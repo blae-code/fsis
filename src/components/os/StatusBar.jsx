@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Wifi, WifiOff, Shield } from 'lucide-react';
+import { Wifi, WifiOff, Shield, Maximize2, Minimize2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { useFullscreen } from '@/lib/useFullscreen';
 
 export default function StatusBar() {
   const [time, setTime] = useState(new Date());
   const [online, setOnline] = useState(navigator.onLine);
+  const { isFullscreen, toggle } = useFullscreen();
   const { data: user } = useQuery({ queryKey: ['user'], queryFn: () => base44.auth.me() });
 
   useEffect(() => {
@@ -102,6 +104,21 @@ export default function StatusBar() {
         <span className="font-mono text-[10px] text-foreground/60">
           {user?.handle ? `${user.handle.toUpperCase()} · ONLINE` : 'OPERATOR ONLINE'}
         </span>
+
+        <div className="h-4 w-px bg-border/40" />
+
+        {/* Fullscreen toggle */}
+        <button
+          onClick={toggle}
+          title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+          className="flex items-center justify-center w-6 h-6 rounded hover:bg-muted transition-colors"
+        >
+          {isFullscreen ? (
+            <Minimize2 className="w-3.5 h-3.5 text-muted-foreground hover:text-primary" />
+          ) : (
+            <Maximize2 className="w-3.5 h-3.5 text-muted-foreground hover:text-primary" />
+          )}
+        </button>
       </div>
     </motion.div>
   );

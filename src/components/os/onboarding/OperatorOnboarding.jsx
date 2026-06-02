@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronRight, Loader2, Radio } from 'lucide-react';
 import OnboardingStep from './OnboardingStep';
+import { useFullscreen } from '@/lib/useFullscreen';
 
 const inputStyle = { borderColor: 'hsl(170, 25%, 18%)' };
 
@@ -19,6 +20,7 @@ export default function OperatorOnboarding({ user, onComplete }) {
     home_system: user?.home_system || '',
   });
   const [saving, setSaving] = useState(false);
+  const { enter: enterFullscreen } = useFullscreen();
 
   const { data: tiers = [] } = useQuery({
     queryKey: ['pricing_tiers_all'],
@@ -45,6 +47,8 @@ export default function OperatorOnboarding({ user, onComplete }) {
     setSaving(true);
     await base44.auth.updateMe({ ...form, onboarded: true });
     setSaving(false);
+    // "Enter FSIS" is a real user gesture — go fullscreen for the immersive OS experience
+    enterFullscreen();
     onComplete();
   };
 

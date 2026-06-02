@@ -73,10 +73,23 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html, body, #root {
+    height: 100%;
+    overscroll-behavior: none;
+  }
   body {
     @apply bg-background text-foreground font-body;
     overflow: hidden;
   }
+}
+
+/* Fullscreen-optimized viewport: fills the screen using dynamic viewport units
+   so it accounts for mobile browser chrome and true fullscreen mode. */
+.os-viewport {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  width: 100dvw;
 }
 
 /* Xi'an glow effects */

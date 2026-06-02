@@ -18,7 +18,7 @@ function DesktopShell() {
   const { windows } = useWindows();
 
   return (
-    <div className="h-screen w-screen flex flex-col overflow-hidden relative">
+    <div className="os-viewport flex flex-col overflow-hidden relative">
       {/* Background */}
       <DesktopBackground />
 
