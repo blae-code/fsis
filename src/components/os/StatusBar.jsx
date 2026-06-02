@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Wifi, WifiOff, Shield, ChevronDown } from 'lucide-react';
+import { Wifi, WifiOff, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 
 export default function StatusBar() {
   const [time, setTime] = useState(new Date());
   const [online, setOnline] = useState(navigator.onLine);
+  const { data: user } = useQuery({ queryKey: ['user'], queryFn: () => base44.auth.me() });
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -82,19 +85,22 @@ export default function StatusBar() {
 
         <div className="h-4 w-px bg-border/40" />
 
-        {/* Org indicator */}
-        <div className="flex items-center gap-1.5">
-          <Shield className="w-3.5 h-3.5 text-primary/50" />
-          <span className="font-mono text-[10px] text-muted-foreground">
-            RSN
-          </span>
-        </div>
+        {/* Home system indicator */}
+        {user?.home_system && (
+          <>
+            <div className="flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 text-primary/50" />
+              <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+                {user.home_system}
+              </span>
+            </div>
+            <div className="h-4 w-px bg-border/40" />
+          </>
+        )}
 
-        <div className="h-4 w-px bg-border/40" />
-
-        {/* Operator */}
+        {/* Operator presence */}
         <span className="font-mono text-[10px] text-foreground/60">
-          OPERATOR ONLINE
+          {user?.handle ? `${user.handle.toUpperCase()} · ONLINE` : 'OPERATOR ONLINE'}
         </span>
       </div>
     </motion.div>

@@ -1,6 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import BootSequence from '@/components/os/BootSequence';
+import OperatorOnboarding from '@/components/os/onboarding/OperatorOnboarding';
 import StatusBar from '@/components/os/StatusBar';
 import DesktopBackground from '@/components/os/DesktopBackground';
 import Dock from '@/components/os/Dock';
@@ -48,6 +51,9 @@ export default function Desktop() {
   // Skip the full boot sequence on return visits for a faster, app-like feel
   const [booted, setBooted] = useState(() => localCache.hasBooted());
 
+  const { data: user, refetch } = useQuery({ queryKey: ['user'], queryFn: () => base44.auth.me() });
+  const needsOnboarding = booted && user && !user.onboarded;
+
   const handleBootComplete = useCallback(() => {
     localCache.markBooted();
     setBooted(true);
@@ -57,6 +63,11 @@ export default function Desktop() {
     <WindowProvider resolveContent={resolveContentById}>
       {!booted && <BootSequence onComplete={handleBootComplete} />}
       {booted && <DesktopShell />}
+      <AnimatePresence>
+        {needsOnboarding && (
+          <OperatorOnboarding user={user} onComplete={refetch} />
+        )}
+      </AnimatePresence>
     </WindowProvider>
   );
 }

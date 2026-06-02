@@ -16,6 +16,14 @@
     "avatar_url": {
       "type": "string",
       "description": "URL to the operator's avatar image"
+    },
+    "home_system": {
+      "type": "string",
+      "description": "Operator's home star system / base of operations, e.g. Stanton"
+    },
+    "onboarded": {
+      "type": "boolean",
+      "description": "Whether the operator has completed the first-run onboarding sequence"
     }
   },
   "required": [],
