@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Wrench, Package, BookOpen, FileText, Radio, Info } from 'lucide-react';
+import { Wrench, Package, BookOpen, FileText, Radio, Info, Settings } from 'lucide-react';
 
 const ICON_MAP = {
-  Wrench, Package, BookOpen, FileText, Radio, Info,
+  Wrench, Package, BookOpen, FileText, Radio, Info, Settings,
 };
 
 export default function AppIcon({ app, onClick, index }) {

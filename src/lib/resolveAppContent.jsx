@@ -2,6 +2,7 @@ import React from 'react';
 import AboutContent from '@/components/apps/AboutContent';
 import PlaceholderContent from '@/components/apps/PlaceholderContent';
 import SalvageContent from '@/components/apps/SalvageContent';
+import SettingsContent from '@/components/apps/SettingsContent';
 
 // Maps an appId to its window content + title.
 // Used both when opening from the Dock and when restoring a saved session.
@@ -11,6 +12,8 @@ export function resolveAppContent(app) {
       return { title: 'ABOUT — FSIS', content: <AboutContent /> };
     case 'salvage':
       return { title: 'SALVAGE — FairShare Pricing', content: <SalvageContent /> };
+    case 'settings':
+      return { title: 'SETTINGS — System Control', content: <SettingsContent /> };
     default:
       return {
         title: `${app.name.toUpperCase()} — coming online`,
@@ -26,6 +29,8 @@ export function resolveContentById(appId, title) {
       return <AboutContent />;
     case 'salvage':
       return <SalvageContent />;
+    case 'settings':
+      return <SettingsContent />;
     default: {
       const name = (title || appId).split(' — ')[0];
       return <PlaceholderContent name={name} description="" />;
