@@ -6,8 +6,10 @@ import DesktopBackground from '@/components/os/DesktopBackground';
 import Dock from '@/components/os/Dock';
 import AppWindow from '@/components/os/AppWindow';
 import Taskbar from '@/components/os/Taskbar';
+import InstallPrompt from '@/components/os/InstallPrompt';
 import { WindowProvider, useWindows } from '@/lib/windowContext.jsx';
 import { resolveContentById } from '@/lib/resolveAppContent.jsx';
+import { localCache } from '@/lib/localCache';
 
 function DesktopShell() {
   const { windows } = useWindows();
@@ -34,15 +36,20 @@ function DesktopShell() {
 
         {/* Taskbar for open windows */}
         <Taskbar />
+
+        {/* PWA install prompt */}
+        <InstallPrompt />
       </div>
     </div>
   );
 }
 
 export default function Desktop() {
-  const [booted, setBooted] = useState(false);
+  // Skip the full boot sequence on return visits for a faster, app-like feel
+  const [booted, setBooted] = useState(() => localCache.hasBooted());
 
   const handleBootComplete = useCallback(() => {
+    localCache.markBooted();
     setBooted(true);
   }, []);
 

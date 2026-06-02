@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { debounce } from 'lodash';
+import { localCache } from '@/lib/localCache';
 
 const WindowContext = createContext(null);
 
@@ -17,6 +18,8 @@ export function WindowProvider({ children, resolveContent }) {
       // Strip non-serializable content before saving
       const open_windows = wins.map(({ content, id: _id, ...meta }) => meta);
       const last_active_app = [...wins].sort((a, b) => b.zIndex - a.zIndex)[0]?.appId || '';
+      // Mirror to localStorage for instant/offline restore
+      localCache.setSession(open_windows);
       try {
         if (id) {
           await base44.entities.workspace_session.update(id, { open_windows, last_active_app });
@@ -30,27 +33,39 @@ export function WindowProvider({ children, resolveContent }) {
     }, 800)
   ).current;
 
-  // Restore session on mount
+  const hydrate = useCallback((openWindows) => {
+    const restored = (openWindows || []).map(meta => ({
+      ...meta,
+      id: Date.now().toString() + Math.random(),
+      content: resolveContent(meta.appId, meta.title),
+    })).filter(w => w.content);
+    if (restored.length) {
+      const maxZ = Math.max(...restored.map(w => w.zIndex || 100));
+      nextZIndex = Math.max(nextZIndex, maxZ + 1);
+      setWindows(restored);
+    }
+  }, [resolveContent]);
+
+  // Restore session on mount: localStorage first (instant/offline), then reconcile with backend
   useEffect(() => {
     if (restoredRef.current || !resolveContent) return;
     restoredRef.current = true;
+
+    const cached = localCache.getSession();
+    if (cached && cached.length) hydrate(cached);
+
     (async () => {
-      const sessions = await base44.entities.workspace_session.list('-updated_date', 1);
-      const session = sessions[0];
-      if (!session) return;
-      setSessionId(session.id);
-      const restored = (session.open_windows || []).map(meta => ({
-        ...meta,
-        id: Date.now().toString() + Math.random(),
-        content: resolveContent(meta.appId, meta.title),
-      })).filter(w => w.content);
-      if (restored.length) {
-        const maxZ = Math.max(...restored.map(w => w.zIndex || 100));
-        nextZIndex = maxZ + 1;
-        setWindows(restored);
+      try {
+        const sessions = await base44.entities.workspace_session.list('-updated_date', 1);
+        const session = sessions[0];
+        if (!session) return;
+        setSessionId(session.id);
+        if (!cached || !cached.length) hydrate(session.open_windows);
+      } catch {
+        // Offline — localStorage restore already applied
       }
     })();
-  }, [resolveContent]);
+  }, [resolveContent, hydrate]);
 
   // Save whenever windows change (after restore)
   useEffect(() => {
