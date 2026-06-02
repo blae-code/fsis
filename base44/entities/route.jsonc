@@ -1,0 +1,64 @@
+{
+  "properties": {
+    "commodity_code": {
+      "type": "string"
+    },
+    "destination_system": {
+      "type": "string"
+    },
+    "destination_terminal": {
+      "type": "string"
+    },
+    "distance": {
+      "description": "Distance/units as reported by UEX",
+      "type": "number"
+    },
+    "origin_system": {
+      "type": "string"
+    },
+    "origin_terminal": {
+      "type": "string"
+    },
+    "patch_version": {
+      "type": "string"
+    },
+    "price_destination_sell": {
+      "description": "aUEC per unit at destination",
+      "type": "number"
+    },
+    "profit_per_scu": {
+      "description": "Estimated aUEC profit per SCU for this route",
+      "type": "number"
+    },
+    "score": {
+      "description": "UEX route score/ranking",
+      "type": "number"
+    },
+    "synced_at": {
+      "format": "date-time",
+      "type": "string"
+    }
+  },
+  "required": [
+    "commodity_code"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object",
+  "name": "route"
+}

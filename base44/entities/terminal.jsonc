@@ -1,0 +1,54 @@
+{
+  "properties": {
+    "is_salvage_relevant": {
+      "description": "Buys RMC/CM or otherwise relevant to salvage selling",
+      "type": "boolean"
+    },
+    "moon": {
+      "type": "string"
+    },
+    "planet": {
+      "type": "string"
+    },
+    "star_system": {
+      "type": "string"
+    },
+    "terminal_code": {
+      "type": "string"
+    },
+    "terminal_name": {
+      "description": "Display name of the terminal/location",
+      "type": "string"
+    },
+    "terminal_type": {
+      "description": "e.g. TDD, station, outpost, refinery",
+      "type": "string"
+    },
+    "uex_terminal_id": {
+      "description": "UEX internal terminal id for cross-reference",
+      "type": "string"
+    }
+  },
+  "required": [
+    "terminal_name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object",
+  "name": "terminal"
+}

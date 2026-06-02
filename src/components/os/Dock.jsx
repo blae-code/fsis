@@ -5,6 +5,7 @@ import AppIcon from './AppIcon';
 import { useWindows } from '@/lib/windowContext.jsx';
 import AboutContent from '../apps/AboutContent';
 import PlaceholderContent from '../apps/PlaceholderContent';
+import SalvageContent from '../apps/SalvageContent';
 
 export default function Dock() {
   const { openWindow } = useWindows();
@@ -12,6 +13,8 @@ export default function Dock() {
   const handleAppClick = (app) => {
     if (app.id === 'about') {
       openWindow(app.id, 'ABOUT — FSIS', <AboutContent />);
+    } else if (app.id === 'salvage') {
+      openWindow(app.id, 'SALVAGE — FairShare Pricing', <SalvageContent />);
     } else {
       openWindow(
         app.id,

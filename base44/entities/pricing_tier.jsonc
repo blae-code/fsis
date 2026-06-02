@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "properties": {
+    "tier_name": {
+      "type": "string",
+      "description": "Display name of the pricing tier, e.g. 'Redscar Nomads' or 'Public'"
+    },
+    "description": {
+      "type": "string",
+      "description": "Who this tier applies to"
+    },
+    "base_margin_percent": {
+      "type": "number",
+      "description": "FSIS standard markup over the UEX market reference price, as a percent (e.g. 12 = +12%)"
+    },
+    "tier_discount_percent": {
+      "type": "number",
+      "description": "Discount applied to the marked-up price for this tier, as a percent (e.g. 5 = 5% off). 0 for public."
+    },
+    "is_default": {
+      "type": "boolean",
+      "description": "Whether this is the default tier applied when none is specified"
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Whether this tier is currently offered"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes about the tier"
+    }
+  },
+  "required": [
+    "tier_name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "name": "pricing_tier"
+}

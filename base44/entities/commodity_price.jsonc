@@ -1,0 +1,77 @@
+{
+  "properties": {
+    "commodity_name": {
+      "description": "Full commodity name, e.g. Recycled Material Composite",
+      "type": "string"
+    },
+    "commodity_code": {
+      "description": "Short code, e.g. RMC, CMR, CMS",
+      "type": "string"
+    },
+    "is_salvage_output": {
+      "description": "True for salvage-produced commodities (RMC, CMR, CMS)",
+      "type": "boolean"
+    },
+    "terminal_name": {
+      "description": "Terminal where this price applies",
+      "type": "string"
+    },
+    "terminal_code": {
+      "type": "string"
+    },
+    "star_system": {
+      "type": "string"
+    },
+    "price_sell": {
+      "description": "aUEC per unit the terminal pays (what you sell for)",
+      "type": "number"
+    },
+    "price_buy": {
+      "description": "aUEC per unit to buy here, if applicable",
+      "type": "number"
+    },
+    "is_best_sell": {
+      "description": "Flagged as a top-paying terminal for this commodity in the latest sync",
+      "type": "boolean"
+    },
+    "uex_updated_at": {
+      "description": "Timestamp UEX reports for this price (data freshness)",
+      "type": "string"
+    },
+    "confidence": {
+      "description": "UEX data confidence/quality flag",
+      "type": "string"
+    },
+    "patch_version": {
+      "description": "Star Citizen patch the price was reported under",
+      "type": "string"
+    },
+    "synced_at": {
+      "description": "When FSIS cached this record from UEX",
+      "format": "date-time",
+      "type": "string"
+    }
+  },
+  "required": [
+    "commodity_code"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  },
+  "type": "object",
+  "name": "commodity_price"
+}
