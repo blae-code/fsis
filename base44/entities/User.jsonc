@@ -1,17 +1,23 @@
 {
+  "type": "object",
   "properties": {
-    "role": {
+    "handle": {
       "type": "string",
-      "description": "The role of the user in the app",
-      "enum": [
-        "admin",
-        "user"
-      ]
+      "description": "In-game handle / callsign displayed across FSIS apps"
+    },
+    "org_role": {
+      "type": "string",
+      "description": "Role within the org, e.g. Operator, Officer, Salvager"
+    },
+    "org_tier": {
+      "type": "string",
+      "description": "Pricing tier name this operator belongs to (links to pricing_tier.tier_name)"
+    },
+    "avatar_url": {
+      "type": "string",
+      "description": "URL to the operator's avatar image"
     }
   },
-  "required": [
-    "role"
-  ],
-  "name": "User",
-  "type": "object"
+  "required": [],
+  "name": "User"
 }

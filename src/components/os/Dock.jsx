@@ -1,27 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import APPS from '@/lib/appRegistry';
+import { useApps } from '@/lib/useApps';
 import AppIcon from './AppIcon';
 import { useWindows } from '@/lib/windowContext.jsx';
-import AboutContent from '../apps/AboutContent';
-import PlaceholderContent from '../apps/PlaceholderContent';
-import SalvageContent from '../apps/SalvageContent';
+import { resolveAppContent } from '@/lib/resolveAppContent.jsx';
 
 export default function Dock() {
   const { openWindow } = useWindows();
+  const { apps } = useApps();
 
   const handleAppClick = (app) => {
-    if (app.id === 'about') {
-      openWindow(app.id, 'ABOUT — FSIS', <AboutContent />);
-    } else if (app.id === 'salvage') {
-      openWindow(app.id, 'SALVAGE — FairShare Pricing', <SalvageContent />);
-    } else {
-      openWindow(
-        app.id,
-        `${app.name.toUpperCase()} — coming online`,
-        <PlaceholderContent name={app.name} description={app.description} />
-      );
-    }
+    const { title, content } = resolveAppContent(app);
+    openWindow(app.id, title, content);
   };
 
   return (
@@ -51,7 +41,7 @@ export default function Dock() {
         />
 
         <div className="flex items-center gap-1">
-          {APPS.map((app, i) => (
+          {apps.map((app, i) => (
             <AppIcon key={app.id} app={app} onClick={handleAppClick} index={i} />
           ))}
         </div>

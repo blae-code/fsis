@@ -1,0 +1,44 @@
+{
+  "type": "object",
+  "properties": {
+    "open_windows": {
+      "type": "array",
+      "description": "Serialized list of open windows with their position, size and state",
+      "items": {
+        "type": "object",
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "minimized": {
+            "type": "boolean"
+          },
+          "zIndex": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "last_active_app": {
+      "type": "string",
+      "description": "appId of the most recently focused app"
+    }
+  },
+  "required": [],
+  "name": "workspace_session"
+}

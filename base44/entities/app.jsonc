@@ -1,0 +1,49 @@
+{
+  "type": "object",
+  "properties": {
+    "app_id": {
+      "type": "string",
+      "description": "Unique slug for the app, e.g. salvage, cargo, ledger"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name of the app"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description shown in tooltips / placeholders"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Lucide icon name, e.g. Wrench, Package, BookOpen"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "coming-online",
+        "offline"
+      ],
+      "default": "coming-online",
+      "description": "Operational status of the app module"
+    },
+    "color": {
+      "type": "string",
+      "description": "HSL accent color for the app icon"
+    },
+    "sort_order": {
+      "type": "number",
+      "description": "Order in which the app appears in the dock"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the app appears in the dock at all"
+    }
+  },
+  "required": [
+    "app_id",
+    "name"
+  ],
+  "name": "app"
+}

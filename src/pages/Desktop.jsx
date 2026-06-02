@@ -7,6 +7,7 @@ import Dock from '@/components/os/Dock';
 import AppWindow from '@/components/os/AppWindow';
 import Taskbar from '@/components/os/Taskbar';
 import { WindowProvider, useWindows } from '@/lib/windowContext.jsx';
+import { resolveContentById } from '@/lib/resolveAppContent.jsx';
 
 function DesktopShell() {
   const { windows } = useWindows();
@@ -46,7 +47,7 @@ export default function Desktop() {
   }, []);
 
   return (
-    <WindowProvider>
+    <WindowProvider resolveContent={resolveContentById}>
       {!booted && <BootSequence onComplete={handleBootComplete} />}
       {booted && <DesktopShell />}
     </WindowProvider>
