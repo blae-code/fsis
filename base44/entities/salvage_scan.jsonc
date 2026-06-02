@@ -1,0 +1,73 @@
+{
+  "type": "object",
+  "properties": {
+    "scan_type": {
+      "type": "string",
+      "enum": [
+        "terminal",
+        "contract",
+        "ship-hud",
+        "signature",
+        "manifest",
+        "other"
+      ],
+      "default": "terminal",
+      "description": "What kind of in-game screen was analyzed"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Uploaded screenshot that was analyzed"
+    },
+    "summary": {
+      "type": "string",
+      "description": "AI-generated human-readable summary of the scan"
+    },
+    "extracted_data": {
+      "type": "object",
+      "description": "Structured data extracted from the image by the AI/OCR pass",
+      "additionalProperties": true
+    },
+    "detected_commodities": {
+      "type": "array",
+      "description": "Salvage commodities detected with quantities/prices",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "quantity_scu": {
+            "type": "number"
+          },
+          "price_sell": {
+            "type": "number"
+          },
+          "terminal_name": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "description": "AI confidence in the extraction"
+    }
+  },
+  "required": [
+    "scan_type"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  },
+  "name": "salvage_scan"
+}

@@ -1,0 +1,69 @@
+{
+  "type": "object",
+  "properties": {
+    "session_name": {
+      "type": "string",
+      "description": "Operator-given name for this salvage run, e.g. 'Aaron Halo sweep'"
+    },
+    "ship": {
+      "type": "string",
+      "description": "Salvage ship used, e.g. Reclaimer, Vulture, SRV"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planning",
+        "in-progress",
+        "hauling",
+        "sold",
+        "archived"
+      ],
+      "default": "planning",
+      "description": "Current lifecycle status of the salvage session"
+    },
+    "rmc_scu": {
+      "type": "number",
+      "default": 0,
+      "description": "Recycled Material Composite collected, in SCU"
+    },
+    "cmr_scu": {
+      "type": "number",
+      "default": 0,
+      "description": "Construction Materials (Reclaimed) collected, in SCU"
+    },
+    "cms_scu": {
+      "type": "number",
+      "default": 0,
+      "description": "Construction Materials (Salvaged) collected, in SCU"
+    },
+    "hulls_scraped": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of wrecks/hulls processed in this session"
+    },
+    "estimated_value": {
+      "type": "number",
+      "description": "AI/calculated estimated aUEC value of the current cargo"
+    },
+    "location": {
+      "type": "string",
+      "description": "Where the salvaging took place, e.g. Aaron Halo, Yela belt"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-form operator notes"
+    }
+  },
+  "required": [
+    "session_name"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  },
+  "name": "salvage_session"
+}

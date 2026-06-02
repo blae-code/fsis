@@ -11,6 +11,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RefreshCw, Copy, Check, AlertCircle } from 'lucide-react';
 import MarginCalculator from '@/components/apps/salvage/MarginCalculator';
+import OcrTerminal from '@/components/apps/salvage/OcrTerminal';
+import SignatureScanner from '@/components/apps/salvage/SignatureScanner';
+import SalvageAdvisor from '@/components/apps/salvage/SalvageAdvisor';
+import HaulPlanner from '@/components/apps/salvage/HaulPlanner';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -155,7 +159,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto overflow-x-auto flex-nowrap" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
           <TabsTrigger
             value="market"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
@@ -176,9 +180,33 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
           </TabsTrigger>
           <TabsTrigger
             value="margin"
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
           >
             MARGIN
+          </TabsTrigger>
+          <TabsTrigger
+            value="haul"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            HAUL
+          </TabsTrigger>
+          <TabsTrigger
+            value="advisor"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            ADVISOR
+          </TabsTrigger>
+          <TabsTrigger
+            value="ocr"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            OCR
+          </TabsTrigger>
+          <TabsTrigger
+            value="scanner"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            SCANNER
           </TabsTrigger>
         </TabsList>
 
@@ -390,6 +418,22 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
 
         <TabsContent value="margin" className="flex-1 overflow-auto m-0">
           <MarginCalculator bestPrices={bestPrices} />
+        </TabsContent>
+
+        <TabsContent value="haul" className="flex-1 overflow-auto m-0">
+          <HaulPlanner bestPrices={bestPrices} />
+        </TabsContent>
+
+        <TabsContent value="advisor" className="flex-1 overflow-auto m-0">
+          <SalvageAdvisor />
+        </TabsContent>
+
+        <TabsContent value="ocr" className="flex-1 overflow-auto m-0">
+          <OcrTerminal />
+        </TabsContent>
+
+        <TabsContent value="scanner" className="flex-1 overflow-auto m-0">
+          <SignatureScanner />
         </TabsContent>
       </Tabs>
 
