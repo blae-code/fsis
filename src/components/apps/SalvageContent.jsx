@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RefreshCw, Copy, Check, AlertCircle } from 'lucide-react';
+import MarginCalculator from '@/components/apps/salvage/MarginCalculator';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -172,6 +173,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
           >
             QUOTE
+          </TabsTrigger>
+          <TabsTrigger
+            value="margin"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            MARGIN
           </TabsTrigger>
         </TabsList>
 
@@ -379,6 +386,10 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="margin" className="flex-1 overflow-auto m-0">
+          <MarginCalculator bestPrices={bestPrices} />
         </TabsContent>
       </Tabs>
 
