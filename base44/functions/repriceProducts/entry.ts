@@ -4,7 +4,6 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 // current UEX best sell price plus one consistent, published margin.
 // "Show the math" — the reference, margin, and timestamp are stored on the product.
 const DEFAULT_MARGIN_PERCENT = 8;
-const UNITS_PER_SCU = 100; // UEX prices are per cSCU unit
 
 Deno.serve(async (req) => {
     try {
@@ -40,7 +39,7 @@ Deno.serve(async (req) => {
             const best = bestByCode[code];
             if (!best) continue;
 
-            const perUnitRef = product.unit === 'SCU' ? best.price_sell * UNITS_PER_SCU : best.price_sell;
+            const perUnitRef = best.price_sell; // UEX price_sell is per SCU
             const marketRef = Math.round(perUnitRef);
             const newPrice = Math.round(perUnitRef * (1 + marginPercent / 100));
 

@@ -86,6 +86,30 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
             </div>
           )}
 
+          {/* FairShare pricing math — show the work */}
+          {product.market_ref_auec > 0 && (
+            <div className="border p-3 space-y-1" style={{ borderColor: '#3A2F20', background: '#0E0C09' }}>
+              <div className="text-[9px] tracking-[0.2em]" style={{ color: '#C8A05B' }}>FAIRSHARE PRICING — THE MATH</div>
+              <div className="flex justify-between text-[10px]">
+                <span style={{ color: '#9C9080' }}>UEX MARKET REFERENCE</span>
+                <span style={{ color: '#D8CFC0' }}>{product.market_ref_auec.toLocaleString()} aUEC</span>
+              </div>
+              <div className="flex justify-between text-[10px]">
+                <span style={{ color: '#9C9080' }}>FSIS MARGIN (+{product.margin_percent}%)</span>
+                <span style={{ color: '#D8CFC0' }}>+{(product.price_auec - product.market_ref_auec).toLocaleString()} aUEC</span>
+              </div>
+              <div className="flex justify-between text-[10px] pt-1 border-t font-bold" style={{ borderColor: '#2A2118' }}>
+                <span style={{ color: '#C8A05B' }}>YOUR PRICE</span>
+                <span style={{ color: '#E0A22E' }}>{product.price_auec.toLocaleString()} aUEC/{product.unit || 'SCU'}</span>
+              </div>
+              {product.repriced_at && (
+                <p className="text-[9px]" style={{ color: '#6B6155' }}>
+                  Anchored to UEX {new Date(product.repriced_at).toLocaleDateString()} — same margin on every ware. "Every credit accounted for."
+                </p>
+              )}
+            </div>
+          )}
+
           <SerialStrip seed={product.id} label="FSIS CERTIFIED" />
 
           {!inStock && product.category !== 'service' && <RestockNotify product={product} />}

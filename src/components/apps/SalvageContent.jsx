@@ -9,7 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RefreshCw, Copy, Check, AlertCircle } from 'lucide-react';
+import { RefreshCw, Copy, Check, AlertCircle, Coins } from 'lucide-react';
+import { repriceProducts } from '@/functions/repriceProducts';
 import MarginCalculator from '@/components/apps/salvage/MarginCalculator';
 import OcrTerminal from '@/components/apps/salvage/OcrTerminal';
 import SignatureScanner from '@/components/apps/salvage/SignatureScanner';
@@ -24,6 +25,7 @@ import StockTrend from '@/components/apps/salvage/StockTrend';
 import HaulBoard from '@/components/apps/salvage/HaulBoard';
 import PriceAlerts from '@/components/apps/salvage/PriceAlerts';
 import StockAlerts from '@/components/apps/salvage/StockAlerts';
+import ProfitDashboard from '@/components/apps/salvage/ProfitDashboard';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -56,6 +58,12 @@ export default function SalvageContent() {
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: () => base44.auth.me(),
+  });
+
+  // Reprice mutation — anchors storefront prices to UEX + consistent margin
+  const repriceMutation = useMutation({
+    mutationFn: () => repriceProducts({}),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['products'] }),
   });
 
   // Sync mutation
@@ -153,17 +161,31 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
           </span>
         </div>
         {user?.role === 'admin' && (
-          <Button
-            onClick={() => syncMutation.mutate()}
-            disabled={syncMutation.isPending}
-            variant="outline"
-            size="sm"
-            className="h-7 text-[10px] font-mono gap-1.5"
-            style={{ borderColor: 'hsl(33, 18%, 18%)' }}
-          >
-            <RefreshCw className="w-3 h-3" />
-            Sync Now
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => repriceMutation.mutate()}
+              disabled={repriceMutation.isPending}
+              variant="outline"
+              size="sm"
+              className="h-7 text-[10px] font-mono gap-1.5"
+              style={{ borderColor: 'hsl(33, 18%, 18%)' }}
+              title="Re-anchor all storefront prices to current UEX best sell + consistent margin"
+            >
+              <Coins className={`w-3 h-3 ${repriceMutation.isPending ? 'animate-pulse' : ''}`} />
+              {repriceMutation.isPending ? 'Repricing…' : repriceMutation.data ? `Repriced ${repriceMutation.data.data?.repriced ?? 0}` : 'Reprice Store'}
+            </Button>
+            <Button
+              onClick={() => syncMutation.mutate()}
+              disabled={syncMutation.isPending}
+              variant="outline"
+              size="sm"
+              className="h-7 text-[10px] font-mono gap-1.5"
+              style={{ borderColor: 'hsl(33, 18%, 18%)' }}
+            >
+              <RefreshCw className="w-3 h-3" />
+              Sync Now
+            </Button>
+          </div>
         )}
       </div>
 
@@ -252,6 +274,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
           >
             STATS
+          </TabsTrigger>
+          <TabsTrigger
+            value="profit"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            PROFIT
           </TabsTrigger>
           <TabsTrigger
             value="history"
@@ -518,6 +546,10 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
 
         <TabsContent value="stats" className="flex-1 overflow-auto m-0">
           <SalvageAnalytics bestPrices={bestPrices} />
+        </TabsContent>
+
+        <TabsContent value="profit" className="flex-1 overflow-auto m-0">
+          <ProfitDashboard bestPrices={bestPrices} />
         </TabsContent>
 
         <TabsContent value="history" className="flex-1 overflow-auto m-0">
