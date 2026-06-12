@@ -25,7 +25,7 @@ export function resolveAppContent(app) {
     case 'orders':
       return { title: 'ORDERS — Customer Order Desk', content: <OrdersContent /> };
     case 'ledger':
-      return { title: 'LEDGER — Credit Accounting', content: <LedgerContent /> };
+      return { title: 'LEDGER — Income & Operating Costs', content: <LedgerContent /> };
     default:
       return {
         title: `${app.name.toUpperCase()} — coming online`,

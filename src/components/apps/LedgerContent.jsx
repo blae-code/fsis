@@ -1,93 +1,55 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BookOpen, Trash2 } from 'lucide-react';
-import LedgerEntryForm, { CATEGORIES } from '@/components/apps/ledger/LedgerEntryForm';
-import LedgerSummary from '@/components/apps/ledger/LedgerSummary';
+import { useQuery } from '@tanstack/react-query';
+import LedgerSummary from './ledger/LedgerSummary';
+import TransactionForm from './ledger/TransactionForm';
+import TransactionList from './ledger/TransactionList';
+
+const FILTERS = [
+  { value: 'all', label: 'ALL' },
+  { value: 'income', label: 'INCOME' },
+  { value: 'expense', label: 'COSTS' },
+];
 
 export default function LedgerContent() {
-  const queryClient = useQueryClient();
   const [filter, setFilter] = useState('all');
 
-  const { data: entries = [] } = useQuery({
-    queryKey: ['ledger_entries'],
-    queryFn: () => base44.entities.ledger_entry.list('-entry_date', 500),
+  const { data: transactions = [] } = useQuery({
+    queryKey: ['ledger_transactions'],
+    queryFn: () => base44.entities.ledger_transaction.list('-tx_date', 500),
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.ledger_entry.delete(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['ledger_entries'] }),
-  });
-
-  const filtered = filter === 'all' ? entries : entries.filter((e) => e.entry_type === filter);
+  const filtered = filter === 'all' ? transactions : transactions.filter((t) => t.tx_type === filter);
 
   return (
     <div className="h-full flex flex-col industrial-interior font-mono" style={{ background: 'hsl(200, 10%, 10%)' }}>
-      <LedgerSummary entries={entries} />
-      <LedgerEntryForm />
+      <LedgerSummary transactions={transactions} />
+      <TransactionForm />
 
-      <div className="flex items-center justify-between px-3 py-2 border-b" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
-        <div className="text-[9px] text-muted-foreground tracking-[0.2em]">
-          TRANSACTION LOG — {filtered.length} ENTRIES
-        </div>
-        <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="h-7 w-28 text-[10px] font-mono"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all" className="text-xs">All</SelectItem>
-            <SelectItem value="income" className="text-xs">Income</SelectItem>
-            <SelectItem value="expense" className="text-xs">Expenses</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex items-center gap-1 px-3 pt-3">
+        {FILTERS.map((f) => (
+          <button
+            key={f.value}
+            onClick={() => setFilter(f.value)}
+            className="px-3 py-1 rounded text-[9px] tracking-[0.15em] border transition-colors"
+            style={
+              filter === f.value
+                ? { borderColor: 'hsl(168, 65%, 45%)', color: 'hsl(168, 80%, 55%)', background: 'hsl(168, 65%, 45%, 0.08)' }
+                : { borderColor: 'hsl(170, 25%, 18%)', color: 'hsl(165, 20%, 50%)' }
+            }
+          >
+            {f.label}
+          </button>
+        ))}
+        <span className="ml-auto text-[9px] text-muted-foreground">{filtered.length} ENTRIES</span>
       </div>
 
-      <div className="flex-1 overflow-auto p-3 space-y-1.5">
-        {filtered.length === 0 ? (
-          <div className="text-center py-12">
-            <BookOpen className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
-            <p className="text-xs text-muted-foreground">No entries yet — log your first credit movement above.</p>
-          </div>
-        ) : (
-          filtered.map((e) => {
-            const isIncome = e.entry_type === 'income';
-            return (
-              <div
-                key={e.id}
-                className="flex items-center gap-3 rounded border px-3 py-2"
-                style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 8%)' }}
-              >
-                <span
-                  className="w-1 self-stretch rounded-full shrink-0"
-                  style={{ background: isIncome ? 'hsl(140, 50%, 45%)' : 'hsl(0, 55%, 50%)' }}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs text-foreground truncate">{e.description || CATEGORIES[e.category] || 'Entry'}</span>
-                    <Badge variant="outline" className="text-[8px] h-4 text-muted-foreground">
-                      {CATEGORIES[e.category] || e.category}
-                    </Badge>
-                  </div>
-                  <div className="text-[9px] text-muted-foreground">
-                    {e.entry_date || ''} {e.counterparty && `• ${e.counterparty}`}
-                  </div>
-                </div>
-                <span
-                  className="text-xs font-bold shrink-0"
-                  style={{ color: isIncome ? 'hsl(140, 50%, 50%)' : 'hsl(0, 55%, 55%)' }}
-                >
-                  {isIncome ? '+' : '−'}{(e.amount_auec || 0).toLocaleString()}
-                </span>
-                <button
-                  onClick={() => deleteMutation.mutate(e.id)}
-                  className="text-muted-foreground hover:text-destructive shrink-0"
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
-              </div>
-            );
-          })
-        )}
+      <div className="flex-1 overflow-auto p-3">
+        <TransactionList transactions={filtered} />
+      </div>
+
+      <div className="px-3 py-1.5 border-t text-[8px] text-muted-foreground/60 tracking-[0.15em]" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+        FSIS LEDGER • REDSCAR NOMADS TRANSPARENT ACCOUNTING • ALL FIGURES IN aUEC
       </div>
     </div>
   );

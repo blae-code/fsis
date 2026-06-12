@@ -1,0 +1,65 @@
+{
+  "name": "ledger_transaction",
+  "type": "object",
+  "properties": {
+    "tx_type": {
+      "type": "string",
+      "enum": [
+        "income",
+        "expense"
+      ],
+      "description": "Whether this is money in or money out"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "salvage_sale",
+        "order_fulfillment",
+        "contract_payment",
+        "other_income",
+        "fuel",
+        "repairs",
+        "restock",
+        "ship_rental",
+        "fees_fines",
+        "crew_pay",
+        "equipment",
+        "other_expense"
+      ],
+      "description": "Transaction category"
+    },
+    "amount_auec": {
+      "type": "number",
+      "description": "Amount in aUEC (always positive; tx_type determines sign)"
+    },
+    "description": {
+      "type": "string",
+      "description": "What the transaction was for"
+    },
+    "counterparty": {
+      "type": "string",
+      "description": "Who paid / was paid, e.g. TDD Orison, Redscar Nomads"
+    },
+    "tx_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of the transaction"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional extra notes"
+    }
+  },
+  "required": [
+    "tx_type",
+    "amount_auec"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
