@@ -1,0 +1,59 @@
+{
+  "name": "cargo_lot",
+  "type": "object",
+  "properties": {
+    "lot_name": {
+      "type": "string",
+      "description": "Name of this cargo lot, e.g. 'Reclaimer haul 06-12 RMC'"
+    },
+    "commodity_code": {
+      "type": "string",
+      "description": "Commodity short code, e.g. RMC, CMR, CMS"
+    },
+    "quantity_scu": {
+      "type": "number",
+      "default": 0,
+      "description": "Quantity in SCU"
+    },
+    "origin": {
+      "type": "string",
+      "description": "Where the cargo was collected, e.g. Aaron Halo"
+    },
+    "destination": {
+      "type": "string",
+      "description": "Planned sale terminal / destination, e.g. TDD Orison"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "collected",
+        "processed",
+        "sold"
+      ],
+      "default": "collected",
+      "description": "Kanban lane for this lot"
+    },
+    "est_value_auec": {
+      "type": "number",
+      "description": "Estimated sale value in aUEC"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "lot_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
