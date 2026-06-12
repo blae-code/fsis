@@ -1,0 +1,39 @@
+{
+  "name": "ops_brief",
+  "type": "object",
+  "properties": {
+    "headline": {
+      "type": "string",
+      "description": "One-line ops headline for the day"
+    },
+    "body": {
+      "type": "string",
+      "description": "AI-composed operational briefing in markdown"
+    },
+    "stats": {
+      "type": "object",
+      "description": "Raw numbers the brief was built from",
+      "additionalProperties": true
+    },
+    "brief_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this brief covers"
+    }
+  },
+  "required": [
+    "headline"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

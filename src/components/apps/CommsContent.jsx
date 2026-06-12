@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import NetPlan from '@/components/apps/comms/NetPlan';
 import ConnectGuide from '@/components/apps/comms/ConnectGuide';
+import OpsBrief from '@/components/apps/comms/OpsBrief';
 
 // COMMS — FSIS communications run over the OD3ICA Spacecomms Relay Service (SRS).
 export default function CommsContent() {
@@ -21,6 +22,12 @@ export default function CommsContent() {
           >
             OD3ICA RELAY
           </TabsTrigger>
+          <TabsTrigger
+            value="briefing"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            BRIEFING
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="netplan" className="flex-1 overflow-auto m-0">
@@ -29,6 +36,10 @@ export default function CommsContent() {
 
         <TabsContent value="relay" className="flex-1 overflow-auto m-0">
           <ConnectGuide />
+        </TabsContent>
+
+        <TabsContent value="briefing" className="flex-1 overflow-auto m-0">
+          <OpsBrief />
         </TabsContent>
       </Tabs>
     </div>
