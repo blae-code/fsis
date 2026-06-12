@@ -45,3 +45,17 @@ export const localCache = {
   hasBooted: () => read(BASE_KEYS.booted) === true,
   markBooted: () => write(BASE_KEYS.booted, true),
 };
+
+// Storefront cache — remembers returning purchasers/contractors on this device:
+// their handle, preferred delivery location, and any in-progress cart.
+const STORE_KEYS = {
+  customer: 'fsis.store.customer',
+  cart: 'fsis.store.cart',
+};
+
+export const storeCache = {
+  getCustomer: () => read(STORE_KEYS.customer),
+  setCustomer: (profile) => write(STORE_KEYS.customer, profile),
+  getCart: () => read(STORE_KEYS.cart) || [],
+  setCart: (cart) => write(STORE_KEYS.cart, cart),
+};

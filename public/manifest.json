@@ -1,17 +1,16 @@
 {
   "name": "FSIS — FairShare Industrial Solutions",
   "short_name": "FSIS",
-  "description": "Transparent salvage pricing, cargo & logistics OS for the verse.",
+  "description": "Transparent salvage pricing, cargo & logistics OS for the 'verse.",
   "start_url": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#0a1212",
-  "theme_color": "#0a1212",
-  "categories": ["productivity", "utilities"],
+  "background_color": "#0C0B0A",
+  "theme_color": "#0C0B0A",
   "icons": [
     {
       "src": "https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/3789daf8a_generated_image.png",
-      "sizes": "192x192",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
@@ -19,7 +18,7 @@
       "src": "https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/3789daf8a_generated_image.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ]
 }

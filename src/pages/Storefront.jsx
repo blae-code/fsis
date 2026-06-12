@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { storeCache } from '@/lib/localCache';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -18,9 +19,14 @@ import { FSIS } from '@/lib/fsisLore';
 const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/44c3176b4_generated_image.png';
 
 export default function Storefront() {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => storeCache.getCart());
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+
+  // Persist in-progress cart so returning purchasers pick up where they left off
+  useEffect(() => {
+    storeCache.setCart(cart);
+  }, [cart]);
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],

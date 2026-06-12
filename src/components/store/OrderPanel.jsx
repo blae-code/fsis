@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { storeCache } from '@/lib/localCache';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,8 +11,9 @@ const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8C
 
 export default function OrderPanel({ cart, setCart, user }) {
   const queryClient = useQueryClient();
-  const [handle, setHandle] = useState(user?.full_name || '');
-  const [location, setLocation] = useState('');
+  const saved = storeCache.getCustomer();
+  const [handle, setHandle] = useState(saved?.handle || user?.full_name || '');
+  const [location, setLocation] = useState(saved?.location || '');
   const [notes, setNotes] = useState('');
   const [placed, setPlaced] = useState(false);
 
@@ -30,9 +32,10 @@ export default function OrderPanel({ cart, setCart, user }) {
         status: 'new',
       }),
     onSuccess: () => {
+      // Remember this purchaser for next time
+      storeCache.setCustomer({ handle, location });
       queryClient.invalidateQueries({ queryKey: ['my_orders'] });
       setCart([]);
-      setLocation('');
       setNotes('');
       setPlaced(true);
       setTimeout(() => setPlaced(false), 4000);
