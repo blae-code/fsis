@@ -16,6 +16,7 @@ import SignatureScanner from '@/components/apps/salvage/SignatureScanner';
 import SalvageAdvisor from '@/components/apps/salvage/SalvageAdvisor';
 import HaulPlanner from '@/components/apps/salvage/HaulPlanner';
 import SalvageAnalytics from '@/components/apps/salvage/SalvageAnalytics';
+import InventoryView from '@/components/apps/salvage/InventoryView';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -168,6 +169,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             MARKET
           </TabsTrigger>
           <TabsTrigger
+            value="stock"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            STOCK
+          </TabsTrigger>
+          <TabsTrigger
             value="routes"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
           >
@@ -277,6 +284,10 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
               );
             })}
           </div>
+        </TabsContent>
+
+        <TabsContent value="stock" className="flex-1 overflow-auto m-0">
+          <InventoryView bestPrices={bestPrices} />
         </TabsContent>
 
         <TabsContent value="routes" className="flex-1 overflow-auto m-0">
