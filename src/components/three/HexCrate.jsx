@@ -22,14 +22,14 @@ export default function HexCrate({ size = 180 }) {
     const hexGeo = new THREE.CylinderGeometry(1.5, 1.5, 1.6, 6, 1);
     const outer = new THREE.LineSegments(
       new THREE.EdgesGeometry(hexGeo),
-      new THREE.LineBasicMaterial({ color: 0x2ebfa5, transparent: true, opacity: 0.85 })
+      new THREE.LineBasicMaterial({ color: 0xe3c089, transparent: true, opacity: 0.85 })
     );
     group.add(outer);
 
     const innerGeo = new THREE.CylinderGeometry(1.0, 1.0, 1.1, 6, 1);
     const inner = new THREE.LineSegments(
       new THREE.EdgesGeometry(innerGeo),
-      new THREE.LineBasicMaterial({ color: 0x3de0c2, transparent: true, opacity: 0.4 })
+      new THREE.LineBasicMaterial({ color: 0xd4920b, transparent: true, opacity: 0.4 })
     );
     group.add(inner);
 

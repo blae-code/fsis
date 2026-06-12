@@ -22,13 +22,13 @@ export default function MyOrders() {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2 font-mono text-xs text-muted-foreground tracking-[0.2em]">
-        <PackageCheck className="w-3.5 h-3.5 text-primary" /> YOUR ORDERS
+      <div className="flex items-center gap-2 font-mono text-xs tracking-[0.2em]" style={{ color: '#C8A05B' }}>
+        <PackageCheck className="w-3.5 h-3.5" /> YOUR ORDERS
       </div>
       {orders.map((o) => (
-        <div key={o.id} className="rounded border xian-panel p-3 flex items-center justify-between gap-3">
+        <div key={o.id} className="border p-3 flex items-center justify-between gap-3" style={{ borderColor: '#2A2118', background: '#121110' }}>
           <div className="min-w-0">
-            <div className="text-xs font-mono text-foreground truncate">
+            <div className="text-xs font-mono truncate" style={{ color: '#D8CFC0' }}>
               {(o.items || []).map((i) => `${i.quantity}x ${i.code || i.product_name}`).join(', ')}
             </div>
             <div className="text-[10px] font-mono text-muted-foreground">
@@ -36,7 +36,7 @@ export default function MyOrders() {
             </div>
           </div>
           <div className="text-right shrink-0">
-            <div className="text-xs font-mono text-primary font-bold">{(o.total_auec || 0).toLocaleString()} aUEC</div>
+            <div className="text-xs font-mono font-bold" style={{ color: '#E0A22E' }}>{(o.total_auec || 0).toLocaleString()} aUEC</div>
             <Badge variant="outline" className={`text-[9px] font-mono h-4 ${STATUS_STYLES[o.status] || ''}`}>
               {(o.status || 'new').replace('_', ' ').toUpperCase()}
             </Badge>

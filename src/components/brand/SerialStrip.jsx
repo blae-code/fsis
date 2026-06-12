@@ -14,7 +14,7 @@ export default function SerialStrip({ seed = 'FSIS', label, className = '' }) {
     <div className={`flex items-center gap-2 ${className}`}>
       <svg width="90" height="12" viewBox="0 0 120 12" preserveAspectRatio="none" className="opacity-40">
         {bars.map((w, i) => {
-          const rect = <rect key={i} x={x} y="0" width={w} height="12" fill="hsl(165, 40%, 70%)" />;
+          const rect = <rect key={i} x={x} y="0" width={w} height="12" fill="#C8B898" />;
           x += w + 2;
           return rect;
         })}

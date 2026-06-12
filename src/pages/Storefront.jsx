@@ -10,8 +10,9 @@ import MyOrders from '@/components/store/MyOrders';
 import AboutFsis from '@/components/store/AboutFsis';
 import FsisLogo from '@/components/brand/FsisLogo';
 import HexCrate from '@/components/three/HexCrate';
-import SerialStrip from '@/components/brand/SerialStrip';
 import { FSIS } from '@/lib/fsisLore';
+
+const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/44c3176b4_generated_image.png';
 
 export default function Storefront() {
   const [cart, setCart] = useState([]);
@@ -44,19 +45,21 @@ export default function Storefront() {
   };
 
   return (
-    <div className="os-viewport overflow-y-auto" style={{ background: 'hsl(180, 15%, 4%)' }}>
+    <div className="os-viewport overflow-y-auto" style={{ background: '#0C0B0A' }}>
       {/* Header */}
-      <header className="border-b sticky top-0 z-10 backdrop-blur-md" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 15%, 4%, 0.85)' }}>
+      <header className="border-b sticky top-0 z-10 backdrop-blur-md" style={{ borderColor: '#2A2118', background: 'rgba(12, 11, 10, 0.92)' }}>
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <FsisLogo size={34} glow />
+            <div className="p-1.5" style={{ background: 'linear-gradient(160deg, #8A6430, #4A3722)', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}>
+              <FsisLogo size={26} />
+            </div>
             <div>
-              <h1 className="font-mono text-sm font-bold text-primary xian-glow-subtle tracking-[0.15em]">FAIRSHARE INDUSTRIAL SOLUTIONS</h1>
-              <p className="text-[10px] font-mono text-muted-foreground">{FSIS.divisionCodes.join(' • ')} — "{FSIS.motto}"</p>
+              <h1 className="font-mono text-sm font-bold tracking-[0.18em]" style={{ color: '#D8CFC0' }}>FAIRSHARE INDUSTRIAL SOLUTIONS</h1>
+              <p className="text-[10px] font-mono" style={{ color: '#B0793A' }}>{FSIS.divisionCodes.join(' • ')} — "{FSIS.motto}"</p>
             </div>
           </div>
           {user?.role === 'admin' && (
-            <Button asChild variant="outline" size="sm" className="h-8 text-[10px] font-mono gap-1.5" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+            <Button asChild variant="outline" size="sm" className="h-8 text-[10px] font-mono gap-1.5 bg-transparent" style={{ borderColor: '#5C4424', color: '#C8A05B' }}>
               <Link to="/ops">
                 <MonitorCog className="w-3.5 h-3.5" /> OPERATOR TERMINAL
               </Link>
@@ -65,31 +68,51 @@ export default function Storefront() {
         </div>
       </header>
 
-      {/* Hero */}
+      {/* Hero — bronze command deck panel */}
       <section className="max-w-6xl mx-auto px-4 pt-8 pb-6">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
-          <div className="text-center md:text-left">
-            <p className="font-mono text-[10px] text-primary/60 tracking-[0.3em] mb-2">// EST. {FSIS.founded} — STANTON SYSTEM</p>
-            <h2 className="font-mono text-2xl md:text-3xl font-bold text-foreground">
-              Honest salvage. <span className="text-primary xian-glow-subtle">Fair prices.</span>
-            </h2>
-            <p className="text-sm text-muted-foreground mt-2 max-w-xl font-mono">
-              Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
-            </p>
-            <div className="mt-4 flex justify-center md:justify-start">
-              <SerialStrip seed={FSIS.license} label={FSIS.license} />
+        <div
+          className="p-[6px]"
+          style={{
+            background: 'linear-gradient(135deg, #8A6430 0%, #4A3722 35%, #B0793A 65%, #5C4424 100%)',
+            clipPath: 'polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px)',
+          }}
+        >
+          <div
+            className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr]"
+            style={{ clipPath: 'polygon(28px 0, 100% 0, 100% calc(100% - 28px), calc(100% - 28px) 100%, 0 100%, 0 28px)' }}
+          >
+            <div
+              className="relative p-8 md:p-10"
+              style={{
+                backgroundImage: `linear-gradient(95deg, rgba(13, 11, 9, 0.92) 30%, rgba(13, 11, 9, 0.45) 100%), url(${HERO_BG})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center right',
+              }}
+            >
+              <p className="font-mono text-[11px] tracking-[0.3em] mb-3" style={{ color: '#D4920B' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
+              <h2 className="font-mono text-3xl md:text-4xl font-bold leading-tight">
+                <span style={{ color: '#E5DDD0' }}>Honest salvage.</span>
+                <br />
+                <span style={{ color: '#C8893B' }}>Fair prices.</span>
+              </h2>
+              <p className="text-sm mt-4 max-w-md font-mono leading-relaxed" style={{ color: '#B8AC9A' }}>
+                Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
+              </p>
+            </div>
+            <div className="hidden md:flex flex-col items-center justify-center py-6 gap-2" style={{ background: '#080705', borderLeft: '2px solid #5C4424' }}>
+              <HexCrate size={190} />
+              <p className="font-mono text-[10px] tracking-[0.2em]" style={{ color: '#B0793A' }}>{FSIS.license}</p>
             </div>
           </div>
-          <HexCrate size={170} />
         </div>
       </section>
 
       {/* Catalog + cart */}
       <main className="max-w-6xl mx-auto px-4 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {products.length === 0 ? (
-              <p className="col-span-full text-center py-12 text-xs font-mono text-muted-foreground">
+              <p className="col-span-full text-center py-12 text-xs font-mono" style={{ color: '#8A7E6C' }}>
                 No wares listed yet — check back soon.
               </p>
             ) : (
@@ -104,11 +127,11 @@ export default function Storefront() {
         </div>
       </main>
 
-      <footer className="border-t py-4 text-center space-y-1" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
-        <p className="text-[9px] font-mono text-muted-foreground/70 px-4">
+      <footer className="border-t py-4 text-center space-y-1" style={{ borderColor: '#2A2118' }}>
+        <p className="text-[9px] font-mono px-4" style={{ color: '#6B6155' }}>
           {FSIS.name} • {FSIS.license} • {FSIS.hq}
         </p>
-        <p className="text-[9px] font-mono text-muted-foreground px-4">
+        <p className="text-[9px] font-mono px-4" style={{ color: '#8A7E6C' }}>
           All prices in aUEC (in-game currency). Unofficial fan project — not affiliated with Cloud Imperium Games.
         </p>
       </footer>
