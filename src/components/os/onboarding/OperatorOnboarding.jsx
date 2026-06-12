@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronRight, ChevronLeft, Loader2, Radio } from 'lucide-react';
 import OnboardingStep from './OnboardingStep';
+import StatusNodes from './StatusNodes';
 import ScanlineOverlay from '@/components/onboarding/ScanlineOverlay';
 import TypedStatus from '@/components/onboarding/TypedStatus';
 import { useFullscreen } from '@/lib/useFullscreen';
@@ -198,20 +199,17 @@ export default function OperatorOnboarding({ user, onComplete }) {
           </OnboardingStep>
         </AnimatePresence>
 
-        {/* Progress + advance */}
-        <div className="flex items-center justify-between mt-8 pt-5 border-t" style={inputStyle}>
-          <div className="flex gap-1.5">
-            {steps.map((_, i) => (
-              <div
-                key={i}
-                className="h-1 rounded-full transition-all duration-300"
-                style={{
-                  width: i === step ? 20 : 6,
-                  background: i <= step ? 'hsl(38, 72%, 52%)' : 'hsl(33, 18%, 18%)',
-                }}
-              />
-            ))}
-          </div>
+        {/* Status node track */}
+        <div className="mt-8 pt-5 pb-4 px-1 border-t" style={inputStyle}>
+          <StatusNodes
+            labels={['IDENTITY', 'FUNCTION', 'AFFILIATION', 'ORIGIN', 'CONFIRM']}
+            current={step}
+            onJump={(i) => setStep(i)}
+          />
+        </div>
+
+        {/* Advance controls */}
+        <div className="flex items-center justify-end mt-3">
           <div className="flex items-center gap-3">
             {step > 0 && (
               <button
