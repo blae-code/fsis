@@ -10,6 +10,15 @@
       "type": "string",
       "description": "Typical role, e.g. Pilot, Scraper, Security, Hauler"
     },
+    "employment_type": {
+      "type": "string",
+      "enum": [
+        "proprietor",
+        "contractor"
+      ],
+      "default": "contractor",
+      "description": "Proprietor = permanent owner (blae); all other crew are contractors"
+    },
     "default_shares": {
       "type": "number",
       "default": 1,

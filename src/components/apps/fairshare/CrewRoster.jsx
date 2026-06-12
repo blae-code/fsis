@@ -47,10 +47,11 @@ export default function CrewRoster() {
           <Input placeholder="Role, e.g. Scraper" value={role} onChange={(e) => setRole(e.target.value)} className="h-8 text-xs" style={border} />
           <Input type="number" min="0" step="0.5" value={defaultShares} onChange={(e) => setDefaultShares(e.target.value)} className="h-8 text-xs" style={border} title="Default shares" />
           <Button size="sm" className="h-8 text-[10px] gap-1" disabled={!handle || createMutation.isPending}
-            onClick={() => createMutation.mutate({ handle, role, default_shares: parseFloat(defaultShares) || 1, active: true })}>
+            onClick={() => createMutation.mutate({ handle, role, default_shares: parseFloat(defaultShares) || 1, active: true, employment_type: 'contractor' })}>
             <UserPlus className="w-3 h-3" /> ADD
           </Button>
         </div>
+        <p className="text-[9px] text-muted-foreground">All new crew are added as contractors — the Proprietor is the sole permanent member.</p>
       </div>
 
       <div className="space-y-1.5">
@@ -60,7 +61,12 @@ export default function CrewRoster() {
         ) : crew.map((m) => (
           <div key={m.id} className="p-2.5 rounded border flex items-center gap-3" style={panel}>
             <div className="flex-1 min-w-0">
-              <div className="text-xs text-foreground">{m.handle}</div>
+              <div className="text-xs text-foreground flex items-center gap-2">
+                {m.handle}
+                <Badge variant="outline" className={`text-[8px] h-4 ${m.employment_type === 'proprietor' ? 'border-primary/60 text-primary' : 'border-muted-foreground/40 text-muted-foreground'}`}>
+                  {m.employment_type === 'proprietor' ? 'PROPRIETOR' : 'CONTRACTOR'}
+                </Badge>
+              </div>
               <div className="text-[9px] text-muted-foreground">{m.role || 'Crew'} • {m.default_shares ?? 1} share{(m.default_shares ?? 1) === 1 ? '' : 's'} default</div>
             </div>
             <button
@@ -71,9 +77,11 @@ export default function CrewRoster() {
                 {m.active ? 'ACTIVE' : 'INACTIVE'}
               </Badge>
             </button>
-            <button onClick={() => deleteMutation.mutate(m.id)} className="text-muted-foreground hover:text-destructive">
-              <Trash2 className="w-3 h-3" />
-            </button>
+            {m.employment_type !== 'proprietor' && (
+              <button onClick={() => deleteMutation.mutate(m.id)} className="text-muted-foreground hover:text-destructive">
+                <Trash2 className="w-3 h-3" />
+              </button>
+            )}
           </div>
         ))}
       </div>
