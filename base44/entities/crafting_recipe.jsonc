@@ -1,0 +1,85 @@
+{
+  "name": "crafting_recipe",
+  "type": "object",
+  "properties": {
+    "item_name": {
+      "type": "string",
+      "description": "Name of the craftable item, e.g. 'Cryptokey', 'Medpen', 'Ballista Missile'"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "component",
+        "weapon",
+        "armor",
+        "consumable",
+        "ship_part",
+        "base_module",
+        "tool",
+        "other"
+      ],
+      "default": "other",
+      "description": "Item category"
+    },
+    "materials": {
+      "type": "array",
+      "description": "Required input materials",
+      "items": {
+        "type": "object",
+        "properties": {
+          "material_name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short code if applicable, e.g. RMC, CMS"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string",
+            "description": "e.g. SCU, units, cSCU"
+          }
+        }
+      }
+    },
+    "output_quantity": {
+      "type": "number",
+      "default": 1,
+      "description": "How many items one craft produces"
+    },
+    "crafted_at": {
+      "type": "string",
+      "description": "Where it's crafted, e.g. workbench, fabricator tier"
+    },
+    "craft_time": {
+      "type": "string",
+      "description": "Approximate crafting time if known"
+    },
+    "patch_version": {
+      "type": "string",
+      "description": "Star Citizen patch the recipe data applies to"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "description": "AI confidence in the recipe data"
+    },
+    "uses_salvage_materials": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if recipe consumes RMC/CMR/CMS salvage outputs"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "item_name"
+  ]
+}

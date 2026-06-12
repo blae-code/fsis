@@ -43,6 +43,14 @@ const APPS = [
     color: 'hsl(190, 50%, 35%)',
   },
   {
+    id: 'fabrication',
+    name: 'Fabrication',
+    description: 'Crafting recipes & material planning',
+    icon: 'Factory',
+    status: 'active',
+    color: 'hsl(35, 60%, 45%)',
+  },
+  {
     id: 'about',
     name: 'About',
     description: 'System info & disclaimer',

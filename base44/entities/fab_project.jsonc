@@ -1,0 +1,53 @@
+{
+  "name": "fab_project",
+  "type": "object",
+  "properties": {
+    "project_name": {
+      "type": "string",
+      "description": "Operator-given name for this fabrication run"
+    },
+    "items": {
+      "type": "array",
+      "description": "Recipes queued in this project with desired quantities",
+      "items": {
+        "type": "object",
+        "properties": {
+          "recipe_id": {
+            "type": "string"
+          },
+          "item_name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planning",
+        "gathering",
+        "crafting",
+        "complete"
+      ],
+      "default": "planning",
+      "description": "Lifecycle status of the fabrication project"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "project_name"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}
