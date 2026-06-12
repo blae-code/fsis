@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, MapPin, ArrowRight, Loader2 } from 'lucide-react';
 import RouteTemplates from '@/components/apps/salvage/RouteTemplates';
+import PayoutEstimate from '@/components/apps/salvage/PayoutEstimate';
 
 const LANES = [
   { id: 'collected', label: 'COLLECTED', color: 'hsl(45, 80%, 55%)' },
@@ -73,6 +74,11 @@ export default function HaulBoard() {
           <Input placeholder="Destination" value={form.destination} onChange={(e) => setForm({ ...form, destination: e.target.value })} className="h-8 text-xs font-mono" style={fieldStyle} />
           <Input type="number" placeholder="Est. payout" value={form.est_value_auec} onChange={(e) => setForm({ ...form, est_value_auec: e.target.value })} className="h-8 text-xs font-mono" style={fieldStyle} />
         </div>
+        <PayoutEstimate
+          commodityCode={form.commodity_code}
+          quantityScu={form.quantity_scu}
+          onApply={(value) => setForm({ ...form, est_value_auec: String(value) })}
+        />
         <Button
           size="sm"
           className="h-7 text-[10px] font-mono gap-1"
