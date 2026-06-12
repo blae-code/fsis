@@ -1,0 +1,42 @@
+{
+  "name": "crew_member",
+  "type": "object",
+  "properties": {
+    "handle": {
+      "type": "string",
+      "description": "In-game handle of the crew member"
+    },
+    "role": {
+      "type": "string",
+      "description": "Typical role, e.g. Pilot, Scraper, Security, Hauler"
+    },
+    "default_shares": {
+      "type": "number",
+      "default": 1,
+      "description": "Default share count applied when added to a work order"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether they currently fly with FSIS"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "handle"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

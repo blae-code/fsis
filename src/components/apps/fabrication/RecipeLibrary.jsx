@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { lookupRecipe } from '@/functions/lookupRecipe';
@@ -20,6 +20,22 @@ export default function RecipeLibrary() {
     queryKey: ['crafting_recipes'],
     queryFn: () => base44.entities.crafting_recipe.list('-created_date'),
   });
+
+  const { data: materials = [] } = useQuery({
+    queryKey: ['materials'],
+    queryFn: () => base44.entities.material.list(),
+  });
+
+  // Price index from MatDex reference values: by code and lowercase name
+  const priceIndex = useMemo(() => {
+    const idx = {};
+    materials.forEach((m) => {
+      if (m.ref_value_auec == null) return;
+      if (m.code) idx[m.code.toUpperCase()] = m.ref_value_auec;
+      idx[m.material_name.toLowerCase()] = m.ref_value_auec;
+    });
+    return idx;
+  }, [materials]);
 
   const lookupMutation = useMutation({
     mutationFn: async (name) => {
@@ -96,6 +112,7 @@ export default function RecipeLibrary() {
             </Button>
           </div>
           <MaterialList materials={preview.materials} />
+          <CostEstimate recipe={preview} priceIndex={priceIndex} />
           {preview.notes && <p className="text-[10px] text-muted-foreground">{preview.notes}</p>}
         </div>
       )}
@@ -118,6 +135,7 @@ export default function RecipeLibrary() {
                 </button>
               </div>
               <MaterialList materials={r.materials} />
+              <CostEstimate recipe={r} priceIndex={priceIndex} />
             </div>
           ))
         )}
@@ -142,6 +160,30 @@ function RecipeHeader({ recipe }) {
       {recipe.crafted_at && (
         <span className="text-[9px] text-muted-foreground">@ {recipe.crafted_at}</span>
       )}
+    </div>
+  );
+}
+
+// EVE-style craft-cost estimate: prices inputs via MatDex reference values.
+function CostEstimate({ recipe, priceIndex }) {
+  const materials = recipe.materials || [];
+  if (!materials.length) return null;
+
+  let cost = 0;
+  let unknown = 0;
+  materials.forEach((m) => {
+    const value = priceIndex[(m.code || '').toUpperCase()] ?? priceIndex[(m.material_name || '').toLowerCase()];
+    if (value != null) cost += value * (m.quantity || 0);
+    else unknown += 1;
+  });
+
+  if (cost === 0 && unknown === materials.length) return null;
+
+  return (
+    <div className="text-[10px] flex items-center gap-2">
+      <span className="text-muted-foreground">EST. INPUT COST</span>
+      <span className="text-primary font-semibold">~{Math.round(cost).toLocaleString()} aUEC</span>
+      {unknown > 0 && <span className="text-[9px] text-muted-foreground">({unknown} material{unknown === 1 ? '' : 's'} unpriced in MatDex)</span>}
     </div>
   );
 }

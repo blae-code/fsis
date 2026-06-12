@@ -1,0 +1,85 @@
+{
+  "name": "work_order",
+  "type": "object",
+  "properties": {
+    "order_name": {
+      "type": "string",
+      "description": "Name of this work order, e.g. 'Reclaimer run 06-12'"
+    },
+    "session_id": {
+      "type": "string",
+      "description": "Linked salvage session id, if any"
+    },
+    "session_name": {
+      "type": "string",
+      "description": "Linked salvage session name for display"
+    },
+    "gross_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Gross proceeds of the operation in aUEC"
+    },
+    "expenses": {
+      "type": "array",
+      "description": "Deductible operating expenses",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "amount_auec": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "crew_shares": {
+      "type": "array",
+      "description": "Crew on this order with their share counts",
+      "items": {
+        "type": "object",
+        "properties": {
+          "handle": {
+            "type": "string"
+          },
+          "shares": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "settled"
+      ],
+      "default": "open",
+      "description": "Open = awaiting payout, settled = crew paid"
+    },
+    "settled_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When payouts were distributed"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "order_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "name": "contract",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Contract title, e.g. 'Haul 96 SCU RMC to Orison'"
+    },
+    "contract_type": {
+      "type": "string",
+      "enum": [
+        "hauling",
+        "commodity_sale",
+        "fabrication",
+        "salvage_op",
+        "service"
+      ],
+      "default": "hauling",
+      "description": "Type of work being contracted"
+    },
+    "counterparty": {
+      "type": "string",
+      "description": "Client or contractor handle / org"
+    },
+    "origin": {
+      "type": "string",
+      "description": "Pickup / start location"
+    },
+    "destination": {
+      "type": "string",
+      "description": "Delivery / completion location"
+    },
+    "cargo": {
+      "type": "string",
+      "description": "Cargo or deliverable summary, e.g. '96 SCU RMC'"
+    },
+    "payout_auec": {
+      "type": "number",
+      "description": "Agreed payout in aUEC"
+    },
+    "collateral_auec": {
+      "type": "number",
+      "description": "Collateral held against the contract, if any"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Completion deadline"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "accepted",
+        "in_progress",
+        "delivered",
+        "paid",
+        "failed",
+        "cancelled"
+      ],
+      "default": "open",
+      "description": "Contract lifecycle status"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

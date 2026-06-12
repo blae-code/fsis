@@ -1,0 +1,50 @@
+{
+  "name": "price_snapshot",
+  "type": "object",
+  "properties": {
+    "commodity_code": {
+      "type": "string",
+      "description": "Commodity short code, e.g. RMC"
+    },
+    "best_sell": {
+      "type": "number",
+      "description": "Best sell price across terminals at capture time (aUEC/unit)"
+    },
+    "avg_sell": {
+      "type": "number",
+      "description": "Average sell price across terminals at capture time"
+    },
+    "best_terminal": {
+      "type": "string",
+      "description": "Terminal offering the best price at capture time"
+    },
+    "patch_version": {
+      "type": "string"
+    },
+    "captured_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this snapshot was taken"
+    }
+  },
+  "required": [
+    "commodity_code"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

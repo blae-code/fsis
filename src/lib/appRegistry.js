@@ -40,8 +40,16 @@ const APPS = [
     name: 'Contracts',
     description: 'Jobs & agreements',
     icon: 'FileText',
-    status: 'coming-online',
+    status: 'active',
     color: 'hsl(30, 45%, 45%)', // bronze
+  },
+  {
+    id: 'fairshare',
+    name: 'FairShare',
+    description: 'Work orders & crew payouts',
+    icon: 'Coins',
+    status: 'active',
+    color: 'hsl(35, 55%, 50%)', // gold bronze
   },
   {
     id: 'comms',

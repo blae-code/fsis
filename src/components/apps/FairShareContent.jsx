@@ -1,0 +1,49 @@
+import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import WorkOrderForm from '@/components/apps/fairshare/WorkOrderForm';
+import WorkOrderList from '@/components/apps/fairshare/WorkOrderList';
+import CrewRoster from '@/components/apps/fairshare/CrewRoster';
+
+// FairShare: Regolith-style work orders with crew profit-sharing.
+// Gross sale − expenses = net, split by share weight across the crew.
+export default function FairShareContent() {
+  const [activeTab, setActiveTab] = useState('orders');
+
+  return (
+    <div className="h-full flex flex-col industrial-interior" style={{ background: 'hsl(30, 8%, 9%)' }}>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
+          <TabsTrigger
+            value="orders"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            WORK ORDERS
+          </TabsTrigger>
+          <TabsTrigger
+            value="crew"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            CREW ROSTER
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="orders" className="flex-1 overflow-auto m-0">
+          <div className="p-4 space-y-4">
+            <WorkOrderForm />
+            <WorkOrderList />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="crew" className="flex-1 overflow-auto m-0">
+          <CrewRoster />
+        </TabsContent>
+      </Tabs>
+
+      <div className="p-2 border-t text-center" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 6%)' }}>
+        <p className="text-[9px] font-mono text-muted-foreground">
+          "Every credit accounted for." — Net payout = gross − expenses, split by crew share weight.
+        </p>
+      </div>
+    </div>
+  );
+}

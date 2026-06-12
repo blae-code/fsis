@@ -65,6 +65,35 @@ export default function InventoryView({ bestPrices }) {
         </span>
       </div>
 
+      {/* Holdings by location (EVE-style asset tracking) */}
+      {active.length > 0 && (
+        <div className="space-y-1.5">
+          <div className="text-[10px] text-muted-foreground tracking-[0.2em]">HOLDINGS BY LOCATION</div>
+          {Object.entries(
+            active.reduce((acc, s) => {
+              const loc = s.location || 'UNRECORDED';
+              if (!acc[loc]) acc[loc] = { RMC: 0, CMR: 0, CMS: 0 };
+              CODES.forEach((code) => { acc[loc][code] += s[FIELD[code]] || 0; });
+              return acc;
+            }, {})
+          ).map(([loc, q]) => (
+            <div key={loc} className="p-2.5 rounded border flex items-center gap-3" style={panel}>
+              <div className="flex-1 text-xs text-foreground truncate">{loc}</div>
+              <div className="flex gap-3 shrink-0 text-right">
+                {CODES.map((code) => (
+                  <div key={code}>
+                    <div className="text-[8px] text-muted-foreground">{code}</div>
+                    <div className={`text-[11px] font-bold ${q[code] > 0 ? 'text-primary' : 'text-muted-foreground/50'}`}>
+                      {q[code].toLocaleString()}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Per-session breakdown */}
       <div className="space-y-1.5">
         <div className="text-[10px] text-muted-foreground tracking-[0.2em]">HOLDINGS BY SESSION ({active.length} ACTIVE)</div>
