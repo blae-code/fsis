@@ -5,6 +5,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2, MapPin, ArrowRight, Loader2 } from 'lucide-react';
+import RouteTemplates from '@/components/apps/salvage/RouteTemplates';
 
 const LANES = [
   { id: 'collected', label: 'COLLECTED', color: 'hsl(45, 80%, 55%)' },
@@ -16,7 +17,8 @@ const fieldStyle = { borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%,
 
 export default function HaulBoard() {
   const queryClient = useQueryClient();
-  const [form, setForm] = useState({ lot_name: '', commodity_code: 'RMC', quantity_scu: '', origin: '', destination: '' });
+  const emptyForm = { lot_name: '', commodity_code: 'RMC', quantity_scu: '', origin: '', destination: '', est_value_auec: '' };
+  const [form, setForm] = useState(emptyForm);
 
   const { data: lots = [], isLoading } = useQuery({
     queryKey: ['cargo_lots'],
@@ -31,11 +33,12 @@ export default function HaulBoard() {
         quantity_scu: parseFloat(form.quantity_scu) || 0,
         origin: form.origin,
         destination: form.destination,
+        est_value_auec: parseFloat(form.est_value_auec) || 0,
         status: 'collected',
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cargo_lots'] });
-      setForm({ lot_name: '', commodity_code: 'RMC', quantity_scu: '', origin: '', destination: '' });
+      setForm(emptyForm);
     },
   });
 
@@ -62,12 +65,13 @@ export default function HaulBoard() {
       {/* Quick add */}
       <div className="border p-3 space-y-2" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 7%)' }}>
         <p className="text-[9px] font-mono tracking-[0.2em] text-muted-foreground">NEW CARGO LOT</p>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
           <Input placeholder="Lot name" value={form.lot_name} onChange={(e) => setForm({ ...form, lot_name: e.target.value })} className="h-8 text-xs font-mono col-span-2 md:col-span-1" style={fieldStyle} />
           <Input placeholder="Code (RMC)" value={form.commodity_code} onChange={(e) => setForm({ ...form, commodity_code: e.target.value.toUpperCase() })} className="h-8 text-xs font-mono" style={fieldStyle} />
           <Input type="number" placeholder="SCU" value={form.quantity_scu} onChange={(e) => setForm({ ...form, quantity_scu: e.target.value })} className="h-8 text-xs font-mono" style={fieldStyle} />
           <Input placeholder="Origin" value={form.origin} onChange={(e) => setForm({ ...form, origin: e.target.value })} className="h-8 text-xs font-mono" style={fieldStyle} />
           <Input placeholder="Destination" value={form.destination} onChange={(e) => setForm({ ...form, destination: e.target.value })} className="h-8 text-xs font-mono" style={fieldStyle} />
+          <Input type="number" placeholder="Est. payout" value={form.est_value_auec} onChange={(e) => setForm({ ...form, est_value_auec: e.target.value })} className="h-8 text-xs font-mono" style={fieldStyle} />
         </div>
         <Button
           size="sm"
@@ -79,6 +83,20 @@ export default function HaulBoard() {
           ADD LOT
         </Button>
       </div>
+
+      <RouteTemplates
+        form={form}
+        onLoad={(t) =>
+          setForm({
+            ...form,
+            lot_name: form.lot_name || t.template_name,
+            commodity_code: t.commodity_code || form.commodity_code,
+            origin: t.origin || '',
+            destination: t.destination || '',
+            est_value_auec: t.expected_payout_auec ? String(t.expected_payout_auec) : '',
+          })
+        }
+      />
 
       {isLoading ? (
         <div className="flex justify-center py-12"><Loader2 className="w-5 h-5 animate-spin text-primary" /></div>

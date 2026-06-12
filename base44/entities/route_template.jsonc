@@ -1,0 +1,41 @@
+{
+  "name": "route_template",
+  "type": "object",
+  "properties": {
+    "template_name": {
+      "type": "string",
+      "description": "Name of the saved route, e.g. 'Halo run to Orison'"
+    },
+    "commodity_code": {
+      "type": "string",
+      "description": "Commodity short code, e.g. RMC"
+    },
+    "origin": {
+      "type": "string",
+      "description": "Collection / pickup location"
+    },
+    "destination": {
+      "type": "string",
+      "description": "Sale terminal / drop-off location"
+    },
+    "expected_payout_auec": {
+      "type": "number",
+      "description": "Expected payout for a typical run in aUEC"
+    }
+  },
+  "required": [
+    "template_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
