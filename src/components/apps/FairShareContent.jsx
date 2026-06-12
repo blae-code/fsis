@@ -6,7 +6,7 @@ import CrewRoster from '@/components/apps/fairshare/CrewRoster';
 import PayrollTable from '@/components/apps/fairshare/PayrollTable';
 import PayrollTracker from '@/components/apps/fairshare/PayrollTracker';
 import TimeLogs from '@/components/apps/fairshare/TimeLogs';
-import PaydayPanel from '@/components/apps/fairshare/PaydayPanel';
+import PaydayCycleAdmin from '@/components/apps/fairshare/PaydayCycleAdmin';
 import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin';
 import ContractorDashboard from '@/components/apps/fairshare/ContractorDashboard';
 
@@ -90,7 +90,7 @@ export default function FairShareContent() {
         </TabsContent>
 
         <TabsContent value="payday" className="flex-1 overflow-auto m-0">
-          <PaydayPanel />
+          <PaydayCycleAdmin />
         </TabsContent>
 
         <TabsContent value="jobs" className="flex-1 overflow-auto m-0">

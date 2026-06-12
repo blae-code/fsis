@@ -6,6 +6,10 @@
       "type": "string",
       "description": "In-game handle of the crew member"
     },
+    "email": {
+      "type": "string",
+      "description": "App account email \u2014 links the contractor to their login for pay day notifications and elections"
+    },
     "role": {
       "type": "string",
       "description": "Typical role, e.g. Pilot, Scraper, Security, Hauler"

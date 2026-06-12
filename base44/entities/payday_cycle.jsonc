@@ -1,0 +1,130 @@
+{
+  "name": "payday_cycle",
+  "type": "object",
+  "properties": {
+    "cycle_name": {
+      "type": "string",
+      "description": "Display name, e.g. 'Pay Day \u2014 2026-06-12'"
+    },
+    "payday_date": {
+      "type": "string",
+      "format": "date",
+      "description": "The Friday this cycle pays for"
+    },
+    "opens_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the 72-hour decision window opened"
+    },
+    "closes_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the decision window closes (opens_at + 72h)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "published"
+      ],
+      "default": "open",
+      "description": "Open = decision window active; published = final report issued"
+    },
+    "pool_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Declared distributable pool for this cycle in aUEC"
+    },
+    "pool_source": {
+      "type": "string",
+      "description": "How the pool was determined, e.g. 'Auto: 7-day ledger net' or 'Declared by management'"
+    },
+    "total_shares": {
+      "type": "number",
+      "default": 0,
+      "description": "Total outstanding confirmed shares at cycle open"
+    },
+    "share_value_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Pool / total shares \u2014 the same rate for every crew member"
+    },
+    "shares_by_handle": {
+      "type": "array",
+      "description": "Snapshot of outstanding shares per crew member at open",
+      "items": {
+        "type": "object",
+        "properties": {
+          "handle": {
+            "type": "string"
+          },
+          "shares": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "report": {
+      "type": "array",
+      "description": "Final published report \u2014 one line per crew member",
+      "items": {
+        "type": "object",
+        "properties": {
+          "handle": {
+            "type": "string"
+          },
+          "shares": {
+            "type": "number"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "payout_auec": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "total_paid_auec": {
+      "type": "number",
+      "description": "Total aUEC paid out at close"
+    },
+    "deferred_shares": {
+      "type": "number",
+      "description": "Shares rolled over to the next cycle"
+    },
+    "published_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the final report was published"
+    },
+    "force_closed": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if management closed the window before the full 72 hours"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "payday_date"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

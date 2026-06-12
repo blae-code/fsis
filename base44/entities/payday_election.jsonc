@@ -1,0 +1,52 @@
+{
+  "name": "payday_election",
+  "type": "object",
+  "properties": {
+    "cycle_id": {
+      "type": "string",
+      "description": "payday_cycle this election belongs to"
+    },
+    "handle": {
+      "type": "string",
+      "description": "Crew member handle making the election"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email of the app user who made the election"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "cash_in",
+        "defer"
+      ],
+      "description": "Cash in this cycle, or defer (shares roll over \u2014 never forfeited)"
+    },
+    "shares_at_election": {
+      "type": "number",
+      "description": "Outstanding shares at the moment the election was made"
+    },
+    "decided_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the election was last updated"
+    }
+  },
+  "required": [
+    "cycle_id",
+    "handle",
+    "decision"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

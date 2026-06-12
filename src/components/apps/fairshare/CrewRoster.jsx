@@ -13,6 +13,7 @@ export default function CrewRoster() {
   const queryClient = useQueryClient();
   const [handle, setHandle] = useState('');
   const [role, setRole] = useState('');
+  const [email, setEmail] = useState('');
   const [defaultShares, setDefaultShares] = useState('1');
 
   const { data: crew = [] } = useQuery({
@@ -24,7 +25,7 @@ export default function CrewRoster() {
     mutationFn: (m) => base44.entities.crew_member.create(m),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['crew_members'] });
-      setHandle(''); setRole(''); setDefaultShares('1');
+      setHandle(''); setRole(''); setEmail(''); setDefaultShares('1');
     },
   });
 
@@ -42,16 +43,17 @@ export default function CrewRoster() {
     <div className="p-4 space-y-4 font-mono">
       <div className="p-3 rounded border space-y-2" style={panel}>
         <div className="text-[10px] text-muted-foreground tracking-[0.2em]">ADD CREW MEMBER</div>
-        <div className="grid grid-cols-[1fr_1fr_5rem_auto] gap-2">
+        <div className="grid grid-cols-[1fr_1fr_1fr_5rem_auto] gap-2">
           <Input placeholder="In-game handle" value={handle} onChange={(e) => setHandle(e.target.value)} className="h-8 text-xs" style={border} />
           <Input placeholder="Role, e.g. Scraper" value={role} onChange={(e) => setRole(e.target.value)} className="h-8 text-xs" style={border} />
+          <Input type="email" placeholder="Account email (for pay day)" value={email} onChange={(e) => setEmail(e.target.value)} className="h-8 text-xs" style={border} />
           <Input type="number" min="0" step="0.5" value={defaultShares} onChange={(e) => setDefaultShares(e.target.value)} className="h-8 text-xs" style={border} title="Default shares" />
           <Button size="sm" className="h-8 text-[10px] gap-1" disabled={!handle || createMutation.isPending}
-            onClick={() => createMutation.mutate({ handle, role, default_shares: parseFloat(defaultShares) || 1, active: true, employment_type: 'contractor' })}>
+            onClick={() => createMutation.mutate({ handle, role, email: email.trim().toLowerCase(), default_shares: parseFloat(defaultShares) || 1, active: true, employment_type: 'contractor' })}>
             <UserPlus className="w-3 h-3" /> ADD
           </Button>
         </div>
-        <p className="text-[9px] text-muted-foreground">All new crew are added as contractors — the Proprietor is the sole permanent member.</p>
+        <p className="text-[9px] text-muted-foreground">All new crew are added as contractors — the Proprietor is the sole permanent member. Linking their account email enables pay day notifications and in-app cash-in decisions.</p>
       </div>
 
       <div className="space-y-1.5">
@@ -69,6 +71,18 @@ export default function CrewRoster() {
               </div>
               <div className="text-[9px] text-muted-foreground">{m.role || 'Crew'} • {m.default_shares ?? 1} share{(m.default_shares ?? 1) === 1 ? '' : 's'} default</div>
             </div>
+            <Input
+              type="email"
+              defaultValue={m.email || ''}
+              placeholder="link account email"
+              title="Account email — enables pay day elections & notifications"
+              className="h-6 w-44 text-[9px] font-mono"
+              style={border}
+              onBlur={(e) => {
+                const v = e.target.value.trim().toLowerCase();
+                if (v !== (m.email || '')) updateMutation.mutate({ id: m.id, data: { email: v } });
+              }}
+            />
             <button
               onClick={() => updateMutation.mutate({ id: m.id, data: { active: !m.active } })}
               title="Toggle active"
