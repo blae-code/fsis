@@ -8,6 +8,7 @@ import FabricationContent from '@/components/apps/FabricationContent';
 import OrdersContent from '@/components/apps/OrdersContent';
 import LedgerContent from '@/components/apps/LedgerContent';
 import RouteMapContent from '@/components/apps/RouteMapContent';
+import MatDexContent from '@/components/matdex/MatDexContent';
 
 // Maps an appId to its window content + title.
 // Used both when opening from the Dock and when restoring a saved session.
@@ -29,6 +30,8 @@ export function resolveAppContent(app) {
       return { title: 'LEDGER — Income & Operating Costs', content: <LedgerContent /> };
     case 'routemap':
       return { title: 'ROUTEMAP — Jump Path Plotter', content: <RouteMapContent /> };
+    case 'matdex':
+      return { title: 'MATDEX — Materials & Components Index', content: <MatDexContent /> };
     default:
       return {
         title: `${app.name.toUpperCase()} — coming online`,
@@ -56,6 +59,8 @@ export function resolveContentById(appId, title) {
       return <LedgerContent />;
     case 'routemap':
       return <RouteMapContent />;
+    case 'matdex':
+      return <MatDexContent />;
     default: {
       const name = (title || appId).split(' — ')[0];
       return <PlaceholderContent name={name} description="" />;

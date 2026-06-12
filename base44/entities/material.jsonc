@@ -1,0 +1,80 @@
+{
+  "name": "material",
+  "type": "object",
+  "properties": {
+    "material_name": {
+      "type": "string",
+      "description": "Display name, e.g. Recycled Material Composite"
+    },
+    "code": {
+      "type": "string",
+      "description": "Short code, e.g. RMC, CMR, ALUM"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "salvage_output",
+        "raw_ore",
+        "refined_metal",
+        "component",
+        "fuel_gas",
+        "other"
+      ],
+      "default": "other",
+      "description": "Material/component classification"
+    },
+    "grade": {
+      "type": "string",
+      "description": "Tier or grade if applicable, e.g. T1, Standard, Military"
+    },
+    "description": {
+      "type": "string",
+      "description": "What it is and what it's used for"
+    },
+    "sources": {
+      "type": "array",
+      "description": "Where to obtain it, e.g. ['Hull scraping', 'TDD purchase']",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ref_value_auec": {
+      "type": "number",
+      "description": "Reference value in aUEC per unit"
+    },
+    "unit": {
+      "type": "string",
+      "default": "SCU",
+      "description": "Unit measured by, e.g. SCU, cSCU, unit"
+    },
+    "salvage_derived": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if produced by salvage operations"
+    },
+    "sort_order": {
+      "type": "number",
+      "description": "Display order"
+    }
+  },
+  "required": [
+    "material_name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

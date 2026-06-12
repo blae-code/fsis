@@ -68,6 +68,14 @@ const APPS = [
     color: 'hsl(28, 70%, 48%)', // copper
   },
   {
+    id: 'matdex',
+    name: 'MatDex',
+    description: 'Materials & components index',
+    icon: 'Database',
+    status: 'active',
+    color: 'hsl(45, 35%, 58%)', // brass
+  },
+  {
     id: 'about',
     name: 'About',
     description: 'System info & disclaimer',

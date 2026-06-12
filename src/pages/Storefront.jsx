@@ -8,6 +8,9 @@ import ProductCard from '@/components/store/ProductCard';
 import OrderPanel from '@/components/store/OrderPanel';
 import MyOrders from '@/components/store/MyOrders';
 import AboutFsis from '@/components/store/AboutFsis';
+import StoreToolbar from '@/components/store/StoreToolbar';
+import MarketTicker from '@/components/store/MarketTicker';
+import MaterialsIndex from '@/components/store/MaterialsIndex';
 import FsisLogo from '@/components/brand/FsisLogo';
 import HexCrate from '@/components/three/HexCrate';
 import { FSIS } from '@/lib/fsisLore';
@@ -16,6 +19,8 @@ const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435
 
 export default function Storefront() {
   const [cart, setCart] = useState([]);
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('all');
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
@@ -44,6 +49,13 @@ export default function Storefront() {
     });
   };
 
+  const filteredProducts = products.filter((p) => {
+    const q = search.toLowerCase();
+    const matchQ = !q || p.product_name?.toLowerCase().includes(q) || p.code?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q);
+    const matchC = category === 'all' || p.category === category;
+    return matchQ && matchC;
+  });
+
   return (
     <div className="os-viewport overflow-y-auto" style={{ background: '#0C0B0A' }}>
       {/* Header */}
@@ -67,6 +79,8 @@ export default function Storefront() {
           )}
         </div>
       </header>
+
+      <MarketTicker />
 
       {/* Hero — bronze command deck panel */}
       <section className="max-w-6xl mx-auto px-4 pt-8 pb-6">
@@ -110,15 +124,17 @@ export default function Storefront() {
       {/* Catalog + cart */}
       <main className="max-w-6xl mx-auto px-4 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
+          <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} count={filteredProducts.length} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {products.length === 0 ? (
+            {filteredProducts.length === 0 ? (
               <p className="col-span-full text-center py-12 text-xs font-mono" style={{ color: '#8A7E6C' }}>
-                No wares listed yet — check back soon.
+                {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your search.'}
               </p>
             ) : (
-              products.map((p) => <ProductCard key={p.id} product={p} onAdd={addToCart} />)
+              filteredProducts.map((p) => <ProductCard key={p.id} product={p} onAdd={addToCart} />)
             )}
           </div>
+          <MaterialsIndex products={products} />
           <MyOrders />
           <AboutFsis />
         </div>
