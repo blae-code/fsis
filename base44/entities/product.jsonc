@@ -28,6 +28,19 @@
       "type": "number",
       "description": "Public price in aUEC per unit"
     },
+    "market_ref_auec": {
+      "type": "number",
+      "description": "UEX market reference price per unit at last repricing (aUEC)"
+    },
+    "margin_percent": {
+      "type": "number",
+      "description": "FSIS margin percent applied over the UEX reference at last repricing"
+    },
+    "repriced_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the price was last anchored to UEX market data"
+    },
     "unit": {
       "type": "string",
       "default": "SCU",

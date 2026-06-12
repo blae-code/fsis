@@ -11,6 +11,7 @@ import RouteMapContent from '@/components/apps/RouteMapContent';
 import MatDexContent from '@/components/matdex/MatDexContent';
 import FairShareContent from '@/components/apps/FairShareContent';
 import ContractsContent from '@/components/apps/ContractsContent';
+import PerformanceContent from '@/components/apps/PerformanceContent';
 
 // Maps an appId to its window content + title.
 // Used both when opening from the Dock and when restoring a saved session.
@@ -38,6 +39,8 @@ export function resolveAppContent(app) {
       return { title: 'FAIRSHARE — Crew Payroll & Work Orders', content: <FairShareContent /> };
     case 'contracts':
       return { title: 'CONTRACTS — Jobs & Agreements', content: <ContractsContent /> };
+    case 'performance':
+      return { title: 'PERFORMANCE — Salvage & Revenue Analytics', content: <PerformanceContent /> };
     default:
       return {
         title: `${app.name.toUpperCase()} — coming online`,
@@ -71,6 +74,8 @@ export function resolveContentById(appId, title) {
       return <FairShareContent />;
     case 'contracts':
       return <ContractsContent />;
+    case 'performance':
+      return <PerformanceContent />;
     default: {
       const name = (title || appId).split(' — ')[0];
       return <PlaceholderContent name={name} description="" />;

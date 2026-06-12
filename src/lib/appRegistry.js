@@ -84,6 +84,14 @@ const APPS = [
     color: 'hsl(45, 35%, 58%)', // brass
   },
   {
+    id: 'performance',
+    name: 'Performance',
+    description: 'Salvage volume & revenue analytics',
+    icon: 'TrendingUp',
+    status: 'active',
+    color: 'hsl(160, 30%, 50%)', // verdigris
+  },
+  {
     id: 'about',
     name: 'About',
     description: 'System info & disclaimer',
