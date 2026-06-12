@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import FsisLogo from '@/components/brand/FsisLogo';
 
 const BOOT_LINES = [
   { text: '> FSIS CORE v3.14.7 — INITIALIZING', delay: 200 },
@@ -86,6 +87,15 @@ export default function BootSequence({ onComplete }) {
                 <div className="absolute -inset-12 rounded-full border border-primary/10 animate-breathe" />
                 <div className="absolute -inset-20 rounded-full border border-primary/5 animate-breathe" style={{ animationDelay: '1s' }} />
                 
+                <motion.div
+                  className="flex justify-center mb-6"
+                  initial={{ opacity: 0, scale: 0.7, rotate: -30 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.2, duration: 1.4, ease: 'easeOut' }}
+                >
+                  <FsisLogo size={96} glow />
+                </motion.div>
+
                 <motion.h1
                   className="text-7xl md:text-8xl font-bold tracking-[0.3em] font-mono xian-glow"
                   style={{ color: 'hsl(168, 65%, 45%)' }}

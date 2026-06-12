@@ -1,0 +1,94 @@
+{
+  "name": "order",
+  "type": "object",
+  "properties": {
+    "customer_handle": {
+      "type": "string",
+      "description": "Customer's in-game handle / display name"
+    },
+    "items": {
+      "type": "array",
+      "description": "Ordered line items",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string"
+          },
+          "product_name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "unit_price": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "total_auec": {
+      "type": "number",
+      "description": "Order total in aUEC"
+    },
+    "delivery_location": {
+      "type": "string",
+      "description": "Where the customer wants the goods delivered, e.g. Port Tressler"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "confirmed",
+        "in_fulfillment",
+        "delivered",
+        "cancelled"
+      ],
+      "default": "new",
+      "description": "Order lifecycle status"
+    },
+    "customer_notes": {
+      "type": "string",
+      "description": "Notes from the customer"
+    },
+    "internal_notes": {
+      "type": "string",
+      "description": "Business-side notes, not shown to customer"
+    }
+  },
+  "required": [
+    "customer_handle"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

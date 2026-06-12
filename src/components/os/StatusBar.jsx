@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useFullscreen } from '@/lib/useFullscreen';
+import FsisLogo from '@/components/brand/FsisLogo';
+import { FSIS } from '@/lib/fsisLore';
 
 export default function StatusBar() {
   const [time, setTime] = useState(new Date());
@@ -50,7 +52,7 @@ export default function StatusBar() {
       {/* Left: FSIS branding */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse-glow" />
+          <FsisLogo size={22} glow />
           <span className="font-mono text-xs font-bold tracking-[0.2em] text-primary">
             FSIS
           </span>
@@ -58,6 +60,9 @@ export default function StatusBar() {
         <div className="h-4 w-px bg-border/40" />
         <span className="font-mono text-[10px] text-muted-foreground tracking-wider">
           FAIRSHARE INDUSTRIAL
+        </span>
+        <span className="font-mono text-[9px] text-muted-foreground/40 tracking-wider hidden lg:inline">
+          {FSIS.license}
         </span>
       </div>
 

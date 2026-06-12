@@ -1,9 +1,20 @@
 import React from 'react';
 import { Shield, Heart } from 'lucide-react';
+import FsisLogo from '@/components/brand/FsisLogo';
+import FsisSeal from '@/components/brand/FsisSeal';
+import SerialStrip from '@/components/brand/SerialStrip';
+import { FSIS, FOUNDING_STORY, FLEET_REGISTRY, CORE_VALUES } from '@/lib/fsisLore';
 
 export default function AboutContent() {
   return (
-    <div className="h-full font-mono text-xs space-y-6 max-w-lg mx-auto py-4">
+    <div className="h-full font-mono text-xs space-y-6 max-w-lg mx-auto py-4 overflow-auto">
+      {/* Brand header */}
+      <div className="flex items-center justify-between">
+        <FsisLogo size={44} withWordmark glow />
+        <FsisSeal size={64} />
+      </div>
+      <SerialStrip seed={FSIS.license} label={FSIS.license} />
+
       {/* System info */}
       <div className="space-y-3">
         <h2 className="text-sm tracking-[0.2em] text-primary/80 uppercase font-semibold">
@@ -12,21 +23,21 @@ export default function AboutContent() {
         <div className="space-y-1.5 text-foreground/60">
           <div className="flex justify-between">
             <span className="text-muted-foreground">System</span>
-            <span>FSIS — FairShare Industrial Solutions</span>
+            <span>FSIS — {FSIS.name}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Version</span>
             <span>3.14.7-alpha</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Operator</span>
-            <span>Solo Salvage & Cargo</span>
+            <span className="text-muted-foreground">Founded</span>
+            <span>{FSIS.founded} — {FSIS.hq}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Org</span>
             <span className="flex items-center gap-1.5">
               <Shield className="w-3 h-3 text-primary/50" />
-              Redscar Nomads
+              {FSIS.org}
             </span>
           </div>
           <div className="flex justify-between">
@@ -38,17 +49,45 @@ export default function AboutContent() {
 
       <div className="h-px bg-border/30" />
 
-      {/* Brand statement */}
+      {/* Founding story */}
+      <div className="space-y-2">
+        <h2 className="text-sm tracking-[0.2em] text-primary/80 uppercase font-semibold">
+          Company Dossier
+        </h2>
+        <p className="text-foreground/50 leading-relaxed">{FOUNDING_STORY}</p>
+      </div>
+
+      <div className="h-px bg-border/30" />
+
+      {/* Core values */}
       <div className="space-y-2">
         <h2 className="text-sm tracking-[0.2em] text-primary/80 uppercase font-semibold">
           FairShare Promise
         </h2>
-        <p className="text-foreground/50 leading-relaxed">
-          Transparent pricing. Honest salvage. Every credit accounted for.
-          What you see is what you pay. Orgmates get the best rate —
-          always have, always will. No hidden fees. No mystery math.
-          We show our work.
-        </p>
+        {CORE_VALUES.map((v) => (
+          <div key={v.title}>
+            <span className="text-primary/70 font-semibold">{v.title}</span>
+            <span className="text-foreground/50"> — {v.text}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="h-px bg-border/30" />
+
+      {/* Fleet registry */}
+      <div className="space-y-2">
+        <h2 className="text-sm tracking-[0.2em] text-primary/80 uppercase font-semibold">
+          Fleet Registry
+        </h2>
+        <div className="space-y-1 text-foreground/50">
+          {FLEET_REGISTRY.map((f) => (
+            <div key={f.hull} className="flex items-center gap-2">
+              <span className="text-primary/60 w-14 shrink-0">{f.hull}</span>
+              <span className="flex-1 truncate">{f.ship} "{f.name}"</span>
+              <span className="text-muted-foreground/60 text-[10px]">{f.role}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="h-px bg-border/30" />

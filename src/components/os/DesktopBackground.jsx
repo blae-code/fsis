@@ -1,10 +1,14 @@
 import React from 'react';
+import DebrisField from '@/components/three/DebrisField';
 
 export default function DesktopBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Deep space base */}
       <div className="absolute inset-0" style={{ background: 'hsl(180, 15%, 4%)' }} />
+
+      {/* 3D wireframe salvage debris field */}
+      <DebrisField />
 
       {/* Organic flowing shapes — Xi'an aesthetic */}
       <div
