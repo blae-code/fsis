@@ -1,0 +1,67 @@
+{
+  "name": "comm_channel",
+  "type": "object",
+  "properties": {
+    "channel_name": {
+      "type": "string",
+      "description": "Net name, e.g. FSIS OPS, SALVAGE NET, GUARD"
+    },
+    "frequency_mhz": {
+      "type": "number",
+      "description": "Frequency in MHz on the OD3ICA SRS relay"
+    },
+    "modulation": {
+      "type": "string",
+      "enum": [
+        "AM",
+        "FM"
+      ],
+      "default": "FM",
+      "description": "Radio modulation"
+    },
+    "purpose": {
+      "type": "string",
+      "description": "What this net is used for"
+    },
+    "is_guard": {
+      "type": "boolean",
+      "default": false,
+      "description": "Listen-only guard / emergency frequency"
+    },
+    "encrypted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether SRS light encryption is used on this net"
+    },
+    "sort_order": {
+      "type": "number",
+      "description": "Display order in the net plan"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this net is currently in the plan"
+    }
+  },
+  "required": [
+    "channel_name",
+    "frequency_mhz"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

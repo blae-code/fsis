@@ -37,9 +37,9 @@ const APPS = [
   {
     id: 'comms',
     name: 'Comms',
-    description: 'Communications & logs',
+    description: 'OD3ICA SRS relay & net plan',
     icon: 'Radio',
-    status: 'coming-online',
+    status: 'active',
     color: 'hsl(190, 50%, 35%)',
   },
   {
