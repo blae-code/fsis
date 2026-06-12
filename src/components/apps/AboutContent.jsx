@@ -3,7 +3,7 @@ import { Shield, Heart } from 'lucide-react';
 import FsisLogo from '@/components/brand/FsisLogo';
 import FsisSeal from '@/components/brand/FsisSeal';
 import SerialStrip from '@/components/brand/SerialStrip';
-import { FSIS, FOUNDING_STORY, FLEET_REGISTRY, CORE_VALUES } from '@/lib/fsisLore';
+import { FSIS, OPERATOR, FOUNDING_STORY, FLEET_REGISTRY, FLEET_NOTE, CORE_VALUES, PRINCIPLES } from '@/lib/fsisLore';
 
 export default function AboutContent() {
   return (
@@ -31,7 +31,11 @@ export default function AboutContent() {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Founded</span>
-            <span>{FSIS.founded} — {FSIS.hq}</span>
+            <span>{FSIS.founded}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Operator</span>
+            <span>{OPERATOR.handle} — {OPERATOR.role}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Org</span>
@@ -74,11 +78,28 @@ export default function AboutContent() {
 
       <div className="h-px bg-border/30" />
 
+      {/* Operating principles */}
+      <div className="space-y-2">
+        <h2 className="text-sm tracking-[0.2em] text-primary/80 uppercase font-semibold">
+          Operating Principles
+        </h2>
+        {PRINCIPLES.map((p) => (
+          <div key={p.ix}>
+            <span className="text-primary/50 mr-2">{p.ix}</span>
+            <span className="text-primary/70 font-semibold uppercase">{p.title}</span>
+            <span className="text-foreground/50"> — {p.text}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="h-px bg-border/30" />
+
       {/* Fleet registry */}
       <div className="space-y-2">
         <h2 className="text-sm tracking-[0.2em] text-primary/80 uppercase font-semibold">
           Fleet Registry
         </h2>
+        <p className="text-foreground/40 text-[10px] leading-relaxed">{FLEET_NOTE}</p>
         <div className="space-y-1 text-foreground/50">
           {FLEET_REGISTRY.map((f) => (
             <div key={f.hull} className="flex items-center gap-2">
