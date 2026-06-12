@@ -1,0 +1,66 @@
+{
+  "name": "price_alert",
+  "type": "object",
+  "properties": {
+    "commodity_code": {
+      "type": "string",
+      "description": "Commodity short code to watch, e.g. RMC"
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "above",
+        "below"
+      ],
+      "default": "above",
+      "description": "Trigger when best sell price goes above or below target"
+    },
+    "target_price_auec": {
+      "type": "number",
+      "description": "Target threshold in aUEC per unit"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "armed",
+        "triggered"
+      ],
+      "default": "armed",
+      "description": "Armed = watching; triggered = threshold hit, awaiting re-arm"
+    },
+    "notify_email": {
+      "type": "boolean",
+      "default": true,
+      "description": "Send an email when the alert triggers"
+    },
+    "triggered_price": {
+      "type": "number",
+      "description": "Best sell price at trigger time"
+    },
+    "triggered_terminal": {
+      "type": "string",
+      "description": "Terminal offering the triggering price"
+    },
+    "triggered_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the alert last triggered"
+    }
+  },
+  "required": [
+    "commodity_code",
+    "target_price_auec"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
