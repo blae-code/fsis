@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, Maximize, ShoppingCart, ChevronRight, CheckCircle2, MonitorDown, Keyboard } from 'lucide-react';
+import { Download, Maximize, ShoppingCart, ChevronRight, ChevronLeft, CheckCircle2, MonitorDown, Keyboard } from 'lucide-react';
 import FsisLogo from '@/components/brand/FsisLogo';
+import SerialStrip from '@/components/brand/SerialStrip';
+import ScanlineOverlay from '@/components/onboarding/ScanlineOverlay';
+import TypedStatus from '@/components/onboarding/TypedStatus';
 import { useFullscreen } from '@/lib/useFullscreen';
 
 const isStandalone = () =>
@@ -49,6 +52,17 @@ export default function StoreOnboarding({ onComplete }) {
     onComplete();
   };
 
+  // Keyboard navigation: Enter advances, ← back, Esc skips
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Enter') (isLast ? finish() : setStep((s) => s + 1));
+      else if (e.key === 'ArrowLeft' && step > 0) setStep((s) => s - 1);
+      else if (e.key === 'Escape') onComplete();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
   return (
     <motion.div
       className="fixed inset-0 z-[500] flex items-center justify-center p-4"
@@ -74,7 +88,7 @@ export default function StoreOnboarding({ onComplete }) {
         }}
       >
         <div
-          className="p-8 font-mono"
+          className="relative p-8 font-mono"
           style={{
             background: 'linear-gradient(135deg, #14110D 0%, #0E0C0A 100%)',
             clipPath: 'polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px)',
@@ -85,7 +99,12 @@ export default function StoreOnboarding({ onComplete }) {
             <FsisLogo size={30} />
             <div>
               <div className="text-[10px] tracking-[0.3em]" style={{ color: '#D4920B' }}>FAIRSHARE INDUSTRIAL</div>
-              <div className="text-[9px]" style={{ color: '#8A7E6C' }}>NEW PATRON SETUP — {steps[step]} {step + 1}/{steps.length}</div>
+              <TypedStatus
+                key={step}
+                text={`NEW PATRON SETUP — ${steps[step]} ${step + 1}/${steps.length}`}
+                className="block text-[9px]"
+                style={{ color: '#8A7E6C' }}
+              />
             </div>
           </div>
 
@@ -106,9 +125,16 @@ export default function StoreOnboarding({ onComplete }) {
                     [MonitorDown, 'Best experienced installed on your desktop'],
                     [Maximize, 'Designed to run in fullscreen, like a ship terminal'],
                   ].map(([Icon, text], i) => (
-                    <div key={i} className="flex items-center gap-2.5 text-[11px]" style={{ color: '#9C9080' }}>
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.25 + i * 0.15, duration: 0.35 }}
+                      className="flex items-center gap-2.5 text-[11px]"
+                      style={{ color: '#9C9080' }}
+                    >
                       <Icon className="w-3.5 h-3.5 shrink-0" style={{ color: '#C8A05B' }} /> {text}
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </motion.div>
@@ -184,6 +210,11 @@ export default function StoreOnboarding({ onComplete }) {
               ))}
             </div>
             <div className="flex items-center gap-3">
+              {step > 0 && (
+                <button onClick={() => setStep(step - 1)} className="text-[10px] hover:opacity-80 inline-flex items-center gap-0.5" style={{ color: '#8A7E6C' }}>
+                  <ChevronLeft className="w-3 h-3" /> BACK
+                </button>
+              )}
               <button onClick={onComplete} className="text-[10px] hover:opacity-80" style={{ color: '#6B6155' }}>
                 SKIP
               </button>
@@ -200,6 +231,14 @@ export default function StoreOnboarding({ onComplete }) {
               </button>
             </div>
           </div>
+
+          {/* Serial footer + keyboard hints */}
+          <div className="flex items-center justify-between mt-5">
+            <SerialStrip seed="FSIS-PATRON-LINK" label="PATRON LINK • SEC-7" />
+            <span className="text-[8px] tracking-[0.2em]" style={{ color: '#54493B' }}>ENTER ↵ ADVANCE • ESC SKIP</span>
+          </div>
+
+          <ScanlineOverlay />
         </div>
       </motion.div>
     </motion.div>

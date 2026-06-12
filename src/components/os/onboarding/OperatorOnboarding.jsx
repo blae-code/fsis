@@ -5,8 +5,10 @@ import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronRight, Loader2, Radio } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Loader2, Radio } from 'lucide-react';
 import OnboardingStep from './OnboardingStep';
+import ScanlineOverlay from '@/components/onboarding/ScanlineOverlay';
+import TypedStatus from '@/components/onboarding/TypedStatus';
 import { useFullscreen } from '@/lib/useFullscreen';
 
 const inputStyle = { borderColor: 'hsl(33, 18%, 18%)' };
@@ -31,6 +33,7 @@ export default function OperatorOnboarding({ user, onComplete }) {
 
   const steps = [
     { canAdvance: !!form.handle.trim() },
+    { canAdvance: true },
     { canAdvance: true },
     { canAdvance: true },
     { canAdvance: true },
@@ -70,7 +73,7 @@ export default function OperatorOnboarding({ user, onComplete }) {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.15, duration: 0.6 }}
-        className="relative w-full max-w-md p-8 rounded-2xl xian-border-glow"
+        className="relative w-full max-w-md p-8 rounded-2xl xian-border-glow overflow-hidden"
         style={{
           background: 'linear-gradient(135deg, hsl(30, 10%, 7%, 0.95), hsl(30, 12%, 5%, 0.95))',
           border: '1px solid hsl(33, 18%, 18%, 0.6)',
@@ -78,9 +81,16 @@ export default function OperatorOnboarding({ user, onComplete }) {
       >
         <div className="flex items-center gap-2 mb-8">
           <Radio className="w-4 h-4 text-primary animate-pulse-glow" />
-          <span className="font-mono text-xs tracking-[0.3em] text-primary xian-glow-subtle">
-            FSIS OPERATOR LINK
-          </span>
+          <div className="flex-1">
+            <span className="font-mono text-xs tracking-[0.3em] text-primary xian-glow-subtle">
+              FSIS OPERATOR LINK
+            </span>
+            <TypedStatus
+              key={step}
+              text={`UPLINK SEGMENT ${step + 1}/${steps.length} — ${['IDENTITY', 'FUNCTION', 'AFFILIATION', 'ORIGIN', 'CONFIRM'][step]}`}
+              className="block font-mono text-[9px] tracking-[0.2em] text-muted-foreground mt-0.5"
+            />
+          </div>
         </div>
 
         <AnimatePresence mode="wait">
@@ -156,6 +166,36 @@ export default function OperatorOnboarding({ user, onComplete }) {
             />
             <p className="text-[10px] font-mono text-muted-foreground">Your home system, shown in your live presence.</p>
           </OnboardingStep>
+
+          <OnboardingStep
+            index={4}
+            current={step}
+            label="Uplink / 05"
+            prompt="Confirm your operator dossier."
+          >
+            <div className="space-y-1.5 p-3 rounded border font-mono" style={{ ...inputStyle, background: 'hsl(30, 10%, 6%)' }}>
+              {[
+                ['CALLSIGN', form.handle || '—'],
+                ['FUNCTION', form.org_role || 'Unassigned'],
+                ['TIER', form.org_tier || 'Standard'],
+                ['ORIGIN', form.home_system || 'Unknown'],
+              ].map(([k, v], i) => (
+                <motion.div
+                  key={k}
+                  className="flex justify-between text-[11px]"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 + i * 0.13, duration: 0.3 }}
+                >
+                  <span className="text-muted-foreground tracking-[0.2em]">{k}</span>
+                  <span className="text-primary">{v}</span>
+                </motion.div>
+              ))}
+            </div>
+            <p className="text-[10px] font-mono text-muted-foreground">
+              All fields can be changed later in Settings. Welcome to the crew, {form.handle || 'operator'}.
+            </p>
+          </OnboardingStep>
         </AnimatePresence>
 
         {/* Progress + advance */}
@@ -172,18 +212,30 @@ export default function OperatorOnboarding({ user, onComplete }) {
               />
             ))}
           </div>
-          <Button
-            onClick={handleNext}
-            disabled={!steps[step].canAdvance || saving}
-            size="sm"
-            className="font-mono text-xs gap-1.5"
-            style={{ background: 'hsl(38, 72%, 52%)', color: 'hsl(30, 15%, 6%)' }}
-          >
-            {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
-            {isLast ? 'Enter FSIS' : 'Continue'}
-            {!saving && <ChevronRight className="w-3.5 h-3.5" />}
-          </Button>
+          <div className="flex items-center gap-3">
+            {step > 0 && (
+              <button
+                onClick={() => setStep(step - 1)}
+                className="font-mono text-[10px] text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5 transition-colors"
+              >
+                <ChevronLeft className="w-3 h-3" /> BACK
+              </button>
+            )}
+            <Button
+              onClick={handleNext}
+              disabled={!steps[step].canAdvance || saving}
+              size="sm"
+              className="font-mono text-xs gap-1.5"
+              style={{ background: 'hsl(38, 72%, 52%)', color: 'hsl(30, 15%, 6%)' }}
+            >
+              {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+              {isLast ? 'Establish Link' : 'Continue'}
+              {!saving && <ChevronRight className="w-3.5 h-3.5" />}
+            </Button>
+          </div>
         </div>
+
+        <ScanlineOverlay />
       </motion.div>
     </motion.div>
   );
