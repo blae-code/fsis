@@ -8,6 +8,7 @@ import PayrollTracker from '@/components/apps/fairshare/PayrollTracker';
 import TimeLogs from '@/components/apps/fairshare/TimeLogs';
 import PaydayPanel from '@/components/apps/fairshare/PaydayPanel';
 import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin';
+import ContractorDashboard from '@/components/apps/fairshare/ContractorDashboard';
 
 // FairShare: Regolith-style work orders with crew profit-sharing.
 // Gross sale − expenses = net, split by share weight across the crew.
@@ -23,6 +24,12 @@ export default function FairShareContent() {
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
           >
             WORK ORDERS
+          </TabsTrigger>
+          <TabsTrigger
+            value="contractors"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            CONTRACTORS
           </TabsTrigger>
           <TabsTrigger
             value="crew"
@@ -61,6 +68,10 @@ export default function FairShareContent() {
             <WorkOrderForm />
             <WorkOrderList />
           </div>
+        </TabsContent>
+
+        <TabsContent value="contractors" className="flex-1 overflow-auto m-0">
+          <ContractorDashboard />
         </TabsContent>
 
         <TabsContent value="crew" className="flex-1 overflow-auto m-0">
