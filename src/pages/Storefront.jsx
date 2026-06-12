@@ -13,7 +13,7 @@ import StoreToolbar from '@/components/store/StoreToolbar';
 import MarketTicker from '@/components/store/MarketTicker';
 import MaterialsIndex from '@/components/store/MaterialsIndex';
 import FsisLogo from '@/components/brand/FsisLogo';
-import HexCrate from '@/components/three/HexCrate';
+import HeroScanBay from '@/components/store/HeroScanBay';
 import { FSIS } from '@/lib/fsisLore';
 
 const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/44c3176b4_generated_image.png';
@@ -119,10 +119,7 @@ export default function Storefront() {
                 Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
               </p>
             </div>
-            <div className="hidden md:flex flex-col items-center justify-center py-6 gap-2" style={{ background: '#080705', borderLeft: '2px solid #5C4424' }}>
-              <HexCrate size={190} />
-              <p className="font-mono text-[10px] tracking-[0.2em]" style={{ color: '#B0793A' }}>{FSIS.license}</p>
-            </div>
+            <HeroScanBay products={products} />
           </div>
         </div>
       </section>
