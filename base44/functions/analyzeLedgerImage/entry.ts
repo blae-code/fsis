@@ -1,64 +1,64 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
+// AI vision + OCR for aUEC financial records: mobiGlas wallet/transaction screens,
+// commodity sell receipts, kiosk purchase confirmations, fines, etc.
 Deno.serve(async (req) => {
-    try {
-        const base44 = createClientFromRequest(req);
-        const user = await base44.auth.me();
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (user?.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
 
-        if (user?.role !== 'admin') {
-            return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
-        }
+    const { image_url } = await req.json();
+    if (!image_url) {
+      return Response.json({ error: 'image_url is required' }, { status: 400 });
+    }
 
-        const { image_url } = await req.json();
-        if (!image_url) {
-            return Response.json({ error: 'image_url is required' }, { status: 400 });
-        }
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are an OCR and data-extraction engine for a Star Citizen business's financial ledger. This screenshot shows an in-game aUEC transaction record — it could be a mobiGlas wallet/transaction history, a commodity terminal sell receipt, a purchase/rental kiosk confirmation, a fine notice, or a player-to-player transfer.
 
-        const result = await base44.integrations.Core.InvokeLLM({
-            prompt: `You are an OCR/data-extraction system for Star Citizen financial screenshots.
-Analyze this in-game screenshot. It may show: a mobiGlas wallet/balance screen, a commodity terminal sale receipt, a transaction history list, a mission payout notification, refinery/repair/refuel fees, or any other aUEC credit movement.
-
-Extract every distinct aUEC transaction visible:
+Extract every distinct aUEC transaction you can read. For each transaction determine:
 - entry_type: "income" if credits were received, "expense" if credits were spent
-- category: best fit from: salvage_sale, order_fulfillment, hauling, fuel, repairs, fees_fines, equipment, crew_pay, ship_rental, other
-- amount_auec: positive number (the transaction amount, NOT the wallet balance)
-- description: short human-readable description of what the transaction was
-- counterparty: terminal, shop, NPC, or entity on the other side, if visible
+- category: best fit from exactly this list: salvage_sale, order_fulfillment, hauling, fuel, repairs, fees_fines, equipment, crew_pay, ship_rental, other
+- amount_auec: the positive aUEC amount
+- description: a short human-readable label, e.g. "RMC sale at TDD Orison"
+- counterparty: terminal, shop, NPC, or player handle involved if visible
 - entry_date: date in YYYY-MM-DD if visible on screen, otherwise omit
 
-Also report:
-- wallet_balance: the current aUEC wallet balance if shown on screen, else null
-- summary: 1-2 sentence description of what the screenshot shows
-- confidence: "high", "medium" or "low" based on legibility
+Also read the wallet balance shown on screen (wallet_balance), if visible.
+Provide a concise summary and a confidence rating. If you cannot read a value, omit it rather than guessing.`,
+      file_urls: [image_url],
+      model: 'gemini_3_flash',
+      response_json_schema: {
+        type: 'object',
+        properties: {
+          summary: { type: 'string' },
+          confidence: { type: 'string', enum: ['high', 'medium', 'low'] },
+          wallet_balance: { type: 'number' },
+          transactions: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                entry_type: { type: 'string', enum: ['income', 'expense'] },
+                category: { type: 'string' },
+                amount_auec: { type: 'number' },
+                description: { type: 'string' },
+                counterparty: { type: 'string' },
+                entry_date: { type: 'string' },
+              },
+              required: ['entry_type', 'amount_auec'],
+            },
+          },
+        },
+        required: ['summary', 'confidence'],
+      },
+    });
 
-Only extract transactions you can actually read. Do not invent values.`,
-            file_urls: [image_url],
-            response_json_schema: {
-                type: 'object',
-                properties: {
-                    transactions: {
-                        type: 'array',
-                        items: {
-                            type: 'object',
-                            properties: {
-                                entry_type: { type: 'string', enum: ['income', 'expense'] },
-                                category: { type: 'string' },
-                                amount_auec: { type: 'number' },
-                                description: { type: 'string' },
-                                counterparty: { type: 'string' },
-                                entry_date: { type: 'string' }
-                            }
-                        }
-                    },
-                    wallet_balance: { type: ['number', 'null'] },
-                    summary: { type: 'string' },
-                    confidence: { type: 'string', enum: ['high', 'medium', 'low'] }
-                }
-            }
-        });
-
-        return Response.json(result);
-    } catch (error) {
-        return Response.json({ error: error.message }, { status: 500 });
-    }
+    return Response.json({ status: 'success', ...result });
+  } catch (error) {
+    console.error('analyzeLedgerImage error:', error);
+    return Response.json({ status: 'error', error: error.message }, { status: 500 });
+  }
 });

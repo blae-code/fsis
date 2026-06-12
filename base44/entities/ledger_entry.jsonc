@@ -44,9 +44,13 @@
       "format": "date",
       "description": "Date the transaction occurred"
     },
+    "notes": {
+      "type": "string",
+      "description": "Optional internal notes"
+    },
     "screenshot_url": {
       "type": "string",
-      "description": "Uploaded in-game screenshot evidencing this transaction"
+      "description": "Attached in-game screenshot evidencing this transaction"
     },
     "source": {
       "type": "string",
@@ -56,11 +60,11 @@
         "automation"
       ],
       "default": "manual",
-      "description": "How this entry was recorded"
+      "description": "How this entry was logged"
     },
-    "notes": {
-      "type": "string",
-      "description": "Optional internal notes"
+    "balance_after": {
+      "type": "number",
+      "description": "Wallet aUEC balance after this transaction, if captured from the screenshot"
     }
   },
   "required": [
