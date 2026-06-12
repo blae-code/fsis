@@ -1,202 +1,115 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+
+const UEX_BASE = 'https://api.uexcorp.space/2.0';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    
-    // Verify admin access for manual sync
+
+    // Admin-only (scheduled automation runs with admin context)
     const user = await base44.auth.me();
     if (!user || user.role !== 'admin') {
       return Response.json({ error: 'Admin access required' }, { status: 403 });
     }
 
-    const apiKey = Deno.env.get('UEX_API_KEY');
-    if (!apiKey) {
-      console.log('UEX_API_KEY not configured - skipping sync');
-      return Response.json({ 
-        status: 'skipped', 
-        message: 'UEX_API_KEY secret not configured. Add it in dashboard settings to enable UEX sync.' 
-      });
-    }
-
-    const UEX_BASE = 'https://api.uexcorp.uk/2.0';
-    const headers = {
-      'Authorization': `Bearer ${apiKey}`,
-      'Accept': 'application/json'
-    };
-
-    // Fetch patch version
-    let patchVersion = 'unknown';
-    try {
-      const gameVersionsRes = await fetch(`${UEX_BASE}/game_versions`, { headers });
-      if (gameVersionsRes.ok) {
-        const gameVersions = await gameVersionsRes.json();
-        patchVersion = gameVersions[0]?.name || 'unknown';
-      }
-    } catch (e) {
-      console.log('Could not fetch game version:', e.message);
-    }
-
     const now = new Date().toISOString();
-    const salvageCommodities = ['RMC', 'CMR', 'CMS'];
-    
-    // Fetch commodity prices
-    const pricesRes = await fetch(`${UEX_BASE}/commodities_prices`, { headers });
-    if (!pricesRes.ok) {
-      throw new Error(`Failed to fetch prices: ${pricesRes.status}`);
+
+    // Patch version (public endpoint)
+    let patchVersion = 'unknown';
+    const gvRes = await fetch(`${UEX_BASE}/game_versions`);
+    if (gvRes.ok) {
+      const gv = await gvRes.json();
+      patchVersion = gv?.data?.live || 'unknown';
     }
-    const pricesData = await pricesRes.json();
-    
-    // Filter for salvage commodities and transform
+
+    // Find salvage commodities from the public commodities index
+    const comRes = await fetch(`${UEX_BASE}/commodities`);
+    if (!comRes.ok) throw new Error(`UEX /commodities failed: ${comRes.status}`);
+    const comData = await comRes.json();
+    const SALVAGE_NAMES = ['recycled material composite', 'construction materials', 'scrap'];
+    const salvage = (comData?.data || []).filter(
+      (c) => SALVAGE_NAMES.includes((c.name || '').toLowerCase()) && c.is_raw === 0 && c.is_available === 1
+    );
+    if (salvage.length === 0) throw new Error('No salvage commodities returned by UEX');
+
+    // Fetch live prices per salvage commodity
     const priceRecords = [];
-    const bestPricesByCommodity = {};
-    
-    pricesData.forEach(price => {
-      if (salvageCommodities.includes(price.commodity_code)) {
+    const bestByCode = {};
+
+    for (const c of salvage) {
+      const pRes = await fetch(`${UEX_BASE}/commodities_prices?id_commodity=${c.id}`);
+      if (!pRes.ok) {
+        console.log(`Prices fetch failed for ${c.code}: ${pRes.status}`);
+        continue;
+      }
+      const pData = await pRes.json();
+      (pData?.data || []).forEach((p) => {
+        if (!p.price_sell || p.price_sell <= 0) return;
         const record = {
-          commodity_name: price.commodity_name,
-          commodity_code: price.commodity_code,
+          commodity_name: c.name,
+          commodity_code: c.code,
           is_salvage_output: true,
-          terminal_name: price.terminal_name,
-          terminal_code: price.terminal_code,
-          star_system: price.star_system,
-          price_sell: price.price_sell,
-          price_buy: price.price_buy || null,
+          terminal_name: p.terminal_name,
+          terminal_code: p.terminal_code || p.terminal_slug || null,
+          star_system: p.star_system_name || null,
+          price_sell: p.price_sell,
+          price_buy: p.price_buy || null,
           is_best_sell: false,
-          uex_updated_at: price.uex_updated_at,
-          confidence: price.confidence,
+          uex_updated_at: p.date_modified ? new Date(p.date_modified * 1000).toISOString() : null,
+          confidence: null,
           patch_version: patchVersion,
-          synced_at: now
+          synced_at: now,
         };
         priceRecords.push(record);
-        
-        // Track best price per commodity
-        if (!bestPricesByCommodity[price.commodity_code] || 
-            price.price_sell > bestPricesByCommodity[price.commodity_code].price_sell) {
-          bestPricesByCommodity[price.commodity_code] = record;
+        if (!bestByCode[c.code] || record.price_sell > bestByCode[c.code].price_sell) {
+          bestByCode[c.code] = record;
         }
-      }
-    });
-
-    // Mark best prices
-    priceRecords.forEach(record => {
-      const best = bestPricesByCommodity[record.commodity_code];
-      if (best && record.terminal_code === best.terminal_code) {
-        record.is_best_sell = true;
-      }
-    });
-
-    // Fetch terminals
-    const terminalsRes = await fetch(`${UEX_BASE}/terminals`, { headers });
-    const terminalsData = terminalsRes.ok ? await terminalsRes.json() : [];
-    
-    const terminalRecords = terminalsData.map(t => ({
-      terminal_name: t.terminal_name,
-      terminal_code: t.terminal_code,
-      terminal_type: t.terminal_type,
-      star_system: t.star_system,
-      planet: t.planet,
-      moon: t.moon,
-      uex_terminal_id: t.id?.toString() || null,
-      is_salvage_relevant: salvageCommodities.some(code => 
-        terminalsData.some(p => p.terminal_code === t.terminal_code && salvageCommodities.includes(p.commodity_code))
-      )
-    }));
-
-    // Fetch routes
-    const routesRes = await fetch(`${UEX_BASE}/routes`, { headers });
-    const routesData = routesRes.ok ? await routesRes.json() : [];
-    
-    const routeRecords = routesData
-      .filter(r => salvageCommodities.includes(r.commodity_code))
-      .map(r => ({
-        commodity_code: r.commodity_code,
-        origin_terminal: r.origin_terminal,
-        origin_system: r.origin_system,
-        destination_terminal: r.destination_terminal,
-        destination_system: r.destination_system,
-        profit_per_scu: r.profit_per_scu,
-        distance: r.distance,
-        score: r.score,
-        price_destination_sell: r.price_destination_sell,
-        patch_version: patchVersion,
-        synced_at: now
-      }));
-
-    // Upsert data using bulk operations
-    // First, clear existing data for these commodities
-    const existingPrices = await base44.asServiceRole.entities.commodity_price.filter({
-      commodity_code: { $in: salvageCommodities }
-    });
-    
-    for (const price of existingPrices) {
-      await base44.asServiceRole.entities.commodity_price.delete(price.id);
-    }
-
-    // Bulk create new prices
-    if (priceRecords.length > 0) {
-      await base44.asServiceRole.entities.commodity_price.bulkCreate(priceRecords);
-    }
-
-    // Upsert terminals (merge with existing)
-    for (const terminal of terminalRecords) {
-      const existing = await base44.asServiceRole.entities.terminal.filter({ 
-        terminal_code: terminal.terminal_code 
       });
-      
-      if (existing.length > 0) {
-        await base44.asServiceRole.entities.terminal.update(existing[0].id, terminal);
-      } else {
-        await base44.asServiceRole.entities.terminal.create(terminal);
+    }
+
+    if (priceRecords.length === 0) throw new Error('UEX returned no sell prices for salvage commodities');
+
+    // Mark best sell terminal per commodity
+    priceRecords.forEach((r) => {
+      const best = bestByCode[r.commodity_code];
+      if (best && r.terminal_name === best.terminal_name && r.price_sell === best.price_sell) {
+        r.is_best_sell = true;
       }
-    }
-
-    // Clear and recreate routes
-    const existingRoutes = await base44.asServiceRole.entities.route.filter({
-      commodity_code: { $in: salvageCommodities }
     });
-    
-    for (const route of existingRoutes) {
-      await base44.asServiceRole.entities.route.delete(route.id);
-    }
 
-    if (routeRecords.length > 0) {
-      await base44.asServiceRole.entities.route.bulkCreate(routeRecords);
+    // Replace cached prices
+    const existing = await base44.asServiceRole.entities.commodity_price.list(null, 1000);
+    for (const e of existing) {
+      await base44.asServiceRole.entities.commodity_price.delete(e.id);
     }
+    await base44.asServiceRole.entities.commodity_price.bulkCreate(priceRecords);
 
-    // Append price history snapshots (EVE-style market history)
-    const snapshotRecords = Object.keys(bestPricesByCommodity).map(code => {
-      const all = priceRecords.filter(p => p.commodity_code === code);
-      const avg = all.reduce((s, p) => s + (p.price_sell || 0), 0) / all.length;
-      const best = bestPricesByCommodity[code];
+    // Append history snapshots for trend lines
+    const snapshots = Object.entries(bestByCode).map(([code, best]) => {
+      const all = priceRecords.filter((p) => p.commodity_code === code);
+      const avg = all.reduce((s, p) => s + p.price_sell, 0) / all.length;
       return {
         commodity_code: code,
         best_sell: best.price_sell,
         avg_sell: Math.round(avg * 100) / 100,
         best_terminal: best.terminal_name,
         patch_version: patchVersion,
-        captured_at: now
+        captured_at: now,
       };
     });
-    if (snapshotRecords.length > 0) {
-      await base44.asServiceRole.entities.price_snapshot.bulkCreate(snapshotRecords);
-    }
+    await base44.asServiceRole.entities.price_snapshot.bulkCreate(snapshots);
 
     return Response.json({
       status: 'success',
       summary: {
+        commodities: Object.keys(bestByCode),
         prices_synced: priceRecords.length,
-        terminals_synced: terminalRecords.length,
-        routes_synced: routeRecords.length,
         patch_version: patchVersion,
-        synced_at: now
-      }
+        synced_at: now,
+      },
     });
   } catch (error) {
     console.error('UEX sync error:', error);
-    return Response.json({ 
-      status: 'error', 
-      error: error.message 
-    }, { status: 500 });
+    return Response.json({ status: 'error', error: error.message }, { status: 500 });
   }
 });

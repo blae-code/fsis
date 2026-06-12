@@ -8,7 +8,7 @@ const AMBER = '#D4920B';
 const BONE = '#D8CFC0';
 const DIM = '#8A7E6C';
 
-const NAMES = { RMC: 'RECYCLED MATERIAL COMPOSITE', CMR: 'CONSTRUCTION MATERIALS', CMS: 'COMPOSITE SCRAP' };
+const CODE_ORDER = ['RMC', 'CMAT', 'SCRA'];
 
 function Sparkline({ points }) {
   if (points.length < 2) return <div className="w-[72px]" />;
@@ -63,7 +63,13 @@ export default function ExchangeBoard() {
     (history[s.commodity_code] = history[s.commodity_code] || []).push(s.best_sell || 0);
   });
 
-  const codes = ['RMC', 'CMR', 'CMS'].filter((c) => board[c]?.best);
+  const codes = Object.keys(board)
+    .filter((c) => board[c]?.best)
+    .sort((a, b) => {
+      const ia = CODE_ORDER.indexOf(a), ib = CODE_ORDER.indexOf(b);
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    })
+    .slice(0, 3);
   const latest = prices.reduce((m, p) => (p.synced_at > m ? p.synced_at : m), '');
   const patch = prices[0]?.patch_version;
 
@@ -119,7 +125,7 @@ export default function ExchangeBoard() {
                   <div className="min-w-0">
                     <div className="flex items-baseline gap-2 font-mono">
                       <span className="text-[13px] font-bold tracking-[0.12em]" style={{ color: BONE }}>{code}</span>
-                      <span className="text-[8px] tracking-[0.18em] truncate" style={{ color: DIM }}>{NAMES[code] || best.commodity_name?.toUpperCase()}</span>
+                      <span className="text-[8px] tracking-[0.18em] truncate" style={{ color: DIM }}>{best.commodity_name?.toUpperCase()}</span>
                     </div>
                     <div className="font-mono text-[8px] mt-0.5 truncate" style={{ color: BRONZE }}>
                       BEST @ {best.terminal_name?.toUpperCase()} • {terminals} TERMINALS
