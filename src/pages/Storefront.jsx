@@ -10,6 +10,7 @@ import OrderPanel from '@/components/store/OrderPanel';
 import MyOrders from '@/components/store/MyOrders';
 import AboutFsis from '@/components/store/AboutFsis';
 import StoreToolbar from '@/components/store/StoreToolbar';
+import StoreTabs from '@/components/store/StoreTabs';
 import MarketTicker from '@/components/store/MarketTicker';
 import MaterialsIndex from '@/components/store/MaterialsIndex';
 import FsisLogo from '@/components/brand/FsisLogo';
@@ -22,6 +23,7 @@ export default function Storefront() {
   const [cart, setCart] = useState(() => storeCache.getCart());
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [tab, setTab] = useState('catalog');
 
   // Persist in-progress cart so returning purchasers pick up where they left off
   useEffect(() => {
@@ -63,13 +65,13 @@ export default function Storefront() {
   });
 
   return (
-    <div className="os-viewport overflow-y-auto" style={{ background: '#0C0B0A' }}>
+    <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#0C0B0A' }}>
       {/* Header */}
-      <header className="border-b sticky top-0 z-10 backdrop-blur-md" style={{ borderColor: '#2A2118', background: 'rgba(12, 11, 10, 0.92)' }}>
-        <div className="max-w-[1720px] mx-auto px-4 2xl:px-8 py-3 flex items-center justify-between">
+      <header className="shrink-0 border-b z-10" style={{ borderColor: '#2A2118', background: 'rgba(12, 11, 10, 0.92)' }}>
+        <div className="max-w-[1720px] mx-auto px-4 2xl:px-8 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-1.5" style={{ background: 'linear-gradient(160deg, #8A6430, #4A3722)', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}>
-              <FsisLogo size={26} />
+              <FsisLogo size={24} />
             </div>
             <div>
               <h1 className="font-mono text-sm font-bold tracking-[0.18em]" style={{ color: '#D8CFC0' }}>FAIRSHARE INDUSTRIAL SOLUTIONS</h1>
@@ -86,72 +88,85 @@ export default function Storefront() {
         </div>
       </header>
 
-      <MarketTicker />
+      <div className="shrink-0">
+        <MarketTicker />
+      </div>
 
-      {/* Hero — bronze command deck panel */}
-      <section className="max-w-[1720px] mx-auto px-4 2xl:px-8 pt-8 pb-6">
-        <div
-          className="p-[6px]"
-          style={{
-            background: 'linear-gradient(135deg, #8A6430 0%, #4A3722 35%, #B0793A 65%, #5C4424 100%)',
-            clipPath: 'polygon(30px 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%, 0 30px)',
-          }}
-        >
+      {/* Main deck — fills viewport, no page scroll */}
+      <main className="flex-1 min-h-0 max-w-[1720px] mx-auto w-full px-4 2xl:px-8 py-4 grid grid-cols-1 lg:grid-cols-[1fr_380px] 2xl:grid-cols-[1fr_400px] gap-5 overflow-y-auto lg:overflow-hidden">
+        <div className="flex flex-col min-h-0 gap-4">
+          {/* Compact hero */}
           <div
-            className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] 2xl:grid-cols-[2fr_1fr]"
-            style={{ clipPath: 'polygon(28px 0, 100% 0, 100% calc(100% - 28px), calc(100% - 28px) 100%, 0 100%, 0 28px)' }}
+            className="shrink-0 p-[5px] hidden sm:block"
+            style={{
+              background: 'linear-gradient(135deg, #8A6430 0%, #4A3722 35%, #B0793A 65%, #5C4424 100%)',
+              clipPath: 'polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px)',
+            }}
           >
             <div
-              className="relative p-8 md:p-10"
-              style={{
-                backgroundImage: `linear-gradient(95deg, rgba(13, 11, 9, 0.92) 30%, rgba(13, 11, 9, 0.45) 100%), url(${HERO_BG})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center right',
-              }}
+              className="grid grid-cols-1 md:grid-cols-[1.6fr_1fr]"
+              style={{ clipPath: 'polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px)' }}
             >
-              <p className="font-mono text-[11px] tracking-[0.3em] mb-3" style={{ color: '#D4920B' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
-              <h2 className="font-mono text-3xl md:text-4xl font-bold leading-tight">
-                <span style={{ color: '#E5DDD0' }}>Honest salvage.</span>
-                <br />
-                <span style={{ color: '#C8893B' }}>Fair prices.</span>
-              </h2>
-              <p className="text-sm mt-4 max-w-md font-mono leading-relaxed" style={{ color: '#B8AC9A' }}>
-                Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
-              </p>
+              <div
+                className="relative p-6 md:p-7"
+                style={{
+                  backgroundImage: `linear-gradient(95deg, rgba(13, 11, 9, 0.92) 30%, rgba(13, 11, 9, 0.45) 100%), url(${HERO_BG})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center right',
+                }}
+              >
+                <p className="font-mono text-[10px] tracking-[0.3em] mb-2" style={{ color: '#D4920B' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
+                <h2 className="font-mono text-2xl 2xl:text-3xl font-bold leading-tight">
+                  <span style={{ color: '#E5DDD0' }}>Honest salvage.</span>{' '}
+                  <span style={{ color: '#C8893B' }}>Fair prices.</span>
+                </h2>
+                <p className="text-xs 2xl:text-sm mt-3 max-w-md font-mono leading-relaxed" style={{ color: '#B8AC9A' }}>
+                  Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
+                </p>
+              </div>
+              <HeroScanBay products={products} />
             </div>
-            <HeroScanBay products={products} />
           </div>
-        </div>
-      </section>
 
-      {/* Catalog + cart */}
-      <main className="max-w-[1720px] mx-auto px-4 2xl:px-8 pb-12 grid grid-cols-1 lg:grid-cols-3 2xl:grid-cols-[1fr_400px] gap-6 2xl:gap-8">
-        <div className="lg:col-span-2 2xl:col-span-1 space-y-6">
-          <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} count={filteredProducts.length} />
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
-            {filteredProducts.length === 0 ? (
-              <p className="col-span-full text-center py-12 text-xs font-mono" style={{ color: '#8A7E6C' }}>
-                {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your search.'}
-              </p>
-            ) : (
-              filteredProducts.map((p) => <ProductCard key={p.id} product={p} onAdd={addToCart} />)
+          {/* Section tabs */}
+          <div className="shrink-0 flex flex-wrap items-center justify-between gap-3">
+            <StoreTabs active={tab} onChange={setTab} />
+            {tab === 'catalog' && (
+              <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} count={filteredProducts.length} />
             )}
           </div>
-          <MaterialsIndex products={products} />
-          <MyOrders />
-          <AboutFsis />
+
+          {/* Active section — scrolls internally only if it overflows */}
+          <div className="flex-1 min-h-0 lg:overflow-y-auto pr-1">
+            {tab === 'catalog' && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                {filteredProducts.length === 0 ? (
+                  <p className="col-span-full text-center py-12 text-xs font-mono" style={{ color: '#8A7E6C' }}>
+                    {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your search.'}
+                  </p>
+                ) : (
+                  filteredProducts.map((p) => <ProductCard key={p.id} product={p} onAdd={addToCart} />)
+                )}
+              </div>
+            )}
+            {tab === 'materials' && <MaterialsIndex products={products} />}
+            {tab === 'orders' && <MyOrders />}
+            {tab === 'about' && <AboutFsis />}
+          </div>
         </div>
-        <div className="lg:sticky lg:top-[72px] lg:self-start">
+
+        {/* Order panel — pinned, scrolls internally if needed */}
+        <div className="min-h-0 lg:overflow-y-auto">
           <OrderPanel cart={cart} setCart={setCart} user={user} />
         </div>
       </main>
 
-      <footer className="border-t py-4 text-center space-y-1" style={{ borderColor: '#2A2118' }}>
-        <p className="text-[9px] font-mono px-4" style={{ color: '#6B6155' }}>
+      <footer className="shrink-0 border-t py-1.5 px-4 flex flex-wrap items-center justify-center gap-x-4" style={{ borderColor: '#2A2118' }}>
+        <p className="text-[9px] font-mono" style={{ color: '#6B6155' }}>
           {FSIS.name} • {FSIS.license} • {FSIS.hq}
         </p>
-        <p className="text-[9px] font-mono px-4" style={{ color: '#8A7E6C' }}>
-          All prices in aUEC (in-game currency). Unofficial fan project — not affiliated with Cloud Imperium Games.
+        <p className="text-[9px] font-mono" style={{ color: '#8A7E6C' }}>
+          All prices in aUEC. Unofficial fan project — not affiliated with Cloud Imperium Games.
         </p>
       </footer>
     </div>
