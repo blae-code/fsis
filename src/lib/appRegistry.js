@@ -43,14 +43,6 @@ const APPS = [
     color: 'hsl(190, 50%, 35%)',
   },
   {
-    id: 'orders',
-    name: 'Orders',
-    description: 'Customer order desk & fulfillment',
-    icon: 'ClipboardList',
-    status: 'active',
-    color: 'hsl(190, 55%, 45%)',
-  },
-  {
     id: 'fabrication',
     name: 'Fabrication',
     description: 'Crafting recipes & material planning',
