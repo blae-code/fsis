@@ -6,6 +6,10 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Desktop from '@/pages/Desktop';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -18,7 +22,10 @@ const AuthenticatedApp = () => {
     );
   }
 
-  if (authError) {
+  const authPaths = ['/login', '/register', '/forgot-password', '/reset-password'];
+  const isAuthPath = authPaths.includes(window.location.pathname);
+
+  if (authError && !isAuthPath) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
@@ -29,6 +36,10 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/" element={<Desktop />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
