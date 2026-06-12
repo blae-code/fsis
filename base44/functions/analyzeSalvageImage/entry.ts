@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
 
     const prompts = {
       terminal: 'This is a screenshot of a Star Citizen commodity trade terminal. Extract every commodity row you can read: the commodity name, its short code (RMC, CMR, CMS, etc.), the sell price per unit in aUEC, and the terminal/location name if visible. Focus on salvage outputs (RMC = Recycled Material Composite, CMR = Construction Materials Reclaimed, CMS = Construction Materials Salvaged).',
-      contract: 'This is a Star Citizen contract/mission screen. Extract the contract title, reward in aUEC, location, and any salvage objectives (number of panels, hulls, or SCU required).',
+      contract: 'This is a Star Citizen contract/mission screen. Extract the contract title, reward in aUEC, location, and any salvage objectives (number of panels, hulls, or SCU required). In the "extra" object, return: contract_title (string), reward_auec (number), location (string), objective (string summary of the deliverable).',
       'ship-hud': 'This is a Star Citizen ship HUD or cargo/inventory screen. Read the cargo manifest: list each commodity, its short code, and quantity in SCU.',
       signature: 'This is a Star Citizen ship/wreck or scanning screen. Identify the ship hull or wreck type if visible, estimate its salvage potential (rough RMC/CMR yield in SCU for that hull class), and read any signature/scan numbers shown.',
       manifest: 'This is a Star Citizen cargo manifest. List each commodity, short code, and SCU quantity.',

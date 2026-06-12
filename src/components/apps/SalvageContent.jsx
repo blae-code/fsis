@@ -19,6 +19,7 @@ import SalvageAnalytics from '@/components/apps/salvage/SalvageAnalytics';
 import InventoryView from '@/components/apps/salvage/InventoryView';
 import CargoScanner from '@/components/apps/salvage/CargoScanner';
 import PriceHistory from '@/components/apps/salvage/PriceHistory';
+import ScanLog from '@/components/apps/salvage/ScanLog';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -235,6 +236,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
           >
             HISTORY
+          </TabsTrigger>
+          <TabsTrigger
+            value="scanlog"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            LOG
           </TabsTrigger>
         </TabsList>
 
@@ -478,6 +485,10 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
 
         <TabsContent value="history" className="flex-1 overflow-auto m-0">
           <PriceHistory />
+        </TabsContent>
+
+        <TabsContent value="scanlog" className="flex-1 overflow-auto m-0">
+          <ScanLog />
         </TabsContent>
       </Tabs>
 
