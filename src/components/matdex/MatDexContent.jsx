@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { Search, Database } from 'lucide-react';
+import { Search, Database, Boxes } from 'lucide-react';
 import { MAT_CATEGORIES, matCategoryMeta } from '@/components/matdex/matdexMeta';
 import MaterialDetail from '@/components/matdex/MaterialDetail';
+import CargoMarketView from '@/components/matdex/CargoMarketView';
 
 const border = { borderColor: 'hsl(33, 18%, 18%)' };
 
@@ -12,6 +13,7 @@ export default function MatDexContent({ onOpenApp }) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [selectedId, setSelectedId] = useState(null);
+  const [showCargo, setShowCargo] = useState(false);
 
   const { data: materials = [], isLoading } = useQuery({
     queryKey: ['materials'],
@@ -62,10 +64,23 @@ export default function MatDexContent({ onOpenApp }) {
               <meta.icon className="w-2.5 h-2.5" /> {meta.label}
             </button>
           ))}
+          <button
+            onClick={() => setShowCargo(!showCargo)}
+            className="px-2 py-1 rounded text-[9px] tracking-[0.12em] border transition-colors inline-flex items-center gap-1 ml-auto"
+            style={showCargo
+              ? { borderColor: 'hsl(38, 72%, 52%)', color: 'hsl(38, 72%, 52%)', background: 'hsl(38, 72%, 52% / 0.1)' }
+              : { ...border, color: 'hsl(35, 12%, 52%)' }}
+          >
+            <Boxes className="w-2.5 h-2.5" /> MY CARGO
+          </button>
         </div>
       </div>
 
-      {/* Body: list + detail */}
+      {showCargo ? (
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <CargoMarketView />
+        </div>
+      ) : (
       <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-[240px_1fr]">
         <div className="overflow-y-auto border-b md:border-b-0 md:border-r max-h-44 md:max-h-none" style={border}>
           {isLoading ? (
@@ -106,6 +121,7 @@ export default function MatDexContent({ onOpenApp }) {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
