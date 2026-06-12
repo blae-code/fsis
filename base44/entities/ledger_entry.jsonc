@@ -44,6 +44,20 @@
       "format": "date",
       "description": "Date the transaction occurred"
     },
+    "screenshot_url": {
+      "type": "string",
+      "description": "Uploaded in-game screenshot evidencing this transaction"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "ocr_scan",
+        "automation"
+      ],
+      "default": "manual",
+      "description": "How this entry was recorded"
+    },
     "notes": {
       "type": "string",
       "description": "Optional internal notes"
