@@ -1,15 +1,15 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, Scale } from 'lucide-react';
 
-export default function LedgerSummary({ transactions }) {
-  const income = transactions.filter((t) => t.tx_type === 'income').reduce((s, t) => s + (t.amount_auec || 0), 0);
-  const expenses = transactions.filter((t) => t.tx_type === 'expense').reduce((s, t) => s + (t.amount_auec || 0), 0);
+export default function LedgerSummary({ entries }) {
+  const income = entries.filter((e) => e.entry_type === 'income').reduce((s, e) => s + (e.amount_auec || 0), 0);
+  const expenses = entries.filter((e) => e.entry_type === 'expense').reduce((s, e) => s + (e.amount_auec || 0), 0);
   const net = income - expenses;
 
   const kpis = [
     { label: 'TOTAL INCOME', value: income, icon: TrendingUp, color: 'hsl(140, 50%, 50%)' },
-    { label: 'OPERATING COSTS', value: expenses, icon: TrendingDown, color: 'hsl(0, 60%, 55%)' },
-    { label: 'NET BALANCE', value: net, icon: Scale, color: net >= 0 ? 'hsl(168, 80%, 55%)' : 'hsl(0, 60%, 55%)' },
+    { label: 'OPERATING COSTS', value: expenses, icon: TrendingDown, color: 'hsl(0, 55%, 55%)' },
+    { label: 'NET BALANCE', value: net, icon: Scale, color: net >= 0 ? 'hsl(168, 80%, 55%)' : 'hsl(0, 55%, 55%)' },
   ];
 
   return (
