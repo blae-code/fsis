@@ -5,6 +5,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Minus, Plus, TrendingUp, ShoppingCart } from 'lucide-react';
 import CommodityIcon from '@/components/brand/CommodityIcon';
 import SerialStrip from '@/components/brand/SerialStrip';
+import MarketBadge from '@/components/store/MarketBadge';
+import RestockNotify from '@/components/store/RestockNotify';
 import { lotNumber } from '@/lib/fsisLore';
 
 /** Buyer-facing product dossier: specs, live market comparison, stock, related wares */
@@ -54,9 +56,12 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
         <div className="p-4 space-y-4">
           {/* Price + stock */}
           <div className="flex items-end justify-between">
-            <div>
-              <span className="text-2xl font-bold" style={{ color: '#E0A22E' }}>{product.price_auec.toLocaleString()}</span>
-              <span className="text-[10px] ml-1.5" style={{ color: '#8A7E6C' }}>aUEC/{product.unit || 'SCU'}</span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span>
+                <span className="text-2xl font-bold" style={{ color: '#E0A22E' }}>{product.price_auec.toLocaleString()}</span>
+                <span className="text-[10px] ml-1.5" style={{ color: '#8A7E6C' }}>aUEC/{product.unit || 'SCU'}</span>
+              </span>
+              <MarketBadge price={product.price_auec} marketBest={topTerminals[0]?.price_sell} />
             </div>
             <span className="text-[10px]" style={{ color: inStock ? '#7BA05B' : '#C05050' }}>
               {product.category === 'service' ? 'AVAILABLE ON REQUEST' : inStock ? `${product.stock} ${product.unit || 'SCU'} IN STOCK` : 'OUT OF STOCK'}
@@ -82,6 +87,8 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
           )}
 
           <SerialStrip seed={product.id} label="FSIS CERTIFIED" />
+
+          {!inStock && product.category !== 'service' && <RestockNotify product={product} />}
 
           {/* Qty + add */}
           <div className="flex items-center gap-3">

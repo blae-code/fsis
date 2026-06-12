@@ -1,0 +1,53 @@
+{
+  "name": "restock_request",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "Product the buyer wants restocked"
+    },
+    "product_name": {
+      "type": "string",
+      "description": "Product display name at request time"
+    },
+    "code": {
+      "type": "string",
+      "description": "Commodity short code, e.g. RMC"
+    },
+    "contact": {
+      "type": "string",
+      "description": "Buyer email or in-game handle to notify on restock"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "notified"
+      ],
+      "default": "open",
+      "description": "Open = awaiting restock; notified = buyer contacted"
+    }
+  },
+  "required": [
+    "product_id",
+    "contact"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

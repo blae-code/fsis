@@ -15,6 +15,9 @@ import MarketTicker from '@/components/store/MarketTicker';
 import ProductDetail from '@/components/store/ProductDetail';
 import FsisLogo from '@/components/brand/FsisLogo';
 import ExchangeBoard from '@/components/store/ExchangeBoard';
+import QuoteBuilder from '@/components/store/QuoteBuilder';
+import OpsFeed from '@/components/store/OpsFeed';
+import SystemStatus from '@/components/store/SystemStatus';
 import { FSIS } from '@/lib/fsisLore';
 
 const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/44c3176b4_generated_image.png';
@@ -41,6 +44,18 @@ export default function Storefront() {
     queryFn: () => base44.auth.me(),
   });
 
+  // Live UEX best-sell per commodity for "vs market" badges (shares the ticker cache)
+  const { data: marketPrices = [] } = useQuery({
+    queryKey: ['ticker_prices'],
+    queryFn: () => base44.entities.commodity_price.filter({ is_best_sell: true }),
+  });
+  const marketBestByCode = {};
+  marketPrices.forEach((p) => {
+    if (!marketBestByCode[p.commodity_code] || (p.price_sell || 0) > marketBestByCode[p.commodity_code]) {
+      marketBestByCode[p.commodity_code] = p.price_sell || 0;
+    }
+  });
+
   const addToCart = (product, qty = 1) => {
     setCart((prev) => {
       const existing = prev.find((i) => i.product_id === product.id);
@@ -51,10 +66,36 @@ export default function Storefront() {
         product_id: product.id,
         product_name: product.product_name,
         code: product.code,
+        category: product.category,
         unit: product.unit || 'SCU',
         unit_price: product.price_auec,
         quantity: qty,
       }];
+    });
+  };
+
+  // Refill the manifest from a past order's line items
+  const reorder = (items) => {
+    setCart((prev) => {
+      let next = [...prev];
+      items.forEach((item) => {
+        const existing = next.find((i) => i.product_id === item.product_id);
+        if (existing) {
+          next = next.map((i) => i.product_id === item.product_id ? { ...i, quantity: i.quantity + item.quantity } : i);
+        } else {
+          const live = products.find((p) => p.id === item.product_id);
+          next.push({
+            product_id: item.product_id,
+            product_name: item.product_name,
+            code: item.code,
+            category: live?.category,
+            unit: item.unit || 'SCU',
+            unit_price: live?.price_auec ?? item.unit_price,
+            quantity: item.quantity,
+          });
+        }
+      });
+      return next;
     });
   };
 
@@ -146,12 +187,20 @@ export default function Storefront() {
                     {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your search.'}
                   </p>
                 ) : (
-                  filteredProducts.map((p) => <ProductCard key={p.id} product={p} onAdd={addToCart} onView={setDetailProduct} />)
+                  filteredProducts.map((p) => (
+                    <ProductCard key={p.id} product={p} onAdd={addToCart} onView={setDetailProduct} marketBest={p.code ? marketBestByCode[p.code] : undefined} />
+                  ))
                 )}
               </div>
             )}
-            {tab === 'orders' && <MyOrders />}
-            {tab === 'about' && <AboutFsis />}
+            {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty) => { addToCart(p, qty); }} />}
+            {tab === 'orders' && <MyOrders onReorder={reorder} />}
+            {tab === 'about' && (
+              <>
+                <SystemStatus />
+                <AboutFsis />
+              </>
+            )}
           </div>
         </div>
 
@@ -168,6 +217,10 @@ export default function Storefront() {
         onAdd={addToCart}
         onView={setDetailProduct}
       />
+
+      <div className="shrink-0">
+        <OpsFeed />
+      </div>
 
       <footer className="shrink-0 border-t py-1.5 px-4 flex flex-wrap items-center justify-center gap-x-4" style={{ borderColor: '#2A2118' }}>
         <p className="text-[9px] font-mono" style={{ color: '#6B6155' }}>

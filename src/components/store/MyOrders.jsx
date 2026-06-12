@@ -3,11 +3,12 @@ import { storeCache } from '@/lib/localCache';
 import { trackOrder } from '@/functions/trackOrder';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { PackageCheck, Search, Loader2 } from 'lucide-react';
+import { PackageCheck, Search, Loader2, RotateCcw } from 'lucide-react';
 import OrderTimeline from '@/components/store/OrderTimeline';
+import { etaFor } from '@/lib/storeLocations';
 
 /** Buyer order tracking — works for guests via tracking codes (no account needed) */
-export default function MyOrders() {
+export default function MyOrders({ onReorder }) {
   const queryClient = useQueryClient();
   const [codes, setCodes] = useState(() => storeCache.getTrackingCodes());
   const [lookup, setLookup] = useState('');
@@ -92,11 +93,27 @@ export default function MyOrders() {
                   {(o.items || []).map((i) => `${i.quantity}x ${i.code || i.product_name}`).join(', ')}
                 </div>
                 <div className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>
-                  {new Date(o.created_date).toLocaleDateString()} {o.delivery_location && `• ${o.delivery_location}`}
+                  PLACED {new Date(o.created_date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })} {o.delivery_location && `• ${o.delivery_location}`}
                 </div>
+                {!['delivered', 'cancelled'].includes(o.status) && etaFor(o.delivery_location) && (
+                  <div className="text-[10px] font-mono" style={{ color: '#7BA05B' }}>
+                    EST DELIVERY {etaFor(o.delivery_location)} AFTER CONFIRMATION
+                  </div>
+                )}
               </div>
-              <div className="text-xs font-mono font-bold shrink-0" style={{ color: '#E0A22E' }}>
-                {(o.total_auec || 0).toLocaleString()} aUEC
+              <div className="flex flex-col items-end gap-1.5 shrink-0">
+                <div className="text-xs font-mono font-bold" style={{ color: '#E0A22E' }}>
+                  {(o.total_auec || 0).toLocaleString()} aUEC
+                </div>
+                {onReorder && (o.items || []).length > 0 && (
+                  <button
+                    onClick={() => onReorder(o.items)}
+                    className="px-2.5 py-1 font-mono text-[9px] font-bold border inline-flex items-center gap-1 hover:brightness-125 transition-all"
+                    style={{ borderColor: '#5C4424', color: '#C8A05B', background: '#161310' }}
+                  >
+                    <RotateCcw className="w-2.5 h-2.5" /> REORDER
+                  </button>
+                )}
               </div>
             </div>
             <OrderTimeline status={o.status} />

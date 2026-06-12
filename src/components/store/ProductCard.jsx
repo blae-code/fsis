@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Hammer, Wrench, Plus } from 'lucide-react';
 import CommodityIcon from '@/components/brand/CommodityIcon';
 import SerialStrip from '@/components/brand/SerialStrip';
+import MarketBadge from '@/components/store/MarketBadge';
+import StockBar from '@/components/store/StockBar';
 import { lotNumber } from '@/lib/fsisLore';
 
 const PLATE_TEXTURE = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/3910df846_generated_image.png';
@@ -13,7 +15,7 @@ const CATEGORY_META = {
   service: { label: 'SERVICE', icon: Wrench },
 };
 
-export default function ProductCard({ product, onAdd, onView }) {
+export default function ProductCard({ product, onAdd, onView, marketBest }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
   const FallbackIcon = meta.icon;
@@ -65,12 +67,19 @@ export default function ProductCard({ product, onAdd, onView }) {
 
         <div className="mt-auto space-y-2">
           <SerialStrip seed={product.id} label="FSIS CERTIFIED" />
-          <div className="font-mono">
-            <span className="text-xl font-bold" style={{ color: '#E0A22E' }}>{product.price_auec.toLocaleString()}</span>
-            <span className="text-[10px] ml-1.5" style={{ color: '#8A7E6C' }}>aUEC/{product.unit || 'SCU'}</span>
-            <div className="text-[10px]" style={{ color: '#9C9080' }}>
-              {product.category === 'service' ? 'On request' : inStock ? `${product.stock} ${product.unit || 'SCU'} in stock` : 'Out of stock'}
+          <div className="font-mono space-y-1.5">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span>
+                <span className="text-xl font-bold" style={{ color: '#E0A22E' }}>{product.price_auec.toLocaleString()}</span>
+                <span className="text-[10px] ml-1.5" style={{ color: '#8A7E6C' }}>aUEC/{product.unit || 'SCU'}</span>
+              </span>
+              <MarketBadge price={product.price_auec} marketBest={marketBest} />
             </div>
+            {product.category === 'service' ? (
+              <div className="text-[10px]" style={{ color: '#9C9080' }}>On request</div>
+            ) : (
+              <StockBar stock={product.stock || 0} unit={product.unit || 'SCU'} />
+            )}
           </div>
           <div className="flex items-center justify-between">
             <span className="font-mono text-[10px] px-2 py-1 border" style={{ borderColor: '#3A2F20', color: '#8A7E6C' }}>

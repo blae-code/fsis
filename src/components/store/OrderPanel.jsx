@@ -5,7 +5,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ShoppingCart, Trash2, Loader2, CheckCircle2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ShoppingCart, Trash2, Loader2 } from 'lucide-react';
+import ManifestReceipt from '@/components/store/ManifestReceipt';
+import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 
@@ -15,17 +18,20 @@ export default function OrderPanel({ cart, setCart, user }) {
   const [handle, setHandle] = useState(saved?.handle || user?.full_name || '');
   const [location, setLocation] = useState(saved?.location || '');
   const [notes, setNotes] = useState('');
-  const [placed, setPlaced] = useState(null); // tracking code of last placed order
+  const [svcWindow, setSvcWindow] = useState('');
+  const [placed, setPlaced] = useState(null); // manifest snapshot of last placed order
 
   const total = cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
+  const hasService = cart.some((i) => i.category === 'service');
 
   const orderMutation = useMutation({
     mutationFn: async () => {
+      const finalNotes = svcWindow ? `${notes}\n[SERVICE WINDOW] ${svcWindow.replace('T', ' ')}`.trim() : notes;
       const res = await placeOrder({
         customer_handle: handle,
         items: cart.map(({ product_id, product_name, quantity }) => ({ product_id, product_name, quantity })),
         delivery_location: location,
-        customer_notes: notes,
+        customer_notes: finalNotes,
       });
       return res.data;
     },
@@ -34,9 +40,10 @@ export default function OrderPanel({ cart, setCart, user }) {
       storeCache.setCustomer({ handle, location });
       storeCache.addTrackingCode(data.tracking_code);
       queryClient.invalidateQueries({ queryKey: ['tracked_orders'] });
+      setPlaced({ tracking_code: data.tracking_code, handle, location, items: [...cart], total });
       setCart([]);
       setNotes('');
-      setPlaced(data.tracking_code);
+      setSvcWindow('');
     },
   });
 
@@ -56,17 +63,7 @@ export default function OrderPanel({ cart, setCart, user }) {
         <ShoppingCart className="w-3.5 h-3.5" /> ORDER MANIFEST
       </div>
 
-      {placed && (
-        <div className="p-3 space-y-1 text-xs font-mono" style={{ background: 'rgba(224, 162, 46, 0.1)', color: '#E0A22E' }}>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 shrink-0" /> Order received — FSIS will confirm shortly.
-          </div>
-          <div style={{ color: '#D8CFC0' }}>
-            Tracking code: <span className="font-bold" style={{ color: '#E0A22E' }}>{placed}</span>
-            <span className="block text-[10px] mt-0.5" style={{ color: '#9C9080' }}>Saved on this device — check status anytime under MY ORDERS.</span>
-          </div>
-        </div>
-      )}
+      {placed && <ManifestReceipt order={placed} />}
 
       {cart.length === 0 ? (
         <div className="border p-6 text-center" style={{ borderColor: '#3A2F20' }}>
@@ -104,8 +101,31 @@ export default function OrderPanel({ cart, setCart, user }) {
             </div>
             <div className="space-y-1">
               <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>DELIVERY LOCATION</Label>
-              <Input value={location} onChange={(e) => setLocation(e.target.value)} className="h-8 text-xs font-mono" style={fieldStyle} placeholder="e.g. Port Tressler" />
+              <Select value={location} onValueChange={setLocation}>
+                <SelectTrigger className="h-8 text-xs font-mono" style={fieldStyle}>
+                  <SelectValue placeholder="Select destination" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DELIVERY_LOCATIONS.map((l) => (
+                    <SelectItem key={l.name} value={l.name} className="text-xs font-mono">
+                      {l.name} — {l.region}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {location && (
+                <p className="text-[9px] font-mono" style={{ color: '#7BA05B' }}>
+                  EST DELIVERY {etaFor(location)} after confirmation
+                  {DELIVERY_LOCATIONS.find((l) => l.name === location)?.note ? ` • ${DELIVERY_LOCATIONS.find((l) => l.name === location).note}` : ''}
+                </p>
+              )}
             </div>
+            {hasService && (
+              <div className="space-y-1">
+                <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>SERVICE WINDOW (YOUR PREFERRED TIME)</Label>
+                <Input type="datetime-local" value={svcWindow} onChange={(e) => setSvcWindow(e.target.value)} className="h-8 text-xs font-mono" style={fieldStyle} />
+              </div>
+            )}
             <div className="space-y-1">
               <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>NOTES</Label>
               <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="text-xs font-mono h-16" style={fieldStyle} placeholder="Anything we should know?" />
