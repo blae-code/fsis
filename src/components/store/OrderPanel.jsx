@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { placeOrder } from '@/functions/placeOrder';
 import { storeCache } from '@/lib/localCache';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
@@ -15,30 +15,28 @@ export default function OrderPanel({ cart, setCart, user }) {
   const [handle, setHandle] = useState(saved?.handle || user?.full_name || '');
   const [location, setLocation] = useState(saved?.location || '');
   const [notes, setNotes] = useState('');
-  const [placed, setPlaced] = useState(false);
+  const [placed, setPlaced] = useState(null); // tracking code of last placed order
 
   const total = cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
 
   const orderMutation = useMutation({
-    mutationFn: () =>
-      base44.entities.order.create({
+    mutationFn: async () => {
+      const res = await placeOrder({
         customer_handle: handle,
-        items: cart.map(({ product_id, product_name, code, quantity, unit, unit_price }) => ({
-          product_id, product_name, code, quantity, unit, unit_price,
-        })),
-        total_auec: total,
+        items: cart.map(({ product_id, product_name, quantity }) => ({ product_id, product_name, quantity })),
         delivery_location: location,
         customer_notes: notes,
-        status: 'new',
-      }),
-    onSuccess: () => {
-      // Remember this purchaser for next time
+      });
+      return res.data;
+    },
+    onSuccess: (data) => {
+      // Remember this purchaser and their tracking code for next time
       storeCache.setCustomer({ handle, location });
-      queryClient.invalidateQueries({ queryKey: ['my_orders'] });
+      storeCache.addTrackingCode(data.tracking_code);
+      queryClient.invalidateQueries({ queryKey: ['tracked_orders'] });
       setCart([]);
       setNotes('');
-      setPlaced(true);
-      setTimeout(() => setPlaced(false), 4000);
+      setPlaced(data.tracking_code);
     },
   });
 
@@ -59,8 +57,14 @@ export default function OrderPanel({ cart, setCart, user }) {
       </div>
 
       {placed && (
-        <div className="flex items-center gap-2 p-3 text-xs font-mono" style={{ background: 'rgba(224, 162, 46, 0.1)', color: '#E0A22E' }}>
-          <CheckCircle2 className="w-4 h-4" /> Order received — FSIS will confirm shortly.
+        <div className="p-3 space-y-1 text-xs font-mono" style={{ background: 'rgba(224, 162, 46, 0.1)', color: '#E0A22E' }}>
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" /> Order received — FSIS will confirm shortly.
+          </div>
+          <div style={{ color: '#D8CFC0' }}>
+            Tracking code: <span className="font-bold" style={{ color: '#E0A22E' }}>{placed}</span>
+            <span className="block text-[10px] mt-0.5" style={{ color: '#9C9080' }}>Saved on this device — check status anytime under MY ORDERS.</span>
+          </div>
         </div>
       )}
 
@@ -111,7 +115,7 @@ export default function OrderPanel({ cart, setCart, user }) {
           <button
             className="w-full h-9 font-mono text-xs font-bold rounded-full disabled:opacity-40 disabled:pointer-events-none hover:brightness-110 transition-all inline-flex items-center justify-center"
             disabled={!handle || orderMutation.isPending}
-            onClick={() => orderMutation.mutate()}
+            onClick={() => { setPlaced(null); orderMutation.mutate(); }}
             style={{
               background: 'linear-gradient(180deg, #E8B13A, #BD7E16)',
               color: '#1A1206',

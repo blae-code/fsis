@@ -13,7 +13,7 @@ const CATEGORY_META = {
   service: { label: 'SERVICE', icon: Wrench },
 };
 
-export default function ProductCard({ product, onAdd }) {
+export default function ProductCard({ product, onAdd, onView }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
   const FallbackIcon = meta.icon;
@@ -21,7 +21,8 @@ export default function ProductCard({ product, onAdd }) {
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col">
       <div
-        className="relative flex flex-col gap-3 p-4 border flex-1"
+        onClick={() => onView?.(product)}
+        className="relative flex flex-col gap-3 p-4 border flex-1 cursor-pointer hover:brightness-110 transition-all"
         style={{
           borderColor: '#5C4A33',
           clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
@@ -77,7 +78,7 @@ export default function ProductCard({ product, onAdd }) {
             </span>
             <button
               disabled={!inStock}
-              onClick={() => onAdd(product)}
+              onClick={(e) => { e.stopPropagation(); onAdd(product); }}
               className="h-8 px-5 rounded-full font-mono text-[11px] font-bold inline-flex items-center gap-1 disabled:opacity-40 disabled:pointer-events-none hover:brightness-110 transition-all"
               style={{
                 background: 'linear-gradient(180deg, #E8B13A, #BD7E16)',

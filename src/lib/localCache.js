@@ -51,6 +51,7 @@ export const localCache = {
 const STORE_KEYS = {
   customer: 'fsis.store.customer',
   cart: 'fsis.store.cart',
+  trackingCodes: 'fsis.store.tracking_codes',
 };
 
 export const storeCache = {
@@ -58,4 +59,9 @@ export const storeCache = {
   setCustomer: (profile) => write(STORE_KEYS.customer, profile),
   getCart: () => read(STORE_KEYS.cart) || [],
   setCart: (cart) => write(STORE_KEYS.cart, cart),
+  getTrackingCodes: () => read(STORE_KEYS.trackingCodes) || [],
+  addTrackingCode: (code) => {
+    const codes = read(STORE_KEYS.trackingCodes) || [];
+    if (!codes.includes(code)) write(STORE_KEYS.trackingCodes, [code, ...codes].slice(0, 20));
+  },
 };

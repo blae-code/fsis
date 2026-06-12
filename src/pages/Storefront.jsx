@@ -12,6 +12,7 @@ import AboutFsis from '@/components/store/AboutFsis';
 import StoreToolbar from '@/components/store/StoreToolbar';
 import StoreTabs from '@/components/store/StoreTabs';
 import MarketTicker from '@/components/store/MarketTicker';
+import ProductDetail from '@/components/store/ProductDetail';
 import FsisLogo from '@/components/brand/FsisLogo';
 import HeroScanBay from '@/components/store/HeroScanBay';
 import { FSIS } from '@/lib/fsisLore';
@@ -23,6 +24,7 @@ export default function Storefront() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [tab, setTab] = useState('catalog');
+  const [detailProduct, setDetailProduct] = useState(null);
 
   // Persist in-progress cart so returning purchasers pick up where they left off
   useEffect(() => {
@@ -39,11 +41,11 @@ export default function Storefront() {
     queryFn: () => base44.auth.me(),
   });
 
-  const addToCart = (product) => {
+  const addToCart = (product, qty = 1) => {
     setCart((prev) => {
       const existing = prev.find((i) => i.product_id === product.id);
       if (existing) {
-        return prev.map((i) => i.product_id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
+        return prev.map((i) => i.product_id === product.id ? { ...i, quantity: i.quantity + qty } : i);
       }
       return [...prev, {
         product_id: product.id,
@@ -51,7 +53,7 @@ export default function Storefront() {
         code: product.code,
         unit: product.unit || 'SCU',
         unit_price: product.price_auec,
-        quantity: 1,
+        quantity: qty,
       }];
     });
   };
@@ -144,7 +146,7 @@ export default function Storefront() {
                     {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your search.'}
                   </p>
                 ) : (
-                  filteredProducts.map((p) => <ProductCard key={p.id} product={p} onAdd={addToCart} />)
+                  filteredProducts.map((p) => <ProductCard key={p.id} product={p} onAdd={addToCart} onView={setDetailProduct} />)
                 )}
               </div>
             )}
@@ -158,6 +160,14 @@ export default function Storefront() {
           <OrderPanel cart={cart} setCart={setCart} user={user} />
         </div>
       </main>
+
+      <ProductDetail
+        product={detailProduct}
+        products={products}
+        onClose={() => setDetailProduct(null)}
+        onAdd={addToCart}
+        onView={setDetailProduct}
+      />
 
       <footer className="shrink-0 border-t py-1.5 px-4 flex flex-wrap items-center justify-center gap-x-4" style={{ borderColor: '#2A2118' }}>
         <p className="text-[9px] font-mono" style={{ color: '#6B6155' }}>

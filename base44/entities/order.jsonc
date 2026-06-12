@@ -6,6 +6,10 @@
       "type": "string",
       "description": "Customer's in-game handle / display name"
     },
+    "tracking_code": {
+      "type": "string",
+      "description": "Public tracking code given to the buyer, e.g. FSIS-3F9A2C"
+    },
     "items": {
       "type": "array",
       "description": "Ordered line items",
