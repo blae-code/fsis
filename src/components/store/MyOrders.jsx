@@ -3,7 +3,8 @@ import { storeCache } from '@/lib/localCache';
 import { trackOrder } from '@/functions/trackOrder';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { PackageCheck, Search, Loader2, RotateCcw, KeyRound } from 'lucide-react';
+import { PackageCheck, Search, Loader2, RotateCcw, KeyRound, FileDown } from 'lucide-react';
+import { downloadInvoice } from '@/lib/invoicePdf';
 import OrderTimeline from '@/components/store/OrderTimeline';
 import { etaFor } from '@/lib/storeLocations';
 
@@ -105,15 +106,35 @@ export default function MyOrders({ onReorder }) {
                 <div className="text-xs font-mono font-bold" style={{ color: '#E0A22E' }}>
                   {(o.total_auec || 0).toLocaleString()} aUEC
                 </div>
-                {onReorder && (o.items || []).length > 0 && (
+                <div className="flex gap-1.5">
                   <button
-                    onClick={() => onReorder(o.items)}
+                    onClick={() => downloadInvoice({
+                      tracking_code: o.tracking_code,
+                      handle: o.customer_handle,
+                      location: o.delivery_location,
+                      items: o.items,
+                      total: o.total_auec,
+                      discount_auec: o.discount_auec,
+                      discount_percent: o.discount_percent,
+                      discount_code: o.discount_code,
+                      passphrase: o.handoff_passphrase,
+                      placed_date: o.created_date,
+                    })}
                     className="px-2.5 py-1 font-mono text-[9px] font-bold border inline-flex items-center gap-1 hover:brightness-125 transition-all"
                     style={{ borderColor: '#5C4424', color: '#C8A05B', background: '#161310' }}
                   >
-                    <RotateCcw className="w-2.5 h-2.5" /> REORDER
+                    <FileDown className="w-2.5 h-2.5" /> INVOICE
                   </button>
-                )}
+                  {onReorder && (o.items || []).length > 0 && (
+                    <button
+                      onClick={() => onReorder(o.items)}
+                      className="px-2.5 py-1 font-mono text-[9px] font-bold border inline-flex items-center gap-1 hover:brightness-125 transition-all"
+                      style={{ borderColor: '#5C4424', color: '#C8A05B', background: '#161310' }}
+                    >
+                      <RotateCcw className="w-2.5 h-2.5" /> REORDER
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
             {o.handoff_passphrase && !['delivered', 'cancelled'].includes(o.status) && (

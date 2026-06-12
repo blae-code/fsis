@@ -1,5 +1,6 @@
 import React from 'react';
-import { CheckCircle2, KeyRound } from 'lucide-react';
+import { CheckCircle2, KeyRound, FileDown } from 'lucide-react';
+import { downloadInvoice } from '@/lib/invoicePdf';
 import FsisLogo from '@/components/brand/FsisLogo';
 import SerialStrip from '@/components/brand/SerialStrip';
 import { FSIS } from '@/lib/fsisLore';
@@ -67,6 +68,13 @@ export default function ManifestReceipt({ order }) {
             </p>
           </div>
         )}
+        <button
+          onClick={() => downloadInvoice(order)}
+          className="w-full h-8 font-mono text-[10px] font-bold inline-flex items-center justify-center gap-1.5 border hover:brightness-125 transition-all"
+          style={{ borderColor: '#5C4424', color: '#C8A05B', background: '#161310' }}
+        >
+          <FileDown className="w-3 h-3" /> DOWNLOAD INVOICE (PDF)
+        </button>
         <SerialStrip seed={order.tracking_code} label={`ISSUED ${new Date().toLocaleDateString()}`} />
         <p className="text-[8px]" style={{ color: '#6B6155' }}>
           Saved on this device — track anytime under MY ORDERS. "{FSIS.motto}"
