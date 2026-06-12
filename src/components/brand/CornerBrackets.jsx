@@ -1,7 +1,7 @@
 import React from 'react';
 
 /** HUD-style corner brackets overlay — wrap inside a relative parent */
-export default function CornerBrackets({ size = 10, color = 'hsl(168, 65%, 45%, 0.45)' }) {
+export default function CornerBrackets({ size = 10, color = 'rgba(200, 160, 91, 0.5)' }) {
   const base = {
     position: 'absolute',
     width: size,

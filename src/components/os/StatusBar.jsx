@@ -41,8 +41,8 @@ export default function StatusBar() {
     <motion.div
       className="h-10 flex items-center justify-between px-4 relative z-[200] select-none"
       style={{
-        background: 'linear-gradient(to right, hsl(180, 12%, 6%, 0.95), hsl(180, 15%, 5%, 0.95))',
-        borderBottom: '1px solid hsl(170, 25%, 18%, 0.4)',
+        background: 'linear-gradient(to right, hsl(30, 12%, 6%, 0.95), hsl(30, 10%, 5%, 0.95))',
+        borderBottom: '1px solid hsl(33, 18%, 17%, 0.6)',
         backdropFilter: 'blur(12px)',
       }}
       initial={{ y: -40 }}

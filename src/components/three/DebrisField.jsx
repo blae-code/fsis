@@ -16,8 +16,8 @@ export default function DebrisField() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     mount.appendChild(renderer.domElement);
 
-    const jade = new THREE.LineBasicMaterial({ color: 0x2ebfa5, transparent: true, opacity: 0.16 });
-    const jadeDim = new THREE.LineBasicMaterial({ color: 0x2ebfa5, transparent: true, opacity: 0.07 });
+    const jade = new THREE.LineBasicMaterial({ color: 0xc89853, transparent: true, opacity: 0.16 });
+    const jadeDim = new THREE.LineBasicMaterial({ color: 0x6e89a8, transparent: true, opacity: 0.08 });
 
     const group = new THREE.Group();
     const geos = [
@@ -41,7 +41,7 @@ export default function DebrisField() {
     // Central derelict hull — large stretched wireframe
     const hull = new THREE.LineSegments(
       new THREE.EdgesGeometry(new THREE.CylinderGeometry(1.2, 1.8, 6, 6, 2)),
-      new THREE.LineBasicMaterial({ color: 0x2ebfa5, transparent: true, opacity: 0.1 })
+      new THREE.LineBasicMaterial({ color: 0xb0793a, transparent: true, opacity: 0.1 })
     );
     hull.rotation.z = Math.PI / 3;
     hull.position.set(0, 0.5, -6);

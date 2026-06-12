@@ -17,7 +17,7 @@ const AuthenticatedApp = () => {
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center" style={{ background: 'hsl(180, 15%, 4%)' }}>
+      <div className="fixed inset-0 flex items-center justify-center" style={{ background: 'hsl(30, 10%, 4%)' }}>
         <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div>
       </div>
     );

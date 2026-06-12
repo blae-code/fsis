@@ -53,16 +53,16 @@ export default function BootSequence({ onComplete }) {
       {phase !== 'done' && (
         <motion.div
           className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
-          style={{ background: 'hsl(180, 15%, 4%)' }}
+          style={{ background: 'hsl(30, 10%, 4%)' }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1.2 }}
         >
           {/* Ambient organic background shapes */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-[0.03] animate-breathe"
-              style={{ background: 'radial-gradient(circle, hsl(168, 80%, 55%), transparent)', filter: 'blur(80px)' }} />
+              style={{ background: 'radial-gradient(circle, hsl(38, 80%, 55%), transparent)', filter: 'blur(80px)' }} />
             <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full opacity-[0.04] animate-breathe"
-              style={{ background: 'radial-gradient(circle, hsl(155, 50%, 45%), transparent)', filter: 'blur(60px)', animationDelay: '2s' }} />
+              style={{ background: 'radial-gradient(circle, hsl(20, 60%, 45%), transparent)', filter: 'blur(60px)', animationDelay: '2s' }} />
           </div>
 
           {/* Scan line effect */}
@@ -98,7 +98,7 @@ export default function BootSequence({ onComplete }) {
 
                 <motion.h1
                   className="text-7xl md:text-8xl font-bold tracking-[0.3em] font-mono xian-glow"
-                  style={{ color: 'hsl(168, 65%, 45%)' }}
+                  style={{ color: 'hsl(38, 72%, 52%)' }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 1.2 }}
@@ -112,16 +112,16 @@ export default function BootSequence({ onComplete }) {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.2, duration: 0.8 }}
                 >
-                  <div className="h-px flex-1 max-w-16" style={{ background: 'linear-gradient(to right, transparent, hsl(168, 65%, 45%, 0.4))' }} />
-                  <span className="text-sm tracking-[0.4em] uppercase font-mono" style={{ color: 'hsl(168, 65%, 45%, 0.7)' }}>
+                  <div className="h-px flex-1 max-w-16" style={{ background: 'linear-gradient(to right, transparent, hsl(38, 72%, 52%, 0.4))' }} />
+                  <span className="text-sm tracking-[0.4em] uppercase font-mono" style={{ color: 'hsl(38, 72%, 52%, 0.7)' }}>
                     FairShare Industrial Solutions
                   </span>
-                  <div className="h-px flex-1 max-w-16" style={{ background: 'linear-gradient(to left, transparent, hsl(168, 65%, 45%, 0.4))' }} />
+                  <div className="h-px flex-1 max-w-16" style={{ background: 'linear-gradient(to left, transparent, hsl(38, 72%, 52%, 0.4))' }} />
                 </motion.div>
 
                 <motion.p
                   className="mt-6 text-xs tracking-[0.25em] uppercase font-mono"
-                  style={{ color: 'hsl(165, 20%, 50%, 0.5)' }}
+                  style={{ color: 'hsl(35, 12%, 52%, 0.6)' }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 1.8, duration: 0.8 }}

@@ -25,8 +25,8 @@ export default function Dock() {
       <div
         className="relative px-6 py-4 mx-auto xian-border-glow"
         style={{
-          background: 'linear-gradient(135deg, hsl(180, 12%, 7%, 0.9) 0%, hsl(180, 15%, 5%, 0.85) 100%)',
-          border: '1px solid hsl(170, 25%, 18%, 0.35)',
+          background: 'linear-gradient(135deg, hsl(30, 10%, 7%, 0.9) 0%, hsl(30, 10%, 5%, 0.85) 100%)',
+          border: '1px solid hsl(33, 18%, 17%, 0.5)',
           borderRadius: '24px 32px 24px 32px', // asymmetric organic
           backdropFilter: 'blur(16px)',
           maxWidth: 'fit-content',
@@ -36,7 +36,7 @@ export default function Dock() {
         <div
           className="absolute top-0 left-8 right-8 h-px"
           style={{
-            background: 'linear-gradient(to right, transparent, hsl(168, 65%, 45%, 0.3), transparent)',
+            background: 'linear-gradient(to right, transparent, hsl(38, 72%, 52%, 0.35), transparent)',
           }}
         />
 

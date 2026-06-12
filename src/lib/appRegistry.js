@@ -1,5 +1,6 @@
 // Central registry for all FSIS modules/apps
 // To add a new app, import it and add to the APPS array
+// Accent palette: warm metals + steel blues. Red/yellow/green reserved for status.
 
 const APPS = [
   {
@@ -8,7 +9,7 @@ const APPS = [
     description: 'Salvage operations & inventory',
     icon: 'Wrench',
     status: 'coming-online', // 'active' | 'coming-online' | 'offline'
-    color: 'hsl(168, 65%, 45%)',
+    color: 'hsl(38, 75%, 52%)', // amber
   },
   {
     id: 'routemap',
@@ -16,7 +17,7 @@ const APPS = [
     description: 'Jump paths to salvage terminals',
     icon: 'Map',
     status: 'active',
-    color: 'hsl(200, 55%, 45%)',
+    color: 'hsl(210, 45%, 55%)', // steel blue
   },
   {
     id: 'cargo',
@@ -24,7 +25,7 @@ const APPS = [
     description: 'Cargo manifest & hauling',
     icon: 'Package',
     status: 'coming-online',
-    color: 'hsl(155, 50%, 35%)',
+    color: 'hsl(20, 60%, 50%)', // rust copper
   },
   {
     id: 'ledger',
@@ -32,7 +33,7 @@ const APPS = [
     description: 'Income & operating costs',
     icon: 'BookOpen',
     status: 'active',
-    color: 'hsl(180, 40%, 30%)',
+    color: 'hsl(220, 30%, 58%)', // slate blue
   },
   {
     id: 'contracts',
@@ -40,7 +41,7 @@ const APPS = [
     description: 'Jobs & agreements',
     icon: 'FileText',
     status: 'coming-online',
-    color: 'hsl(145, 45%, 40%)',
+    color: 'hsl(30, 45%, 45%)', // bronze
   },
   {
     id: 'comms',
@@ -48,7 +49,7 @@ const APPS = [
     description: 'OD3ICA SRS relay & net plan',
     icon: 'Radio',
     status: 'active',
-    color: 'hsl(190, 50%, 35%)',
+    color: 'hsl(18, 65%, 52%)', // burnt orange
   },
   {
     id: 'orders',
@@ -56,7 +57,7 @@ const APPS = [
     description: 'Customer order desk & fulfillment',
     icon: 'ClipboardList',
     status: 'active',
-    color: 'hsl(190, 55%, 45%)',
+    color: 'hsl(205, 45%, 55%)', // sky steel
   },
   {
     id: 'fabrication',
@@ -64,7 +65,7 @@ const APPS = [
     description: 'Crafting recipes & material planning',
     icon: 'Factory',
     status: 'active',
-    color: 'hsl(35, 60%, 45%)',
+    color: 'hsl(28, 70%, 48%)', // copper
   },
   {
     id: 'about',
@@ -72,7 +73,7 @@ const APPS = [
     description: 'System info & disclaimer',
     icon: 'Info',
     status: 'active',
-    color: 'hsl(170, 30%, 40%)',
+    color: 'hsl(40, 18%, 65%)', // bone
   },
 ];
 

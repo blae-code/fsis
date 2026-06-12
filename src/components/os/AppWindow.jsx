@@ -112,9 +112,9 @@ export default function AppWindow({ window: win }) {
       <div
         className="w-full h-full flex flex-col rounded-lg overflow-hidden"
         style={{
-          background: 'hsl(200, 10%, 10%)',
-          border: '1px solid hsl(170, 25%, 18%, 0.4)',
-          boxShadow: '0 8px 32px hsl(180, 15%, 2%, 0.6), 0 0 1px hsl(168, 65%, 45%, 0.1)',
+          background: 'hsl(28, 8%, 9%)',
+          border: '1px solid hsl(33, 18%, 17%, 0.6)',
+          boxShadow: '0 8px 32px hsl(30, 15%, 2%, 0.6), 0 0 1px hsl(38, 72%, 52%, 0.12)',
         }}
       >
         {/* Window header - draggable */}
@@ -122,8 +122,8 @@ export default function AppWindow({ window: win }) {
           ref={dragRef}
           className="flex items-center justify-between px-4 h-10 shrink-0 cursor-move"
           style={{
-            background: 'linear-gradient(to right, hsl(180, 15%, 12%), hsl(180, 12%, 10%))',
-            borderBottom: '1px solid hsl(170, 25%, 18%, 0.3)',
+            background: 'linear-gradient(to right, hsl(30, 12%, 12%), hsl(30, 10%, 10%))',
+            borderBottom: '1px solid hsl(33, 18%, 17%, 0.5)',
           }}
           onMouseDown={onDragStart}
           onTouchStart={onDragStart}
