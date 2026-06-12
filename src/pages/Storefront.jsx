@@ -18,6 +18,8 @@ import ExchangeBoard from '@/components/store/ExchangeBoard';
 import QuoteBuilder from '@/components/store/QuoteBuilder';
 import OpsFeed from '@/components/store/OpsFeed';
 import JobsBoard from '@/components/store/JobsBoard';
+import StoreOnboarding from '@/components/store/StoreOnboarding';
+import { AnimatePresence } from 'framer-motion';
 import SystemStatus from '@/components/store/SystemStatus';
 import { FSIS } from '@/lib/fsisLore';
 
@@ -29,6 +31,7 @@ export default function Storefront() {
   const [category, setCategory] = useState('all');
   const [tab, setTab] = useState('catalog');
   const [detailProduct, setDetailProduct] = useState(null);
+  const [showOnboarding, setShowOnboarding] = useState(() => !storeCache.hasOnboarded());
 
   // Persist in-progress cart so returning purchasers pick up where they left off
   useEffect(() => {
@@ -109,6 +112,17 @@ export default function Storefront() {
 
   return (
     <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#0C0B0A' }}>
+      <AnimatePresence>
+        {showOnboarding && (
+          <StoreOnboarding
+            onComplete={() => {
+              storeCache.markOnboarded();
+              setShowOnboarding(false);
+            }}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <header className="shrink-0 border-b z-10" style={{ borderColor: '#2A2118', background: 'rgba(12, 11, 10, 0.92)' }}>
         <div className="max-w-[1720px] mx-auto px-4 2xl:px-8 py-2.5 flex items-center justify-between">
@@ -231,6 +245,9 @@ export default function Storefront() {
         <p className="text-[9px] font-mono" style={{ color: '#8A7E6C' }}>
           All prices in aUEC. Unofficial fan project — not affiliated with Cloud Imperium Games.
         </p>
+        <button onClick={() => setShowOnboarding(true)} className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#C8A05B' }}>
+          SETUP GUIDE
+        </button>
       </footer>
     </div>
   );
