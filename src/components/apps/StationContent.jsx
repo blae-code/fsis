@@ -6,7 +6,7 @@ import { MonitorDot } from 'lucide-react';
 import SalvageOpsView from '@/components/apps/station/SalvageOpsView';
 import HaulerView from '@/components/apps/station/HaulerView';
 import ManagementView from '@/components/apps/station/ManagementView';
-import MyPaydayPanel from '@/components/apps/station/MyPaydayPanel';
+import ContractorPaydayView from '@/components/apps/station/ContractorPaydayView';
 
 const ROLES = [
   { id: 'salvage_operator', label: 'SALVAGE OPERATOR' },
@@ -55,22 +55,17 @@ export default function StationContent() {
         </Select>
       </div>
 
-      <div className="flex-1 overflow-auto p-4 font-mono">
+      <div className="flex-1 overflow-auto p-4 font-mono space-y-4">
+        <ContractorPaydayView />
         {!role ? (
           <div className="text-center py-12">
             <MonitorDot className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
             <p className="text-xs font-mono text-muted-foreground">Select your duty role above to load your station view.</p>
           </div>
         ) : role === 'salvage_operator' ? (
-          <>
-            <MyPaydayPanel />
-            <SalvageOpsView />
-          </>
+          <SalvageOpsView />
         ) : role === 'cargo_hauler' ? (
-          <>
-            <MyPaydayPanel />
-            <HaulerView />
-          </>
+          <HaulerView />
         ) : (
           <ManagementView />
         )}
