@@ -5,11 +5,11 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, R
 import { BarChart3 } from 'lucide-react';
 
 const COMMODITY_NAMES = { RMC: 'Recycled Material Composite', CMR: 'Construction Mat. (Reclaimed)', CMS: 'Construction Mat. (Salvaged)' };
-const BAR_COLORS = ['hsl(38, 75%, 55%)', 'hsl(210, 45%, 55%)', 'hsl(20, 60%, 50%)'];
+const BAR_COLORS = ['hsl(42, 85%, 60%)', 'hsl(20, 60%, 50%)', 'hsl(210, 45%, 55%)'];
 
 const tooltipStyle = {
-  background: 'hsl(30, 12%, 7%)',
-  border: '1px solid hsl(33, 18%, 17%)',
+  background: 'hsl(30, 10%, 7%)',
+  border: '1px solid hsl(33, 18%, 18%)',
   borderRadius: 4,
   fontSize: 10,
   fontFamily: 'JetBrains Mono, monospace',
@@ -58,16 +58,16 @@ export default function SalvageAnalytics({ bestPrices }) {
   return (
     <div className="p-4 space-y-5 font-mono">
       {/* Profit per session */}
-      <div className="rounded border p-3" style={{ borderColor: 'hsl(33, 18%, 17%)', background: 'hsl(30, 12%, 8%)' }}>
+      <div className="rounded border p-3" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 8%)' }}>
         <div className="text-[9px] text-muted-foreground tracking-[0.2em] mb-3">ESTIMATED PROFIT PER SESSION (aUEC)</div>
         <ResponsiveContainer width="100%" height={200}>
           <LineChart data={profitData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-            <CartesianGrid stroke="hsl(33, 18%, 17%)" strokeDasharray="3 3" opacity={0.4} />
-            <XAxis dataKey="date" tick={{ fontSize: 9, fill: 'hsl(35, 12%, 52%)', fontFamily: 'monospace' }} stroke="hsl(33, 18%, 17%)" />
-            <YAxis tick={{ fontSize: 9, fill: 'hsl(35, 12%, 52%)', fontFamily: 'monospace' }} stroke="hsl(33, 18%, 17%)" tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
+            <CartesianGrid stroke="hsl(33, 18%, 18%)" strokeDasharray="3 3" opacity={0.4} />
+            <XAxis dataKey="date" tick={{ fontSize: 9, fill: 'hsl(35, 12%, 52%)', fontFamily: 'monospace' }} stroke="hsl(33, 18%, 18%)" />
+            <YAxis tick={{ fontSize: 9, fill: 'hsl(35, 12%, 52%)', fontFamily: 'monospace' }} stroke="hsl(33, 18%, 18%)" tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
             <Tooltip
               contentStyle={tooltipStyle}
-              labelStyle={{ color: 'hsl(38, 20%, 82%)' }}
+              labelStyle={{ color: 'hsl(38, 25%, 85%)' }}
               formatter={(v) => [`${v.toLocaleString()} aUEC`, 'Est. profit']}
             />
             <Line type="monotone" dataKey="profit" stroke="hsl(42, 85%, 60%)" strokeWidth={2} dot={{ r: 3, fill: 'hsl(42, 85%, 60%)' }} />
@@ -76,18 +76,18 @@ export default function SalvageAnalytics({ bestPrices }) {
       </div>
 
       {/* Commodity value processed */}
-      <div className="rounded border p-3" style={{ borderColor: 'hsl(33, 18%, 17%)', background: 'hsl(30, 12%, 8%)' }}>
+      <div className="rounded border p-3" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 8%)' }}>
         <div className="text-[9px] text-muted-foreground tracking-[0.2em] mb-3">
           MOST VALUABLE COMMODITIES PROCESSED {hasPriceData ? '(aUEC @ BEST SELL)' : '(SCU — no price data synced)'}
         </div>
         <ResponsiveContainer width="100%" height={200}>
           <BarChart data={commodityData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-            <CartesianGrid stroke="hsl(33, 18%, 17%)" strokeDasharray="3 3" opacity={0.4} />
-            <XAxis dataKey="code" tick={{ fontSize: 10, fill: 'hsl(38, 20%, 82%)', fontFamily: 'monospace' }} stroke="hsl(33, 18%, 17%)" />
-            <YAxis tick={{ fontSize: 9, fill: 'hsl(35, 12%, 52%)', fontFamily: 'monospace' }} stroke="hsl(33, 18%, 17%)" tickFormatter={(v) => v >= 1000000 ? `${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
+            <CartesianGrid stroke="hsl(33, 18%, 18%)" strokeDasharray="3 3" opacity={0.4} />
+            <XAxis dataKey="code" tick={{ fontSize: 10, fill: 'hsl(38, 25%, 85%)', fontFamily: 'monospace' }} stroke="hsl(33, 18%, 18%)" />
+            <YAxis tick={{ fontSize: 9, fill: 'hsl(35, 12%, 52%)', fontFamily: 'monospace' }} stroke="hsl(33, 18%, 18%)" tickFormatter={(v) => v >= 1000000 ? `${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v} />
             <Tooltip
               contentStyle={tooltipStyle}
-              labelStyle={{ color: 'hsl(38, 20%, 82%)' }}
+              labelStyle={{ color: 'hsl(38, 25%, 85%)' }}
               formatter={(v, key, { payload }) =>
                 hasPriceData
                   ? [`${v.toLocaleString()} aUEC (${payload.scu.toLocaleString()} SCU)`, COMMODITY_NAMES[payload.code]]
