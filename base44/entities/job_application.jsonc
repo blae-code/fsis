@@ -1,0 +1,58 @@
+{
+  "name": "job_application",
+  "type": "object",
+  "properties": {
+    "posting_id": {
+      "type": "string",
+      "description": "Job posting applied to"
+    },
+    "posting_title": {
+      "type": "string",
+      "description": "Posting title at apply time"
+    },
+    "handle": {
+      "type": "string",
+      "description": "Applicant's in-game handle"
+    },
+    "contact": {
+      "type": "string",
+      "description": "How to reach them \u2014 Spectrum, Discord, email"
+    },
+    "pitch": {
+      "type": "string",
+      "description": "Relevant skills and experience"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "accepted",
+        "declined"
+      ],
+      "default": "new",
+      "description": "Review status"
+    }
+  },
+  "required": [
+    "posting_id",
+    "handle"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

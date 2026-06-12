@@ -17,6 +17,7 @@ import FsisLogo from '@/components/brand/FsisLogo';
 import ExchangeBoard from '@/components/store/ExchangeBoard';
 import QuoteBuilder from '@/components/store/QuoteBuilder';
 import OpsFeed from '@/components/store/OpsFeed';
+import JobsBoard from '@/components/store/JobsBoard';
 import SystemStatus from '@/components/store/SystemStatus';
 import { FSIS } from '@/lib/fsisLore';
 
@@ -195,6 +196,7 @@ export default function Storefront() {
             )}
             {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty) => { addToCart(p, qty); }} />}
             {tab === 'orders' && <MyOrders onReorder={reorder} />}
+            {tab === 'jobs' && <JobsBoard />}
             {tab === 'about' && (
               <>
                 <SystemStatus />

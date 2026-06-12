@@ -4,6 +4,9 @@ import WorkOrderForm from '@/components/apps/fairshare/WorkOrderForm';
 import WorkOrderList from '@/components/apps/fairshare/WorkOrderList';
 import CrewRoster from '@/components/apps/fairshare/CrewRoster';
 import PayrollTable from '@/components/apps/fairshare/PayrollTable';
+import TimeLogs from '@/components/apps/fairshare/TimeLogs';
+import PaydayPanel from '@/components/apps/fairshare/PaydayPanel';
+import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin';
 
 // FairShare: Regolith-style work orders with crew profit-sharing.
 // Gross sale − expenses = net, split by share weight across the crew.
@@ -32,6 +35,24 @@ export default function FairShareContent() {
           >
             PAYROLL
           </TabsTrigger>
+          <TabsTrigger
+            value="time"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            TIME &amp; SHARES
+          </TabsTrigger>
+          <TabsTrigger
+            value="payday"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            PAY DAY
+          </TabsTrigger>
+          <TabsTrigger
+            value="jobs"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            JOB BOARD
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="orders" className="flex-1 overflow-auto m-0">
@@ -47,6 +68,18 @@ export default function FairShareContent() {
 
         <TabsContent value="payroll" className="flex-1 overflow-auto m-0">
           <PayrollTable />
+        </TabsContent>
+
+        <TabsContent value="time" className="flex-1 overflow-auto m-0">
+          <TimeLogs />
+        </TabsContent>
+
+        <TabsContent value="payday" className="flex-1 overflow-auto m-0">
+          <PaydayPanel />
+        </TabsContent>
+
+        <TabsContent value="jobs" className="flex-1 overflow-auto m-0">
+          <JobBoardAdmin />
         </TabsContent>
       </Tabs>
 

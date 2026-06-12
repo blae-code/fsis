@@ -1,0 +1,61 @@
+{
+  "name": "time_log",
+  "type": "object",
+  "properties": {
+    "handle": {
+      "type": "string",
+      "description": "Crew member handle the time belongs to"
+    },
+    "work_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the work took place"
+    },
+    "minutes": {
+      "type": "number",
+      "description": "Confirmed minutes of participation in FSIS work"
+    },
+    "shares": {
+      "type": "number",
+      "description": "Shares earned: 1 share per 20 confirmed minutes"
+    },
+    "description": {
+      "type": "string",
+      "description": "What work was performed, e.g. 'Reclaimer hull scraping, Aaron Halo'"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "confirmed",
+        "cashed"
+      ],
+      "default": "confirmed",
+      "description": "Confirmed = earned, awaiting pay day; cashed = paid out"
+    },
+    "payday_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Pay day this log was cashed on"
+    },
+    "payout_auec": {
+      "type": "number",
+      "description": "aUEC paid for these shares at cash-in"
+    }
+  },
+  "required": [
+    "handle",
+    "minutes"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
