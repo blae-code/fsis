@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-// OD3ICA background agent: triggered by entity automation when a new salvage_scan
+// FSIS.bot background agent: triggered by entity automation when a new salvage_scan
 // is created. Dispatches by scan type:
 //   ship-hud / manifest -> sync RMC/CMR/CMS quantities to the active salvage session
 //   terminal            -> record OCR'd sell prices as price history snapshots
@@ -22,7 +22,7 @@ async function handleCargoScan(base44, scan) {
 
   if (Object.keys(quantities).length === 0) {
     await base44.asServiceRole.entities.salvage_scan.update(scan.id, {
-      applied_changes: 'OD3ICA: no RMC/CMR/CMS quantities readable in this scan — inventory unchanged.',
+      applied_changes: 'FSIS.bot: no RMC/CMR/CMS quantities readable in this scan — inventory unchanged.',
     });
     return { skipped: true, reason: 'No salvage quantities detected' };
   }
@@ -41,7 +41,7 @@ async function handleCargoScan(base44, scan) {
 
   if (!session) {
     await base44.asServiceRole.entities.salvage_scan.update(scan.id, {
-      applied_changes: 'OD3ICA: no active salvage session found — start a session and re-run this scan.',
+      applied_changes: 'FSIS.bot: no active salvage session found — start a session and re-run this scan.',
     });
     return { skipped: true, reason: 'No active session' };
   }
@@ -61,7 +61,7 @@ async function handleCargoScan(base44, scan) {
     auto_applied: true,
     applied_session_id: session.id,
     applied_session_name: session.session_name,
-    applied_changes: `OD3ICA synced "${session.session_name}" — ${changeParts.join(', ')}`,
+    applied_changes: `FSIS.bot synced "${session.session_name}" — ${changeParts.join(', ')}`,
   });
 
   console.log(`Applied cargo scan ${scan.id} to session ${session.id}: ${changeParts.join(', ')}`);
@@ -86,7 +86,7 @@ async function handleTerminalScan(base44, scan) {
 
   if (snapshots.length === 0) {
     await base44.asServiceRole.entities.salvage_scan.update(scan.id, {
-      applied_changes: 'OD3ICA: no RMC/CMR/CMS sell prices readable in this terminal scan.',
+      applied_changes: 'FSIS.bot: no RMC/CMR/CMS sell prices readable in this terminal scan.',
     });
     return { skipped: true, reason: 'No prices detected' };
   }
@@ -95,7 +95,7 @@ async function handleTerminalScan(base44, scan) {
   const parts = snapshots.map((s) => `${s.commodity_code} @ ${s.best_sell} aUEC`);
   await base44.asServiceRole.entities.salvage_scan.update(scan.id, {
     auto_applied: true,
-    applied_changes: `OD3ICA logged ${snapshots.length} price snapshot${snapshots.length === 1 ? '' : 's'} to market history — ${parts.join(', ')}`,
+    applied_changes: `FSIS.bot logged ${snapshots.length} price snapshot${snapshots.length === 1 ? '' : 's'} to market history — ${parts.join(', ')}`,
   });
 
   console.log(`Terminal scan ${scan.id}: recorded ${snapshots.length} price snapshots`);
@@ -115,12 +115,12 @@ async function handleContractScan(base44, scan) {
     destination: x.location || '',
     cargo: x.objective || '',
     status: 'open',
-    notes: `Auto-drafted by OD3ICA from a contract scan. ${scan.summary || ''}`.trim(),
+    notes: `Auto-drafted by FSIS.bot from a contract scan. ${scan.summary || ''}`.trim(),
   });
 
   await base44.asServiceRole.entities.salvage_scan.update(scan.id, {
     auto_applied: true,
-    applied_changes: `OD3ICA drafted contract "${title}"${payout ? ` (${payout.toLocaleString()} aUEC)` : ''} — review it on the Contracts board.`,
+    applied_changes: `FSIS.bot drafted contract "${title}"${payout ? ` (${payout.toLocaleString()} aUEC)` : ''} — review it on the Contracts board.`,
   });
 
   console.log(`Contract scan ${scan.id}: drafted contract ${contract.id}`);

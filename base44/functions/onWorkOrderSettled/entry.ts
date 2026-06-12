@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-// OD3ICA payroll agent: when a FairShare work order is settled, compute each
+// FSIS.bot payroll agent: when a FairShare work order is settled, compute each
 // crew member's payout and auto-log crew_pay expense entries in the Ledger.
 
 Deno.serve(async (req) => {
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
         description: `Crew payout — ${c.handle} (${c.shares} share${c.shares === 1 ? '' : 's'}) for ${wo.order_name}`,
         counterparty: c.handle,
         entry_date: today,
-        notes: `Auto-logged by OD3ICA payroll agent. ${dedupeTag}`,
+        notes: `Auto-logged by FSIS.bot payroll agent. ${dedupeTag}`,
       }));
 
     await svc.ledger_entry.bulkCreate(entries);

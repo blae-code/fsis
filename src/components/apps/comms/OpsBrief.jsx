@@ -9,7 +9,7 @@ import { Radio, RefreshCw, Loader2 } from 'lucide-react';
 const border = { borderColor: 'hsl(33, 18%, 18%)' };
 const panel = { ...border, background: 'hsl(30, 10%, 8%)' };
 
-// OD3ICA daily ops briefings — AI-composed each morning, on-demand refresh for admins.
+// FSIS.bot daily ops briefings — AI-composed each morning, on-demand refresh for admins.
 export default function OpsBrief() {
   const queryClient = useQueryClient();
 
@@ -36,7 +36,7 @@ export default function OpsBrief() {
     <div className="p-4 space-y-3 font-mono">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-[10px] text-muted-foreground tracking-[0.2em]">
-          <Radio className="w-3.5 h-3.5 text-primary" /> OD3ICA OPS BRIEFINGS
+          <Radio className="w-3.5 h-3.5 text-primary" /> FSIS.bot OPS BRIEFINGS
         </div>
         {user?.role === 'admin' && (
           <Button
@@ -53,7 +53,7 @@ export default function OpsBrief() {
 
       {briefs.length === 0 ? (
         <p className="text-xs text-muted-foreground py-8 text-center">
-          No briefings on file — OD3ICA composes one every morning at 07:00, or hit BRIEF ME NOW.
+          No briefings on file — FSIS.bot composes one every morning at 07:00, or hit BRIEF ME NOW.
         </p>
       ) : briefs.map((b, i) => (
         <div key={b.id} className="p-3 rounded border space-y-2" style={panel}>

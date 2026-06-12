@@ -23,7 +23,7 @@ const CONF_STYLE = {
   low: 'border-destructive/40 text-destructive',
 };
 
-// OD3ICA scan log: every OCR pass and what the background agent did with it.
+// FSIS.bot scan log: every OCR pass and what the background agent did with it.
 export default function ScanLog() {
   const queryClient = useQueryClient();
   const [rerunningId, setRerunningId] = useState(null);
@@ -85,7 +85,7 @@ export default function ScanLog() {
                   onClick={() => { setRerunningId(scan.id); rerunMutation.mutate(scan); }}
                   disabled={rerunMutation.isPending}
                   className="text-muted-foreground hover:text-primary transition-colors"
-                  title="Re-run OD3ICA agent on this scan"
+                  title="Re-run FSIS.bot on this scan"
                 >
                   {rerunningId === scan.id ? <Loader2 className="w-3 h-3 animate-spin text-primary" /> : <RotateCw className="w-3 h-3" />}
                 </button>

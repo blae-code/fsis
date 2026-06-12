@@ -8,7 +8,7 @@ import ScanResult from './ScanResult';
 
 const border = { borderColor: 'hsl(33, 18%, 18%)' };
 
-// Cargo OCR: screenshot your ship's cargo readout and the OD3ICA background
+// Cargo OCR: screenshot your ship's cargo readout and the FSIS.bot background
 // agent auto-applies detected RMC/CMR/CMS quantities to your active session.
 export default function CargoScanner() {
   const [result, setResult] = useState(null);
@@ -40,7 +40,7 @@ export default function CargoScanner() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-[10px] font-mono text-muted-foreground">
-            Upload a screenshot of your ship's cargo readout or manifest. The OD3ICA background agent reads RMC/CMR/CMS quantities and syncs them to your active salvage session automatically — check the STOCK tab afterwards.
+            Upload a screenshot of your ship's cargo readout or manifest. The FSIS.bot background agent reads RMC/CMR/CMS quantities and syncs them to your active salvage session automatically — check the STOCK tab afterwards.
           </p>
           <ScanUploader
             scanType="ship-hud"
@@ -64,7 +64,7 @@ export default function CargoScanner() {
                 <Loader2 className="w-3.5 h-3.5 text-primary animate-spin shrink-0 mt-0.5" />
               )}
               <span className={agentDone && scan.auto_applied ? 'text-primary' : 'text-muted-foreground'}>
-                {agentDone ? scan.applied_changes : 'OD3ICA agent processing scan in background…'}
+                {agentDone ? scan.applied_changes : 'FSIS.bot processing scan in background…'}
               </span>
             </div>
           )}

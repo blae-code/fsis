@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-// OD3ICA order triage agent: when a storefront order is created, verify each
+// FSIS.bot order triage agent: when a storefront order is created, verify each
 // line item against live stock and pricing, annotate internal notes, and
 // auto-confirm the order if everything checks out.
 
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
 
     await svc.order.update(order.id, {
       status: allFulfillable ? 'confirmed' : 'new',
-      internal_notes: `OD3ICA AUTO-TRIAGE (${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC)\n${lines.join('\n')}\n${verdict}${order.internal_notes ? `\n---\n${order.internal_notes}` : ''}`,
+      internal_notes: `FSIS.bot AUTO-TRIAGE (${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC)\n${lines.join('\n')}\n${verdict}${order.internal_notes ? `\n---\n${order.internal_notes}` : ''}`,
     });
 
     console.log(`Order ${order.id} triaged: ${allFulfillable ? 'auto-confirmed' : 'flagged for review'}`);

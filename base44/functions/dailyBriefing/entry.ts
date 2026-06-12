@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-// OD3ICA briefing agent: runs on a daily schedule, gathers operational data
+// FSIS.bot briefing agent: runs on a daily schedule, gathers operational data
 // across the whole FSIS stack and uses AI to compose a morning ops brief.
 
 Deno.serve(async (req) => {
@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
     };
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `You are OD3ICA, the AI ops officer for Fairshare Industrial Solutions, a Star Citizen salvage company. Compose today's morning operations brief from this data:\n\n${JSON.stringify(stats, null, 2)}\n\nWrite a punchy one-line headline and a short markdown body (max 120 words): current ops tempo, anything needing attention (new orders to triage, unsettled crew payouts, open contracts), and a one-line market read from the latest prices. Stay in-universe, professional, no fluff.`,
+      prompt: `You are FSIS.bot, the AI ops officer for Fairshare Industrial Solutions, a Star Citizen salvage company. Compose today's morning operations brief from this data:\n\n${JSON.stringify(stats, null, 2)}\n\nWrite a punchy one-line headline and a short markdown body (max 120 words): current ops tempo, anything needing attention (new orders to triage, unsettled crew payouts, open contracts), and a one-line market read from the latest prices. Stay in-universe, professional, no fluff.`,
       response_json_schema: {
         type: 'object',
         properties: {

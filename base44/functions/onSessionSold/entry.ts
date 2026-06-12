@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-// OD3ICA settlement agent: when a salvage session is marked "sold",
+// FSIS.bot settlement agent: when a salvage session is marked "sold",
 // automatically log the income in the Ledger and draft a FairShare work
 // order pre-loaded with the active crew roster — no manual bookkeeping.
 
@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
         description: `Salvage sale — ${session.session_name} (${session.ship || 'unknown ship'})`,
         counterparty: session.location || '',
         entry_date: today,
-        notes: 'Auto-logged by OD3ICA settlement agent.',
+        notes: 'Auto-logged by FSIS.bot settlement agent.',
       });
       actions.push(`logged ${gross.toLocaleString()} aUEC income`);
     }
@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
       gross_auec: gross,
       crew_shares: roster.map((m) => ({ handle: m.handle, shares: m.default_shares ?? 1 })),
       status: 'open',
-      notes: 'Auto-drafted by OD3ICA when the session was marked sold. Adjust crew and expenses before settling.',
+      notes: 'Auto-drafted by FSIS.bot when the session was marked sold. Adjust crew and expenses before settling.',
     });
     actions.push(`drafted work order for ${roster.length} crew`);
 

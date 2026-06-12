@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-// OD3ICA market watch: runs on a schedule after UEX price syncs. Compares the
+// FSIS.bot market watch: runs on a schedule after UEX price syncs. Compares the
 // best cached sell price per commodity against armed price alerts; when a
 // threshold is crossed, marks the alert triggered and emails the alert owner.
 
@@ -44,11 +44,11 @@ Deno.serve(async (req) => {
       if (alert.notify_email !== false && alert.created_by) {
         const dirWord = alert.direction === 'below' ? 'dropped below' : 'hit';
         await base44.asServiceRole.integrations.Core.SendEmail({
-          from_name: 'FSIS OD3ICA Market Watch',
+          from_name: 'FSIS.bot Market Watch',
           to: alert.created_by,
           subject: `⚠ ${alert.commodity_code} ${dirWord} ${alert.target_price_auec.toLocaleString()} aUEC — sell window open`,
           body: [
-            `OD3ICA MARKET ALERT — ${alert.commodity_code}`,
+            `FSIS.bot MARKET ALERT — ${alert.commodity_code}`,
             ``,
             `Best sell price ${dirWord} your target of ${alert.target_price_auec.toLocaleString()} aUEC.`,
             ``,

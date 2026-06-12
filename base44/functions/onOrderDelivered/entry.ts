@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-// OD3ICA fulfillment agent: when an order is marked delivered, auto-log the
+// FSIS.bot fulfillment agent: when an order is marked delivered, auto-log the
 // sale income in the Ledger and decrement storefront stock per line item.
 
 Deno.serve(async (req) => {
@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
         description: `Order delivered — ${order.customer_handle} (${(order.items || []).map((i) => `${i.quantity} ${i.code || i.product_name}`).join(', ')})`,
         counterparty: order.customer_handle,
         entry_date: new Date().toISOString().slice(0, 10),
-        notes: `Auto-logged by OD3ICA fulfillment agent. ${dedupeTag}`,
+        notes: `Auto-logged by FSIS.bot fulfillment agent. ${dedupeTag}`,
       });
       actions.push(`logged ${total.toLocaleString()} aUEC income`);
     }
