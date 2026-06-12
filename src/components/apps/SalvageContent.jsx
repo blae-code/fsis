@@ -17,6 +17,7 @@ import SalvageAdvisor from '@/components/apps/salvage/SalvageAdvisor';
 import HaulPlanner from '@/components/apps/salvage/HaulPlanner';
 import SalvageAnalytics from '@/components/apps/salvage/SalvageAnalytics';
 import InventoryView from '@/components/apps/salvage/InventoryView';
+import CargoScanner from '@/components/apps/salvage/CargoScanner';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -175,6 +176,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             STOCK
           </TabsTrigger>
           <TabsTrigger
+            value="cargo"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            CARGO
+          </TabsTrigger>
+          <TabsTrigger
             value="routes"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
           >
@@ -288,6 +295,10 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
 
         <TabsContent value="stock" className="flex-1 overflow-auto m-0">
           <InventoryView bestPrices={bestPrices} />
+        </TabsContent>
+
+        <TabsContent value="cargo" className="flex-1 overflow-auto m-0">
+          <CargoScanner />
         </TabsContent>
 
         <TabsContent value="routes" className="flex-1 overflow-auto m-0">

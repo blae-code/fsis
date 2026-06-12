@@ -1,4 +1,5 @@
 {
+  "name": "salvage_scan",
   "type": "object",
   "properties": {
     "scan_type": {
@@ -56,6 +57,23 @@
         "low"
       ],
       "description": "AI confidence in the extraction"
+    },
+    "auto_applied": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if the background agent applied this scan to inventory"
+    },
+    "applied_session_id": {
+      "type": "string",
+      "description": "Salvage session the agent updated"
+    },
+    "applied_session_name": {
+      "type": "string",
+      "description": "Name of the updated salvage session"
+    },
+    "applied_changes": {
+      "type": "string",
+      "description": "Human-readable summary of what the agent changed"
     }
   },
   "required": [
@@ -68,6 +86,5 @@
     "write": {
       "created_by": "{{user.email}}"
     }
-  },
-  "name": "salvage_scan"
+  }
 }
