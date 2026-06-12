@@ -14,7 +14,7 @@ import StoreTabs from '@/components/store/StoreTabs';
 import MarketTicker from '@/components/store/MarketTicker';
 import ProductDetail from '@/components/store/ProductDetail';
 import FsisLogo from '@/components/brand/FsisLogo';
-import HeroScanBay from '@/components/store/HeroScanBay';
+import ExchangeBoard from '@/components/store/ExchangeBoard';
 import { FSIS } from '@/lib/fsisLore';
 
 const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/44c3176b4_generated_image.png';
@@ -125,7 +125,7 @@ export default function Storefront() {
                   Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
                 </p>
               </div>
-              <HeroScanBay products={products} />
+              <ExchangeBoard />
             </div>
           </div>
 
