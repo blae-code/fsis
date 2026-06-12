@@ -52,6 +52,7 @@ const STORE_KEYS = {
   customer: 'fsis.store.customer',
   cart: 'fsis.store.cart',
   trackingCodes: 'fsis.store.tracking_codes',
+  onboarded: 'fsis.store.onboarded',
 };
 
 export const storeCache = {
@@ -64,4 +65,6 @@ export const storeCache = {
     const codes = read(STORE_KEYS.trackingCodes) || [];
     if (!codes.includes(code)) write(STORE_KEYS.trackingCodes, [code, ...codes].slice(0, 20));
   },
+  hasOnboarded: () => read(STORE_KEYS.onboarded) === true,
+  markOnboarded: () => write(STORE_KEYS.onboarded, true),
 };

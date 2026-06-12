@@ -4,6 +4,7 @@ import WorkOrderForm from '@/components/apps/fairshare/WorkOrderForm';
 import WorkOrderList from '@/components/apps/fairshare/WorkOrderList';
 import CrewRoster from '@/components/apps/fairshare/CrewRoster';
 import PayrollTable from '@/components/apps/fairshare/PayrollTable';
+import PayrollTracker from '@/components/apps/fairshare/PayrollTracker';
 import TimeLogs from '@/components/apps/fairshare/TimeLogs';
 import PaydayPanel from '@/components/apps/fairshare/PaydayPanel';
 import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin';
@@ -67,6 +68,9 @@ export default function FairShareContent() {
         </TabsContent>
 
         <TabsContent value="payroll" className="flex-1 overflow-auto m-0">
+          <div className="p-4 pb-0">
+            <PayrollTracker />
+          </div>
           <PayrollTable />
         </TabsContent>
 
