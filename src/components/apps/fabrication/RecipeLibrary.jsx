@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { lookupRecipe } from '@/functions/lookupRecipe';
@@ -26,16 +26,13 @@ export default function RecipeLibrary() {
     queryFn: () => base44.entities.material.list(),
   });
 
-  // Price index from MatDex reference values: by code and lowercase name
-  const priceIndex = useMemo(() => {
-    const idx = {};
-    materials.forEach((m) => {
-      if (m.ref_value_auec == null) return;
-      if (m.code) idx[m.code.toUpperCase()] = m.ref_value_auec;
-      idx[m.material_name.toLowerCase()] = m.ref_value_auec;
-    });
-    return idx;
-  }, [materials]);
+  // Index ref values by code and lowercase name for craft-cost estimates
+  const matIndex = {};
+  materials.forEach((m) => {
+    if (m.ref_value_auec == null) return;
+    if (m.code) matIndex[m.code.toUpperCase()] = m.ref_value_auec;
+    matIndex[m.material_name.toLowerCase()] = m.ref_value_auec;
+  });
 
   const lookupMutation = useMutation({
     mutationFn: async (name) => {
@@ -112,7 +109,7 @@ export default function RecipeLibrary() {
             </Button>
           </div>
           <MaterialList materials={preview.materials} />
-          <CostEstimate recipe={preview} priceIndex={priceIndex} />
+          <CraftCost materials={preview.materials} matIndex={matIndex} />
           {preview.notes && <p className="text-[10px] text-muted-foreground">{preview.notes}</p>}
         </div>
       )}
@@ -135,7 +132,7 @@ export default function RecipeLibrary() {
                 </button>
               </div>
               <MaterialList materials={r.materials} />
-              <CostEstimate recipe={r} priceIndex={priceIndex} />
+              <CraftCost materials={r.materials} matIndex={matIndex} />
             </div>
           ))
         )}
@@ -164,26 +161,22 @@ function RecipeHeader({ recipe }) {
   );
 }
 
-// EVE-style craft-cost estimate: prices inputs via MatDex reference values.
-function CostEstimate({ recipe, priceIndex }) {
-  const materials = recipe.materials || [];
-  if (!materials.length) return null;
-
+// EVE-style industry costing: estimated input cost from MatDex reference values.
+function CraftCost({ materials = [], matIndex }) {
   let cost = 0;
-  let unknown = 0;
+  let priced = 0;
   materials.forEach((m) => {
-    const value = priceIndex[(m.code || '').toUpperCase()] ?? priceIndex[(m.material_name || '').toLowerCase()];
-    if (value != null) cost += value * (m.quantity || 0);
-    else unknown += 1;
+    const ref = matIndex[(m.code || '').toUpperCase()] ?? matIndex[(m.material_name || '').toLowerCase()];
+    if (ref != null && m.quantity) {
+      cost += ref * m.quantity;
+      priced += 1;
+    }
   });
-
-  if (cost === 0 && unknown === materials.length) return null;
-
+  if (priced === 0) return null;
   return (
-    <div className="text-[10px] flex items-center gap-2">
-      <span className="text-muted-foreground">EST. INPUT COST</span>
-      <span className="text-primary font-semibold">~{Math.round(cost).toLocaleString()} aUEC</span>
-      {unknown > 0 && <span className="text-[9px] text-muted-foreground">({unknown} material{unknown === 1 ? '' : 's'} unpriced in MatDex)</span>}
+    <div className="text-[9px] text-muted-foreground">
+      EST. INPUT COST: <span className="text-primary font-semibold">{Math.round(cost).toLocaleString()} aUEC</span>
+      {priced < materials.length && <span> ({priced}/{materials.length} materials priced in MatDex)</span>}
     </div>
   );
 }

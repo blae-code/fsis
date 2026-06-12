@@ -231,10 +231,10 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             STATS
           </TabsTrigger>
           <TabsTrigger
-            value="trends"
+            value="history"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
           >
-            TRENDS
+            HISTORY
           </TabsTrigger>
         </TabsList>
 
@@ -476,7 +476,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
           <SalvageAnalytics bestPrices={bestPrices} />
         </TabsContent>
 
-        <TabsContent value="trends" className="flex-1 overflow-auto m-0">
+        <TabsContent value="history" className="flex-1 overflow-auto m-0">
           <PriceHistory />
         </TabsContent>
       </Tabs>

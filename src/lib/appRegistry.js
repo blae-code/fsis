@@ -46,10 +46,10 @@ const APPS = [
   {
     id: 'fairshare',
     name: 'FairShare',
-    description: 'Work orders & crew payouts',
+    description: 'Crew payroll & work orders',
     icon: 'Coins',
     status: 'active',
-    color: 'hsl(35, 55%, 50%)', // gold bronze
+    color: 'hsl(42, 60%, 50%)', // gold
   },
   {
     id: 'comms',

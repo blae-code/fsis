@@ -164,21 +164,20 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.route.bulkCreate(routeRecords);
     }
 
-    // Record price history snapshots for trend charting
-    const snapshotRecords = salvageCommodities.map(code => {
-      const rows = priceRecords.filter(r => r.commodity_code === code);
-      if (rows.length === 0) return null;
+    // Append price history snapshots (EVE-style market history)
+    const snapshotRecords = Object.keys(bestPricesByCommodity).map(code => {
+      const all = priceRecords.filter(p => p.commodity_code === code);
+      const avg = all.reduce((s, p) => s + (p.price_sell || 0), 0) / all.length;
       const best = bestPricesByCommodity[code];
-      const avg = rows.reduce((s, r) => s + (r.price_sell || 0), 0) / rows.length;
       return {
         commodity_code: code,
-        best_sell_auec: best?.price_sell || 0,
-        avg_sell_auec: Math.round(avg * 100) / 100,
-        terminal_name: best?.terminal_name || '',
+        best_sell: best.price_sell,
+        avg_sell: Math.round(avg * 100) / 100,
+        best_terminal: best.terminal_name,
         patch_version: patchVersion,
-        captured_at: now,
+        captured_at: now
       };
-    }).filter(Boolean);
+    });
     if (snapshotRecords.length > 0) {
       await base44.asServiceRole.entities.price_snapshot.bulkCreate(snapshotRecords);
     }

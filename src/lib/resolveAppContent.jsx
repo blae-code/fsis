@@ -9,8 +9,8 @@ import OrdersContent from '@/components/apps/OrdersContent';
 import LedgerContent from '@/components/apps/LedgerContent';
 import RouteMapContent from '@/components/apps/RouteMapContent';
 import MatDexContent from '@/components/matdex/MatDexContent';
-import ContractsContent from '@/components/apps/ContractsContent';
 import FairShareContent from '@/components/apps/FairShareContent';
+import ContractsContent from '@/components/apps/ContractsContent';
 
 // Maps an appId to its window content + title.
 // Used both when opening from the Dock and when restoring a saved session.
@@ -34,10 +34,10 @@ export function resolveAppContent(app) {
       return { title: 'ROUTEMAP — Jump Path Plotter', content: <RouteMapContent /> };
     case 'matdex':
       return { title: 'MATDEX — Materials & Components Index', content: <MatDexContent /> };
-    case 'contracts':
-      return { title: 'CONTRACTS — Job Board', content: <ContractsContent /> };
     case 'fairshare':
-      return { title: 'FAIRSHARE — Work Orders & Crew Payouts', content: <FairShareContent /> };
+      return { title: 'FAIRSHARE — Crew Payroll & Work Orders', content: <FairShareContent /> };
+    case 'contracts':
+      return { title: 'CONTRACTS — Jobs & Agreements', content: <ContractsContent /> };
     default:
       return {
         title: `${app.name.toUpperCase()} — coming online`,
@@ -67,10 +67,10 @@ export function resolveContentById(appId, title) {
       return <RouteMapContent />;
     case 'matdex':
       return <MatDexContent />;
-    case 'contracts':
-      return <ContractsContent />;
     case 'fairshare':
       return <FairShareContent />;
+    case 'contracts':
+      return <ContractsContent />;
     default: {
       const name = (title || appId).split(' — ')[0];
       return <PlaceholderContent name={name} description="" />;
