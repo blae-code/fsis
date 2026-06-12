@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Search, Database, Boxes } from 'lucide-react';
-import { MAT_CATEGORIES, matCategoryMeta } from '@/components/matdex/matdexMeta';
+import { MAT_CATEGORIES, INDEX_CATEGORIES, matCategoryMeta, isIndexMaterial } from '@/components/matdex/matdexMeta';
 import MaterialDetail from '@/components/matdex/MaterialDetail';
 import CargoMarketView from '@/components/matdex/CargoMarketView';
 
@@ -20,7 +20,7 @@ export default function MatDexContent({ onOpenApp }) {
     queryFn: () => base44.entities.material.list('sort_order'),
   });
 
-  const filtered = materials.filter((m) => {
+  const filtered = materials.filter(isIndexMaterial).filter((m) => {
     const q = search.toLowerCase();
     const matchQ = !q || m.material_name?.toLowerCase().includes(q) || m.code?.toLowerCase().includes(q) || m.description?.toLowerCase().includes(q);
     const matchC = category === 'all' || m.category === category;
@@ -52,18 +52,21 @@ export default function MatDexContent({ onOpenApp }) {
           >
             ALL
           </button>
-          {Object.entries(MAT_CATEGORIES).map(([key, meta]) => (
-            <button
-              key={key}
-              onClick={() => setCategory(key)}
-              className="px-2 py-1 rounded text-[9px] tracking-[0.12em] border transition-colors inline-flex items-center gap-1"
-              style={category === key
-                ? { borderColor: meta.color, color: meta.color, background: meta.color.replace(')', ' / 0.1)') }
-                : { ...border, color: 'hsl(35, 12%, 52%)' }}
-            >
-              <meta.icon className="w-2.5 h-2.5" /> {meta.label}
-            </button>
-          ))}
+          {INDEX_CATEGORIES.map((key) => {
+            const meta = MAT_CATEGORIES[key];
+            return (
+              <button
+                key={key}
+                onClick={() => setCategory(key)}
+                className="px-2 py-1 rounded text-[9px] tracking-[0.12em] border transition-colors inline-flex items-center gap-1"
+                style={category === key
+                  ? { borderColor: meta.color, color: meta.color, background: meta.color.replace(')', ' / 0.1)') }
+                  : { ...border, color: 'hsl(35, 12%, 52%)' }}
+              >
+                <meta.icon className="w-2.5 h-2.5" /> {meta.label}
+              </button>
+            );
+          })}
           <button
             onClick={() => setShowCargo(!showCargo)}
             className="px-2 py-1 rounded text-[9px] tracking-[0.12em] border transition-colors inline-flex items-center gap-1 ml-auto"

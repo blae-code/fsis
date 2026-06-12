@@ -13,3 +13,11 @@ export const MAT_CATEGORIES = {
 export function matCategoryMeta(category) {
   return MAT_CATEGORIES[category] || MAT_CATEGORIES.other;
 }
+
+// Index scope: only materials directly involved in resource extraction and crafting
+// (salvage/mining outputs, refined metals, gear & components). Fuel/gas and misc excluded.
+export const INDEX_CATEGORIES = ['salvage_output', 'raw_ore', 'refined_metal', 'component'];
+
+export function isIndexMaterial(m) {
+  return INDEX_CATEGORIES.includes(m.category);
+}

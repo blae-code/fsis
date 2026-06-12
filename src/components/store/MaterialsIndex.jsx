@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Database, Search, ChevronDown, ChevronUp } from 'lucide-react';
-import { matCategoryMeta } from '@/components/matdex/matdexMeta';
+import { matCategoryMeta, isIndexMaterial } from '@/components/matdex/matdexMeta';
 
 // Public materials & components reference, cross-linked to the store catalog
 export default function MaterialsIndex({ products = [] }) {
@@ -15,12 +15,13 @@ export default function MaterialsIndex({ products = [] }) {
   });
 
   const listedCodes = new Set(products.map((p) => p.code).filter(Boolean));
-  const filtered = materials.filter((m) => {
+  const scoped = materials.filter(isIndexMaterial);
+  const filtered = scoped.filter((m) => {
     const q = search.toLowerCase();
     return !q || m.material_name?.toLowerCase().includes(q) || m.code?.toLowerCase().includes(q);
   });
 
-  if (materials.length === 0) return null;
+  if (scoped.length === 0) return null;
 
   return (
     <section className="border" style={{ borderColor: '#3A2F20', background: 'rgba(10, 9, 7, 0.5)', clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)' }}>
@@ -28,7 +29,7 @@ export default function MaterialsIndex({ products = [] }) {
         <span className="flex items-center gap-2 text-[11px] font-bold tracking-[0.2em]" style={{ color: '#D8CFC0' }}>
           <Database className="w-3.5 h-3.5" style={{ color: '#E0A22E' }} />
           MATERIALS &amp; COMPONENTS INDEX
-          <span className="text-[9px] font-normal" style={{ color: '#8A7E6C' }}>({materials.length} ENTRIES)</span>
+          <span className="text-[9px] font-normal" style={{ color: '#8A7E6C' }}>({scoped.length} ENTRIES)</span>
         </span>
         {open ? <ChevronUp className="w-4 h-4" style={{ color: '#C8A05B' }} /> : <ChevronDown className="w-4 h-4" style={{ color: '#C8A05B' }} />}
       </button>
