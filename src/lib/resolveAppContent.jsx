@@ -5,6 +5,7 @@ import SalvageContent from '@/components/apps/SalvageContent';
 import SettingsContent from '@/components/apps/SettingsContent';
 import CommsContent from '@/components/apps/CommsContent';
 import FabricationContent from '@/components/apps/FabricationContent';
+import OrdersContent from '@/components/apps/OrdersContent';
 
 // Maps an appId to its window content + title.
 // Used both when opening from the Dock and when restoring a saved session.
@@ -20,6 +21,8 @@ export function resolveAppContent(app) {
       return { title: 'COMMS — OD3ICA SRS Relay', content: <CommsContent /> };
     case 'fabrication':
       return { title: 'FABRICATION — Crafting & Materials', content: <FabricationContent /> };
+    case 'orders':
+      return { title: 'ORDERS — Customer Order Desk', content: <OrdersContent /> };
     default:
       return {
         title: `${app.name.toUpperCase()} — coming online`,
@@ -41,6 +44,8 @@ export function resolveContentById(appId, title) {
       return <CommsContent />;
     case 'fabrication':
       return <FabricationContent />;
+    case 'orders':
+      return <OrdersContent />;
     default: {
       const name = (title || appId).split(' — ')[0];
       return <PlaceholderContent name={name} description="" />;

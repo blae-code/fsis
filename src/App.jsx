@@ -6,6 +6,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Desktop from '@/pages/Desktop';
+import Storefront from '@/pages/Storefront';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -40,7 +41,8 @@ const AuthenticatedApp = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/" element={<Desktop />} />
+      <Route path="/" element={<Storefront />} />
+      <Route path="/ops" element={<Desktop />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
