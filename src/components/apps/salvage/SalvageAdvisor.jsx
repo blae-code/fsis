@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Brain, Loader2, Route as RouteIcon, Lightbulb } from 'lucide-react';
 
-const border = { borderColor: 'hsl(170, 25%, 18%)' };
+const border = { borderColor: 'hsl(33, 18%, 17%)' };
 const CODES = ['RMC', 'CMR', 'CMS'];
 
 // AI agent that recommends the optimal sell strategy for the cargo on hand.
@@ -31,7 +31,7 @@ export default function SalvageAdvisor() {
 
   return (
     <div className="p-4 space-y-4">
-      <Card className="border bg-transparent" style={{ ...border, background: 'hsl(180, 12%, 8%)' }}>
+      <Card className="border bg-transparent" style={{ ...border, background: 'hsl(30, 12%, 8%)' }}>
         <CardHeader className="py-3">
           <CardTitle className="text-sm font-mono flex items-center gap-2">
             <Brain className="w-4 h-4 text-primary" /> Salvage Advisor
@@ -73,7 +73,7 @@ export default function SalvageAdvisor() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="font-mono text-xs space-y-3 p-3 rounded"
-              style={{ background: 'hsl(180, 12%, 8%)', border: '1px solid hsl(170, 25%, 18%)' }}
+              style={{ background: 'hsl(30, 12%, 8%)', border: '1px solid hsl(33, 18%, 17%)' }}
             >
               <p className="text-primary font-semibold xian-glow-subtle">{result.headline}</p>
 

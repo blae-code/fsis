@@ -9,7 +9,7 @@ import { ChevronRight, Loader2, Radio } from 'lucide-react';
 import OnboardingStep from './OnboardingStep';
 import { useFullscreen } from '@/lib/useFullscreen';
 
-const inputStyle = { borderColor: 'hsl(170, 25%, 18%)' };
+const inputStyle = { borderColor: 'hsl(33, 18%, 18%)' };
 
 export default function OperatorOnboarding({ user, onComplete }) {
   const [step, setStep] = useState(0);
@@ -58,12 +58,12 @@ export default function OperatorOnboarding({ user, onComplete }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      style={{ background: 'hsl(180, 15%, 4%, 0.96)', backdropFilter: 'blur(8px)' }}
+      style={{ background: 'hsl(30, 12%, 4%, 0.96)', backdropFilter: 'blur(8px)' }}
     >
       {/* Ambient breathing glow */}
       <div
         className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full animate-breathe pointer-events-none"
-        style={{ background: 'radial-gradient(circle, hsl(168, 80%, 55%, 0.12), transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, hsl(42, 85%, 60%, 0.12), transparent 70%)' }}
       />
 
       <motion.div
@@ -72,8 +72,8 @@ export default function OperatorOnboarding({ user, onComplete }) {
         transition={{ delay: 0.15, duration: 0.6 }}
         className="relative w-full max-w-md p-8 rounded-2xl xian-border-glow"
         style={{
-          background: 'linear-gradient(135deg, hsl(180, 12%, 7%, 0.95), hsl(180, 15%, 5%, 0.95))',
-          border: '1px solid hsl(170, 25%, 18%, 0.5)',
+          background: 'linear-gradient(135deg, hsl(30, 10%, 7%, 0.95), hsl(30, 12%, 5%, 0.95))',
+          border: '1px solid hsl(33, 18%, 18%, 0.6)',
         }}
       >
         <div className="flex items-center gap-2 mb-8">
@@ -167,7 +167,7 @@ export default function OperatorOnboarding({ user, onComplete }) {
                 className="h-1 rounded-full transition-all duration-300"
                 style={{
                   width: i === step ? 20 : 6,
-                  background: i <= step ? 'hsl(168, 65%, 45%)' : 'hsl(170, 25%, 18%)',
+                  background: i <= step ? 'hsl(38, 72%, 52%)' : 'hsl(33, 18%, 18%)',
                 }}
               />
             ))}
@@ -177,7 +177,7 @@ export default function OperatorOnboarding({ user, onComplete }) {
             disabled={!steps[step].canAdvance || saving}
             size="sm"
             className="font-mono text-xs gap-1.5"
-            style={{ background: 'hsl(168, 65%, 45%)', color: 'hsl(180, 15%, 5%)' }}
+            style={{ background: 'hsl(38, 72%, 52%)', color: 'hsl(30, 15%, 6%)' }}
           >
             {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
             {isLast ? 'Enter FSIS' : 'Continue'}

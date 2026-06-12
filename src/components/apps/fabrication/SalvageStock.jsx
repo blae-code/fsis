@@ -25,7 +25,7 @@ export default function SalvageStock({ required }) {
   const anyRequired = codes.some((c) => (required[c] || 0) > 0);
 
   return (
-    <div className="p-3 rounded border space-y-2" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 8%)' }}>
+    <div className="p-3 rounded border space-y-2" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 8%)' }}>
       <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground tracking-[0.2em]">
         <Recycle className="w-3 h-3 text-primary" /> SALVAGE STOCK vs REQUIRED
       </div>
@@ -35,7 +35,7 @@ export default function SalvageStock({ required }) {
           const need = required[code] || 0;
           const covered = need === 0 || have >= need;
           return (
-            <div key={code} className="p-2 rounded text-center" style={{ background: 'hsl(180, 10%, 12%)' }}>
+            <div key={code} className="p-2 rounded text-center" style={{ background: 'hsl(30, 10%, 12%)' }}>
               <div className="text-[10px] text-muted-foreground">{code}</div>
               <div className={`text-xs font-bold ${covered ? 'text-primary' : 'text-destructive'}`}>
                 {have.toFixed(1)} / {need.toFixed(1)}

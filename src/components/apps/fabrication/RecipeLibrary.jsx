@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search, Loader2, Save, Trash2, Recycle, AlertCircle } from 'lucide-react';
 
-const border = { borderColor: 'hsl(170, 25%, 18%)' };
-const panel = { ...border, background: 'hsl(180, 12%, 8%)' };
+const border = { borderColor: 'hsl(33, 18%, 18%)' };
+const panel = { ...border, background: 'hsl(30, 10%, 8%)' };
 
 export default function RecipeLibrary() {
   const queryClient = useQueryClient();
@@ -88,7 +88,7 @@ export default function RecipeLibrary() {
 
       {/* Preview */}
       {preview && (
-        <div className="p-3 rounded border space-y-2" style={{ ...panel, borderColor: 'hsl(168, 65%, 45%, 0.5)' }}>
+        <div className="p-3 rounded border space-y-2" style={{ ...panel, borderColor: 'hsl(38, 72%, 52%, 0.5)' }}>
           <div className="flex items-center justify-between">
             <RecipeHeader recipe={preview} />
             <Button size="sm" className="h-7 text-[10px] gap-1" onClick={savePreview} disabled={saveMutation.isPending}>
@@ -155,8 +155,8 @@ function MaterialList({ materials = [] }) {
           key={i}
           className="text-[10px] px-2 py-0.5 rounded"
           style={{
-            background: ['RMC', 'CMR', 'CMS'].includes(m.code) ? 'hsl(168, 65%, 45%, 0.12)' : 'hsl(180, 10%, 14%)',
-            color: ['RMC', 'CMR', 'CMS'].includes(m.code) ? 'hsl(168, 65%, 55%)' : 'hsl(165, 30%, 70%)',
+            background: ['RMC', 'CMR', 'CMS'].includes(m.code) ? 'hsl(38, 72%, 52%, 0.12)' : 'hsl(30, 10%, 14%)',
+            color: ['RMC', 'CMR', 'CMS'].includes(m.code) ? 'hsl(42, 85%, 60%)' : 'hsl(38, 20%, 70%)',
           }}
         >
           {m.quantity} {m.unit || ''} {m.code || m.material_name}

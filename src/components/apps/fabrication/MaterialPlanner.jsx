@@ -7,8 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Trash2, Save, FolderOpen } from 'lucide-react';
 import SalvageStock from '@/components/apps/fabrication/SalvageStock';
 
-const border = { borderColor: 'hsl(170, 25%, 18%)' };
-const panel = { ...border, background: 'hsl(180, 12%, 8%)' };
+const border = { borderColor: 'hsl(33, 18%, 18%)' };
+const panel = { ...border, background: 'hsl(30, 10%, 8%)' };
 
 export default function MaterialPlanner() {
   const queryClient = useQueryClient();

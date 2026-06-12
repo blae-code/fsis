@@ -39,10 +39,10 @@ export default function InstallPrompt() {
           exit={{ opacity: 0, y: 20 }}
           className="absolute bottom-6 right-6 z-[200] flex items-center gap-3 px-4 py-3 rounded-xl"
           style={{
-            background: 'hsl(180, 12%, 7%, 0.92)',
-            border: '1px solid hsl(170, 25%, 18%, 0.4)',
+            background: 'hsl(30, 10%, 7%, 0.92)',
+            border: '1px solid hsl(33, 18%, 18%, 0.5)',
             backdropFilter: 'blur(14px)',
-            boxShadow: '0 8px 32px hsl(180, 15%, 2%, 0.6)',
+            boxShadow: '0 8px 32px hsl(30, 15%, 2%, 0.6)',
           }}
         >
           <Download className="w-4 h-4 text-primary shrink-0" />
@@ -53,7 +53,7 @@ export default function InstallPrompt() {
           <button
             onClick={install}
             className="ml-2 px-3 py-1 rounded text-[10px] font-mono text-primary-foreground"
-            style={{ background: 'hsl(168, 65%, 45%)' }}
+            style={{ background: 'hsl(38, 72%, 52%)' }}
           >
             Install
           </button>

@@ -7,9 +7,9 @@ export default function SettingsContent() {
   const [tab, setTab] = useState('profile');
 
   return (
-    <div className="h-full flex flex-col industrial-interior" style={{ background: 'hsl(200, 10%, 10%)' }}>
+    <div className="h-full flex flex-col industrial-interior" style={{ background: 'hsl(28, 8%, 9%)' }}>
       <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col">
-        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto" style={{ borderColor: 'hsl(33, 18%, 17%)' }}>
           <TabsTrigger
             value="profile"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"

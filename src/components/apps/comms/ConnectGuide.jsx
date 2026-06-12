@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Copy, Check, Radio, ExternalLink, Siren } from 'lucide-react';
 
-const border = { borderColor: 'hsl(170, 25%, 18%)' };
+const border = { borderColor: 'hsl(33, 18%, 17%)' };
+const ORANGE = 'hsl(18, 65%, 52%)';
 const SERVER = 'main.od3ica-srs.space';
 
 export default function ConnectGuide() {
@@ -16,10 +17,10 @@ export default function ConnectGuide() {
   return (
     <div className="p-4 space-y-4 font-mono">
       {/* Relay identity */}
-      <div className="p-4 rounded border" style={{ ...border, background: 'hsl(180, 12%, 8%)' }}>
+      <div className="p-4 rounded border" style={{ ...border, background: 'hsl(30, 12%, 8%)' }}>
         <div className="flex items-center gap-2 mb-2">
-          <Radio className="w-4 h-4 text-primary" />
-          <span className="text-xs font-bold tracking-[0.2em] text-primary">OD3ICA SPACECOMMS RELAY SERVICE</span>
+          <Radio className="w-4 h-4" style={{ color: ORANGE }} />
+          <span className="text-xs font-bold tracking-[0.2em]" style={{ color: ORANGE }}>OD3ICA SPACECOMMS RELAY SERVICE</span>
         </div>
         <p className="text-[11px] text-muted-foreground leading-relaxed">
           All FSIS voice traffic is carried over the OD3ICA SRS public relay — a free, unbiased,
@@ -29,10 +30,10 @@ export default function ConnectGuide() {
       </div>
 
       {/* Server address */}
-      <div className="p-4 rounded border" style={{ ...border, background: 'hsl(180, 12%, 8%)' }}>
+      <div className="p-4 rounded border" style={{ ...border, background: 'hsl(30, 12%, 8%)' }}>
         <div className="text-[10px] text-muted-foreground mb-1 tracking-wider">RELAY ADDRESS — TUNE IN</div>
         <div className="flex items-center justify-between gap-2">
-          <span className="text-sm text-primary xian-glow-subtle">{SERVER}</span>
+          <span className="text-sm" style={{ color: ORANGE, textShadow: '0 0 10px hsl(18, 65%, 52%, 0.3)' }}>{SERVER}</span>
           <button
             onClick={copyServer}
             className="flex items-center gap-1 px-2 py-1 rounded border text-[10px] hover:bg-muted transition-colors"
@@ -64,7 +65,8 @@ export default function ConnectGuide() {
           href="https://od3ica-srs.webflow.io/"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-[11px] text-primary hover:underline"
+          className="flex items-center gap-1.5 text-[11px] hover:underline"
+          style={{ color: ORANGE }}
         >
           <ExternalLink className="w-3 h-3" /> OD3ICA SRS — How to connect
         </a>
@@ -72,7 +74,8 @@ export default function ConnectGuide() {
           href="https://od3ica-srs.webflow.io/list"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-[11px] text-primary hover:underline"
+          className="flex items-center gap-1.5 text-[11px] hover:underline"
+          style={{ color: ORANGE }}
         >
           <ExternalLink className="w-3 h-3" /> Public frequency list
         </a>

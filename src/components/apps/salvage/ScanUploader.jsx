@@ -5,7 +5,7 @@ import { analyzeSalvageImage } from '@/functions/analyzeSalvageImage';
 import { Button } from '@/components/ui/button';
 import { Upload, Loader2, ImageIcon, Sparkles } from 'lucide-react';
 
-const border = { borderColor: 'hsl(170, 25%, 18%)' };
+const border = { borderColor: 'hsl(33, 18%, 18%)' };
 
 // Reusable uploader: pick image -> upload -> run AI vision/OCR analysis.
 // Calls onResult(result) with the structured analysis.

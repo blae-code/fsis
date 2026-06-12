@@ -12,8 +12,8 @@ export default function Taskbar() {
     <motion.div
       className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[150] flex items-center gap-1 px-3 py-1.5 rounded-full"
       style={{
-        background: 'hsl(180, 12%, 7%, 0.85)',
-        border: '1px solid hsl(170, 25%, 18%, 0.25)',
+        background: 'hsl(30, 10%, 7%, 0.85)',
+        border: '1px solid hsl(33, 18%, 18%, 0.4)',
         backdropFilter: 'blur(12px)',
       }}
       initial={{ opacity: 0, y: 20 }}

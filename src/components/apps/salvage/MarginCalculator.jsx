@@ -8,7 +8,7 @@ import { AlertCircle, TrendingUp, TrendingDown } from 'lucide-react';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
-const border = { borderColor: 'hsl(170, 25%, 18%)' };
+const border = { borderColor: 'hsl(33, 18%, 18%)' };
 
 function CostInput({ label, value, onChange, suffix }) {
   return (
@@ -64,7 +64,7 @@ export default function MarginCalculator({ bestPrices }) {
 
   return (
     <div className="p-4 space-y-4">
-      <Card className="border bg-transparent" style={{ ...border, background: 'hsl(180, 12%, 8%)' }}>
+      <Card className="border bg-transparent" style={{ ...border, background: 'hsl(30, 10%, 8%)' }}>
         <CardHeader className="py-3">
           <CardTitle className="text-sm font-mono">Profit Margin Calculator</CardTitle>
         </CardHeader>
@@ -104,7 +104,7 @@ export default function MarginCalculator({ bestPrices }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="font-mono text-xs space-y-2 p-3 rounded"
-              style={{ background: 'hsl(180, 12%, 8%)', border: '1px solid hsl(170, 25%, 18%)' }}
+              style={{ background: 'hsl(30, 10%, 8%)', border: '1px solid hsl(33, 18%, 18%)' }}
             >
               <Row label="Best Market Sell" value={`${sellPrice.toFixed(2)} aUEC/SCU`} />
               <Row label={`Gross Revenue (${quantity} SCU)`} value={`${grossRevenue.toFixed(2)} aUEC`} color="text-primary" />

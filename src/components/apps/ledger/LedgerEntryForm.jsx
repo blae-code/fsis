@@ -47,7 +47,7 @@ export default function LedgerEntryForm() {
   });
 
   return (
-    <div className="p-3 border-b space-y-2" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 7%)' }}>
+    <div className="p-3 border-b space-y-2" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 7%)' }}>
       <div className="text-[9px] text-muted-foreground tracking-[0.2em]">NEW LEDGER ENTRY</div>
       <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
         <Select value={form.entry_type} onValueChange={(v) => set('entry_type', v)}>

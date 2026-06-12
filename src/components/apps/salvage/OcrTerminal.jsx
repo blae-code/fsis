@@ -4,7 +4,7 @@ import { ScanText } from 'lucide-react';
 import ScanUploader from './ScanUploader';
 import ScanResult from './ScanResult';
 
-const border = { borderColor: 'hsl(170, 25%, 18%)' };
+const border = { borderColor: 'hsl(33, 18%, 18%)' };
 
 // OCR a commodity terminal screenshot to auto-read live prices in-game.
 export default function OcrTerminal() {
@@ -12,7 +12,7 @@ export default function OcrTerminal() {
 
   return (
     <div className="p-4 space-y-4">
-      <Card className="border bg-transparent" style={{ ...border, background: 'hsl(180, 12%, 8%)' }}>
+      <Card className="border bg-transparent" style={{ ...border, background: 'hsl(30, 10%, 8%)' }}>
         <CardHeader className="py-3">
           <CardTitle className="text-sm font-mono flex items-center gap-2">
             <ScanText className="w-4 h-4 text-primary" /> Terminal OCR

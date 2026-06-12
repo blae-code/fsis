@@ -47,17 +47,17 @@ export default function OperatorProfile() {
         onChange={(e) => setForm({ ...form, [key]: e.target.value })}
         placeholder={placeholder}
         className="h-8 text-xs font-mono mt-1"
-        style={{ borderColor: 'hsl(170, 25%, 18%)' }}
+        style={{ borderColor: 'hsl(33, 18%, 17%)' }}
       />
     </div>
   );
 
   return (
     <div className="p-4 space-y-4 font-mono">
-      <div className="flex items-center gap-3 pb-3 border-b" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+      <div className="flex items-center gap-3 pb-3 border-b" style={{ borderColor: 'hsl(33, 18%, 17%)' }}>
         <div
           className="w-12 h-12 rounded flex items-center justify-center overflow-hidden shrink-0"
-          style={{ background: 'hsl(180, 12%, 12%)', border: '1px solid hsl(170, 25%, 18%)' }}
+          style={{ background: 'hsl(30, 12%, 12%)', border: '1px solid hsl(33, 18%, 17%)' }}
         >
           {form.avatar_url ? (
             <img src={form.avatar_url} alt="avatar" className="w-full h-full object-cover" />
@@ -77,7 +77,7 @@ export default function OperatorProfile() {
       <div>
         <Label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Pricing Tier</Label>
         <Select value={form.org_tier} onValueChange={(v) => setForm({ ...form, org_tier: v })}>
-          <SelectTrigger className="h-8 text-xs font-mono mt-1" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+          <SelectTrigger className="h-8 text-xs font-mono mt-1" style={{ borderColor: 'hsl(33, 18%, 17%)' }}>
             <SelectValue placeholder="Select tier" />
           </SelectTrigger>
           <SelectContent>
@@ -96,7 +96,7 @@ export default function OperatorProfile() {
         variant="outline"
         size="sm"
         className="w-full font-mono text-xs gap-2 mt-2"
-        style={{ borderColor: 'hsl(170, 25%, 18%)' }}
+        style={{ borderColor: 'hsl(33, 18%, 17%)' }}
       >
         {saved ? <Check className="w-3.5 h-3.5 text-primary" /> : <Save className="w-3.5 h-3.5" />}
         {saved ? 'Saved' : saving ? 'Saving...' : 'Save Profile'}

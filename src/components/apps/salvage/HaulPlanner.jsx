@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Ship, Boxes, AlertCircle } from 'lucide-react';
 
-const border = { borderColor: 'hsl(170, 25%, 18%)' };
+const border = { borderColor: 'hsl(33, 18%, 17%)' };
 
 // Rough RMC yield per hull and cargo capacity (SCU) for common salvage ships.
 const SHIPS = {
@@ -42,7 +42,7 @@ export default function HaulPlanner({ bestPrices }) {
 
   return (
     <div className="p-4 space-y-4">
-      <Card className="border bg-transparent" style={{ ...border, background: 'hsl(180, 12%, 8%)' }}>
+      <Card className="border bg-transparent" style={{ ...border, background: 'hsl(30, 12%, 8%)' }}>
         <CardHeader className="py-3">
           <CardTitle className="text-sm font-mono flex items-center gap-2">
             <Boxes className="w-4 h-4 text-primary" /> Haul Planner
@@ -89,7 +89,7 @@ export default function HaulPlanner({ bestPrices }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="font-mono text-xs space-y-2 p-3 rounded"
-              style={{ background: 'hsl(180, 12%, 8%)', border: '1px solid hsl(170, 25%, 18%)' }}
+              style={{ background: 'hsl(30, 12%, 8%)', border: '1px solid hsl(33, 18%, 17%)' }}
             >
               <Row label="Est. RMC Yield" value={`${rawYield} SCU`} color="text-primary" />
               <Row label="Cargo Capacity" value={cargoCap > 0 ? `${cargoCap} SCU` : 'External (no hold)'} />

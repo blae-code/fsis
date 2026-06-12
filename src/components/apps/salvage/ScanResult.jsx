@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 
-const border = { borderColor: 'hsl(170, 25%, 18%)' };
+const border = { borderColor: 'hsl(33, 18%, 18%)' };
 
 const confidenceColor = {
   high: 'border-primary/40 text-primary',
@@ -20,7 +20,7 @@ export default function ScanResult({ result }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       className="space-y-3 p-3 rounded font-mono text-xs"
-      style={{ ...border, background: 'hsl(180, 12%, 8%)', border: '1px solid hsl(170, 25%, 18%)' }}
+      style={{ ...border, background: 'hsl(30, 10%, 8%)', border: '1px solid hsl(33, 18%, 18%)' }}
     >
       <div className="flex items-center justify-between">
         <span className="text-primary font-semibold">AI ANALYSIS</span>
@@ -36,7 +36,7 @@ export default function ScanResult({ result }) {
       {commodities.length > 0 && (
         <div className="space-y-1.5 pt-2 border-t" style={border}>
           {commodities.map((c, i) => (
-            <div key={i} className="flex items-center justify-between p-2 rounded" style={{ background: 'hsl(180, 10%, 12%)' }}>
+            <div key={i} className="flex items-center justify-between p-2 rounded" style={{ background: 'hsl(30, 10%, 12%)' }}>
               <div>
                 <span className="text-primary font-semibold">{c.code || c.name || '—'}</span>
                 {c.terminal_name && <span className="text-muted-foreground"> · {c.terminal_name}</span>}

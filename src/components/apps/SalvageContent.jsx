@@ -135,9 +135,9 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
   };
 
   return (
-    <div className="h-full flex flex-col industrial-interior" style={{ background: 'hsl(200, 10%, 10%)' }}>
+    <div className="h-full flex flex-col industrial-interior" style={{ background: 'hsl(30, 8%, 9%)' }}>
       {/* Header with sync status */}
-      <div className="p-3 border-b flex items-center justify-between" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 7%)' }}>
+      <div className="p-3 border-b flex items-center justify-between" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 7%)' }}>
         <div className="flex items-center gap-2">
           <RefreshCw className={`w-3.5 h-3.5 ${syncMutation.isPending ? 'animate-spin text-primary' : 'text-muted-foreground'}`} />
           <span className="font-mono text-xs text-muted-foreground">
@@ -151,7 +151,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             variant="outline"
             size="sm"
             className="h-7 text-[10px] font-mono gap-1.5"
-            style={{ borderColor: 'hsl(170, 25%, 18%)' }}
+            style={{ borderColor: 'hsl(33, 18%, 18%)' }}
           >
             <RefreshCw className="w-3 h-3" />
             Sync Now
@@ -160,7 +160,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto overflow-x-auto flex-nowrap" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto overflow-x-auto flex-nowrap" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
           <TabsTrigger
             value="market"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
@@ -224,7 +224,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
               const best = bestPrices[code];
               
               return (
-                <Card key={code} className="border bg-transparent" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 8%)' }}>
+                <Card key={code} className="border bg-transparent" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 8%)' }}>
                   <CardHeader className="py-3">
                     <CardTitle className="text-sm font-mono flex items-center gap-2">
                       <span className="text-primary">{code}</span>
@@ -249,7 +249,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
                         <div
                           key={i}
                           className="flex items-center justify-between text-[10px] font-mono p-2 rounded"
-                          style={{ background: price.is_best_sell ? 'hsl(168, 65%, 45%, 0.1)' : 'hsl(180, 10%, 12%)' }}
+                          style={{ background: price.is_best_sell ? 'hsl(38, 72%, 52%, 0.1)' : 'hsl(30, 10%, 12%)' }}
                         >
                           <div className="flex items-center gap-2">
                             {price.is_best_sell && <Check className="w-3 h-3 text-primary" />}
@@ -288,7 +288,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
               </div>
             ) : (
               sortedRoutes.map((route, i) => (
-                <Card key={i} className="border bg-transparent" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 8%)' }}>
+                <Card key={i} className="border bg-transparent" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 8%)' }}>
                   <CardContent className="py-3">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
@@ -317,7 +317,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
 
         <TabsContent value="quote" className="flex-1 overflow-auto m-0">
           <div className="p-4 space-y-4">
-            <Card className="border bg-transparent" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 8%)' }}>
+            <Card className="border bg-transparent" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 8%)' }}>
               <CardHeader className="py-3">
                 <CardTitle className="text-sm font-mono">FairShare Quote Calculator</CardTitle>
               </CardHeader>
@@ -326,7 +326,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
                   <div>
                     <Label className="text-[10px] font-mono text-muted-foreground">Commodity</Label>
                     <Select value={selectedCommodity} onValueChange={setSelectedCommodity}>
-                      <SelectTrigger className="h-8 text-xs font-mono" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+                      <SelectTrigger className="h-8 text-xs font-mono" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -344,7 +344,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
                       value={quantity}
                       onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                       className="h-8 text-xs font-mono"
-                      style={{ borderColor: 'hsl(170, 25%, 18%)' }}
+                      style={{ borderColor: 'hsl(33, 18%, 18%)' }}
                     />
                   </div>
                 </div>
@@ -355,7 +355,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
                     value={selectedTier?.tier_name || ''} 
                     onValueChange={(name) => setSelectedTier(tiers.find(t => t.tier_name === name))}
                   >
-                    <SelectTrigger className="h-8 text-xs font-mono" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+                    <SelectTrigger className="h-8 text-xs font-mono" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
                       <SelectValue placeholder="Select tier" />
                     </SelectTrigger>
                     <SelectContent>
@@ -373,21 +373,21 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="font-mono text-xs space-y-2 p-3 rounded"
-                    style={{ background: 'hsl(180, 12%, 8%)', border: '1px solid hsl(170, 25%, 18%)' }}
+                    style={{ background: 'hsl(30, 10%, 8%)', border: '1px solid hsl(33, 18%, 18%)' }}
                   >
-                    <div className="flex justify-between pb-2 border-b" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+                    <div className="flex justify-between pb-2 border-b" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
                       <span className="text-muted-foreground">UEX Market Reference</span>
                       <span className="text-foreground">{quote.uexReferencePrice.toFixed(2)} aUEC/unit</span>
                     </div>
-                    <div className="flex justify-between pb-2 border-b" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+                    <div className="flex justify-between pb-2 border-b" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
                       <span className="text-muted-foreground">FSIS Margin (+{quote.fsisMarginPercent}%)</span>
                       <span className="text-primary">+{quote.fsisMargin.toFixed(2)} aUEC/unit</span>
                     </div>
-                    <div className="flex justify-between pb-2 border-b" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+                    <div className="flex justify-between pb-2 border-b" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
                       <span className="text-muted-foreground">Subtotal</span>
                       <span className="text-foreground">{quote.markedUpPrice.toFixed(2)} aUEC/unit</span>
                     </div>
-                    <div className="flex justify-between pb-2 border-b" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+                    <div className="flex justify-between pb-2 border-b" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
                       <span className="text-muted-foreground">{quote.tier} Discount (-{quote.tierDiscountPercent}%)</span>
                       <span className="text-accent">-{quote.tierDiscount.toFixed(2)} aUEC/unit</span>
                     </div>
@@ -395,7 +395,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
                       <span className="font-semibold text-primary">Per SCU Price</span>
                       <span className="font-semibold text-primary">{quote.perScuPrice.toFixed(2)} aUEC</span>
                     </div>
-                    <div className="flex justify-between pt-3 mt-2 border-t text-lg" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+                    <div className="flex justify-between pt-3 mt-2 border-t text-lg" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
                       <span className="font-bold text-primary">TOTAL ({quote.quantity} SCU)</span>
                       <span className="font-bold text-primary xian-glow-subtle">{quote.total.toFixed(2)} aUEC</span>
                     </div>
@@ -405,7 +405,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
                       variant="outline"
                       size="sm"
                       className="w-full mt-4 font-mono text-xs gap-2"
-                      style={{ borderColor: 'hsl(170, 25%, 18%)' }}
+                      style={{ borderColor: 'hsl(33, 18%, 18%)' }}
                     >
                       {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
                       {copied ? 'Copied!' : 'Copy Quote'}
@@ -449,7 +449,7 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
       </Tabs>
 
       {/* Footer disclaimer */}
-      <div className="p-2 border-t text-center" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 6%)' }}>
+      <div className="p-2 border-t text-center" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 6%)' }}>
         <p className="text-[9px] font-mono text-muted-foreground">
           Prices are crowdsourced via UEX and may lag the live server — always verify in game. Unofficial fan project, not affiliated with Cloud Imperium Games.
         </p>

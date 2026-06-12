@@ -8,8 +8,8 @@ import { ClipboardList, MapPin } from 'lucide-react';
 const STATUSES = ['new', 'confirmed', 'in_fulfillment', 'delivered', 'cancelled'];
 
 const STATUS_COLORS = {
-  new: 'hsl(168, 65%, 45%)',
-  confirmed: 'hsl(190, 50%, 45%)',
+  new: 'hsl(205, 45%, 55%)',
+  confirmed: 'hsl(28, 70%, 48%)',
   in_fulfillment: 'hsl(40, 70%, 50%)',
   delivered: 'hsl(140, 50%, 45%)',
   cancelled: 'hsl(0, 60%, 50%)',
@@ -32,15 +32,15 @@ export default function OrdersContent() {
   const revenue = orders.filter((o) => o.status === 'delivered').reduce((s, o) => s + (o.total_auec || 0), 0);
 
   return (
-    <div className="h-full flex flex-col industrial-interior font-mono" style={{ background: 'hsl(200, 10%, 10%)' }}>
+    <div className="h-full flex flex-col industrial-interior font-mono" style={{ background: 'hsl(28, 8%, 9%)' }}>
       {/* KPI strip */}
-      <div className="grid grid-cols-3 gap-px border-b" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+      <div className="grid grid-cols-3 gap-px border-b" style={{ borderColor: 'hsl(33, 18%, 17%)' }}>
         {[
           { label: 'OPEN ORDERS', value: open.length },
           { label: 'TOTAL ORDERS', value: orders.length },
           { label: 'DELIVERED REVENUE', value: `${revenue.toLocaleString()} aUEC` },
         ].map((kpi) => (
-          <div key={kpi.label} className="p-3 text-center" style={{ background: 'hsl(180, 12%, 7%)' }}>
+          <div key={kpi.label} className="p-3 text-center" style={{ background: 'hsl(30, 12%, 7%)' }}>
             <div className="text-[9px] text-muted-foreground tracking-[0.2em]">{kpi.label}</div>
             <div className="text-sm font-bold text-primary">{kpi.value}</div>
           </div>
@@ -55,7 +55,7 @@ export default function OrdersContent() {
           </div>
         ) : (
           orders.map((o) => (
-            <div key={o.id} className="rounded border p-3 space-y-2" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 8%)' }}>
+            <div key={o.id} className="rounded border p-3 space-y-2" style={{ borderColor: 'hsl(33, 18%, 17%)', background: 'hsl(30, 12%, 8%)' }}>
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-foreground">{o.customer_handle}</span>
@@ -67,7 +67,7 @@ export default function OrdersContent() {
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-primary">{(o.total_auec || 0).toLocaleString()} aUEC</span>
                   <Select value={o.status} onValueChange={(status) => updateMutation.mutate({ id: o.id, status })}>
-                    <SelectTrigger className="h-7 w-36 text-[10px]" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+                    <SelectTrigger className="h-7 w-36 text-[10px]" style={{ borderColor: 'hsl(33, 18%, 17%)' }}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

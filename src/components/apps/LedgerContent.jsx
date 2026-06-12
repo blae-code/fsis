@@ -24,11 +24,11 @@ export default function LedgerContent() {
   const filtered = filter === 'all' ? entries : entries.filter((e) => e.entry_type === filter);
 
   return (
-    <div className="h-full flex flex-col industrial-interior font-mono" style={{ background: 'hsl(200, 10%, 10%)' }}>
+    <div className="h-full flex flex-col industrial-interior font-mono" style={{ background: 'hsl(30, 8%, 9%)' }}>
       <LedgerSummary entries={entries} />
       <LedgerEntryForm />
 
-      <div className="flex items-center justify-between px-3 py-2 border-b" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+      <div className="flex items-center justify-between px-3 py-2 border-b" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
         <div className="text-[9px] text-muted-foreground tracking-[0.2em]">
           TRANSACTION LOG — {filtered.length} ENTRIES
         </div>
@@ -55,7 +55,7 @@ export default function LedgerContent() {
               <div
                 key={e.id}
                 className="flex items-center gap-3 rounded border px-3 py-2"
-                style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 8%)' }}
+                style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 8%)' }}
               >
                 <span
                   className="w-1 self-stretch rounded-full shrink-0"

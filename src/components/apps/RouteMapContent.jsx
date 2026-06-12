@@ -39,9 +39,9 @@ export default function RouteMapContent() {
   }, [routes, originSystem, commodity]);
 
   return (
-    <div className="h-full flex flex-col industrial-interior font-mono" style={{ background: 'hsl(200, 10%, 10%)' }}>
+    <div className="h-full flex flex-col industrial-interior font-mono" style={{ background: 'hsl(30, 8%, 9%)' }}>
       {/* controls */}
-      <div className="flex items-center gap-2 p-3 border-b flex-wrap" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 7%)' }}>
+      <div className="flex items-center gap-2 p-3 border-b flex-wrap" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 7%)' }}>
         <div className="text-[9px] text-muted-foreground tracking-[0.2em] mr-2">JUMP PATH PLOTTER</div>
         <Select value={originSystem} onValueChange={setOriginSystem}>
           <SelectTrigger className="h-7 w-32 text-[10px] font-mono"><SelectValue placeholder="System" /></SelectTrigger>
@@ -78,7 +78,7 @@ export default function RouteMapContent() {
         )}
       </div>
 
-      <div className="px-3 py-1.5 border-t text-[8px] text-muted-foreground/60 tracking-[0.15em]" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+      <div className="px-3 py-1.5 border-t text-[8px] text-muted-foreground/60 tracking-[0.15em]" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
         FSIS ROUTEMAP • DISTANCE DATA via UEX CACHE • PATHS ARE ADVISORY ONLY
       </div>
     </div>

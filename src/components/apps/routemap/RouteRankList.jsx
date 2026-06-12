@@ -9,11 +9,11 @@ export default function RouteRankList({ routes }) {
           key={r.id || i}
           className="flex items-center gap-3 rounded border px-3 py-2"
           style={{
-            borderColor: i === 0 ? 'hsl(168, 65%, 45%, 0.5)' : 'hsl(170, 25%, 18%)',
-            background: i === 0 ? 'hsl(168, 65%, 45%, 0.05)' : 'hsl(180, 12%, 8%)',
+            borderColor: i === 0 ? 'hsl(38, 72%, 52%, 0.5)' : 'hsl(33, 18%, 18%)',
+            background: i === 0 ? 'hsl(38, 72%, 52%, 0.05)' : 'hsl(30, 10%, 8%)',
           }}
         >
-          <span className="text-[10px] font-bold w-6 text-center shrink-0" style={{ color: i === 0 ? 'hsl(168, 80%, 55%)' : 'hsl(165, 20%, 50%)' }}>
+          <span className="text-[10px] font-bold w-6 text-center shrink-0" style={{ color: i === 0 ? 'hsl(42, 85%, 60%)' : 'hsl(35, 12%, 52%)' }}>
             {i === 0 ? <Zap className="w-3 h-3 mx-auto" /> : `#${i + 1}`}
           </span>
           <div className="flex-1 min-w-0">

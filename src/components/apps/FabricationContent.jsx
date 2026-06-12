@@ -9,7 +9,7 @@ export default function FabricationContent() {
   return (
     <div className="h-full flex flex-col industrial-interior">
       <Tabs defaultValue="planner" className="flex-1 flex flex-col min-h-0">
-        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto" style={{ borderColor: 'hsl(170, 25%, 18%)' }}>
+        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto" style={{ borderColor: 'hsl(33, 18%, 17%)' }}>
           <TabsTrigger
             value="planner"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
@@ -33,7 +33,7 @@ export default function FabricationContent() {
         </TabsContent>
       </Tabs>
 
-      <div className="p-2 border-t text-center" style={{ borderColor: 'hsl(170, 25%, 18%)', background: 'hsl(180, 12%, 6%)' }}>
+      <div className="p-2 border-t text-center" style={{ borderColor: 'hsl(33, 18%, 17%)', background: 'hsl(30, 12%, 6%)' }}>
         <p className="text-[9px] font-mono text-muted-foreground">
           Recipe data is AI-sourced from community references and may differ from the live build — verify in game.
         </p>

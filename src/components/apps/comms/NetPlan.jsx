@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, Lock, Siren } from 'lucide-react';
 
-const border = { borderColor: 'hsl(170, 25%, 18%)' };
+const border = { borderColor: 'hsl(33, 18%, 18%)' };
 
 export default function NetPlan() {
   const queryClient = useQueryClient();
@@ -59,7 +59,7 @@ export default function NetPlan() {
       </div>
 
       {showForm && (
-        <div className="p-3 rounded border space-y-2" style={{ ...border, background: 'hsl(180, 12%, 8%)' }}>
+        <div className="p-3 rounded border space-y-2" style={{ ...border, background: 'hsl(30, 10%, 8%)' }}>
           <div className="grid grid-cols-2 gap-2">
             <Input
               placeholder="Net name (e.g. SALVAGE NET)"
@@ -105,8 +105,8 @@ export default function NetPlan() {
               key={ch.id}
               className="flex items-center gap-3 px-3 py-2.5 text-xs"
               style={{
-                borderTop: i > 0 ? '1px solid hsl(170, 25%, 18%)' : 'none',
-                background: ch.is_guard ? 'hsl(0, 40%, 8%)' : 'hsl(180, 12%, 8%)',
+                borderTop: i > 0 ? '1px solid hsl(33, 18%, 18%)' : 'none',
+                background: ch.is_guard ? 'hsl(0, 40%, 8%)' : 'hsl(30, 10%, 8%)',
               }}
             >
               <span className={`w-24 font-bold tracking-wider ${ch.is_guard ? 'text-destructive' : 'text-primary'}`}>
