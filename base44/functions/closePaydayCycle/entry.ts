@@ -91,40 +91,7 @@ Deno.serve(async (req) => {
         force_closed: targeted && !due,
       });
 
-      // Publish the transparency report to every linked crew member
-      const crew = await base44.asServiceRole.entities.crew_member.filter({ active: true }, '-created_date', 200);
-      const reportLines = report.map((r) =>
-        `  ${r.handle}: ${r.shares} shares — ${r.decision === 'cash_in' ? `CASHED IN → ${r.payout_auec.toLocaleString()} aUEC` : 'DEFERRED (rolls over in full)'}`
-      );
-      const body = [
-        `FSIS FINAL PAY DAY REPORT — ${cycle.payday_date}`,
-        ``,
-        `Distributable pool: ${pool.toLocaleString()} aUEC (${cycle.pool_source || 'declared'})`,
-        `Total shares at open: ${totalShares}`,
-        `Share value: ${Math.round(shareValue).toLocaleString()} aUEC/share — identical rate for every crew member`,
-        ``,
-        `SPLITS:`,
-        ...reportLines,
-        ``,
-        `Total paid out: ${totalPaid.toLocaleString()} aUEC`,
-        `Shares deferred to next cycle: ${Math.round(deferredShares * 100) / 100} (never forfeited)`,
-        `Unclaimed pool retained in business treasury for future pay days.`,
-        ``,
-        `Full report is permanently archived in the FSIS app (Station → MY PAY DAY and FairShare → PAY DAY).`,
-        ``,
-        `"Every credit accounted for."`,
-      ].join('\n');
-
-      for (const m of crew) {
-        if (!m.email) continue;
-        await base44.asServiceRole.integrations.Core.SendEmail({
-          from_name: 'FSIS.bot Pay Day',
-          to: m.email,
-          subject: `📋 Final pay day report — ${cycle.payday_date} (${totalPaid.toLocaleString()} aUEC distributed)`,
-          body,
-        });
-      }
-
+      // No emails / PII — the transparency report is published in-app, keyed by callsign only.
       console.log(`Cycle ${cycle.id} published: paid ${totalPaid}, deferred ${deferredShares} shares`);
       results.push({ cycle_id: cycle.id, total_paid_auec: totalPaid, deferred_shares: deferredShares });
     }

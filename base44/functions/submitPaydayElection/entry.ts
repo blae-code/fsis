@@ -1,8 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 // Records a contractor's pay day election (cash in or defer) for the open cycle.
-// Identity is enforced server-side: the logged-in user's email must match their
-// crew roster record — nobody can elect on someone else's behalf.
+// Identity is enforced server-side: the logged-in user's operator callsign must
+// match their crew roster record — nobody can elect on someone else's behalf.
 
 Deno.serve(async (req) => {
   try {
@@ -17,10 +17,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Decision must be cash_in or defer' }, { status: 400 });
     }
 
-    const matches = await base44.asServiceRole.entities.crew_member.filter({ email: user.email });
-    const me = matches[0];
+    const crew = await base44.asServiceRole.entities.crew_member.filter({ active: true });
+    const me = (user.handle && crew.find((m) => (m.handle || '').toLowerCase() === user.handle.toLowerCase())) || null;
     if (!me) {
-      return Response.json({ error: 'Your account is not linked to a crew roster record. Ask management to add your email.' }, { status: 403 });
+      return Response.json({ error: 'Your callsign is not on the crew roster. Ask management to add your callsign, and make sure it matches your FSIS operator callsign.' }, { status: 403 });
     }
 
     const openCycles = await base44.asServiceRole.entities.payday_cycle.filter({ status: 'open' });
@@ -39,7 +39,6 @@ Deno.serve(async (req) => {
     const data = {
       cycle_id: cycle.id,
       handle: me.handle,
-      email: user.email,
       decision,
       shares_at_election: shares,
       decided_at: new Date().toISOString(),

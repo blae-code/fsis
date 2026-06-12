@@ -4,11 +4,7 @@
   "properties": {
     "handle": {
       "type": "string",
-      "description": "In-game handle of the crew member"
-    },
-    "email": {
-      "type": "string",
-      "description": "App account email \u2014 links the contractor to their login for pay day notifications and elections"
+      "description": "In-game callsign of the crew member \u2014 also links their app operator profile (callsign match) for pay day elections"
     },
     "role": {
       "type": "string",

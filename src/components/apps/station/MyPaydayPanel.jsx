@@ -39,8 +39,8 @@ export default function MyPaydayPanel() {
           <Coins className="w-3 h-3" /> MY PAY DAY
         </div>
         <p className="text-[10px] text-muted-foreground mt-1.5">
-          Your account isn't linked to a crew member yet. Ask management to add your login email on the Crew Roster
-          to receive pay day notifications and cast your cash-in decision here.
+          Your callsign isn't on the crew roster yet. Ask management to add your callsign — it must match
+          your FSIS operator callsign (Settings) — to cast your cash-in decision here.
         </p>
       </div>
     );
@@ -99,7 +99,7 @@ export default function MyPaydayPanel() {
               <p className="text-[9px] text-destructive">{electMutation.error?.response?.data?.error || 'Could not record your decision.'}</p>
             )}
             <p className="text-[9px] text-muted-foreground">
-              No response = your shares are automatically banked at full value, never forfeited. The final transparency report is published and emailed when the window closes.
+              No response = your shares are automatically banked at full value, never forfeited. The final transparency report is published here when the window closes.
             </p>
           </>
         )}

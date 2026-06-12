@@ -1,8 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 // Contractor-facing pay day status. Scoped strictly to the logged-in user via
-// their crew roster email link — returns their shares, the open cycle, their
-// election, and the latest published transparency report.
+// their callsign matching the crew roster — returns their shares, the open cycle,
+// their election, and the latest published transparency report.
 
 Deno.serve(async (req) => {
   try {
@@ -12,8 +12,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const matches = await base44.asServiceRole.entities.crew_member.filter({ email: user.email });
-    const me = matches[0] || null;
+    const crew = await base44.asServiceRole.entities.crew_member.filter({ active: true });
+    const me = (user.handle && crew.find((m) => (m.handle || '').toLowerCase() === user.handle.toLowerCase())) || null;
 
     const openCycles = await base44.asServiceRole.entities.payday_cycle.filter({ status: 'open' });
     const published = await base44.asServiceRole.entities.payday_cycle.filter({ status: 'published' }, '-published_at', 1);

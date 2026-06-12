@@ -10,8 +10,9 @@ Deno.serve(async (req) => {
 
     const svc = base44.asServiceRole;
 
+    // Identity by callsign: the operator's FSIS callsign must match a roster handle.
     const crew = await svc.entities.crew_member.filter({ active: true });
-    const member = crew.find((m) => (m.email || '').toLowerCase() === (user.email || '').toLowerCase());
+    const member = crew.find((m) => (m.handle || '').toLowerCase() === (user.handle || '').toLowerCase() && user.handle);
     if (!member) {
       return Response.json({ linked: false });
     }

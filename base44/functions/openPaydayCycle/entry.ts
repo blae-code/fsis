@@ -73,44 +73,10 @@ Deno.serve(async (req) => {
       })),
     });
 
-    // Notify every linked crew member with outstanding shares
-    const crew = await base44.asServiceRole.entities.crew_member.filter({ active: true }, '-created_date', 200);
-    let notified = 0;
-    for (const m of crew) {
-      const shares = byHandle[m.handle];
-      if (!m.email || !shares) continue;
-      const est = Math.round(shares * shareValue);
-      await base44.asServiceRole.integrations.Core.SendEmail({
-        from_name: 'FSIS.bot Pay Day',
-        to: m.email,
-        subject: `💰 Pay Day window open — ${Math.round(shares * 100) / 100} shares, est. ${est.toLocaleString()} aUEC`,
-        body: [
-          `FSIS PAY DAY — ${paydayDate}`,
-          ``,
-          `${m.handle}, the weekly pay day decision window is now OPEN.`,
-          ``,
-          `Your outstanding shares: ${Math.round(shares * 100) / 100}`,
-          `Current share value: ${Math.round(shareValue).toLocaleString()} aUEC/share`,
-          `Your estimated payout: ${est.toLocaleString()} aUEC`,
-          `Distributable pool: ${pool.toLocaleString()} aUEC (${poolSource})`,
-          ``,
-          `You have 72 HOURS to decide — window closes ${closes.toUTCString()}.`,
-          ``,
-          `• CASH IN — receive your share of this week's pool on close.`,
-          `• DEFER — your shares roll over in full to the next pay day. Shares never expire and are never forfeited.`,
-          `• No response = automatic DEFER. You will never lose earned shares by staying silent.`,
-          ``,
-          `Make your election in the FSIS app → Station → MY PAY DAY.`,
-          `A full transparency report of all earnings and splits will be published when the window closes.`,
-          ``,
-          `"Every credit accounted for."`,
-        ].join('\n'),
-      });
-      notified++;
-    }
-
-    console.log(`Pay day cycle ${cycle.id} opened: pool ${pool}, ${totalShares} shares, ${notified} notified`);
-    return Response.json({ opened: true, cycle_id: cycle.id, pool_auec: pool, total_shares: totalShares, notified });
+    // No emails / PII — crew see the open window in-app (Station → MY PAY DAY),
+    // identified by callsign only.
+    console.log(`Pay day cycle ${cycle.id} opened: pool ${pool}, ${totalShares} shares`);
+    return Response.json({ opened: true, cycle_id: cycle.id, pool_auec: pool, total_shares: totalShares });
   } catch (error) {
     console.error('openPaydayCycle error:', error);
     return Response.json({ error: error.message }, { status: 500 });
