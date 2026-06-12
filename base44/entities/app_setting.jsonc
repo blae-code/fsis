@@ -4,7 +4,7 @@
   "properties": {
     "key": {
       "type": "string",
-      "description": "Unique setting key, e.g. ledger_sheets_spreadsheet_id"
+      "description": "Setting key, e.g. ledger_sheet_id"
     },
     "value": {
       "type": "string",

@@ -6,6 +6,7 @@ import KpiTiles from '@/components/apps/performance/KpiTiles';
 import VolumeChart from '@/components/apps/performance/VolumeChart';
 import RevenueChart from '@/components/apps/performance/RevenueChart';
 import CommodityProfit from '@/components/apps/performance/CommodityProfit';
+import CommodityTrades from '@/components/apps/performance/CommodityTrades';
 
 const COMMODITY_NAMES = {
   RMC: 'Recycled Material Composite',
@@ -127,6 +128,7 @@ export default function PerformanceContent() {
               <VolumeChart data={volumeData} />
               <RevenueChart data={revenueData} />
             </div>
+            <CommodityTrades sessions={sessions} bestPrice={bestPrice} />
             <CommodityProfit data={profitData} />
           </>
         )}
