@@ -1,9 +1,8 @@
 import React from 'react';
-import { Package, Layers, ClipboardList, Info } from 'lucide-react';
+import { Package, ClipboardList, Info } from 'lucide-react';
 
 const TABS = [
   { id: 'catalog', label: 'CATALOG', icon: Package },
-  { id: 'materials', label: 'MATERIALS', icon: Layers },
   { id: 'orders', label: 'MY ORDERS', icon: ClipboardList },
   { id: 'about', label: 'ABOUT FSIS', icon: Info },
 ];

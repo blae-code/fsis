@@ -12,7 +12,6 @@ import AboutFsis from '@/components/store/AboutFsis';
 import StoreToolbar from '@/components/store/StoreToolbar';
 import StoreTabs from '@/components/store/StoreTabs';
 import MarketTicker from '@/components/store/MarketTicker';
-import MaterialsIndex from '@/components/store/MaterialsIndex';
 import FsisLogo from '@/components/brand/FsisLogo';
 import HeroScanBay from '@/components/store/HeroScanBay';
 import { FSIS } from '@/lib/fsisLore';
@@ -149,7 +148,6 @@ export default function Storefront() {
                 )}
               </div>
             )}
-            {tab === 'materials' && <MaterialsIndex products={products} />}
             {tab === 'orders' && <MyOrders />}
             {tab === 'about' && <AboutFsis />}
           </div>
