@@ -66,7 +66,7 @@ export default function Storefront() {
     <div className="os-viewport overflow-y-auto" style={{ background: '#0C0B0A' }}>
       {/* Header */}
       <header className="border-b sticky top-0 z-10 backdrop-blur-md" style={{ borderColor: '#2A2118', background: 'rgba(12, 11, 10, 0.92)' }}>
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-[1720px] mx-auto px-4 2xl:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-1.5" style={{ background: 'linear-gradient(160deg, #8A6430, #4A3722)', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}>
               <FsisLogo size={26} />
@@ -89,7 +89,7 @@ export default function Storefront() {
       <MarketTicker />
 
       {/* Hero — bronze command deck panel */}
-      <section className="max-w-6xl mx-auto px-4 pt-8 pb-6">
+      <section className="max-w-[1720px] mx-auto px-4 2xl:px-8 pt-8 pb-6">
         <div
           className="p-[6px]"
           style={{
@@ -98,7 +98,7 @@ export default function Storefront() {
           }}
         >
           <div
-            className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr]"
+            className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] 2xl:grid-cols-[2fr_1fr]"
             style={{ clipPath: 'polygon(28px 0, 100% 0, 100% calc(100% - 28px), calc(100% - 28px) 100%, 0 100%, 0 28px)' }}
           >
             <div
@@ -125,10 +125,10 @@ export default function Storefront() {
       </section>
 
       {/* Catalog + cart */}
-      <main className="max-w-6xl mx-auto px-4 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
+      <main className="max-w-[1720px] mx-auto px-4 2xl:px-8 pb-12 grid grid-cols-1 lg:grid-cols-3 2xl:grid-cols-[1fr_400px] gap-6 2xl:gap-8">
+        <div className="lg:col-span-2 2xl:col-span-1 space-y-6">
           <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} count={filteredProducts.length} />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
             {filteredProducts.length === 0 ? (
               <p className="col-span-full text-center py-12 text-xs font-mono" style={{ color: '#8A7E6C' }}>
                 {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your search.'}
@@ -141,7 +141,7 @@ export default function Storefront() {
           <MyOrders />
           <AboutFsis />
         </div>
-        <div>
+        <div className="lg:sticky lg:top-[72px] lg:self-start">
           <OrderPanel cart={cart} setCart={setCart} user={user} />
         </div>
       </main>
