@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WorkOrderForm from '@/components/apps/fairshare/WorkOrderForm';
 import WorkOrderList from '@/components/apps/fairshare/WorkOrderList';
 import CrewRoster from '@/components/apps/fairshare/CrewRoster';
+import PayrollTable from '@/components/apps/fairshare/PayrollTable';
 
 // FairShare: Regolith-style work orders with crew profit-sharing.
 // Gross sale − expenses = net, split by share weight across the crew.
@@ -25,6 +26,12 @@ export default function FairShareContent() {
           >
             CREW ROSTER
           </TabsTrigger>
+          <TabsTrigger
+            value="payroll"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            PAYROLL
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="orders" className="flex-1 overflow-auto m-0">
@@ -36,6 +43,10 @@ export default function FairShareContent() {
 
         <TabsContent value="crew" className="flex-1 overflow-auto m-0">
           <CrewRoster />
+        </TabsContent>
+
+        <TabsContent value="payroll" className="flex-1 overflow-auto m-0">
+          <PayrollTable />
         </TabsContent>
       </Tabs>
 
