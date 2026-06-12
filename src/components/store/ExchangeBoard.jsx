@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 const BRONZE = '#B0793A';
 const AMBER = '#D4920B';
@@ -37,17 +37,32 @@ function timeAgo(iso) {
 
 /** Real-time UEX exchange board — live best-sell prices, deltas and trend lines per salvage commodity */
 export default function ExchangeBoard() {
-  const { data: prices = [] } = useQuery({
+  const queryClient = useQueryClient();
+
+  const { data: prices = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['exchange_prices'],
     queryFn: () => base44.entities.commodity_price.list('-price_sell', 200),
     refetchInterval: 60 * 1000,
+    refetchIntervalInBackground: true,
+    retry: 3,
   });
 
   const { data: snapshots = [] } = useQuery({
     queryKey: ['exchange_snapshots'],
     queryFn: () => base44.entities.price_snapshot.list('-captured_at', 90),
     refetchInterval: 5 * 60 * 1000,
+    refetchIntervalInBackground: true,
   });
+
+  // Real-time push: when the 15-min UEX sync rewrites the cache, refresh the board instantly
+  useEffect(() => {
+    const unsubscribe = base44.entities.commodity_price.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ['exchange_prices'] });
+      queryClient.invalidateQueries({ queryKey: ['exchange_snapshots'] });
+      queryClient.invalidateQueries({ queryKey: ['ticker_prices'] });
+    });
+    return unsubscribe;
+  }, [queryClient]);
 
   // Best entry + terminal depth per commodity from the live UEX cache
   const board = {};
@@ -110,7 +125,20 @@ export default function ExchangeBoard() {
 
       {/* Commodity rows */}
       <div className="relative flex-1 flex flex-col justify-center gap-px px-3 min-h-[210px]">
-        {codes.length === 0 ? (
+        {isLoading ? (
+          <p className="text-center font-mono text-[10px] animate-pulse" style={{ color: DIM }}>LINKING TO UEX RELAY…</p>
+        ) : isError ? (
+          <div className="text-center font-mono text-[10px] space-y-2">
+            <p style={{ color: '#C24141' }}>FEED INTERRUPTED — RELAY UNREACHABLE</p>
+            <button
+              onClick={() => refetch()}
+              className="px-3 py-1 border hover:brightness-125 transition-all"
+              style={{ borderColor: `${BRONZE}66`, color: BRONZE }}
+            >
+              RETRY LINK
+            </button>
+          </div>
+        ) : codes.length === 0 ? (
           <p className="text-center font-mono text-[10px]" style={{ color: DIM }}>AWAITING UEX TELEMETRY…</p>
         ) : (
           codes.map((code) => {
@@ -152,7 +180,7 @@ export default function ExchangeBoard() {
       {/* Sync footer */}
       <div className="relative px-4 py-2 font-mono text-[9px] flex items-center justify-between" style={{ borderTop: `1px solid ${BRONZE}26` }}>
         <span style={{ color: DIM }}>SYNC: <span style={{ color: BONE }}>{timeAgo(latest)}</span></span>
-        <span style={{ color: '#5FA463' }}>● UEXCORP RELAY NOMINAL</span>
+        <span style={{ color: isError ? '#C24141' : '#5FA463' }}>● UEXCORP RELAY {isError ? 'FAULT' : 'NOMINAL'}</span>
       </div>
     </div>
   );

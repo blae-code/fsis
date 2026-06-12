@@ -8,7 +8,8 @@ export default function MarketTicker() {
   const { data: prices = [] } = useQuery({
     queryKey: ['ticker_prices'],
     queryFn: () => base44.entities.commodity_price.filter({ is_best_sell: true }),
-    staleTime: 5 * 60 * 1000,
+    refetchInterval: 5 * 60 * 1000,
+    refetchIntervalInBackground: true,
   });
 
   if (prices.length === 0) return null;
