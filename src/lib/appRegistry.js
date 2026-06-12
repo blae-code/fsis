@@ -12,6 +12,14 @@ const APPS = [
     color: 'hsl(38, 30%, 60%)', // pale bronze
   },
   {
+    id: 'management',
+    name: 'Management',
+    description: 'Admin console — storefront & operations',
+    icon: 'Briefcase',
+    status: 'active',
+    color: 'hsl(0, 45%, 55%)', // command red
+  },
+  {
     id: 'salvage',
     name: 'Salvage',
     description: 'Salvage operations & inventory',
