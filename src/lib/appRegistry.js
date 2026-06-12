@@ -21,9 +21,9 @@ const APPS = [
   {
     id: 'ledger',
     name: 'Ledger',
-    description: 'Finances & transactions',
+    description: 'Credit accounting — income vs operating costs',
     icon: 'BookOpen',
-    status: 'coming-online',
+    status: 'active',
     color: 'hsl(180, 40%, 30%)',
   },
   {

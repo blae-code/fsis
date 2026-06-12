@@ -6,6 +6,7 @@ import SettingsContent from '@/components/apps/SettingsContent';
 import CommsContent from '@/components/apps/CommsContent';
 import FabricationContent from '@/components/apps/FabricationContent';
 import OrdersContent from '@/components/apps/OrdersContent';
+import LedgerContent from '@/components/apps/LedgerContent';
 
 // Maps an appId to its window content + title.
 // Used both when opening from the Dock and when restoring a saved session.
@@ -23,6 +24,8 @@ export function resolveAppContent(app) {
       return { title: 'FABRICATION — Crafting & Materials', content: <FabricationContent /> };
     case 'orders':
       return { title: 'ORDERS — Customer Order Desk', content: <OrdersContent /> };
+    case 'ledger':
+      return { title: 'LEDGER — Credit Accounting', content: <LedgerContent /> };
     default:
       return {
         title: `${app.name.toUpperCase()} — coming online`,
@@ -46,6 +49,8 @@ export function resolveContentById(appId, title) {
       return <FabricationContent />;
     case 'orders':
       return <OrdersContent />;
+    case 'ledger':
+      return <LedgerContent />;
     default: {
       const name = (title || appId).split(' — ')[0];
       return <PlaceholderContent name={name} description="" />;

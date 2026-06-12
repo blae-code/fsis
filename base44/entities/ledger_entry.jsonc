@@ -1,0 +1,68 @@
+{
+  "name": "ledger_entry",
+  "type": "object",
+  "properties": {
+    "entry_type": {
+      "type": "string",
+      "enum": [
+        "income",
+        "expense"
+      ],
+      "description": "Whether this is money in or money out"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "salvage_sale",
+        "order_fulfillment",
+        "hauling",
+        "fuel",
+        "repairs",
+        "fees_fines",
+        "equipment",
+        "crew_pay",
+        "ship_rental",
+        "other"
+      ],
+      "default": "other",
+      "description": "What the credit movement relates to"
+    },
+    "amount_auec": {
+      "type": "number",
+      "description": "Amount in aUEC (always positive; entry_type determines direction)"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this entry is for, e.g. 'RMC sale at TDD Orison'"
+    },
+    "counterparty": {
+      "type": "string",
+      "description": "Who paid or was paid, e.g. terminal, customer handle, crew member"
+    },
+    "entry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the transaction occurred"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional internal notes"
+    }
+  },
+  "required": [
+    "entry_type",
+    "amount_auec"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
