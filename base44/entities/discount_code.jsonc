@@ -1,0 +1,44 @@
+{
+  "name": "discount_code",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "The code buyers enter, stored uppercase, e.g. REDSCAR-2956"
+    },
+    "label": {
+      "type": "string",
+      "description": "What this code is for, e.g. Redscar Nomads org rate"
+    },
+    "discount_percent": {
+      "type": "number",
+      "description": "Percent off the order total, e.g. 10"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the code can currently be redeemed"
+    },
+    "uses": {
+      "type": "number",
+      "default": 0,
+      "description": "How many times the code has been redeemed"
+    }
+  },
+  "required": [
+    "code",
+    "discount_percent"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

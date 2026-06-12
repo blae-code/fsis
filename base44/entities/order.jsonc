@@ -10,6 +10,22 @@
       "type": "string",
       "description": "Public tracking code given to the buyer, e.g. FSIS-3F9A2C"
     },
+    "handoff_passphrase": {
+      "type": "string",
+      "description": "Unique passphrase for in-person handoff identity verification, e.g. IRON-VULTURE-47"
+    },
+    "discount_code": {
+      "type": "string",
+      "description": "Discount code redeemed on this order, if any"
+    },
+    "discount_percent": {
+      "type": "number",
+      "description": "Percent discount applied"
+    },
+    "discount_auec": {
+      "type": "number",
+      "description": "Discount amount in aUEC"
+    },
     "items": {
       "type": "array",
       "description": "Ordered line items",
@@ -39,7 +55,7 @@
     },
     "total_auec": {
       "type": "number",
-      "description": "Order total in aUEC"
+      "description": "Order total in aUEC (after discount)"
     },
     "delivery_location": {
       "type": "string",

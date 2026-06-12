@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, KeyRound } from 'lucide-react';
 import FsisLogo from '@/components/brand/FsisLogo';
 import SerialStrip from '@/components/brand/SerialStrip';
 import { FSIS } from '@/lib/fsisLore';
@@ -46,10 +46,27 @@ export default function ManifestReceipt({ order }) {
             </div>
           ))}
         </div>
+        {order.discount_auec > 0 && (
+          <div className="flex justify-between" style={{ color: '#7BA05B' }}>
+            <span>DISCOUNT ({order.discount_percent}%)</span>
+            <span>−{order.discount_auec.toLocaleString()}</span>
+          </div>
+        )}
         <div className="flex justify-between border-t pt-2 text-[11px] font-bold" style={{ borderColor: '#3A2F20' }}>
           <span style={{ color: '#D8CFC0' }}>TOTAL</span>
           <span style={{ color: '#E0A22E' }}>{(order.total || 0).toLocaleString()} aUEC</span>
         </div>
+        {order.passphrase && (
+          <div className="border p-2.5 space-y-1" style={{ borderColor: '#5C4424', background: '#161310' }}>
+            <div className="flex items-center gap-1.5 text-[8px] tracking-[0.2em]" style={{ color: '#C8A05B' }}>
+              <KeyRound className="w-3 h-3" /> HANDOFF PASSPHRASE
+            </div>
+            <div className="text-sm font-bold tracking-[0.15em]" style={{ color: '#E0A22E' }}>{order.passphrase}</div>
+            <p className="text-[8px] leading-relaxed" style={{ color: '#8A7E6C' }}>
+              For in-person delivery: the FSIS representative will state this passphrase to confirm their identity — and may ask you (or your representative) for it in return. Never share it before the meet.
+            </p>
+          </div>
+        )}
         <SerialStrip seed={order.tracking_code} label={`ISSUED ${new Date().toLocaleDateString()}`} />
         <p className="text-[8px]" style={{ color: '#6B6155' }}>
           Saved on this device — track anytime under MY ORDERS. "{FSIS.motto}"

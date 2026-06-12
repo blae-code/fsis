@@ -3,7 +3,7 @@ import { storeCache } from '@/lib/localCache';
 import { trackOrder } from '@/functions/trackOrder';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { PackageCheck, Search, Loader2, RotateCcw } from 'lucide-react';
+import { PackageCheck, Search, Loader2, RotateCcw, KeyRound } from 'lucide-react';
 import OrderTimeline from '@/components/store/OrderTimeline';
 import { etaFor } from '@/lib/storeLocations';
 
@@ -116,6 +116,13 @@ export default function MyOrders({ onReorder }) {
                 )}
               </div>
             </div>
+            {o.handoff_passphrase && !['delivered', 'cancelled'].includes(o.status) && (
+              <div className="flex items-center gap-2 font-mono text-[10px]" title="Spoken at the in-person handoff to verify identity on both sides">
+                <KeyRound className="w-3 h-3 shrink-0" style={{ color: '#C8A05B' }} />
+                <span style={{ color: '#8A7E6C' }}>HANDOFF PASSPHRASE:</span>
+                <span className="font-bold tracking-[0.12em]" style={{ color: '#E0A22E' }}>{o.handoff_passphrase}</span>
+              </div>
+            )}
             <OrderTimeline status={o.status} />
           </div>
         ))

@@ -19,6 +19,7 @@ export default function OrderPanel({ cart, setCart, user }) {
   const [location, setLocation] = useState(saved?.location || '');
   const [notes, setNotes] = useState('');
   const [svcWindow, setSvcWindow] = useState('');
+  const [discountCode, setDiscountCode] = useState('');
   const [placed, setPlaced] = useState(null); // manifest snapshot of last placed order
 
   const total = cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
@@ -32,6 +33,7 @@ export default function OrderPanel({ cart, setCart, user }) {
         items: cart.map(({ product_id, product_name, quantity }) => ({ product_id, product_name, quantity })),
         delivery_location: location,
         customer_notes: finalNotes,
+        discount_code: discountCode.trim(),
       });
       return res.data;
     },
@@ -40,10 +42,20 @@ export default function OrderPanel({ cart, setCart, user }) {
       storeCache.setCustomer({ handle, location });
       storeCache.addTrackingCode(data.tracking_code);
       queryClient.invalidateQueries({ queryKey: ['tracked_orders'] });
-      setPlaced({ tracking_code: data.tracking_code, handle, location, items: [...cart], total });
+      setPlaced({
+        tracking_code: data.tracking_code,
+        handle,
+        location,
+        items: [...cart],
+        total: data.total_auec,
+        discount_auec: data.discount_auec,
+        discount_percent: data.discount_percent,
+        passphrase: data.handoff_passphrase,
+      });
       setCart([]);
       setNotes('');
       setSvcWindow('');
+      setDiscountCode('');
     },
   });
 
@@ -127,10 +139,27 @@ export default function OrderPanel({ cart, setCart, user }) {
               </div>
             )}
             <div className="space-y-1">
+              <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>DISCOUNT CODE (OPTIONAL)</Label>
+              <Input
+                value={discountCode}
+                onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                className="h-8 text-xs font-mono"
+                style={fieldStyle}
+                placeholder="Org members enter code here"
+              />
+              <p className="text-[9px] font-mono" style={{ color: '#6B6155' }}>Verified at checkout — itemized on your receipt.</p>
+            </div>
+            <div className="space-y-1">
               <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>NOTES</Label>
               <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className="text-xs font-mono h-16" style={fieldStyle} placeholder="Anything we should know?" />
             </div>
           </div>
+
+          {orderMutation.isError && (
+            <p className="text-[10px] font-mono" style={{ color: '#C05050' }}>
+              {orderMutation.error?.response?.data?.error || 'Order failed — please try again.'}
+            </p>
+          )}
 
           <button
             className="w-full h-9 font-mono text-xs font-bold rounded-full disabled:opacity-40 disabled:pointer-events-none hover:brightness-110 transition-all inline-flex items-center justify-center"
