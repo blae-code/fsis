@@ -23,6 +23,7 @@ import ScanLog from '@/components/apps/salvage/ScanLog';
 import StockTrend from '@/components/apps/salvage/StockTrend';
 import HaulBoard from '@/components/apps/salvage/HaulBoard';
 import PriceAlerts from '@/components/apps/salvage/PriceAlerts';
+import StockAlerts from '@/components/apps/salvage/StockAlerts';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -342,6 +343,9 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
 
         <TabsContent value="alerts" className="flex-1 overflow-auto m-0">
           <PriceAlerts bestPrices={bestPrices} />
+          <div className="px-4 pb-4">
+            <StockAlerts />
+          </div>
         </TabsContent>
 
         <TabsContent value="board" className="flex-1 overflow-auto m-0">

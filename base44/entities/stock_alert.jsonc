@@ -1,0 +1,61 @@
+{
+  "name": "stock_alert",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "Product being watched"
+    },
+    "product_name": {
+      "type": "string",
+      "description": "Product display name at time of arming"
+    },
+    "code": {
+      "type": "string",
+      "description": "Commodity short code, e.g. RMC"
+    },
+    "threshold_qty": {
+      "type": "number",
+      "description": "Trigger when stock falls below this quantity"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "armed",
+        "triggered"
+      ],
+      "default": "armed",
+      "description": "Armed = watching; triggered = stock dropped below threshold"
+    },
+    "notify_email": {
+      "type": "boolean",
+      "default": true,
+      "description": "Send an email when the alert triggers"
+    },
+    "triggered_stock": {
+      "type": "number",
+      "description": "Stock level at trigger time"
+    },
+    "triggered_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the alert last triggered"
+    }
+  },
+  "required": [
+    "product_id",
+    "threshold_qty"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
