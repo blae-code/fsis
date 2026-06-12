@@ -2,6 +2,7 @@ import React from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Briefcase } from 'lucide-react';
+import CommodityTrendChart from '@/components/apps/station/CommodityTrendChart';
 
 /** Station view for management — top-line ops summary across all divisions */
 export default function ManagementView() {
@@ -43,6 +44,8 @@ export default function ManagementView() {
           </div>
         ))}
       </div>
+
+      <CommodityTrendChart />
 
       <div className="rounded border p-3 text-[10px] text-muted-foreground flex items-center gap-2" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 8%)' }}>
         <Briefcase className="w-3.5 h-3.5 shrink-0" style={{ color: 'hsl(42, 60%, 50%)' }} />
