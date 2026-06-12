@@ -11,6 +11,14 @@ const APPS = [
     color: 'hsl(168, 65%, 45%)',
   },
   {
+    id: 'routemap',
+    name: 'Routemap',
+    description: 'Jump paths to salvage terminals',
+    icon: 'Map',
+    status: 'active',
+    color: 'hsl(200, 55%, 45%)',
+  },
+  {
     id: 'cargo',
     name: 'Cargo',
     description: 'Cargo manifest & hauling',
