@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { BookOpen, Trash2 } from 'lucide-react';
 import LedgerEntryForm, { CATEGORIES } from '@/components/apps/ledger/LedgerEntryForm';
 import LedgerSummary from '@/components/apps/ledger/LedgerSummary';
+import MonthlyReport from '@/components/apps/ledger/MonthlyReport';
 
 export default function LedgerContent() {
   const queryClient = useQueryClient();
@@ -32,14 +33,17 @@ export default function LedgerContent() {
         <div className="text-[9px] text-muted-foreground tracking-[0.2em]">
           TRANSACTION LOG — {filtered.length} ENTRIES
         </div>
-        <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="h-7 w-28 text-[10px] font-mono"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all" className="text-xs">All</SelectItem>
-            <SelectItem value="income" className="text-xs">Income</SelectItem>
-            <SelectItem value="expense" className="text-xs">Expenses</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <MonthlyReport entries={entries} />
+          <Select value={filter} onValueChange={setFilter}>
+            <SelectTrigger className="h-7 w-28 text-[10px] font-mono"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="text-xs">All</SelectItem>
+              <SelectItem value="income" className="text-xs">Income</SelectItem>
+              <SelectItem value="expense" className="text-xs">Expenses</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="flex-1 overflow-auto p-3 space-y-1.5">
