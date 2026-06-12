@@ -1,0 +1,29 @@
+{
+  "name": "app_setting",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "Unique setting key, e.g. ledger_sheets_spreadsheet_id"
+    },
+    "value": {
+      "type": "string",
+      "description": "Setting value"
+    }
+  },
+  "required": [
+    "key"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
