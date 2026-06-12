@@ -4,6 +4,14 @@
 
 const APPS = [
   {
+    id: 'station',
+    name: 'Station',
+    description: 'Your role-based duty dashboard',
+    icon: 'MonitorDot',
+    status: 'active',
+    color: 'hsl(38, 30%, 60%)', // pale bronze
+  },
+  {
     id: 'salvage',
     name: 'Salvage',
     description: 'Salvage operations & inventory',

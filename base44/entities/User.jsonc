@@ -1,31 +1,15 @@
 {
+  "name": "User",
   "type": "object",
   "properties": {
-    "handle": {
+    "ops_role": {
       "type": "string",
-      "description": "In-game handle / callsign displayed across FSIS apps"
-    },
-    "org_role": {
-      "type": "string",
-      "description": "Role within the org, e.g. Operator, Officer, Salvager"
-    },
-    "org_tier": {
-      "type": "string",
-      "description": "Pricing tier name this operator belongs to (links to pricing_tier.tier_name)"
-    },
-    "avatar_url": {
-      "type": "string",
-      "description": "URL to the operator's avatar image"
-    },
-    "home_system": {
-      "type": "string",
-      "description": "Operator's home star system / base of operations, e.g. Stanton"
-    },
-    "onboarded": {
-      "type": "boolean",
-      "description": "Whether the operator has completed the first-run onboarding sequence"
+      "enum": [
+        "salvage_operator",
+        "cargo_hauler",
+        "management"
+      ],
+      "description": "Duty role determining which Station dashboard view the user sees"
     }
-  },
-  "required": [],
-  "name": "User"
+  }
 }
