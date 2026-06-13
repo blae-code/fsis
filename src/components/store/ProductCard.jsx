@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Hammer, Wrench, ShoppingCart } from 'lucide-react';
+import { Hammer, Wrench, ShoppingCart, Pin } from 'lucide-react';
 import AddToCartControl from '@/components/store/AddToCartControl';
 import StoreTip from '@/components/store/StoreTip';
 import CommodityIcon from '@/components/brand/CommodityIcon';
@@ -17,7 +17,7 @@ const CATEGORY_META = {
   service: { label: 'SERVICE', icon: Wrench },
 };
 
-export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0 }) {
+export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
   const FallbackIcon = meta.icon;
@@ -61,16 +61,27 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
             )}
           </div>
           <div className="flex flex-col items-end gap-1.5">
-            <span
-              className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
-              style={{
-                background: 'linear-gradient(180deg, #5C8273, #3A5A4E)',
-                color: '#0D1411',
-                clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)',
-              }}
-            >
-              {meta.label}
-            </span>
+            <div className="flex items-center gap-1.5">
+              <StoreTip label={pinned ? 'UNPIN' : 'PIN TO TOP'} desc="Pinned wares stay at the top of the catalog on this device.">
+                <button
+                  onClick={(e) => { e.stopPropagation(); onTogglePin?.(product.id); }}
+                  className="p-1 border hover:brightness-125 transition-all"
+                  style={{ borderColor: pinned ? '#C8893B' : '#2E2519', background: 'rgba(10, 9, 7, 0.6)' }}
+                >
+                  <Pin className="w-3 h-3" style={{ color: pinned ? '#F0B43A' : '#6B6155', fill: pinned ? '#F0B43A' : 'none' }} />
+                </button>
+              </StoreTip>
+              <span
+                className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
+                style={{
+                  background: 'linear-gradient(180deg, #5C8273, #3A5A4E)',
+                  color: '#0D1411',
+                  clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)',
+                }}
+              >
+                {meta.label}
+              </span>
+            </div>
             {inCart && (
               <motion.span
                 initial={{ opacity: 0, scale: 0.8 }}

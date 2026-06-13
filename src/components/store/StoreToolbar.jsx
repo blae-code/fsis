@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import StoreTip, { Kbd } from '@/components/store/StoreTip';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const CATEGORIES = [
   { key: 'all', label: 'ALL WARES' },
@@ -9,7 +10,7 @@ const CATEGORIES = [
   { key: 'service', label: 'SERVICES' },
 ];
 
-export default function StoreToolbar({ search, setSearch, category, setCategory, count }) {
+export default function StoreToolbar({ search, setSearch, category, setCategory, sort, setSort, count }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 font-mono">
       <div className="relative flex-1">
@@ -52,6 +53,20 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
           );
         })}
       </div>
+      <Select value={sort} onValueChange={setSort}>
+        <SelectTrigger
+          className="h-8 w-[130px] text-[9px] font-mono tracking-[0.1em] rounded-none shrink-0"
+          style={{ borderColor: '#2E423B', background: 'rgba(10, 9, 7, 0.5)', color: '#6FA08F' }}
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="featured" className="text-xs font-mono">FEATURED</SelectItem>
+          <SelectItem value="price_asc" className="text-xs font-mono">PRICE: LOW FIRST</SelectItem>
+          <SelectItem value="price_desc" className="text-xs font-mono">PRICE: HIGH FIRST</SelectItem>
+          <SelectItem value="stock" className="text-xs font-mono">MOST STOCK</SelectItem>
+        </SelectContent>
+      </Select>
       <span className="text-[9px] shrink-0" style={{ color: '#6B6155' }}>{count} LISTED</span>
     </div>
   );

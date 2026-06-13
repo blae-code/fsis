@@ -19,6 +19,10 @@ import QuoteBuilder from '@/components/store/QuoteBuilder';
 import OpsFeed from '@/components/store/OpsFeed';
 import JobsBoard from '@/components/store/JobsBoard';
 import StoreOnboarding from '@/components/store/StoreOnboarding';
+import MobileCartBar from '@/components/store/MobileCartBar';
+import HowItWorksStrip from '@/components/store/HowItWorksStrip';
+import RecentDeliveries from '@/components/store/RecentDeliveries';
+import { useToast } from '@/components/ui/use-toast';
 import { AnimatePresence } from 'framer-motion';
 import SystemStatus from '@/components/store/SystemStatus';
 import HexCrate from '@/components/three/HexCrate';
@@ -33,6 +37,9 @@ export default function Storefront() {
   const [tab, setTab] = useState('catalog');
   const [detailProduct, setDetailProduct] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(() => !storeCache.hasOnboarded());
+  const [sort, setSort] = useState('featured');
+  const [pins, setPins] = useState(() => storeCache.getPins());
+  const { toast } = useToast();
 
   // Persist in-progress cart so returning purchasers pick up where they left off
   useEffect(() => {
@@ -81,21 +88,32 @@ export default function Storefront() {
   });
 
   const addToCart = (product, qty = 1) => {
-    setCart((prev) => {
-      const existing = prev.find((i) => i.product_id === product.id);
-      if (existing) {
-        return prev.map((i) => i.product_id === product.id ? { ...i, quantity: i.quantity + qty } : i);
-      }
-      return [...prev, {
+    // Stock-aware cap — never let the manifest exceed available units
+    const cap = product.category === 'service' ? Infinity : (product.stock || 0);
+    const existing = cart.find((i) => i.product_id === product.id);
+    const current = existing?.quantity || 0;
+    const allowed = Math.min(qty, cap - current);
+    if (allowed <= 0) {
+      toast({ title: 'STOCK LIMIT', description: `Only ${cap} ${product.unit || 'SCU'} of ${product.product_name} available — all already in your manifest.` });
+      return;
+    }
+    if (allowed < qty) {
+      toast({ title: 'QUANTITY CAPPED', description: `Only ${cap} ${product.unit || 'SCU'} of ${product.product_name} in stock.` });
+    }
+    if (existing) {
+      setCart(cart.map((i) => i.product_id === product.id ? { ...i, quantity: i.quantity + allowed } : i));
+    } else {
+      setCart([...cart, {
         product_id: product.id,
         product_name: product.product_name,
         code: product.code,
         category: product.category,
         unit: product.unit || 'SCU',
         unit_price: product.price_auec,
-        quantity: qty,
-      }];
-    });
+        stock: cap === Infinity ? null : cap,
+        quantity: allowed,
+      }]);
+    }
   };
 
   // Refill the manifest from a past order's line items
@@ -129,6 +147,16 @@ export default function Storefront() {
     const matchC = category === 'all' || p.category === category;
     return matchQ && matchC;
   });
+
+  const SORT_FNS = {
+    featured: (a, b) => (a.sort_order || 0) - (b.sort_order || 0),
+    price_asc: (a, b) => a.price_auec - b.price_auec,
+    price_desc: (a, b) => b.price_auec - a.price_auec,
+    stock: (a, b) => (b.stock || 0) - (a.stock || 0),
+  };
+  const sortedProducts = [...filteredProducts].sort((a, b) =>
+    (pins.includes(a.id) ? 0 : 1) - (pins.includes(b.id) ? 0 : 1) || SORT_FNS[sort](a, b)
+  );
 
   return (
     <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#0C0B0A' }}>
@@ -170,7 +198,7 @@ export default function Storefront() {
       </div>
 
       {/* Main deck — fills viewport, no page scroll */}
-      <main className="flex-1 min-h-0 max-w-[1720px] mx-auto w-full px-4 2xl:px-8 py-4 grid grid-cols-1 lg:grid-cols-[1fr_380px] 2xl:grid-cols-[1fr_400px] gap-5 overflow-y-auto lg:overflow-hidden">
+      <main className="flex-1 min-h-0 max-w-[1720px] mx-auto w-full px-4 2xl:px-8 pt-4 pb-20 lg:pb-4 grid grid-cols-1 lg:grid-cols-[1fr_380px] 2xl:grid-cols-[1fr_400px] gap-5 overflow-y-auto lg:overflow-hidden">
         <div className="flex flex-col min-h-0 gap-4">
           {/* Compact hero */}
           <div
@@ -213,30 +241,36 @@ export default function Storefront() {
           <div className="shrink-0 flex flex-wrap items-center justify-between gap-3">
             <StoreTabs active={tab} onChange={setTab} />
             {tab === 'catalog' && (
-              <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} count={filteredProducts.length} />
+              <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} sort={sort} setSort={setSort} count={filteredProducts.length} />
             )}
           </div>
 
           {/* Active section — scrolls internally only if it overflows */}
           <div className="flex-1 min-h-0 lg:overflow-y-auto pr-1">
             {tab === 'catalog' && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-                {filteredProducts.length === 0 ? (
-                  <p className="col-span-full text-center py-12 text-xs font-mono" style={{ color: '#8A7E6C' }}>
-                    {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your search.'}
-                  </p>
-                ) : (
-                  filteredProducts.map((p) => (
-                    <ProductCard
-                      key={p.id}
-                      product={p}
-                      onAdd={addToCart}
-                      onView={setDetailProduct}
-                      marketBest={p.code ? marketBestByCode[p.code] : undefined}
-                      inCartQty={cart.find((i) => i.product_id === p.id)?.quantity || 0}
-                    />
-                  ))
-                )}
+              <div className="space-y-4">
+                <HowItWorksStrip />
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                  {sortedProducts.length === 0 ? (
+                    <p className="col-span-full text-center py-12 text-xs font-mono" style={{ color: '#8A7E6C' }}>
+                      {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your search.'}
+                    </p>
+                  ) : (
+                    sortedProducts.map((p) => (
+                      <ProductCard
+                        key={p.id}
+                        product={p}
+                        onAdd={addToCart}
+                        onView={setDetailProduct}
+                        marketBest={p.code ? marketBestByCode[p.code] : undefined}
+                        inCartQty={cart.find((i) => i.product_id === p.id)?.quantity || 0}
+                        pinned={pins.includes(p.id)}
+                        onTogglePin={(id) => setPins(storeCache.togglePin(id))}
+                      />
+                    ))
+                  )}
+                </div>
+                <RecentDeliveries />
               </div>
             )}
             {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty) => { addToCart(p, qty); }} />}
@@ -251,8 +285,8 @@ export default function Storefront() {
           </div>
         </div>
 
-        {/* Order panel — pinned, scrolls internally if needed */}
-        <div className="min-h-0 lg:overflow-y-auto">
+        {/* Order panel — pinned, scrolls internally if needed (drawer on mobile) */}
+        <div className="hidden lg:block min-h-0 lg:overflow-y-auto">
           <OrderPanel cart={cart} setCart={setCart} user={user} />
         </div>
       </main>
@@ -268,6 +302,8 @@ export default function Storefront() {
       <div className="shrink-0">
         <OpsFeed />
       </div>
+
+      <MobileCartBar cart={cart} setCart={setCart} user={user} />
 
       <footer className="shrink-0 border-t py-1.5 px-4 flex flex-wrap items-center justify-center gap-x-4" style={{ borderColor: '#2A2118' }}>
         <p className="text-[9px] font-mono" style={{ color: '#6B6155' }}>

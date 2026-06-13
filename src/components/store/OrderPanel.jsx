@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ShoppingCart, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ManifestReceipt from '@/components/store/ManifestReceipt';
+import OrderReceiptModal from '@/components/store/OrderReceiptModal';
 import HoldToTransmit from '@/components/store/HoldToTransmit';
 import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
 
@@ -23,6 +24,7 @@ export default function OrderPanel({ cart, setCart, user }) {
   const [svcWindow, setSvcWindow] = useState('');
   const [discountCode, setDiscountCode] = useState('');
   const [placed, setPlaced] = useState(null); // manifest snapshot of last placed order
+  const [showReceipt, setShowReceipt] = useState(false);
 
   const total = cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
   const hasService = cart.some((i) => i.category === 'service');
@@ -54,6 +56,7 @@ export default function OrderPanel({ cart, setCart, user }) {
         discount_percent: data.discount_percent,
         passphrase: data.handoff_passphrase,
       });
+      setShowReceipt(true);
       setCart([]);
       setNotes('');
       setSvcWindow('');
@@ -62,7 +65,11 @@ export default function OrderPanel({ cart, setCart, user }) {
   });
 
   const setQty = (id, qty) =>
-    setCart(cart.map((i) => (i.product_id === id ? { ...i, quantity: Math.max(1, qty) } : i)));
+    setCart(cart.map((i) => {
+      if (i.product_id !== id) return i;
+      const cap = i.stock == null ? Infinity : i.stock;
+      return { ...i, quantity: Math.min(cap, Math.max(1, qty)) };
+    }));
 
   return (
     <div
@@ -78,6 +85,7 @@ export default function OrderPanel({ cart, setCart, user }) {
       </div>
 
       {placed && <ManifestReceipt order={placed} />}
+      <OrderReceiptModal order={placed} open={showReceipt} onClose={() => setShowReceipt(false)} />
 
       {cart.length === 0 ? (
         <div className="border p-6 text-center" style={{ borderColor: '#3A2F20' }}>

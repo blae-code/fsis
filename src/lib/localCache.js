@@ -53,6 +53,8 @@ const STORE_KEYS = {
   cart: 'fsis.store.cart',
   trackingCodes: 'fsis.store.tracking_codes',
   onboarded: 'fsis.store.onboarded',
+  pins: 'fsis.store.pins',
+  howto: 'fsis.store.howto_dismissed',
 };
 
 export const storeCache = {
@@ -67,4 +69,13 @@ export const storeCache = {
   },
   hasOnboarded: () => read(STORE_KEYS.onboarded) === true,
   markOnboarded: () => write(STORE_KEYS.onboarded, true),
+  getPins: () => read(STORE_KEYS.pins) || [],
+  togglePin: (id) => {
+    const pins = read(STORE_KEYS.pins) || [];
+    const next = pins.includes(id) ? pins.filter((p) => p !== id) : [id, ...pins];
+    write(STORE_KEYS.pins, next);
+    return next;
+  },
+  hasDismissedHowTo: () => read(STORE_KEYS.howto) === true,
+  dismissHowTo: () => write(STORE_KEYS.howto, true),
 };

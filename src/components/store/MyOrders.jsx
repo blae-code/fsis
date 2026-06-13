@@ -8,7 +8,15 @@ import { useToast } from '@/components/ui/use-toast';
 import { PackageCheck, Search, Loader2, RotateCcw, KeyRound, FileDown } from 'lucide-react';
 import { downloadInvoice } from '@/lib/invoicePdf';
 import OrderTimeline from '@/components/store/OrderTimeline';
+import CancelOrder from '@/components/store/CancelOrder';
 import { etaFor } from '@/lib/storeLocations';
+
+// Per-status fulfillment expectation shown to buyers
+const STATUS_NOTE = {
+  new: 'Awaiting crew confirmation — typically within 12h',
+  confirmed: 'Confirmed — queued for fulfillment, typically 24–48h',
+  in_fulfillment: 'Crew assigned — delivery being arranged',
+};
 
 /** Buyer order tracking — works for guests via tracking codes (no account needed) */
 export default function MyOrders({ onReorder }) {
@@ -168,6 +176,9 @@ export default function MyOrders({ onReorder }) {
                     EST DELIVERY {etaFor(o.delivery_location)} AFTER CONFIRMATION
                   </div>
                 )}
+                {STATUS_NOTE[o.status] && (
+                  <div className="text-[10px] font-mono mt-0.5" style={{ color: '#877D6D' }}>{STATUS_NOTE[o.status]}</div>
+                )}
               </div>
               <div className="flex flex-col items-end gap-1.5 shrink-0">
                 <div className="text-xs font-mono font-bold" style={{ color: '#E0A22E' }}>
@@ -200,6 +211,15 @@ export default function MyOrders({ onReorder }) {
                     >
                       <RotateCcw className="w-2.5 h-2.5" /> REORDER
                     </button>
+                  )}
+                  {o.status === 'new' && (
+                    <CancelOrder
+                      trackingCode={o.tracking_code}
+                      onCancelled={() => {
+                        queryClient.invalidateQueries({ queryKey: ['tracked_orders'] });
+                        queryClient.invalidateQueries({ queryKey: ['my_account_orders'] });
+                      }}
+                    />
                   )}
                 </div>
               </div>
