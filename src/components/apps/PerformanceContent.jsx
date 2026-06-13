@@ -7,6 +7,8 @@ import VolumeChart from '@/components/apps/performance/VolumeChart';
 import RevenueChart from '@/components/apps/performance/RevenueChart';
 import CommodityProfit from '@/components/apps/performance/CommodityProfit';
 import CommodityTrades from '@/components/apps/performance/CommodityTrades';
+import OpTypeBreakdown from '@/components/apps/performance/OpTypeBreakdown';
+import CrewEarnings from '@/components/apps/performance/CrewEarnings';
 
 const COMMODITY_NAMES = {
   RMC: 'Recycled Material Composite',
@@ -37,6 +39,16 @@ export default function PerformanceContent() {
   const { data: prices = [] } = useQuery({
     queryKey: ['commodity_prices'],
     queryFn: () => base44.entities.commodity_price.list(),
+  });
+
+  const { data: workOrders = [] } = useQuery({
+    queryKey: ['perf_work_orders'],
+    queryFn: () => base44.entities.work_order.list('-created_date', 200),
+  });
+
+  const { data: crew = [] } = useQuery({
+    queryKey: ['crew_members'],
+    queryFn: () => base44.entities.crew_member.list('-created_date'),
   });
 
   if (sessionsLoading || ledgerLoading) {
@@ -130,6 +142,8 @@ export default function PerformanceContent() {
             </div>
             <CommodityTrades sessions={sessions} bestPrice={bestPrice} />
             <CommodityProfit data={profitData} />
+            <OpTypeBreakdown workOrders={workOrders} />
+            <CrewEarnings workOrders={workOrders} crew={crew} />
           </>
         )}
 

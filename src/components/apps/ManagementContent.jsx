@@ -1,82 +1,102 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ShieldAlert, Briefcase } from 'lucide-react';
-import ManagementCommandDeck from '@/components/apps/management/ManagementCommandDeck';
-import WorkOrderDeck from '@/components/apps/fairshare/WorkOrderDeck';
+import { motion } from 'framer-motion';
+import { ShieldAlert } from 'lucide-react';
+import ManagementView from '@/components/apps/station/ManagementView';
 import ProductManager from '@/components/apps/management/ProductManager';
 import DiscountManager from '@/components/apps/management/DiscountManager';
 import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin';
-import CrewRosterDeck from '@/components/apps/fairshare/CrewRosterDeck';
+import CrewRoster from '@/components/apps/fairshare/CrewRoster';
 import OrdersContent from '@/components/apps/OrdersContent';
 
-const tabCls =
-  'rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap';
+const AMBER  = '#E0A22E';
+const DIM    = '#7A6E60';
+const DIMMER = '#3A3028';
 
-/** Management console — admin-only space with all storefront & operations tools */
+const TABS = [
+  { id: 'overview',  label: 'OVERVIEW',   glyph: '◈' },
+  { id: 'store',     label: 'STORE',      glyph: '⬡' },
+  { id: 'discounts', label: 'DISCOUNTS',  glyph: '◆' },
+  { id: 'orders',    label: 'ORDERS',     glyph: '▸' },
+  { id: 'jobs',      label: 'JOB BOARD',  glyph: '✦' },
+  { id: 'crew',      label: 'CREW',       glyph: '◉' },
+];
+
 export default function ManagementContent() {
+  const [activeTab, setActiveTab] = useState('overview');
+
   const { data: user, isLoading } = useQuery({
     queryKey: ['user'],
     queryFn: () => base44.auth.me(),
   });
 
   if (isLoading) {
-    return <div className="text-center py-12 text-xs font-mono text-muted-foreground">Verifying clearance…</div>;
+    return (
+      <div className="h-full flex items-center justify-center font-mono" style={{ background: '#0A0806' }}>
+        <span className="text-[10px] tracking-[0.2em]" style={{ color: DIM }}>VERIFYING CLEARANCE…</span>
+      </div>
+    );
   }
 
   if (user?.role !== 'admin') {
     return (
-      <div className="h-full flex items-center justify-center industrial-interior" style={{ background: 'hsl(30, 8%, 9%)' }}>
-        <div className="text-center font-mono">
-          <ShieldAlert className="w-8 h-8 mx-auto mb-3 text-destructive" />
-          <div className="text-xs text-foreground tracking-[0.2em]">MANAGEMENT CLEARANCE REQUIRED</div>
-          <p className="text-[10px] text-muted-foreground mt-2">This console is restricted to FSIS management personnel.</p>
+      <div className="h-full flex items-center justify-center font-mono" style={{ background: '#0A0806' }}>
+        <div className="text-center space-y-2">
+          <ShieldAlert className="w-8 h-8 mx-auto" style={{ color: '#C05050' }} />
+          <div className="text-xs tracking-[0.25em]" style={{ color: '#C05050' }}>MANAGEMENT CLEARANCE REQUIRED</div>
+          <p className="text-[9px]" style={{ color: DIM }}>This console is restricted to FSIS management personnel.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full flex flex-col industrial-interior font-mono" style={{ background: 'hsl(30, 8%, 9%)' }}>
-      <div className="p-3 border-b flex items-center gap-2" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 7%)' }}>
-        <Briefcase className="w-3.5 h-3.5 text-primary" />
-        <span className="text-[10px] tracking-[0.2em] text-muted-foreground">MANAGEMENT CONSOLE — STOREFRONT & OPERATIONS</span>
+    <div className="h-full flex flex-col font-mono" style={{ background: 'hsl(30, 8%, 9%)' }}>
+      {/* Header */}
+      <div className="shrink-0 px-3 py-2 border-b flex items-center gap-2" style={{ borderColor: '#2A2118', background: '#0A0806' }}>
+        <span style={{ color: AMBER }}>◈</span>
+        <span className="text-[9px] tracking-[0.25em]" style={{ color: '#7A6050' }}>MANAGEMENT CONSOLE</span>
+        <span className="text-[8px] ml-auto" style={{ color: DIMMER }}>
+          {user?.full_name || user?.email}
+        </span>
       </div>
 
-      <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
-        <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-auto p-0 overflow-x-auto flex-nowrap shrink-0" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
-          <TabsTrigger value="overview" className={tabCls}>OVERVIEW</TabsTrigger>
-          <TabsTrigger value="store" className={tabCls}>STORE</TabsTrigger>
-          <TabsTrigger value="discounts" className={tabCls}>DISCOUNTS</TabsTrigger>
-          <TabsTrigger value="orders" className={tabCls}>ORDERS</TabsTrigger>
-          <TabsTrigger value="jobs" className={tabCls}>JOB BOARD</TabsTrigger>
-          <TabsTrigger value="crew" className={tabCls}>CREW</TabsTrigger>
-          <TabsTrigger value="work_orders" className={tabCls}>WORK ORDERS</TabsTrigger>
-        </TabsList>
+      {/* Tab rail */}
+      <div className="shrink-0 border-b flex overflow-x-auto" style={{ borderColor: '#2A2118' }}>
+        {TABS.map((t) => {
+          const active = activeTab === t.id;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id)}
+              className="relative flex items-center gap-1.5 px-4 py-2.5 text-[9px] tracking-[0.15em] whitespace-nowrap shrink-0 transition-colors"
+              style={{ color: active ? AMBER : DIM }}
+            >
+              <span style={{ color: active ? AMBER : DIMMER }}>{t.glyph}</span>
+              {t.label}
+              {active && (
+                <motion.div
+                  layoutId="mgmt-tab-underline"
+                  className="absolute bottom-0 left-0 right-0 h-0.5"
+                  style={{ background: AMBER }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 35 }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
 
-        <TabsContent value="overview" className="flex-1 overflow-auto m-0 p-4">
-          <ManagementCommandDeck />
-        </TabsContent>
-        <TabsContent value="store" className="flex-1 overflow-auto m-0 p-4">
-          <ProductManager />
-        </TabsContent>
-        <TabsContent value="discounts" className="flex-1 overflow-auto m-0 p-4">
-          <DiscountManager />
-        </TabsContent>
-        <TabsContent value="orders" className="flex-1 overflow-hidden m-0">
-          <OrdersContent />
-        </TabsContent>
-        <TabsContent value="jobs" className="flex-1 overflow-auto m-0">
-          <JobBoardAdmin />
-        </TabsContent>
-        <TabsContent value="crew" className="flex-1 overflow-auto m-0">
-          <CrewRosterDeck />
-        </TabsContent>
-        <TabsContent value="work_orders" className="flex-1 overflow-auto m-0">
-          <WorkOrderDeck />
-        </TabsContent>
-      </Tabs>
+      {/* Content */}
+      <div className="flex-1 overflow-auto">
+        {activeTab === 'overview'  && <div className="p-4"><ManagementView /></div>}
+        {activeTab === 'store'     && <div className="p-4"><ProductManager /></div>}
+        {activeTab === 'discounts' && <div className="p-4"><DiscountManager /></div>}
+        {activeTab === 'orders'    && <OrdersContent />}
+        {activeTab === 'jobs'      && <JobBoardAdmin />}
+        {activeTab === 'crew'      && <CrewRoster />}
+      </div>
     </div>
   );
 }
