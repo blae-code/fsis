@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-// Public order lookup by tracking code — returns only buyer-safe fields.
+// Public order lookup by tracking code or handoff passphrase — returns only buyer-safe fields.
 
 Deno.serve(async (req) => {
   try {
@@ -12,7 +12,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Tracking code required' }, { status: 400 });
     }
 
-    const matches = await base44.asServiceRole.entities.order.filter({ tracking_code: code });
+    let matches = await base44.asServiceRole.entities.order.filter({ tracking_code: code });
+    if (matches.length === 0) {
+      // Guest checkout receipts carry a handoff passphrase — allow lookup by it too
+      matches = await base44.asServiceRole.entities.order.filter({ handoff_passphrase: code });
+    }
     if (matches.length === 0) {
       return Response.json({ error: 'No order found for that code' }, { status: 404 });
     }

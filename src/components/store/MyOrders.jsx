@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { storeCache } from '@/lib/localCache';
+import { base44 } from '@/api/base44Client';
 import { trackOrder } from '@/functions/trackOrder';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
@@ -34,10 +35,29 @@ export default function MyOrders({ onReorder }) {
     refetchIntervalInBackground: true,
   });
 
+  // Account-linked orders for signed-in buyers
+  const { data: accountOrders = [] } = useQuery({
+    queryKey: ['my_account_orders'],
+    queryFn: async () => {
+      const authed = await base44.auth.isAuthenticated();
+      if (!authed) return [];
+      const user = await base44.auth.me();
+      return base44.entities.order.filter({ created_by_id: user.id }, '-created_date', 50);
+    },
+    refetchInterval: 30 * 1000,
+  });
+
+  // Merge account orders with device-tracked codes (dedupe by tracking code)
+  const allOrders = useMemo(() => {
+    const map = new Map();
+    [...orders, ...accountOrders].forEach((o) => map.set(o.tracking_code || o.id, o));
+    return [...map.values()].sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+  }, [orders, accountOrders]);
+
   // Detect live status changes — flash the card and notify the buyer
   useEffect(() => {
     const changed = [];
-    orders.forEach((o) => {
+    allOrders.forEach((o) => {
       const prev = prevStatuses.current[o.tracking_code];
       if (prev && prev !== o.status) {
         changed.push(o.tracking_code);
@@ -53,7 +73,7 @@ export default function MyOrders({ onReorder }) {
       const t = setTimeout(() => setUpdatedCodes([]), 4000);
       return () => clearTimeout(t);
     }
-  }, [orders, toast]);
+  }, [allOrders, toast]);
 
   const handleLookup = async () => {
     const code = lookup.trim().toUpperCase();
@@ -67,7 +87,7 @@ export default function MyOrders({ onReorder }) {
       setLookup('');
       queryClient.invalidateQueries({ queryKey: ['tracked_orders'] });
     } catch {
-      setLookupError('No order found for that code.');
+      setLookupError('No order found for that tracking code or passphrase.');
     }
     setLooking(false);
   };
@@ -96,7 +116,7 @@ export default function MyOrders({ onReorder }) {
             value={lookup}
             onChange={(e) => setLookup(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLookup()}
-            placeholder="Enter tracking code, e.g. FSIS-3F9A2C"
+            placeholder="Tracking code (FSIS-3F9A2C) or receipt passphrase (IRON-VULTURE-47)"
             className="h-8 text-xs font-mono flex-1"
             style={{ borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' }}
           />
@@ -113,18 +133,18 @@ export default function MyOrders({ onReorder }) {
       </div>
 
       {/* Tracked orders */}
-      {codes.length === 0 ? (
+      {allOrders.length === 0 && !isLoading ? (
         <div className="border p-6 text-center" style={{ borderColor: '#3A2F20' }}>
           <p className="text-xs font-mono" style={{ color: '#9C9080' }}>
-            No tracked orders on this device — place an order or enter a tracking code above.
+            No tracked orders — place an order, sign in to your account, or enter a tracking code or receipt passphrase above.
           </p>
         </div>
-      ) : isLoading ? (
+      ) : isLoading && allOrders.length === 0 ? (
         <div className="flex justify-center py-8">
           <Loader2 className="w-5 h-5 animate-spin" style={{ color: '#C8A05B' }} />
         </div>
       ) : (
-        orders.map((o) => (
+        allOrders.map((o) => (
           <div
             key={o.tracking_code}
             className="border p-4 space-y-3 transition-all duration-700"
