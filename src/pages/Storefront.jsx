@@ -27,6 +27,7 @@ import { DerelictHull } from '@/components/brand/glyphs/EmptyStates';
 import { motion, AnimatePresence } from 'framer-motion';
 import SystemStatus from '@/components/store/SystemStatus';
 import WeeklyReport from '@/components/store/WeeklyReport';
+import StoreDashboard from '@/components/store/StoreDashboard';
 import HexCrate from '@/components/three/HexCrate';
 import { FSIS } from '@/lib/fsisLore';
 
@@ -50,7 +51,7 @@ export default function Storefront() {
 
   // Global shortcuts: "/" focuses search, 1–5 switch sections
   useEffect(() => {
-    const TAB_KEYS = { 1: 'catalog', 2: 'quote', 3: 'orders', 4: 'jobs', 5: 'report', 6: 'about' };
+    const TAB_KEYS = { 1: 'catalog', 2: 'quote', 3: 'orders', 4: 'jobs', 5: 'dashboard', 6: 'report', 7: 'about' };
     const onKey = (e) => {
       if (showOnboarding || detailProduct) return;
       const t = e.target;
@@ -292,6 +293,7 @@ export default function Storefront() {
             {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty) => { addToCart(p, qty); }} />}
             {tab === 'orders' && <MyOrders onReorder={reorder} />}
             {tab === 'jobs' && <JobsBoard />}
+            {tab === 'dashboard' && <StoreDashboard />}
             {tab === 'report' && <WeeklyReport />}
             {tab === 'about' && (
               <>
