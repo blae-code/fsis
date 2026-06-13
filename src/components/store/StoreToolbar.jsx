@@ -4,6 +4,7 @@ import { Search } from 'lucide-react';
 import StoreTip, { Kbd } from '@/components/store/StoreTip';
 import CategoryRadialMenu from '@/components/store/CategoryRadialMenu';
 
+
 const SORTS = [
   { key: 'featured',   label: 'FEATURED' },
   { key: 'price_asc',  label: '↑ PRICE' },
@@ -12,7 +13,6 @@ const SORTS = [
 ];
 
 export default function StoreToolbar({ search, setSearch, category, setCategory, sort, setSort, count }) {
-  const layoutId = useId();
   const sortId = useId();
 
   return (
