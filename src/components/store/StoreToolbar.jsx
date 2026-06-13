@@ -1,19 +1,31 @@
-import React from 'react';
+import React, { useId } from 'react';
+import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import StoreTip, { Kbd } from '@/components/store/StoreTip';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SalvageCrest, FabricatedCrest, ServiceCrest } from '@/components/brand/glyphs/CategoryCrests';
 
 const CATEGORIES = [
-  { key: 'all', label: 'ALL WARES' },
-  { key: 'salvage_commodity', label: 'SALVAGE' },
-  { key: 'fabricated', label: 'FABRICATED' },
-  { key: 'service', label: 'SERVICES' },
+  { key: 'all',               label: 'ALL',        Icon: null },
+  { key: 'salvage_commodity', label: 'SALVAGE',    Icon: SalvageCrest },
+  { key: 'fabricated',       label: 'FABRICATED',  Icon: FabricatedCrest },
+  { key: 'service',          label: 'SERVICES',    Icon: ServiceCrest },
+];
+
+const SORTS = [
+  { key: 'featured',   label: 'FEATURED' },
+  { key: 'price_asc',  label: '↑ PRICE' },
+  { key: 'price_desc', label: '↓ PRICE' },
+  { key: 'stock',      label: 'STOCK' },
 ];
 
 export default function StoreToolbar({ search, setSearch, category, setCategory, sort, setSort, count }) {
+  const layoutId = useId();
+  const sortId = useId();
+
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-3 font-mono">
-      <div className="relative flex-1">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 font-mono flex-wrap">
+      {/* Search */}
+      <div className="relative flex-1 min-w-[160px]">
         <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#8A7E6C' }} />
         <input
           id="store-search"
@@ -32,42 +44,77 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
           <Kbd>/</Kbd>
         </span>
       </div>
-      <div className="flex gap-1.5 flex-wrap">
-        {CATEGORIES.map((c) => {
-          const active = category === c.key;
+
+      {/* Category segmented switch — sliding bronze plate */}
+      <div
+        className="relative flex h-9 p-0.5 shrink-0"
+        style={{ background: '#0C0A07', border: '1px solid #2A2118', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+      >
+        {CATEGORIES.map(({ key, label, Icon }) => {
+          const active = category === key;
           return (
-            <StoreTip key={c.key} label={`Filter: ${c.label.toLowerCase()}`}>
-            <button
-              onClick={() => setCategory(c.key)}
-              className="px-3 py-1.5 text-[9px] tracking-[0.15em] font-bold border transition-all hover:brightness-125"
-              style={{
-                clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)',
-                ...(active
-                  ? { background: 'linear-gradient(180deg, #A87C42, #6E4D24)', color: '#15100A', borderColor: '#A87C42', boxShadow: '0 0 12px rgba(212, 146, 11, 0.35)' }
-                  : { background: 'transparent', color: '#6FA08F', borderColor: '#2E423B' }),
-              }}
-            >
-              {c.label}
-            </button>
+            <StoreTip key={key} label={`Filter: ${label.toLowerCase()}`}>
+              <button
+                onClick={() => setCategory(key)}
+                className="relative px-3 h-full flex items-center gap-1.5 text-[9px] tracking-[0.12em] font-bold transition-colors"
+                style={{ color: active ? '#F4ECDB' : '#6F6557', zIndex: 1 }}
+              >
+                {active && (
+                  <motion.span
+                    layoutId={`cat-${layoutId}`}
+                    className="absolute inset-0"
+                    style={{
+                      background: 'linear-gradient(160deg, #8A6430, #4A3722)',
+                      border: '1px solid #B0793A',
+                      clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)',
+                      boxShadow: '0 0 10px rgba(212, 146, 11, 0.2)',
+                    }}
+                    transition={{ type: 'spring', stiffness: 480, damping: 36 }}
+                  />
+                )}
+                <span className="relative inline-flex items-center gap-1">
+                  {Icon && <Icon className="w-2.5 h-2.5" style={{ color: active ? '#E0A22E' : '#6FA08F' }} />}
+                  {label}
+                </span>
+              </button>
             </StoreTip>
           );
         })}
       </div>
-      <Select value={sort} onValueChange={setSort}>
-        <SelectTrigger
-          className="h-8 w-[130px] text-[9px] font-mono tracking-[0.1em] rounded-none shrink-0"
-          style={{ borderColor: '#2E423B', background: 'rgba(10, 9, 7, 0.5)', color: '#6FA08F' }}
-        >
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="featured" className="text-xs font-mono">FEATURED</SelectItem>
-          <SelectItem value="price_asc" className="text-xs font-mono">PRICE: LOW FIRST</SelectItem>
-          <SelectItem value="price_desc" className="text-xs font-mono">PRICE: HIGH FIRST</SelectItem>
-          <SelectItem value="stock" className="text-xs font-mono">MOST STOCK</SelectItem>
-        </SelectContent>
-      </Select>
-      <span className="text-[9px] shrink-0" style={{ color: '#6B6155' }}>{count} LISTED</span>
+
+      {/* Sort segmented switch */}
+      <div
+        className="relative flex h-9 p-0.5 shrink-0"
+        style={{ background: '#0C0A07', border: '1px solid #1E2E28', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
+      >
+        {SORTS.map(({ key, label }) => {
+          const active = sort === key;
+          return (
+            <button
+              key={key}
+              onClick={() => setSort(key)}
+              className="relative px-2.5 h-full text-[9px] tracking-[0.1em] font-bold transition-colors"
+              style={{ color: active ? '#F4ECDB' : '#4A6B5A', zIndex: 1 }}
+            >
+              {active && (
+                <motion.span
+                  layoutId={`sort-${sortId}`}
+                  className="absolute inset-0"
+                  style={{
+                    background: 'linear-gradient(160deg, #233530, #141F1C)',
+                    border: '1px solid #3C5A50',
+                    clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)',
+                  }}
+                  transition={{ type: 'spring', stiffness: 480, damping: 36 }}
+                />
+              )}
+              <span className="relative">{label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      <span className="text-[9px] shrink-0" style={{ color: '#6B6155' }}>{count} WARES</span>
     </div>
   );
 }

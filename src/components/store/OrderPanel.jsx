@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { placeOrder } from '@/functions/placeOrder';
 import { storeCache } from '@/lib/localCache';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/input'; // still used for handle, location, discount, notes
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ShoppingCart, Trash2 } from 'lucide-react';
+import ManifestStepper from '@/components/store/ManifestStepper';
 import { motion, AnimatePresence } from 'framer-motion';
 import ManifestReceipt from '@/components/store/ManifestReceipt';
 import OrderReceiptModal from '@/components/store/OrderReceiptModal';
@@ -106,11 +107,11 @@ export default function OrderPanel({ cart, setCart, user }) {
                 className="flex items-center gap-2 text-xs font-mono overflow-hidden"
               >
                 <span className="flex-1 truncate" style={{ color: '#D8CFC0' }}>{item.code || item.product_name}</span>
-                <Input
-                  type="number" min="1" value={item.quantity}
-                  onChange={(e) => setQty(item.product_id, parseInt(e.target.value) || 1)}
-                  className="h-7 w-16 text-xs font-mono"
-                  style={fieldStyle}
+                <ManifestStepper
+                  value={item.quantity}
+                  min={1}
+                  max={item.stock == null ? Infinity : item.stock}
+                  onChange={(qty) => setQty(item.product_id, qty)}
                 />
                 <span className="w-24 text-right" style={{ color: '#E0A22E' }}>{(item.unit_price * item.quantity).toLocaleString()}</span>
                 <button onClick={() => setCart(cart.filter((i) => i.product_id !== item.product_id))} className="hover:opacity-70" style={{ color: '#8A7E6C' }}>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { storeCache } from '@/lib/localCache';
 import { X } from 'lucide-react';
 import { ManifestPicto, TransmitPicto, HandoffPicto } from '@/components/brand/glyphs/StepPictograms';
@@ -26,20 +27,35 @@ export default function HowItWorksStrip() {
         <X className="w-3.5 h-3.5" />
       </button>
       <p className="font-mono text-[9px] tracking-[0.25em] mb-2.5" style={{ color: '#6FA08F' }}>HOW BUYING WORKS</p>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-0">
         {STEPS.map(({ icon: Icon, title, desc }, i) => (
-          <div key={title} className="flex items-start gap-2.5">
-            <span
-              className="shrink-0 w-8 h-8 flex items-center justify-center border"
-              style={{ borderColor: '#3C5A50', color: '#8FBFAE', background: '#101413' }}
-            >
-              <Icon className="w-5 h-5" />
-            </span>
-            <div className="min-w-0">
-              <p className="font-mono text-[10px] font-bold tracking-[0.12em]" style={{ color: '#D8CFC0' }}>
-                <span style={{ color: '#6FA08F' }}>0{i + 1} ·</span> {title}
-              </p>
-              <p className="text-[10px] font-mono leading-relaxed mt-0.5" style={{ color: '#877D6D' }}>{desc}</p>
+          <div key={title} className="flex items-start gap-2.5 relative">
+            {/* Step connector line between items */}
+            {i < STEPS.length - 1 && (
+              <motion.div
+                className="hidden sm:block absolute right-0 top-4 w-px h-4 -translate-y-1/2"
+                style={{ background: 'linear-gradient(180deg, #3C5A50, transparent)' }}
+                initial={{ scaleY: 0 }}
+                animate={{ scaleY: 1 }}
+                transition={{ delay: i * 0.2 + 0.4, duration: 0.4 }}
+              />
+            )}
+            <div className="flex items-start gap-2.5 p-3 flex-1">
+              <motion.span
+                className="shrink-0 w-8 h-8 flex items-center justify-center border"
+                style={{ borderColor: '#3C5A50', color: '#8FBFAE', background: '#101413', clipPath: 'polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px)' }}
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.15, type: 'spring', stiffness: 300, damping: 22 }}
+              >
+                <Icon className="w-5 h-5" />
+              </motion.span>
+              <div className="min-w-0">
+                <p className="font-mono text-[10px] font-bold tracking-[0.12em]" style={{ color: '#D8CFC0' }}>
+                  <span style={{ color: '#6FA08F' }}>0{i + 1} ·</span> {title}
+                </p>
+                <p className="text-[10px] font-mono leading-relaxed mt-0.5" style={{ color: '#877D6D' }}>{desc}</p>
+              </div>
             </div>
           </div>
         ))}

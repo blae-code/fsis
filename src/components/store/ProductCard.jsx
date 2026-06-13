@@ -4,6 +4,7 @@ import { ShoppingCart, Pin } from 'lucide-react';
 import { SalvageCrest, FabricatedCrest, ServiceCrest } from '@/components/brand/glyphs/CategoryCrests';
 import HazardCorner from '@/components/brand/glyphs/HazardCorner';
 import AddToCartControl from '@/components/store/AddToCartControl';
+import CardRadialMenu from '@/components/store/CardRadialMenu';
 import StoreTip from '@/components/store/StoreTip';
 import CommodityIcon from '@/components/brand/CommodityIcon';
 import SerialStrip from '@/components/brand/SerialStrip';
@@ -19,7 +20,7 @@ const CATEGORY_META = {
   service: { label: 'SERVICE', icon: ServiceCrest, crest: ServiceCrest },
 };
 
-export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin }) {
+export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin, onRestockNotify }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
   const FallbackIcon = meta.icon;
@@ -33,6 +34,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
       style={{ perspective: 900 }}
     >
       <motion.div
+        data-radial-host
         onClick={() => onView?.(product)}
         whileHover={{ rotateX: 2.5, rotateY: -2.5, y: -4 }}
         transition={{ type: 'spring', stiffness: 300, damping: 22 }}
@@ -47,6 +49,16 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         }}
       >
         {!inStock && <HazardCorner size={34} />}
+        {/* Radial context menu — right-click / long-press */}
+        <CardRadialMenu
+          product={product}
+          pinned={pinned}
+          inStock={inStock}
+          onAdd={onAdd}
+          onView={onView}
+          onTogglePin={onTogglePin}
+          onRestockNotify={onRestockNotify}
+        />
         {/* Sheen sweep on hover */}
         <span
           className="absolute inset-y-0 w-1/3 pointer-events-none -left-1/2 group-hover/card:left-[120%] transition-[left] duration-700 ease-out"

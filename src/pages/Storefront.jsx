@@ -270,6 +270,7 @@ export default function Storefront() {
                         inCartQty={cart.find((i) => i.product_id === p.id)?.quantity || 0}
                         pinned={pins.includes(p.id)}
                         onTogglePin={(id) => setPins(storeCache.togglePin(id))}
+                        onRestockNotify={() => toast({ title: 'RESTOCK ALERT', description: `We'll list ${p.product_name} again as soon as salvage ops deliver. Check back soon.` })}
                       />
                     ))
                   )}
