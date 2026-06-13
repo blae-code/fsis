@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Clock, AlertTriangle, Loader2, ArrowRight } from 'lucide-react';
-// ArrowRight is imported from lucide-react above — no local redeclaration needed
+
 import { differenceInDays, format } from 'date-fns';
 
 const AMBER  = '#E0A22E';

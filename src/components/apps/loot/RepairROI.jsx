@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wrench, TrendingUp, TrendingDown, Minus, Loader2, CheckCircle2 } from 'lucide-react';
+import { Wrench, TrendingUp, TrendingDown, Minus, Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -248,13 +248,5 @@ function Row({ label, value, dim, color, bold }) {
       <span style={{ color: dim ? '#7A6E60' : '#9C9080' }}>{label}</span>
       <span className={bold ? 'font-bold' : ''} style={{ color: color || '#D8CFC0' }}>{value}</span>
     </div>
-  );
-}
-
-function ArrowRight({ className, style }) {
-  return (
-    <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   );
 }
