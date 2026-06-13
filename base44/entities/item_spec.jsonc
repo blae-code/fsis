@@ -1,0 +1,72 @@
+{
+  "name": "item_spec",
+  "type": "object",
+  "properties": {
+    "item_name": {
+      "type": "string",
+      "description": "Canonical item name"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "fps_gear",
+        "weapon",
+        "ship_component",
+        "vehicle_component",
+        "bulk_cargo"
+      ],
+      "default": "ship_component"
+    },
+    "size_class": {
+      "type": "string",
+      "enum": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "M",
+        "L",
+        "XL",
+        "N/A"
+      ],
+      "default": "N/A"
+    },
+    "manufacturer": {
+      "type": "string"
+    },
+    "grade": {
+      "type": "string",
+      "description": "In-game quality grade, e.g. A, B, C or Civilian, Military, Competition"
+    },
+    "compatible_ships": {
+      "type": "array",
+      "description": "Ships this fits",
+      "items": {
+        "type": "string"
+      }
+    },
+    "base_value_auec": {
+      "type": "number",
+      "description": "Reference value at 100% condition in aUEC"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "item_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

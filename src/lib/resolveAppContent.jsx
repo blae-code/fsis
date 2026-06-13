@@ -14,6 +14,7 @@ import ContractsContent from '@/components/apps/ContractsContent';
 import PerformanceContent from '@/components/apps/PerformanceContent';
 import StationContent from '@/components/apps/StationContent';
 import ManagementContent from '@/components/apps/ManagementContent';
+import LootContent from '@/components/apps/LootContent';
 
 // Maps an appId to its window content + title.
 // Used both when opening from the Dock and when restoring a saved session.
@@ -47,6 +48,8 @@ export function resolveAppContent(app) {
       return { title: 'STATION — Your Duty Dashboard', content: <StationContent /> };
     case 'management':
       return { title: 'MANAGEMENT — Admin Console', content: <ManagementContent /> };
+    case 'loot':
+      return { title: 'LOOT — Recovery & Resale', content: <LootContent /> };
     default:
       return {
         title: `${app.name.toUpperCase()} — coming online`,
@@ -86,6 +89,8 @@ export function resolveContentById(appId, title) {
       return <StationContent />;
     case 'management':
       return <ManagementContent />;
+    case 'loot':
+      return <LootContent />;
     default: {
       const name = (title || appId).split(' — ')[0];
       return <PlaceholderContent name={name} description="" />;

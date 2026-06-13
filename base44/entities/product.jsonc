@@ -15,10 +15,58 @@
       "enum": [
         "salvage_commodity",
         "fabricated",
-        "service"
+        "service",
+        "fps_gear",
+        "weapon",
+        "ship_component",
+        "vehicle_component"
       ],
       "default": "salvage_commodity",
       "description": "Type of ware"
+    },
+    "item_type": {
+      "type": "string",
+      "description": "Sub-type for components/gear, e.g. shield, QD, power_plant, helmet, rifle"
+    },
+    "condition_grade": {
+      "type": "string",
+      "enum": [
+        "new",
+        "refurb",
+        "used",
+        "worn"
+      ],
+      "description": "Condition tier shown on storefront"
+    },
+    "condition_pct": {
+      "type": "number",
+      "description": "Numeric condition percentage 0\u2013100"
+    },
+    "size_class": {
+      "type": "string",
+      "enum": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "M",
+        "L",
+        "XL",
+        "N/A"
+      ],
+      "description": "Size class for ship/vehicle components"
+    },
+    "manufacturer": {
+      "type": "string",
+      "description": "Item manufacturer"
+    },
+    "compatible_ships": {
+      "type": "array",
+      "description": "Compatible ship models, e.g. ['Cutlass Black', 'Freelancer MAX']",
+      "items": {
+        "type": "string"
+      }
     },
     "description": {
       "type": "string",
@@ -59,6 +107,15 @@
     "sort_order": {
       "type": "number",
       "description": "Display order on the storefront"
+    },
+    "loot_item_id": {
+      "type": "string",
+      "description": "Source loot_item id if this listing came from a looted item"
+    },
+    "make_offer_only": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, buyers submit an offer instead of a direct cart purchase"
     }
   },
   "required": [

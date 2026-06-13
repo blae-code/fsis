@@ -1,0 +1,129 @@
+{
+  "name": "loot_item",
+  "type": "object",
+  "properties": {
+    "item_name": {
+      "type": "string",
+      "description": "Full item name, e.g. Hurston Dynamics S3 Shield Generator"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "fps_gear",
+        "weapon",
+        "ship_component",
+        "vehicle_component",
+        "bulk_cargo"
+      ],
+      "default": "ship_component",
+      "description": "Category of the looted item"
+    },
+    "condition_pct": {
+      "type": "number",
+      "default": 100,
+      "description": "Item condition percentage 0\u2013100"
+    },
+    "condition_grade": {
+      "type": "string",
+      "enum": [
+        "new",
+        "refurb",
+        "used",
+        "worn"
+      ],
+      "default": "used",
+      "description": "Condition tier derived from condition_pct"
+    },
+    "size_class": {
+      "type": "string",
+      "enum": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5",
+        "M",
+        "L",
+        "XL",
+        "N/A"
+      ],
+      "default": "N/A",
+      "description": "Size class for ship/vehicle components"
+    },
+    "manufacturer": {
+      "type": "string",
+      "description": "Item manufacturer, e.g. Aegis, Hurston Dynamics, Klaus & Werner"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 1,
+      "description": "Number of units looted"
+    },
+    "source_op": {
+      "type": "string",
+      "description": "Operation where this was looted, e.g. 'Reclaimer op Aaron Halo', 'Bounty vs GrimHex'"
+    },
+    "source_location": {
+      "type": "string",
+      "description": "Location looted from, e.g. Aaron Halo, Cellin, NPC ship wreck"
+    },
+    "crew_handle": {
+      "type": "string",
+      "description": "Crew member who looted or recovered this item"
+    },
+    "work_order_id": {
+      "type": "string",
+      "description": "Linked work order for crew share attribution"
+    },
+    "compatible_ships": {
+      "type": "array",
+      "description": "Ships this component fits, e.g. ['Cutlass Black', 'Freelancer']",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "raw",
+        "repairing",
+        "repaired",
+        "listed",
+        "sold",
+        "scrapped"
+      ],
+      "default": "raw",
+      "description": "Processing pipeline status"
+    },
+    "linked_product_id": {
+      "type": "string",
+      "description": "Product entity id once listed on storefront"
+    },
+    "est_sell_auec": {
+      "type": "number",
+      "description": "Estimated sell price in aUEC"
+    },
+    "actual_sell_auec": {
+      "type": "number",
+      "description": "Actual sale price once sold"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "item_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

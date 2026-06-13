@@ -18,7 +18,13 @@ const CATEGORY_META = {
   salvage_commodity: { label: 'SALVAGE', crest: SalvageCrest },
   fabricated: { label: 'FABRICATED', icon: FabricatedCrest, crest: FabricatedCrest },
   service: { label: 'SERVICE', icon: ServiceCrest, crest: ServiceCrest },
+  fps_gear: { label: 'GEAR', crest: ServiceCrest },
+  weapon: { label: 'WEAPON', crest: ServiceCrest },
+  ship_component: { label: 'COMPONENT', crest: FabricatedCrest },
+  vehicle_component: { label: 'VEH COMP', crest: FabricatedCrest },
 };
+
+const CONDITION_COLOR = { new: '#7BA05B', refurb: '#6FA08F', used: '#C8893B', worn: '#C05050' };
 
 export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin, onRestockNotify }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
@@ -98,6 +104,17 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
                 {meta.label}
               </span>
             </div>
+            {product.condition_grade && (
+              <span className="inline-flex items-center px-2 py-0.5 text-[8px] font-mono font-bold"
+                style={{ color: CONDITION_COLOR[product.condition_grade] || '#7A6E60', border: `1px solid ${(CONDITION_COLOR[product.condition_grade] || '#7A6E60')}55`, background: `${(CONDITION_COLOR[product.condition_grade] || '#7A6E60')}18`, clipPath: 'polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%)' }}>
+                {product.condition_grade.toUpperCase()}{product.condition_pct != null ? ` ${product.condition_pct}%` : ''}
+              </span>
+            )}
+            {product.size_class && product.size_class !== 'N/A' && (
+              <span className="text-[8px] font-mono font-bold px-1.5 py-0.5" style={{ color: '#6FA08F', border: '1px solid #6FA08F44', background: '#6FA08F14' }}>
+                {product.size_class}
+              </span>
+            )}
             {inCart && (
               <motion.span
                 initial={{ opacity: 0, scale: 0.8 }}

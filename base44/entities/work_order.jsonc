@@ -6,6 +6,19 @@
       "type": "string",
       "description": "Name of this work order, e.g. 'Reclaimer run 06-12'"
     },
+    "op_type": {
+      "type": "string",
+      "enum": [
+        "salvage",
+        "bounty",
+        "cargo",
+        "piracy",
+        "escort",
+        "other"
+      ],
+      "default": "salvage",
+      "description": "Operation type for performance analytics"
+    },
     "session_id": {
       "type": "string",
       "description": "Linked salvage session id, if any"

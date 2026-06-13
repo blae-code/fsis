@@ -1,0 +1,52 @@
+{
+  "name": "repair_log",
+  "type": "object",
+  "properties": {
+    "loot_item_id": {
+      "type": "string",
+      "description": "ID of the loot_item being repaired"
+    },
+    "item_name": {
+      "type": "string",
+      "description": "Item name at time of repair (denormalized for display)"
+    },
+    "repair_cost_auec": {
+      "type": "number",
+      "description": "Actual repair cost in aUEC"
+    },
+    "repaired_by": {
+      "type": "string",
+      "description": "Crew handle who performed the repair"
+    },
+    "condition_before": {
+      "type": "number",
+      "description": "Condition % before repair"
+    },
+    "condition_after": {
+      "type": "number",
+      "description": "Condition % after repair"
+    },
+    "repair_location": {
+      "type": "string",
+      "description": "Station or ship where repair was done"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "loot_item_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

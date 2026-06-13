@@ -10,6 +10,20 @@ import GradeStamp from '@/components/brand/glyphs/GradeStamp';
 import RestockNotify from '@/components/store/RestockNotify';
 import { lotNumber } from '@/lib/fsisLore';
 
+const CONDITION_COLOR = { new: '#7BA05B', refurb: '#6FA08F', used: '#C8893B', worn: '#C05050' };
+const CONDITION_LABEL = { new: 'NEW', refurb: 'REFURBISHED', used: 'USED', worn: 'WORN' };
+
+function ConditionBadge({ grade, pct }) {
+  if (!grade) return null;
+  const color = CONDITION_COLOR[grade] || '#7A6E60';
+  return (
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-mono font-bold"
+      style={{ color, border: `1px solid ${color}55`, background: `${color}18`, clipPath: 'polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)' }}>
+      {CONDITION_LABEL[grade] || grade.toUpperCase()}{pct != null ? ` · ${pct}%` : ''}
+    </span>
+  );
+}
+
 /** Buyer-facing product dossier: specs, live market comparison, stock, related wares */
 export default function ProductDetail({ product, products = [], onClose, onAdd, onView }) {
   const [qty, setQty] = useState(1);
@@ -47,7 +61,20 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
               {product.product_name}
               {product.code && <span className="ml-2" style={{ color: '#E0A22E' }}>[{product.code}]</span>}
             </h3>
-            <p className="text-[10px] mt-0.5" style={{ color: '#8A7E6C' }}>{lotNumber(product.id)} • {product.category?.replace('_', ' ').toUpperCase()}</p>
+            <p className="text-[10px] mt-0.5 flex items-center flex-wrap gap-1.5" style={{ color: '#8A7E6C' }}>
+              {lotNumber(product.id)} • {product.category?.replace(/_/g, ' ').toUpperCase()}
+              {product.size_class && product.size_class !== 'N/A' && (
+                <span className="px-1.5 py-0.5 text-[8px] font-bold" style={{ color: '#6FA08F', border: '1px solid #6FA08F44', background: '#6FA08F14' }}>{product.size_class}</span>
+              )}
+              {product.manufacturer && (
+                <span style={{ color: '#B0793A' }}>{product.manufacturer}</span>
+              )}
+            </p>
+            {product.condition_grade && (
+              <div className="mt-1">
+                <ConditionBadge grade={product.condition_grade} pct={product.condition_pct} />
+              </div>
+            )}
             {product.description && (
               <p className="text-xs mt-1.5 leading-relaxed" style={{ color: '#9C9080' }}>{product.description}</p>
             )}
@@ -108,6 +135,41 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
                 <p className="text-[9px]" style={{ color: '#6B6155' }}>
                   Anchored to UEX {new Date(product.repriced_at).toLocaleDateString()} — same margin on every ware. "Every credit accounted for."
                 </p>
+              )}
+            </div>
+          )}
+
+          {/* Component spec sheet */}
+          {(product.compatible_ships?.length > 0 || product.item_type) && (
+            <div className="border p-3 space-y-1.5" style={{ borderColor: '#3A2F20', background: '#0E0C09' }}>
+              <div className="text-[9px] tracking-[0.2em]" style={{ color: '#C8A05B' }}>COMPONENT SPECS</div>
+              {product.item_type && (
+                <div className="flex justify-between text-[10px]">
+                  <span style={{ color: '#9C9080' }}>TYPE</span>
+                  <span style={{ color: '#D8CFC0' }}>{product.item_type.replace(/_/g, ' ').toUpperCase()}</span>
+                </div>
+              )}
+              {product.size_class && product.size_class !== 'N/A' && (
+                <div className="flex justify-between text-[10px]">
+                  <span style={{ color: '#9C9080' }}>SIZE CLASS</span>
+                  <span style={{ color: '#6FA08F' }}>{product.size_class}</span>
+                </div>
+              )}
+              {product.manufacturer && (
+                <div className="flex justify-between text-[10px]">
+                  <span style={{ color: '#9C9080' }}>MANUFACTURER</span>
+                  <span style={{ color: '#D8CFC0' }}>{product.manufacturer}</span>
+                </div>
+              )}
+              {product.compatible_ships?.length > 0 && (
+                <div>
+                  <div className="text-[9px] mb-1" style={{ color: '#9C9080' }}>COMPATIBLE SHIPS</div>
+                  <div className="flex flex-wrap gap-1">
+                    {product.compatible_ships.map((s) => (
+                      <span key={s} className="px-2 py-0.5 text-[9px]" style={{ border: '1px solid #3A2F20', color: '#C8A05B', background: '#121110' }}>{s}</span>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           )}

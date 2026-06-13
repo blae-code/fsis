@@ -6,6 +6,17 @@
       "type": "string",
       "description": "Name of this cargo lot, e.g. 'Reclaimer haul 06-12 RMC'"
     },
+    "lot_type": {
+      "type": "string",
+      "enum": [
+        "commodity",
+        "gear",
+        "component",
+        "weapon"
+      ],
+      "default": "commodity",
+      "description": "Type of cargo in this lot"
+    },
     "commodity_code": {
       "type": "string",
       "description": "Commodity short code, e.g. RMC, CMR, CMS"

@@ -5,6 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { PackagePlus, Trash2, Check, Loader2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const CATEGORIES = ['salvage_commodity','fabricated','service','fps_gear','weapon','ship_component','vehicle_component'];
+const CONDITION_GRADES = ['new','refurb','used','worn'];
+const SIZE_CLASSES = ['S1','S2','S3','S4','S5','M','L','XL','N/A'];
 
 const border = { borderColor: 'hsl(33, 18%, 18%)' };
 const panel = { ...border, background: 'hsl(30, 10%, 8%)' };
@@ -65,6 +70,10 @@ export default function ProductManager() {
   const [code, setCode] = useState('');
   const [newPrice, setNewPrice] = useState('');
   const [newStock, setNewStock] = useState('');
+  const [newCategory, setNewCategory] = useState('salvage_commodity');
+  const [newCondition, setNewCondition] = useState('');
+  const [newSize, setNewSize] = useState('');
+  const [newMfr, setNewMfr] = useState('');
 
   const { data: products = [] } = useQuery({
     queryKey: ['mgmt_products'],
@@ -76,13 +85,17 @@ export default function ProductManager() {
       base44.entities.product.create({
         product_name: name,
         code: code.toUpperCase(),
+        category: newCategory,
         price_auec: parseFloat(newPrice) || 0,
         stock: parseFloat(newStock) || 0,
+        ...(newCondition && { condition_grade: newCondition }),
+        ...(newSize && newSize !== 'N/A' && { size_class: newSize }),
+        ...(newMfr && { manufacturer: newMfr }),
         available: true,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mgmt_products'] });
-      setName(''); setCode(''); setNewPrice(''); setNewStock('');
+      setName(''); setCode(''); setNewPrice(''); setNewStock(''); setNewCondition(''); setNewSize(''); setNewMfr('');
     },
   });
 
@@ -92,12 +105,25 @@ export default function ProductManager() {
         <div className="text-[10px] text-muted-foreground tracking-[0.2em] flex items-center gap-1.5">
           <PackagePlus className="w-3 h-3" /> ADD WARE TO CATALOG
         </div>
-        <div className="grid grid-cols-[1fr_5rem_6rem_5rem_auto] gap-2">
-          <Input placeholder="Product name" value={name} onChange={(e) => setName(e.target.value)} className="h-8 text-xs" style={border} />
-          <Input placeholder="Code" value={code} onChange={(e) => setCode(e.target.value)} className="h-8 text-xs" style={border} />
-          <Input type="number" min="0" placeholder="Price aUEC" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="h-8 text-xs" style={border} />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <Input placeholder="Product name *" value={name} onChange={(e) => setName(e.target.value)} className="h-8 text-xs col-span-2 md:col-span-1" style={border} />
+          <Input placeholder="Code (RMC…)" value={code} onChange={(e) => setCode(e.target.value)} className="h-8 text-xs" style={border} />
+          <Input type="number" min="0" placeholder="Price aUEC *" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="h-8 text-xs" style={border} />
           <Input type="number" min="0" placeholder="Stock" value={newStock} onChange={(e) => setNewStock(e.target.value)} className="h-8 text-xs" style={border} />
-          <Button size="sm" className="h-8 text-[10px]" disabled={!name || !newPrice || createMutation.isPending} onClick={() => createMutation.mutate()}>
+          <Select value={newCategory} onValueChange={setNewCategory}>
+            <SelectTrigger className="h-8 text-xs font-mono" style={border}><SelectValue /></SelectTrigger>
+            <SelectContent>{CATEGORIES.map((c) => <SelectItem key={c} value={c} className="text-xs font-mono">{c.replace(/_/g,' ').toUpperCase()}</SelectItem>)}</SelectContent>
+          </Select>
+          <Select value={newCondition} onValueChange={setNewCondition}>
+            <SelectTrigger className="h-8 text-xs font-mono" style={border}><SelectValue placeholder="Condition grade" /></SelectTrigger>
+            <SelectContent>{CONDITION_GRADES.map((g) => <SelectItem key={g} value={g} className="text-xs font-mono">{g.toUpperCase()}</SelectItem>)}</SelectContent>
+          </Select>
+          <Select value={newSize} onValueChange={setNewSize}>
+            <SelectTrigger className="h-8 text-xs font-mono" style={border}><SelectValue placeholder="Size class" /></SelectTrigger>
+            <SelectContent>{SIZE_CLASSES.map((s) => <SelectItem key={s} value={s} className="text-xs font-mono">{s}</SelectItem>)}</SelectContent>
+          </Select>
+          <Input placeholder="Manufacturer" value={newMfr} onChange={(e) => setNewMfr(e.target.value)} className="h-8 text-xs" style={border} />
+          <Button size="sm" className="h-8 text-[10px] md:col-start-4" disabled={!name || !newPrice || createMutation.isPending} onClick={() => createMutation.mutate()}>
             ADD
           </Button>
         </div>
