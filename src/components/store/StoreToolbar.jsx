@@ -2,14 +2,7 @@ import React, { useId } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import StoreTip, { Kbd } from '@/components/store/StoreTip';
-import { SalvageCrest, FabricatedCrest, ServiceCrest } from '@/components/brand/glyphs/CategoryCrests';
-
-const CATEGORIES = [
-  { key: 'all',               label: 'ALL',        Icon: null },
-  { key: 'salvage_commodity', label: 'SALVAGE',    Icon: SalvageCrest },
-  { key: 'fabricated',       label: 'FABRICATED',  Icon: FabricatedCrest },
-  { key: 'service',          label: 'SERVICES',    Icon: ServiceCrest },
-];
+import CategoryRadialMenu from '@/components/store/CategoryRadialMenu';
 
 const SORTS = [
   { key: 'featured',   label: 'FEATURED' },
@@ -45,42 +38,8 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
         </span>
       </div>
 
-      {/* Category segmented switch — sliding bronze plate */}
-      <div
-        className="relative flex h-9 p-0.5 shrink-0"
-        style={{ background: '#0C0A07', border: '1px solid #2A2118', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
-      >
-        {CATEGORIES.map(({ key, label, Icon }) => {
-          const active = category === key;
-          return (
-            <StoreTip key={key} label={`Filter: ${label.toLowerCase()}`}>
-              <button
-                onClick={() => setCategory(key)}
-                className="relative px-3 h-full flex items-center gap-1.5 text-[9px] tracking-[0.12em] font-bold transition-colors"
-                style={{ color: active ? '#F4ECDB' : '#6F6557', zIndex: 1 }}
-              >
-                {active && (
-                  <motion.span
-                    layoutId={`cat-${layoutId}`}
-                    className="absolute inset-0"
-                    style={{
-                      background: 'linear-gradient(160deg, #8A6430, #4A3722)',
-                      border: '1px solid #B0793A',
-                      clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)',
-                      boxShadow: '0 0 10px rgba(212, 146, 11, 0.2)',
-                    }}
-                    transition={{ type: 'spring', stiffness: 480, damping: 36 }}
-                  />
-                )}
-                <span className="relative inline-flex items-center gap-1">
-                  {Icon && <Icon className="w-2.5 h-2.5" style={{ color: active ? '#E0A22E' : '#6FA08F' }} />}
-                  {label}
-                </span>
-              </button>
-            </StoreTip>
-          );
-        })}
-      </div>
+      {/* Category radial menu */}
+      <CategoryRadialMenu category={category} setCategory={setCategory} />
 
       {/* Sort segmented switch */}
       <div
