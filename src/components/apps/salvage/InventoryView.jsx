@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -50,9 +50,11 @@ function SectionHead({ children }) {
   );
 }
 
+import { useState } from 'react';
+
 export default function InventoryView({ bestPrices }) {
-  const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
+  const queryClient = useQueryClient();
 
   const { data: sessions = [], isLoading: sessLoading } = useQuery({
     queryKey: ['salvage_sessions_inventory'],
@@ -84,25 +86,23 @@ export default function InventoryView({ bestPrices }) {
   const sessionValueOf = (code, scu) => Math.round(scu * 100 * (bestPrices?.[code]?.price_sell || 0));
   const sessionTotalValue = CODES.reduce((s, code) => s + sessionValueOf(code, sessionTotals[code]), 0);
 
-  // ── Search filtering ─────────────────────────────────────────────────────
+  // ── Search filter ────────────────────────────────────────────────────────
   const q = search.trim().toLowerCase();
-  const filteredProducts = useMemo(() => q
+  const filteredProducts = q
     ? products.filter((p) =>
         (p.product_name || '').toLowerCase().includes(q) ||
         (p.code || '').toLowerCase().includes(q) ||
         (p.category || '').toLowerCase().includes(q)
       )
-    : products,
-  [products, q]);
-  const filteredSessions = useMemo(() => q
+    : products;
+  const filteredSessions = q
     ? activeSessions.filter((s) =>
         (s.session_name || '').toLowerCase().includes(q) ||
         (s.ship || '').toLowerCase().includes(q) ||
         (s.location || '').toLowerCase().includes(q) ||
         (s.status || '').toLowerCase().includes(q)
       )
-    : activeSessions,
-  [activeSessions, q]);
+    : activeSessions;
 
   // ── Product-based stock (storefront listings) ────────────────────────────
   const salvageProds  = filteredProducts.filter((p) => p.category === 'salvage_commodity');
@@ -127,18 +127,18 @@ export default function InventoryView({ bestPrices }) {
   return (
     <div className="p-4 space-y-5 font-mono">
 
-      {/* ── Global search bar ───────────────────────────────────── */}
+      {/* ── Search bar ──────────────────────────────────────────── */}
       <div className="relative">
-        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none" style={{ color: DIM }} />
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none" style={{ color: '#7A6E60' }} />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search products, sessions, locations…"
-          className="w-full h-8 pl-8 pr-8 bg-transparent border text-[10px] font-mono outline-none"
+          placeholder="Filter by name, code, status, ship, location…"
+          className="w-full h-8 pl-7 pr-7 bg-transparent border text-[10px] font-mono outline-none focus:border-amber-700/40 transition-colors"
           style={{ borderColor: '#2A2118', color: '#D8CFC0' }}
         />
         {search && (
-          <button onClick={() => setSearch('')} className="absolute right-2.5 top-1/2 -translate-y-1/2" style={{ color: DIM }}>
+          <button onClick={() => setSearch('')} className="absolute right-2 top-1/2 -translate-y-1/2" style={{ color: '#7A6E60' }}>
             <X className="w-3 h-3" />
           </button>
         )}
