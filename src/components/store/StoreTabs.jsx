@@ -1,14 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import StoreTip from '@/components/store/StoreTip';
-import { CatalogSigil, QuoteSigil, OrdersSigil, JobsSigil, AboutSigil } from '@/components/brand/glyphs/DivisionSigils';
+import { CatalogSigil, QuoteSigil, OrdersSigil, JobsSigil, AboutSigil, ReportSigil } from '@/components/brand/glyphs/DivisionSigils';
 
 const TABS = [
   { id: 'catalog', label: 'CATALOG', icon: CatalogSigil, tip: 'Browse wares & add to manifest', key: '1' },
   { id: 'quote', label: 'BULK QUOTE', icon: QuoteSigil, tip: 'Build a bulk pricing estimate', key: '2' },
   { id: 'orders', label: 'MY ORDERS', icon: OrdersSigil, tip: 'Track orders by code', key: '3' },
   { id: 'jobs', label: 'JOBS', icon: JobsSigil, tip: 'Open contractor postings', key: '4' },
-  { id: 'about', label: 'ABOUT FSIS', icon: AboutSigil, tip: 'Company dossier & system status', key: '5' },
+  { id: 'report', label: 'REPORT', icon: ReportSigil, tip: 'Weekly sales & cargo output summary', key: '5' },
+  { id: 'about', label: 'ABOUT FSIS', icon: AboutSigil, tip: 'Company dossier & system status', key: '6' },
 ];
 
 /** Storefront selector rail — bronze plate glides between sections instead of

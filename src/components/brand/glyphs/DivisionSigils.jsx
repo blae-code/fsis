@@ -86,6 +86,23 @@ export function JobsSigil(props) {
   );
 }
 
+/** Bar-chart report sigil with rising columns + scan line — Weekly Report */
+export function ReportSigil(props) {
+  return (
+    <Svg {...props}>
+      {/* Rising columns */}
+      <rect x="4" y="14" width="3.5" height="7" strokeWidth="1.2" />
+      <rect x="10.25" y="9" width="3.5" height="12" strokeWidth="1.2" />
+      <rect x="16.5" y="5" width="3.5" height="16" strokeWidth="1.2" />
+      {/* Scan line */}
+      <path d="M3 19 H21" strokeWidth="1" opacity="0.4" />
+      {/* Trend arrow */}
+      <path d="M5 15 L10.5 10 L16.5 6" strokeWidth="1.3" opacity="0.55" />
+      <path d="M14.5 5.5 L16.5 6 L16 8" strokeWidth="1" opacity="0.55" />
+    </Svg>
+  );
+}
+
 /** Reclaimer claw in certification ring + inner hex frame — About FSIS */
 export function AboutSigil(props) {
   return (
