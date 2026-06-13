@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Package, ClipboardList, Info, Calculator, Briefcase } from 'lucide-react';
+import StoreTip from '@/components/store/StoreTip';
 
 const TABS = [
-  { id: 'catalog', label: 'CATALOG', icon: Package },
-  { id: 'quote', label: 'BULK QUOTE', icon: Calculator },
-  { id: 'orders', label: 'MY ORDERS', icon: ClipboardList },
-  { id: 'jobs', label: 'JOBS', icon: Briefcase },
-  { id: 'about', label: 'ABOUT FSIS', icon: Info },
+  { id: 'catalog', label: 'CATALOG', icon: Package, tip: 'Browse wares & add to manifest', key: '1' },
+  { id: 'quote', label: 'BULK QUOTE', icon: Calculator, tip: 'Build a bulk pricing estimate', key: '2' },
+  { id: 'orders', label: 'MY ORDERS', icon: ClipboardList, tip: 'Track orders by code', key: '3' },
+  { id: 'jobs', label: 'JOBS', icon: Briefcase, tip: 'Open contractor postings', key: '4' },
+  { id: 'about', label: 'ABOUT FSIS', icon: Info, tip: 'Company dossier & system status', key: '5' },
 ];
 
 /** Storefront selector rail — bronze plate glides between sections instead of
@@ -18,11 +19,11 @@ export default function StoreTabs({ active, onChange }) {
       className="relative flex gap-0.5 font-mono text-[10px] tracking-[0.15em] p-0.5"
       style={{ background: '#0E0C0A', border: '1px solid #2A2118', clipPath: 'polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px)' }}
     >
-      {TABS.map(({ id, label, icon: Icon }) => {
+      {TABS.map(({ id, label, icon: Icon, tip, key }) => {
         const isActive = active === id;
         return (
+          <StoreTip key={id} label={tip} shortcut={key}>
           <button
-            key={id}
             onClick={() => onChange(id)}
             className="relative flex items-center gap-1.5 px-3 py-2 transition-colors"
             style={{ color: isActive ? '#F0E6D2' : '#8A7E6C' }}
@@ -53,6 +54,7 @@ export default function StoreTabs({ active, onChange }) {
               {label}
             </span>
           </button>
+          </StoreTip>
         );
       })}
     </div>

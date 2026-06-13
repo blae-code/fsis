@@ -39,6 +39,24 @@ export default function Storefront() {
     storeCache.setCart(cart);
   }, [cart]);
 
+  // Keyboard shortcuts: 1-5 switch sections, / focuses catalog search
+  useEffect(() => {
+    const TAB_KEYS = ['catalog', 'quote', 'orders', 'jobs', 'about'];
+    const handler = (e) => {
+      const typing = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
+      if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === '/') {
+        e.preventDefault();
+        setTab('catalog');
+        requestAnimationFrame(() => document.getElementById('store-search')?.focus());
+      } else if (TAB_KEYS[parseInt(e.key, 10) - 1]) {
+        setTab(TAB_KEYS[parseInt(e.key, 10) - 1]);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
     queryFn: () => base44.entities.product.filter({ available: true }, 'sort_order'),
@@ -208,7 +226,14 @@ export default function Storefront() {
                   </p>
                 ) : (
                   filteredProducts.map((p) => (
-                    <ProductCard key={p.id} product={p} onAdd={addToCart} onView={setDetailProduct} marketBest={p.code ? marketBestByCode[p.code] : undefined} />
+                    <ProductCard
+                      key={p.id}
+                      product={p}
+                      onAdd={addToCart}
+                      onView={setDetailProduct}
+                      marketBest={p.code ? marketBestByCode[p.code] : undefined}
+                      inCartQty={cart.find((i) => i.product_id === p.id)?.quantity || 0}
+                    />
                   ))
                 )}
               </div>
@@ -253,6 +278,11 @@ export default function Storefront() {
         <button onClick={() => setShowOnboarding(true)} className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#C8A05B' }}>
           SETUP GUIDE
         </button>
+        <p className="hidden md:block text-[9px] font-mono" style={{ color: '#6B6155' }}>
+          <kbd className="px-1 border" style={{ borderColor: '#3A2F20', color: '#8A7E6C' }}>1–5</kbd> sections
+          <span className="mx-1.5">•</span>
+          <kbd className="px-1 border" style={{ borderColor: '#3A2F20', color: '#8A7E6C' }}>/</kbd> search
+        </p>
       </footer>
     </div>
   );

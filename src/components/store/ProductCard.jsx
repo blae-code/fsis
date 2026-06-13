@@ -16,10 +16,11 @@ const CATEGORY_META = {
   service: { label: 'SERVICE', icon: Wrench },
 };
 
-export default function ProductCard({ product, onAdd, onView, marketBest }) {
+export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0 }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
   const FallbackIcon = meta.icon;
+  const inCart = inCartQty > 0;
 
   return (
     <motion.div
@@ -34,7 +35,8 @@ export default function ProductCard({ product, onAdd, onView, marketBest }) {
         transition={{ type: 'spring', stiffness: 300, damping: 22 }}
         className="relative flex flex-col gap-3 p-4 border flex-1 cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
         style={{
-          borderColor: '#5C4A33',
+          borderColor: inCart ? '#D4920B' : '#5C4A33',
+          boxShadow: inCart ? '0 0 18px rgba(212, 146, 11, 0.22), inset 0 0 18px rgba(212, 146, 11, 0.05)' : undefined,
           transformStyle: 'preserve-3d',
           clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
           backgroundImage: `linear-gradient(rgba(12, 11, 10, 0.45), rgba(12, 11, 10, 0.72)), url(${PLATE_TEXTURE})`,
@@ -57,16 +59,28 @@ export default function ProductCard({ product, onAdd, onView, marketBest }) {
               <FallbackIcon className="w-5 h-5" style={{ color: '#E0A22E' }} />
             )}
           </div>
-          <span
-            className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
-            style={{
-              background: 'linear-gradient(180deg, #A87C42, #6E4D24)',
-              color: '#15100A',
-              clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)',
-            }}
-          >
-            {meta.label}
-          </span>
+          <div className="flex flex-col items-end gap-1">
+            <span
+              className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
+              style={{
+                background: 'linear-gradient(180deg, #A87C42, #6E4D24)',
+                color: '#15100A',
+                clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)',
+              }}
+            >
+              {meta.label}
+            </span>
+            {inCart && (
+              <motion.span
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="px-2 py-0.5 text-[8px] font-mono font-bold tracking-[0.15em] border"
+                style={{ borderColor: '#D4920B', color: '#E0A22E', background: 'rgba(212, 146, 11, 0.1)' }}
+              >
+                IN MANIFEST ×{inCartQty}
+              </motion.span>
+            )}
+          </div>
         </div>
 
         <div>

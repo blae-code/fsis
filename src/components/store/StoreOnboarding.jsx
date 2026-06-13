@@ -5,7 +5,18 @@ import FsisLogo from '@/components/brand/FsisLogo';
 import SerialStrip from '@/components/brand/SerialStrip';
 import ScanlineOverlay from '@/components/onboarding/ScanlineOverlay';
 import TypedStatus from '@/components/onboarding/TypedStatus';
+import StatusNodes from '@/components/os/onboarding/StatusNodes';
+import HexCrate from '@/components/three/HexCrate';
 import { useFullscreen } from '@/lib/useFullscreen';
+
+const Kbd = ({ children }) => (
+  <kbd
+    className="px-1.5 py-0.5 text-[8px] font-bold border rounded-sm"
+    style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#1A150E', boxShadow: 'inset 0 -1px 0 #3A2F20' }}
+  >
+    {children}
+  </kbd>
+);
 
 const isStandalone = () =>
   typeof window !== 'undefined' &&
@@ -94,6 +105,11 @@ export default function StoreOnboarding({ onComplete }) {
             clipPath: 'polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px)',
           }}
         >
+          {/* Floating 3D hex crate — ambient, behind content */}
+          <div className="absolute -top-4 -right-4 pointer-events-none opacity-40 hidden sm:block">
+            <HexCrate size={110} />
+          </div>
+
           {/* Header */}
           <div className="flex items-center gap-3 mb-7">
             <FsisLogo size={30} />
@@ -199,15 +215,9 @@ export default function StoreOnboarding({ onComplete }) {
           </AnimatePresence>
 
           {/* Progress + nav */}
-          <div className="flex items-center justify-between mt-8 pt-5 border-t" style={{ borderColor: '#2A2118' }}>
-            <div className="flex gap-1.5">
-              {steps.map((_, i) => (
-                <div
-                  key={i}
-                  className="h-1 transition-all duration-300"
-                  style={{ width: i === step ? 20 : 6, background: i <= step ? '#D4920B' : '#2A2118' }}
-                />
-              ))}
+          <div className="flex items-center justify-between mt-8 pt-5 pb-3 border-t" style={{ borderColor: '#2A2118' }}>
+            <div className="w-36">
+              <StatusNodes labels={steps} current={step} onJump={setStep} />
             </div>
             <div className="flex items-center gap-3">
               {step > 0 && (
@@ -218,24 +228,39 @@ export default function StoreOnboarding({ onComplete }) {
               <button onClick={onComplete} className="text-[10px] hover:opacity-80" style={{ color: '#6B6155' }}>
                 SKIP
               </button>
-              <button
+              <motion.button
                 onClick={() => (isLast ? finish() : setStep(step + 1))}
-                className="h-9 px-5 text-xs font-bold inline-flex items-center gap-1.5 hover:brightness-110 transition-all"
+                whileHover="hover"
+                whileTap={{ scale: 0.96 }}
+                className="relative h-9 px-5 text-xs font-bold inline-flex items-center gap-1.5 overflow-hidden"
                 style={{
                   background: 'linear-gradient(180deg, #E8B13A, #BD7E16)',
                   color: '#1A1206',
                   clipPath: 'polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px)',
                 }}
               >
-                {isLast ? 'ENTER THE STORE' : 'CONTINUE'} <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+                {/* Light sweep on hover */}
+                <motion.span
+                  className="absolute inset-y-0 w-1/2 pointer-events-none"
+                  style={{ background: 'linear-gradient(105deg, transparent, rgba(255,240,200,0.55), transparent)' }}
+                  initial={{ x: '-150%' }}
+                  variants={{ hover: { x: '250%' } }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                />
+                <span className="relative">{isLast ? 'ENTER THE STORE' : 'CONTINUE'}</span>
+                <motion.span variants={{ hover: { x: 3 } }} className="relative inline-flex">
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </motion.span>
+              </motion.button>
             </div>
           </div>
 
           {/* Serial footer + keyboard hints */}
           <div className="flex items-center justify-between mt-5">
             <SerialStrip seed="FSIS-PATRON-LINK" label="PATRON LINK • SEC-7" />
-            <span className="text-[8px] tracking-[0.2em]" style={{ color: '#54493B' }}>ENTER ↵ ADVANCE • ESC SKIP</span>
+            <span className="flex items-center gap-1.5 text-[8px] tracking-[0.15em]" style={{ color: '#54493B' }}>
+              <Kbd>ENTER</Kbd> ADVANCE <span className="mx-0.5">•</span> <Kbd>←</Kbd> BACK <span className="mx-0.5">•</span> <Kbd>ESC</Kbd> SKIP
+            </span>
           </div>
 
           <ScanlineOverlay />
