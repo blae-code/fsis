@@ -12,7 +12,7 @@ import ManifestReceipt from '@/components/store/ManifestReceipt';
 import OrderReceiptModal from '@/components/store/OrderReceiptModal';
 import HoldToTransmit from '@/components/store/HoldToTransmit';
 import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
-import LocationMarker from '@/components/brand/LocationMarker';
+import LocationMarker from '@/components/brand/glyphs/LocationMarker';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 
@@ -140,16 +140,14 @@ export default function OrderPanel({ cart, setCart, user }) {
                 <SelectContent>
                   {DELIVERY_LOCATIONS.map((l) => (
                     <SelectItem key={l.name} value={l.name} className="text-xs font-mono">
-                      <span className="inline-flex items-center gap-1.5">
-                        <span style={{ color: '#6FA08F' }}><LocationMarker kind={l.kind} size={13} /></span>
-                        {l.name} — {l.region}
-                      </span>
+                      {l.name} — {l.region}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               {location && (
                 <p className="text-[9px] font-mono" style={{ color: '#7BA05B' }}>
+                  <LocationMarker name={location} className="w-3 h-3 inline -mt-0.5 mr-1" style={{ color: '#6FA08F' }} />
                   EST DELIVERY {etaFor(location)} after confirmation
                   {DELIVERY_LOCATIONS.find((l) => l.name === location)?.note ? ` • ${DELIVERY_LOCATIONS.find((l) => l.name === location).note}` : ''}
                 </p>

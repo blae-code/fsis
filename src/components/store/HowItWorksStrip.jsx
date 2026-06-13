@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { storeCache } from '@/lib/localCache';
 import { X } from 'lucide-react';
-import { ManifestSlate, UplinkWave, HandoffMeet } from '@/components/brand/StepPictograms';
+import { ManifestPicto, TransmitPicto, HandoffPicto } from '@/components/brand/glyphs/StepPictograms';
 
 const STEPS = [
-  { icon: ManifestSlate, title: 'BUILD MANIFEST', desc: 'Add wares from the catalog and set quantities.' },
-  { icon: UplinkWave, title: 'TRANSMIT ORDER', desc: 'Hold to transmit — you get a tracking code & passphrase.' },
-  { icon: HandoffMeet, title: 'IN-PERSON HANDOFF', desc: 'Meet the FSIS crew in the \u2019verse and speak your passphrase.' },
+  { icon: ManifestPicto, title: 'BUILD MANIFEST', desc: 'Add wares from the catalog and set quantities.' },
+  { icon: TransmitPicto, title: 'TRANSMIT ORDER', desc: 'Hold to transmit — you get a tracking code & passphrase.' },
+  { icon: HandoffPicto, title: 'IN-PERSON HANDOFF', desc: 'Meet the FSIS crew in the \u2019verse and speak your passphrase.' },
 ];
 
 /** Dismissible 3-step explainer for first-time buyers — in-game commerce is
@@ -30,14 +30,14 @@ export default function HowItWorksStrip() {
         {STEPS.map(({ icon: Icon, title, desc }, i) => (
           <div key={title} className="flex items-start gap-2.5">
             <span
-              className="shrink-0 w-7 h-7 flex items-center justify-center border font-mono text-[10px] font-bold"
+              className="shrink-0 w-8 h-8 flex items-center justify-center border"
               style={{ borderColor: '#3C5A50', color: '#8FBFAE', background: '#101413' }}
             >
-              {i + 1}
+              <Icon className="w-5 h-5" />
             </span>
             <div className="min-w-0">
-              <p className="font-mono text-[10px] font-bold tracking-[0.12em] flex items-center gap-1.5" style={{ color: '#D8CFC0' }}>
-                <span style={{ color: '#6FA08F' }}><Icon size={14} /></span> {title}
+              <p className="font-mono text-[10px] font-bold tracking-[0.12em]" style={{ color: '#D8CFC0' }}>
+                <span style={{ color: '#6FA08F' }}>0{i + 1} ·</span> {title}
               </p>
               <p className="text-[10px] font-mono leading-relaxed mt-0.5" style={{ color: '#877D6D' }}>{desc}</p>
             </div>

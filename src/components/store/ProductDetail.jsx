@@ -6,6 +6,7 @@ import { Minus, Plus, TrendingUp, ShoppingCart } from 'lucide-react';
 import CommodityIcon from '@/components/brand/CommodityIcon';
 import SerialStrip from '@/components/brand/SerialStrip';
 import MarketBadge from '@/components/store/MarketBadge';
+import GradeStamp from '@/components/brand/glyphs/GradeStamp';
 import RestockNotify from '@/components/store/RestockNotify';
 import { lotNumber } from '@/lib/fsisLore';
 
@@ -51,6 +52,7 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
               <p className="text-xs mt-1.5 leading-relaxed" style={{ color: '#9C9080' }}>{product.description}</p>
             )}
           </div>
+          <GradeStamp category={product.category} className="ml-auto mr-5 mt-1 shrink-0 hidden sm:inline-block" />
         </div>
 
         <div className="p-4 space-y-4">

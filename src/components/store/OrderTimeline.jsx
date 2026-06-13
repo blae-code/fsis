@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ReceivedGlyph, ConfirmedGlyph, FulfillmentGlyph, DeliveredGlyph, CancelledGlyph } from '@/components/brand/TimelineGlyphs';
+import { ReceivedGlyph, ConfirmedGlyph, FulfillmentGlyph, DeliveredGlyph, CancelledGlyph } from '@/components/brand/glyphs/TimelineGlyphs';
 
 const STEPS = [
   { id: 'new', label: 'RECEIVED', icon: ReceivedGlyph },
@@ -14,7 +14,7 @@ export default function OrderTimeline({ status }) {
   if (status === 'cancelled') {
     return (
       <div className="flex items-center gap-1.5 font-mono text-[10px]" style={{ color: '#C05050' }}>
-        <CancelledGlyph size={14} /> ORDER CANCELLED
+        <CancelledGlyph className="w-3.5 h-3.5" /> ORDER CANCELLED
       </div>
     );
   }
@@ -59,7 +59,7 @@ export default function OrderTimeline({ status }) {
                   boxShadow: isCurrent ? '0 0 10px rgba(224, 162, 46, 0.4)' : 'none',
                 }}
               >
-                <Icon size={14} />
+                <Icon className="w-3.5 h-3.5" />
               </div>
               <span className="font-mono text-[8px] tracking-wider" style={{ color: done ? '#C8A05B' : '#5C5246' }}>
                 {label}

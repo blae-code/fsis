@@ -23,11 +23,11 @@ import MobileCartBar from '@/components/store/MobileCartBar';
 import HowItWorksStrip from '@/components/store/HowItWorksStrip';
 import RecentDeliveries from '@/components/store/RecentDeliveries';
 import { useToast } from '@/components/ui/use-toast';
+import { DerelictHull } from '@/components/brand/glyphs/EmptyStates';
 import { AnimatePresence } from 'framer-motion';
 import SystemStatus from '@/components/store/SystemStatus';
 import HexCrate from '@/components/three/HexCrate';
 import { FSIS } from '@/lib/fsisLore';
-import { DerelictHull } from '@/components/brand/EmptyStates';
 
 const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/44c3176b4_generated_image.png';
 
@@ -253,10 +253,10 @@ export default function Storefront() {
                 <HowItWorksStrip />
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                   {sortedProducts.length === 0 ? (
-                    <div className="col-span-full text-center py-10 space-y-3">
-                      <DerelictHull width={190} />
-                      <p className="text-xs font-mono" style={{ color: '#8A7E6C' }}>
-                        {products.length === 0 ? 'No wares listed yet — check back soon.' : 'Nothing on the scope — no wares match your search.'}
+                    <div className="col-span-full flex flex-col items-center gap-3 py-10">
+                      <DerelictHull width={180} />
+                      <p className="text-center text-xs font-mono" style={{ color: '#8A7E6C' }}>
+                        {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your search.'}
                       </p>
                     </div>
                   ) : (

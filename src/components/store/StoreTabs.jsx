@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import StoreTip from '@/components/store/StoreTip';
-import { CatalogSigil, QuoteSigil, OrdersSigil, JobsSigil, AboutSigil } from '@/components/brand/DivisionSigils';
+import { CatalogSigil, QuoteSigil, OrdersSigil, JobsSigil, AboutSigil } from '@/components/brand/glyphs/DivisionSigils';
 
 const TABS = [
   { id: 'catalog', label: 'CATALOG', icon: CatalogSigil, tip: 'Browse wares & add to manifest', key: '1' },
@@ -50,7 +50,7 @@ export default function StoreTabs({ active, onChange }) {
               />
             )}
             <span className="relative inline-flex items-center gap-1.5">
-              <Icon size={13} />
+              <Icon className="w-3.5 h-3.5" />
               {label}
               <span className="text-[7px] -mt-1.5" style={{ color: isActive ? '#E0A22E' : '#54493B' }}>{key}</span>
             </span>

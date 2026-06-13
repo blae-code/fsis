@@ -1,5 +1,5 @@
 import React from 'react';
-import DeltaGlyph from '@/components/brand/DeltaGlyph';
+import DeltaGlyph from '@/components/brand/glyphs/DeltaGlyph';
 
 /** Compares an FSIS price against the live UEX best-sell and shows the value delta */
 export default function MarketBadge({ price, marketBest }) {
@@ -18,7 +18,7 @@ export default function MarketBadge({ price, marketBest }) {
       }}
       title={`UEX best sell: ${marketBest.toLocaleString()} aUEC`}
     >
-      <DeltaGlyph dir={below ? 'down' : above ? 'up' : 'par'} size={8} />
+      <DeltaGlyph dir={below ? 'down' : above ? 'up' : 'par'} className="w-2 h-2 shrink-0" />
       {label}
     </span>
   );

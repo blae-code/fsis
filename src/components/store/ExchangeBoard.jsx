@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import DeltaGlyph from '@/components/brand/glyphs/DeltaGlyph';
 
 const BRONZE = '#B0793A';
 const AMBER = '#D4920B';
@@ -165,8 +166,13 @@ export default function ExchangeBoard() {
                       <div className="text-[13px] font-bold leading-none" style={{ color: AMBER }}>
                         {(best.price_sell || 0).toLocaleString()}
                       </div>
-                      <div className="text-[8px] mt-0.5 tracking-[0.1em]" style={{ color: delta > 0 ? '#5FA463' : delta < 0 ? '#C24141' : DIM }}>
-                        {deltaPct === null ? 'aUEC/SCU' : `${delta > 0 ? '▲' : delta < 0 ? '▼' : '■'} ${delta === 0 ? 'FLAT' : `${Math.abs(deltaPct)}%`}`}
+                      <div className="text-[8px] mt-0.5 tracking-[0.1em] flex items-center justify-end gap-1" style={{ color: delta > 0 ? '#5FA463' : delta < 0 ? '#C24141' : DIM }}>
+                        {deltaPct === null ? 'aUEC/SCU' : (
+                          <>
+                            <DeltaGlyph dir={delta > 0 ? 'up' : delta < 0 ? 'down' : 'par'} className="w-2 h-2 shrink-0" />
+                            {delta === 0 ? 'FLAT' : `${Math.abs(deltaPct)}%`}
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

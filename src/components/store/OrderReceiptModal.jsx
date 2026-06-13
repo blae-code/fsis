@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Copy, Check, ShieldAlert, X } from 'lucide-react';
-import HandoffSigil from '@/components/brand/HandoffSigil';
+import PassphraseSigil from '@/components/brand/glyphs/PassphraseSigil';
 
-function CopyRow({ label, value, big, icon }) {
+function CopyRow({ label, value, big, Icon }) {
   const [copied, setCopied] = useState(false);
   const copy = () => {
     navigator.clipboard.writeText(value);
@@ -13,7 +13,9 @@ function CopyRow({ label, value, big, icon }) {
   return (
     <div className="border p-3 flex items-center justify-between gap-3" style={{ borderColor: '#3A2F20', background: '#0E0C09' }}>
       <div className="min-w-0">
-        <p className="text-[9px] font-mono tracking-[0.2em] flex items-center gap-1.5" style={{ color: '#6FA08F' }}>{icon}{label}</p>
+        <p className="text-[9px] font-mono tracking-[0.2em] flex items-center gap-1" style={{ color: '#6FA08F' }}>
+          {Icon && <Icon className="w-3.5 h-3.5 shrink-0" />}{label}
+        </p>
         <p className={`font-mono font-bold tracking-[0.1em] truncate ${big ? 'text-xl' : 'text-sm'}`} style={{ color: '#F0B43A' }}>{value}</p>
       </div>
       <button
@@ -58,7 +60,7 @@ export default function OrderReceiptModal({ order, open, onClose }) {
         </div>
 
         <CopyRow label="TRACKING CODE" value={order.tracking_code} big />
-        {order.passphrase && <CopyRow label="HANDOFF PASSPHRASE — SPOKEN AT DELIVERY" value={order.passphrase} icon={<HandoffSigil size={13} color="#6FA08F" />} />}
+        {order.passphrase && <CopyRow label="HANDOFF PASSPHRASE — SPOKEN AT DELIVERY" value={order.passphrase} Icon={PassphraseSigil} />}
 
         <div className="flex items-start gap-2 border p-2.5" style={{ borderColor: '#5C4424', background: 'rgba(212, 146, 11, 0.05)' }}>
           <ShieldAlert className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: '#E0A22E' }} />
