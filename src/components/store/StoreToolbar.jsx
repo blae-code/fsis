@@ -1,7 +1,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import StoreTip, { Kbd } from '@/components/store/StoreTip';
-import StoreTip from '@/components/store/StoreTip';
 
 const CATEGORIES = [
   { key: 'all', label: 'ALL WARES' },
@@ -28,12 +27,9 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
             background: 'rgba(10, 9, 7, 0.5)',
           }}
         />
-        <kbd
-          className="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[9px] font-bold border pointer-events-none"
-          style={{ borderColor: '#3A2F20', color: '#8A7E6C', background: 'rgba(20, 17, 13, 0.8)' }}
-        >
-          /
-        </kbd>
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+          <Kbd>/</Kbd>
+        </span>
       </div>
       <div className="flex gap-1.5 flex-wrap">
         {CATEGORIES.map((c) => {

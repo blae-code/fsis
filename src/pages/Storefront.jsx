@@ -39,23 +39,24 @@ export default function Storefront() {
     storeCache.setCart(cart);
   }, [cart]);
 
-  // Keyboard shortcuts: 1-5 switch sections, / focuses catalog search
+  // Global shortcuts: "/" focuses search, 1–5 switch sections
   useEffect(() => {
-    const TAB_KEYS = ['catalog', 'quote', 'orders', 'jobs', 'about'];
-    const handler = (e) => {
-      const typing = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
-      if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+    const TAB_KEYS = { 1: 'catalog', 2: 'quote', 3: 'orders', 4: 'jobs', 5: 'about' };
+    const onKey = (e) => {
+      if (showOnboarding || detailProduct) return;
+      const t = e.target;
+      if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable) return;
       if (e.key === '/') {
         e.preventDefault();
         setTab('catalog');
         requestAnimationFrame(() => document.getElementById('store-search')?.focus());
-      } else if (TAB_KEYS[parseInt(e.key, 10) - 1]) {
-        setTab(TAB_KEYS[parseInt(e.key, 10) - 1]);
+      } else if (TAB_KEYS[e.key]) {
+        setTab(TAB_KEYS[e.key]);
       }
     };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, []);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showOnboarding, detailProduct]);
 
   const { data: products = [] } = useQuery({
     queryKey: ['products'],
@@ -278,11 +279,6 @@ export default function Storefront() {
         <button onClick={() => setShowOnboarding(true)} className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#C8A05B' }}>
           SETUP GUIDE
         </button>
-        <p className="hidden md:block text-[9px] font-mono" style={{ color: '#6B6155' }}>
-          <kbd className="px-1 border" style={{ borderColor: '#3A2F20', color: '#8A7E6C' }}>1–5</kbd> sections
-          <span className="mx-1.5">•</span>
-          <kbd className="px-1 border" style={{ borderColor: '#3A2F20', color: '#8A7E6C' }}>/</kbd> search
-        </p>
       </footer>
     </div>
   );

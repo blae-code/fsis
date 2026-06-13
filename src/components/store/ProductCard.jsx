@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Hammer, Wrench } from 'lucide-react';
+import { Hammer, Wrench, ShoppingCart } from 'lucide-react';
 import AddToCartControl from '@/components/store/AddToCartControl';
+import StoreTip from '@/components/store/StoreTip';
 import CommodityIcon from '@/components/brand/CommodityIcon';
 import SerialStrip from '@/components/brand/SerialStrip';
 import MarketBadge from '@/components/store/MarketBadge';
@@ -35,8 +36,8 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         transition={{ type: 'spring', stiffness: 300, damping: 22 }}
         className="relative flex flex-col gap-3 p-4 border flex-1 cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
         style={{
-          borderColor: inCart ? '#D4920B' : '#5C4A33',
-          boxShadow: inCart ? '0 0 18px rgba(212, 146, 11, 0.22), inset 0 0 18px rgba(212, 146, 11, 0.05)' : undefined,
+          borderColor: inCart ? '#C8893B' : '#5C4A33',
+          boxShadow: inCart ? '0 0 16px rgba(212, 146, 11, 0.18), inset 0 0 18px rgba(212, 146, 11, 0.05)' : 'none',
           transformStyle: 'preserve-3d',
           clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
           backgroundImage: `linear-gradient(rgba(12, 11, 10, 0.45), rgba(12, 11, 10, 0.72)), url(${PLATE_TEXTURE})`,
@@ -59,7 +60,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
               <FallbackIcon className="w-5 h-5" style={{ color: '#E0A22E' }} />
             )}
           </div>
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex flex-col items-end gap-1.5">
             <span
               className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
               style={{
@@ -74,10 +75,10 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
               <motion.span
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="px-2 py-0.5 text-[8px] font-mono font-bold tracking-[0.15em] border"
-                style={{ borderColor: '#D4920B', color: '#E0A22E', background: 'rgba(212, 146, 11, 0.1)' }}
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-[8px] font-mono font-bold tracking-[0.15em] border"
+                style={{ borderColor: '#C8893B', color: '#E0A22E', background: 'rgba(212, 146, 11, 0.1)' }}
               >
-                IN MANIFEST ×{inCartQty}
+                <ShoppingCart className="w-2.5 h-2.5" /> IN MANIFEST ×{inCartQty}
               </motion.span>
             )}
           </div>
@@ -110,10 +111,16 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
             )}
           </div>
           <div className="flex items-center justify-between">
-            <span className="font-mono text-[10px] px-2 py-1 border" style={{ borderColor: '#3A2F20', color: '#8A7E6C' }}>
-              {lotNumber(product.id)}
-            </span>
-            <AddToCartControl disabled={!inStock} onAdd={() => onAdd(product)} />
+            <StoreTip label="LOT SERIAL" desc="FSIS reclamation lot number — quoted on your delivery manifest.">
+              <span className="font-mono text-[10px] px-2 py-1 border" style={{ borderColor: '#3A2F20', color: '#8A7E6C' }}>
+                {lotNumber(product.id)}
+              </span>
+            </StoreTip>
+            <StoreTip label={inStock ? 'LOAD CRATE' : 'OUT OF STOCK'} desc={inStock ? 'Add one unit to your order manifest. Adjust quantity in the manifest panel.' : 'This ware is awaiting restock from salvage ops.'}>
+              <span onClick={(e) => e.stopPropagation()}>
+                <AddToCartControl disabled={!inStock} onAdd={() => onAdd(product)} />
+              </span>
+            </StoreTip>
           </div>
         </div>
       </motion.div>
