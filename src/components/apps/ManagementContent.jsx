@@ -3,11 +3,12 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ShieldAlert, Briefcase } from 'lucide-react';
-import ManagementView from '@/components/apps/station/ManagementView';
+import ManagementCommandDeck from '@/components/apps/management/ManagementCommandDeck';
+import WorkOrderDeck from '@/components/apps/fairshare/WorkOrderDeck';
 import ProductManager from '@/components/apps/management/ProductManager';
 import DiscountManager from '@/components/apps/management/DiscountManager';
 import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin';
-import CrewRoster from '@/components/apps/fairshare/CrewRoster';
+import CrewRosterDeck from '@/components/apps/fairshare/CrewRosterDeck';
 import OrdersContent from '@/components/apps/OrdersContent';
 
 const tabCls =
@@ -51,10 +52,11 @@ export default function ManagementContent() {
           <TabsTrigger value="orders" className={tabCls}>ORDERS</TabsTrigger>
           <TabsTrigger value="jobs" className={tabCls}>JOB BOARD</TabsTrigger>
           <TabsTrigger value="crew" className={tabCls}>CREW</TabsTrigger>
+          <TabsTrigger value="work_orders" className={tabCls}>WORK ORDERS</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="flex-1 overflow-auto m-0 p-4">
-          <ManagementView />
+          <ManagementCommandDeck />
         </TabsContent>
         <TabsContent value="store" className="flex-1 overflow-auto m-0 p-4">
           <ProductManager />
@@ -69,7 +71,10 @@ export default function ManagementContent() {
           <JobBoardAdmin />
         </TabsContent>
         <TabsContent value="crew" className="flex-1 overflow-auto m-0">
-          <CrewRoster />
+          <CrewRosterDeck />
+        </TabsContent>
+        <TabsContent value="work_orders" className="flex-1 overflow-auto m-0">
+          <WorkOrderDeck />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import WorkOrderForm from '@/components/apps/fairshare/WorkOrderForm';
-import WorkOrderList from '@/components/apps/fairshare/WorkOrderList';
-import CrewRoster from '@/components/apps/fairshare/CrewRoster';
+import WorkOrderDeck from '@/components/apps/fairshare/WorkOrderDeck';
+import CrewRosterDeck from '@/components/apps/fairshare/CrewRosterDeck';
 import PayrollTable from '@/components/apps/fairshare/PayrollTable';
 import PayrollTracker from '@/components/apps/fairshare/PayrollTracker';
 import TimeLogs from '@/components/apps/fairshare/TimeLogs';
-import PaydayCycles from '@/components/apps/fairshare/PaydayCycles';
+import PaydayCycleDeck from '@/components/apps/fairshare/PaydayCycleDeck';
 import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin';
 import ContractorDashboard from '@/components/apps/fairshare/ContractorDashboard';
 
@@ -64,10 +63,7 @@ export default function FairShareContent() {
         </TabsList>
 
         <TabsContent value="orders" className="flex-1 overflow-auto m-0">
-          <div className="p-4 space-y-4">
-            <WorkOrderForm />
-            <WorkOrderList />
-          </div>
+          <WorkOrderDeck />
         </TabsContent>
 
         <TabsContent value="contractors" className="flex-1 overflow-auto m-0">
@@ -75,7 +71,7 @@ export default function FairShareContent() {
         </TabsContent>
 
         <TabsContent value="crew" className="flex-1 overflow-auto m-0">
-          <CrewRoster />
+          <CrewRosterDeck />
         </TabsContent>
 
         <TabsContent value="payroll" className="flex-1 overflow-auto m-0">
@@ -90,7 +86,7 @@ export default function FairShareContent() {
         </TabsContent>
 
         <TabsContent value="payday" className="flex-1 overflow-auto m-0">
-          <PaydayCycles />
+          <PaydayCycleDeck />
         </TabsContent>
 
         <TabsContent value="jobs" className="flex-1 overflow-auto m-0">
