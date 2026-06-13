@@ -24,7 +24,7 @@ import HowItWorksStrip from '@/components/store/HowItWorksStrip';
 import RecentDeliveries from '@/components/store/RecentDeliveries';
 import { useToast } from '@/components/ui/use-toast';
 import { DerelictHull } from '@/components/brand/glyphs/EmptyStates';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import SystemStatus from '@/components/store/SystemStatus';
 import HexCrate from '@/components/three/HexCrate';
 import { FSIS } from '@/lib/fsisLore';
@@ -251,7 +251,12 @@ export default function Storefront() {
             {tab === 'catalog' && (
               <div className="space-y-4">
                 <HowItWorksStrip />
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+                <motion.div
+                  className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
+                  variants={{ show: { transition: { staggerChildren: 0.05 } } }}
+                  initial="hidden"
+                  animate="show"
+                >
                   {sortedProducts.length === 0 ? (
                     <div className="col-span-full flex flex-col items-center gap-3 py-10">
                       <DerelictHull width={180} />
@@ -260,21 +265,26 @@ export default function Storefront() {
                       </p>
                     </div>
                   ) : (
-                    sortedProducts.map((p) => (
-                      <ProductCard
+                    sortedProducts.map((p, i) => (
+                      <motion.div
                         key={p.id}
-                        product={p}
-                        onAdd={addToCart}
-                        onView={setDetailProduct}
-                        marketBest={p.code ? marketBestByCode[p.code] : undefined}
-                        inCartQty={cart.find((i) => i.product_id === p.id)?.quantity || 0}
-                        pinned={pins.includes(p.id)}
-                        onTogglePin={(id) => setPins(storeCache.togglePin(id))}
-                        onRestockNotify={() => toast({ title: 'RESTOCK ALERT', description: `We'll list ${p.product_name} again as soon as salvage ops deliver. Check back soon.` })}
-                      />
+                        variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
+                        transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+                      >
+                        <ProductCard
+                          product={p}
+                          onAdd={addToCart}
+                          onView={setDetailProduct}
+                          marketBest={p.code ? marketBestByCode[p.code] : undefined}
+                          inCartQty={cart.find((i) => i.product_id === p.id)?.quantity || 0}
+                          pinned={pins.includes(p.id)}
+                          onTogglePin={(id) => setPins(storeCache.togglePin(id))}
+                          onRestockNotify={() => toast({ title: 'RESTOCK ALERT', description: `We'll list ${p.product_name} again as soon as salvage ops deliver. Check back soon.` })}
+                        />
+                      </motion.div>
                     ))
                   )}
-                </div>
+                </motion.div>
                 <RecentDeliveries />
               </div>
             )}

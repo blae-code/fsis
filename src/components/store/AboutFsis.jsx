@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import FsisSeal from '@/components/brand/FsisSeal';
 import { FSIS, OPERATOR, FOUNDING_STORY, CORE_VALUES, FLEET_REGISTRY, FLEET_NOTE, PRINCIPLES } from '@/lib/fsisLore';
 
@@ -33,21 +34,33 @@ export default function AboutFsis() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {CORE_VALUES.map((v) => (
-          <div key={v.title} className="border p-3" style={{ borderColor: '#3A2F20', background: '#0E0C09' }}>
+          <motion.div
+            key={v.title}
+            whileHover={{ y: -2, borderColor: '#5C4424', boxShadow: '0 0 14px rgba(212,146,11,0.08)' }}
+            transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+            className="border p-3"
+            style={{ borderColor: '#3A2F20', background: '#0E0C09' }}
+          >
             <div className="font-mono text-[10px] font-bold tracking-[0.15em]" style={{ color: '#E0A22E' }}>{v.title}</div>
             <p className="font-mono text-[10px] mt-1 leading-relaxed" style={{ color: '#9C9080' }}>{v.text}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
 
       {/* Operating principles */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {PRINCIPLES.map((p) => (
-          <div key={p.ix} className="border p-3" style={{ borderColor: '#3A2F20', background: '#0E0C09' }}>
+          <motion.div
+            key={p.ix}
+            whileHover={{ y: -2, borderColor: '#5C4424', boxShadow: '0 0 14px rgba(212,146,11,0.08)' }}
+            transition={{ type: 'spring', stiffness: 320, damping: 26 }}
+            className="border p-3"
+            style={{ borderColor: '#3A2F20', background: '#0E0C09' }}
+          >
             <div className="font-mono text-[9px] tracking-[0.15em]" style={{ color: '#C8A05B' }}>{p.ix}</div>
             <div className="font-mono text-[10px] font-bold tracking-[0.1em] mt-0.5 uppercase" style={{ color: '#E0A22E' }}>{p.title}</div>
             <p className="font-mono text-[10px] mt-1 leading-relaxed" style={{ color: '#9C9080' }}>{p.text}</p>
-          </div>
+          </motion.div>
         ))}
       </div>
 

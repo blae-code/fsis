@@ -159,7 +159,7 @@ export default function MyOrders({ onReorder }) {
         allOrders.map((o) => (
           <div
             key={o.tracking_code}
-            className="border p-4 space-y-3 transition-all duration-700"
+            className="border p-4 space-y-3 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-[#5C4424] hover:shadow-[0_4px_20px_rgba(0,0,0,0.45)]"
             style={{
               borderColor: updatedCodes.includes(o.tracking_code) ? '#D4920B' : '#2A2118',
               background: '#121110',

@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Satellite } from 'lucide-react';
@@ -27,10 +28,16 @@ export default function SystemStatus() {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {cells.map((c) => (
-          <div key={c.k} className="border p-2.5" style={{ borderColor: '#2A2118', background: '#0E0C09' }}>
+          <motion.div
+            key={c.k}
+            whileHover={{ y: -1, borderColor: '#3C5A50', boxShadow: '0 0 10px rgba(111,160,143,0.1)' }}
+            transition={{ type: 'spring', stiffness: 340, damping: 26 }}
+            className="border p-2.5"
+            style={{ borderColor: '#2A2118', background: '#0E0C09' }}
+          >
             <div className="font-mono text-[8px] tracking-[0.2em]" style={{ color: '#8A7E6C' }}>{c.k}</div>
             <div className="font-mono text-[10px] font-bold mt-1" style={{ color: '#D8CFC0' }}>{c.v}</div>
-          </div>
+          </motion.div>
         ))}
       </div>
       <p className="font-mono text-[9px] mt-3" style={{ color: '#6B6155' }}>{FLEET_NOTE}</p>

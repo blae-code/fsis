@@ -23,9 +23,12 @@ export default function StoreTabs({ active, onChange }) {
         const isActive = active === id;
         return (
           <StoreTip key={id} label={tip} shortcut={key}>
-          <button
+          <motion.button
             onClick={() => onChange(id)}
-            className="relative flex items-center gap-1.5 px-3 py-2 transition-colors"
+            whileHover={!isActive ? { color: '#B8AC9A', y: -1 } : {}}
+            whileTap={{ scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 24 }}
+            className="relative flex items-center gap-1.5 px-3 py-2"
             style={{ color: isActive ? '#F4ECDB' : '#6F6557' }}
           >
             {isActive && (
@@ -54,7 +57,7 @@ export default function StoreTabs({ active, onChange }) {
               {label}
               <span className="text-[7px] -mt-1.5" style={{ color: isActive ? '#E0A22E' : '#54493B' }}>{key}</span>
             </span>
-          </button>
+          </motion.button>
           </StoreTip>
         );
       })}

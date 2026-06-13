@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { Calculator, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -97,22 +98,31 @@ export default function QuoteBuilder({ products = [], onLoad }) {
           <p className="text-[9px]" style={{ color: '#6B6155' }}>
             Volume discount is confirmed by the operator at order confirmation.
           </p>
-          <button
+          <motion.button
             onClick={() => onLoad(product, qty, loc)}
-            className="mt-2 w-full h-9 font-mono text-xs font-bold rounded-full hover:brightness-110 transition-all inline-flex items-center justify-center gap-1.5"
+            whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(232,177,58,0.3)' }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+            className="mt-2 w-full h-9 font-mono text-xs font-bold rounded-full inline-flex items-center justify-center gap-1.5"
             style={{ background: 'linear-gradient(180deg, #E8B13A, #BD7E16)', color: '#1A1206' }}
           >
             LOAD INTO MANIFEST <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </motion.button>
         </div>
       )}
 
       {/* Tier reference */}
       <div className="flex flex-wrap gap-2">
         {VOLUME_TIERS.slice().reverse().map((t) => (
-          <span key={t.min} className="px-2.5 py-1 border font-mono text-[9px] tracking-[0.1em]" style={{ borderColor: '#3A2F20', color: '#C8A05B', background: '#121110' }}>
+          <motion.span
+            key={t.min}
+            whileHover={{ borderColor: '#8A6430', color: '#E0C27E', y: -1 }}
+            transition={{ duration: 0.15 }}
+            className="px-2.5 py-1 border font-mono text-[9px] tracking-[0.1em] cursor-default"
+            style={{ borderColor: '#3A2F20', color: '#C8A05B', background: '#121110' }}
+          >
             ≥ {t.min.toLocaleString()} SCU → {t.pct}% OFF
-          </span>
+          </motion.span>
         ))}
       </div>
     </div>

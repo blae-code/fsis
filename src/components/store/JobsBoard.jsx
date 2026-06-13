@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
@@ -57,7 +58,15 @@ export default function JobsBoard() {
         </div>
       ) : (
         postings.map((p) => (
-          <div key={p.id} className="border p-4 space-y-3" style={{ borderColor: '#2A2118', background: '#121110' }}>
+          <motion.div
+            key={p.id}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -2, boxShadow: '0 0 20px rgba(212,146,11,0.1)', borderColor: '#5C4424' }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            className="border p-4 space-y-3"
+            style={{ borderColor: '#2A2118', background: '#121110' }}
+          >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="text-sm font-mono font-bold" style={{ color: '#E5DDD0' }}>{p.title}</div>
@@ -106,14 +115,17 @@ export default function JobsBoard() {
                 </div>
               </div>
             ) : (
-              <button
+              <motion.button
                 onClick={() => setApplyingTo(p.id)}
-                className="px-4 py-1.5 font-mono text-[10px] font-bold border hover:brightness-125 transition-all"
+                whileHover={{ scale: 1.03, boxShadow: '0 0 14px rgba(212,146,11,0.18)' }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+                className="px-4 py-1.5 font-mono text-[10px] font-bold border"
                 style={{ borderColor: '#5C4424', color: '#C8A05B', background: '#161310' }}>
                 APPLY
-              </button>
+              </motion.button>
             )}
-          </div>
+          </motion.div>
         ))
       )}
     </div>
