@@ -1,0 +1,53 @@
+{
+  "name": "ops_log",
+  "type": "object",
+  "properties": {
+    "action": {
+      "type": "string",
+      "description": "What happened, e.g. work_order.settled, order.cancelled, product.repriced"
+    },
+    "entity_type": {
+      "type": "string",
+      "description": "Which entity was affected"
+    },
+    "entity_id": {
+      "type": "string",
+      "description": "ID of the affected entity"
+    },
+    "entity_name": {
+      "type": "string",
+      "description": "Human-readable name of the entity at log time"
+    },
+    "actor": {
+      "type": "string",
+      "description": "Who performed the action \u2014 handle or 'FSIS.bot'"
+    },
+    "detail": {
+      "type": "string",
+      "description": "Optional extra context"
+    },
+    "old_value": {
+      "type": "string",
+      "description": "Previous value (serialised)"
+    },
+    "new_value": {
+      "type": "string",
+      "description": "New value (serialised)"
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

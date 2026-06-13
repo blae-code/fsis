@@ -9,6 +9,7 @@ import DiscountManager from '@/components/apps/management/DiscountManager';
 import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin';
 import CrewRoster from '@/components/apps/fairshare/CrewRoster';
 import OrdersContent from '@/components/apps/OrdersContent';
+import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
 
 const AMBER  = '#E0A22E';
 const DIM    = '#7A6E60';
@@ -21,6 +22,7 @@ const TABS = [
   { id: 'orders',    label: 'ORDERS',     glyph: '▸' },
   { id: 'jobs',      label: 'JOB BOARD',  glyph: '✦' },
   { id: 'crew',      label: 'CREW',       glyph: '◉' },
+  { id: 'auditlog',  label: 'AUDIT LOG',  glyph: '⬚' },
 ];
 
 export default function ManagementContent() {
@@ -96,6 +98,7 @@ export default function ManagementContent() {
         {activeTab === 'orders'    && <OrdersContent />}
         {activeTab === 'jobs'      && <JobBoardAdmin />}
         {activeTab === 'crew'      && <CrewRoster />}
+        {activeTab === 'auditlog'  && <OpsAuditLog />}
       </div>
     </div>
   );

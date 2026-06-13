@@ -58,6 +58,17 @@ Deno.serve(async (req) => {
       await svc.work_order.update(wo.id, { settled_date: today });
     }
 
+    // Write audit log entry
+    await svc.ops_log.create({
+      action: 'work_order.settled',
+      entity_type: 'work_order',
+      entity_id: wo.id,
+      entity_name: wo.order_name,
+      actor: 'FSIS.bot',
+      detail: `Net ${net.toLocaleString()} aUEC · ${entries.length} payouts · ${totalShares} shares`,
+      new_value: `net:${net}`,
+    }).catch(() => {}); // non-fatal
+
     // ── Append to Google Sheets master log ──────────────────────────────────
     try {
       const sheetSettings = await svc.app_setting.filter({ key: 'work_order_log_sheet_id' });

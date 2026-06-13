@@ -62,6 +62,16 @@ Deno.serve(async (req) => {
       internal_notes: `FSIS.bot AUTO-TRIAGE (${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC)\n${lines.join('\n')}\n${verdict}${order.internal_notes ? `\n---\n${order.internal_notes}` : ''}`,
     });
 
+    // Audit log
+    await svc.ops_log.create({
+      action: allFulfillable ? 'order.confirmed' : 'order.flagged',
+      entity_type: 'order',
+      entity_id: order.id,
+      entity_name: `Order from ${order.customer_handle}`,
+      actor: 'FSIS.bot',
+      detail: `${order.total_auec?.toLocaleString() || 0} aUEC — ${order.delivery_location || 'no location'}`,
+    }).catch(() => {});
+
     console.log(`Order ${order.id} triaged: ${allFulfillable ? 'auto-confirmed' : 'flagged for review'}`);
     return Response.json({ triaged: true, auto_confirmed: allFulfillable, flags: lines });
   } catch (error) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Wifi, WifiOff, Shield, Maximize2, Minimize2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
@@ -6,6 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useFullscreen } from '@/lib/useFullscreen';
 import FsisLogo from '@/components/brand/FsisLogo';
 import { FSIS } from '@/lib/fsisLore';
+import NotificationBell from '@/components/os/NotificationBell';
+import UexStalenessIndicator from '@/components/os/UexStalenessIndicator';
 
 export default function StatusBar() {
   const [time, setTime] = useState(new Date());
@@ -109,6 +111,26 @@ export default function StatusBar() {
         <span className="font-mono text-[10px] text-foreground/60">
           {user?.handle ? `${user.handle.toUpperCase()} · ONLINE` : 'OPERATOR ONLINE'}
         </span>
+
+        <div className="h-4 w-px bg-border/40" />
+
+        <UexStalenessIndicator />
+
+        <div className="h-4 w-px bg-border/40" />
+
+        {/* Cmd+K hint */}
+        <button
+          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }))}
+          title="Open command palette (Ctrl+K)"
+          className="hidden sm:flex items-center gap-1 px-1.5 py-0.5 rounded font-mono text-[9px] transition-colors hover:bg-muted"
+          style={{ color: '#3A2E1E', border: '1px solid #2A2118' }}
+        >
+          <span>⌘K</span>
+        </button>
+
+        <div className="h-4 w-px bg-border/40" />
+
+        <NotificationBell />
 
         <div className="h-4 w-px bg-border/40" />
 

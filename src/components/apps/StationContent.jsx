@@ -7,6 +7,7 @@ import SalvageOpsView from '@/components/apps/station/SalvageOpsView';
 import HaulerView from '@/components/apps/station/HaulerView';
 import ManagementView from '@/components/apps/station/ManagementView';
 import ContractorPaydayView from '@/components/apps/station/ContractorPaydayView';
+import QuickTimeLog from '@/components/apps/station/QuickTimeLog';
 
 const AMBER = '#E0A22E';
 const TEAL  = '#6FA08F';
@@ -67,6 +68,9 @@ export default function StationContent() {
       <div className="flex-1 overflow-auto p-4 space-y-4">
         {/* Pay day panel always visible */}
         <ContractorPaydayView />
+
+        {/* Quick time log — contractors submit their hours directly */}
+        {user?.handle && <QuickTimeLog handle={user.handle} />}
 
         {/* Role-specific view */}
         {!role ? (

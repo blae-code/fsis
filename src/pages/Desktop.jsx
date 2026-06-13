@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
@@ -13,9 +13,24 @@ import InstallPrompt from '@/components/os/InstallPrompt';
 import { WindowProvider, useWindows } from '@/lib/windowContext.jsx';
 import { resolveContentById } from '@/lib/resolveAppContent.jsx';
 import { localCache } from '@/lib/localCache';
+import CommandPalette from '@/components/os/CommandPalette';
+import MobileNav from '@/components/os/MobileNav';
 
 function DesktopShell() {
   const { windows } = useWindows();
+  const [cmdOpen, setCmdOpen] = React.useState(false);
+
+  // Cmd+K / Ctrl+K opens command palette
+  React.useEffect(() => {
+    const handler = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setCmdOpen(o => !o);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   return (
     <div className="os-viewport flex flex-col overflow-hidden relative">
@@ -43,6 +58,12 @@ function DesktopShell() {
         {/* PWA install prompt */}
         <InstallPrompt />
       </div>
+
+      {/* Mobile bottom nav */}
+      <MobileNav />
+
+      {/* Command palette */}
+      <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
     </div>
   );
 }

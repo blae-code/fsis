@@ -20,6 +20,7 @@ import OpsFeed from '@/components/store/OpsFeed';
 import JobsBoard from '@/components/store/JobsBoard';
 import StoreOnboarding from '@/components/store/StoreOnboarding';
 import MobileCartBar from '@/components/store/MobileCartBar';
+import ActiveOrderBanner from '@/components/store/ActiveOrderBanner';
 import HowItWorksStrip from '@/components/store/HowItWorksStrip';
 import RecentDeliveries from '@/components/store/RecentDeliveries';
 import { useToast } from '@/components/ui/use-toast';
@@ -322,6 +323,7 @@ export default function Storefront() {
         <OpsFeed />
       </div>
 
+      <ActiveOrderBanner onViewOrders={() => setTab('orders')} />
       <MobileCartBar cart={cart} setCart={setCart} user={user} />
 
       <footer className="shrink-0 border-t py-1.5 px-4 flex flex-wrap items-center justify-center gap-x-4" style={{ borderColor: '#2A2118' }}>
