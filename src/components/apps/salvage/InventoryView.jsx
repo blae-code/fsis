@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -50,9 +50,11 @@ function SectionHead({ children }) {
   );
 }
 
+import { useState } from 'react';
+
 export default function InventoryView({ bestPrices }) {
-  const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
+  const queryClient = useQueryClient();
 
   const { data: sessions = [], isLoading: sessLoading } = useQuery({
     queryKey: ['salvage_sessions_inventory'],
@@ -84,9 +86,27 @@ export default function InventoryView({ bestPrices }) {
   const sessionValueOf = (code, scu) => Math.round(scu * 100 * (bestPrices?.[code]?.price_sell || 0));
   const sessionTotalValue = CODES.reduce((s, code) => s + sessionValueOf(code, sessionTotals[code]), 0);
 
+  // ── Search filter ────────────────────────────────────────────────────────
+  const q = search.trim().toLowerCase();
+  const filteredProducts = q
+    ? products.filter((p) =>
+        (p.product_name || '').toLowerCase().includes(q) ||
+        (p.code || '').toLowerCase().includes(q) ||
+        (p.category || '').toLowerCase().includes(q)
+      )
+    : products;
+  const filteredSessions = q
+    ? activeSessions.filter((s) =>
+        (s.session_name || '').toLowerCase().includes(q) ||
+        (s.ship || '').toLowerCase().includes(q) ||
+        (s.location || '').toLowerCase().includes(q) ||
+        (s.status || '').toLowerCase().includes(q)
+      )
+    : activeSessions;
+
   // ── Product-based stock (storefront listings) ────────────────────────────
-  const salvageProds  = products.filter((p) => p.category === 'salvage_commodity');
-  const otherProds    = products.filter((p) => p.category !== 'salvage_commodity');
+  const salvageProds  = filteredProducts.filter((p) => p.category === 'salvage_commodity');
+  const otherProds    = filteredProducts.filter((p) => p.category !== 'salvage_commodity');
 
   const prodValueOf = (p) => (p.stock || 0) * (bestPrices?.[p.code]?.price_sell || p.price_auec || 0);
   const prodTotalValue = products.reduce((s, p) => s + prodValueOf(p), 0);
@@ -106,6 +126,23 @@ export default function InventoryView({ bestPrices }) {
 
   return (
     <div className="p-4 space-y-5 font-mono">
+
+      {/* ── Search bar ──────────────────────────────────────────── */}
+      <div className="relative">
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none" style={{ color: '#7A6E60' }} />
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Filter by name, code, status, ship, location…"
+          className="w-full h-8 pl-7 pr-7 bg-transparent border text-[10px] font-mono outline-none focus:border-amber-700/40 transition-colors"
+          style={{ borderColor: '#2A2118', color: '#D8CFC0' }}
+        />
+        {search && (
+          <button onClick={() => setSearch('')} className="absolute right-2 top-1/2 -translate-y-1/2" style={{ color: '#7A6E60' }}>
+            <X className="w-3 h-3" />
+          </button>
+        )}
+      </div>
 
       {/* ── Grand total banner ──────────────────────────────────── */}
       <motion.div
@@ -242,8 +279,8 @@ export default function InventoryView({ bestPrices }) {
         </div>
 
         {/* Location breakdown */}
-        {activeSessions.length > 0 && (() => {
-          const byLoc = activeSessions.reduce((acc, s) => {
+        {filteredSessions.length > 0 && (() => {
+          const byLoc = filteredSessions.reduce((acc, s) => {
             const loc = s.location || 'UNASSIGNED';
             if (!acc[loc]) acc[loc] = { RMC: 0, CMR: 0, CMS: 0 };
             CODES.forEach((c) => { acc[loc][c] += s[FIELD[c]] || 0; });
