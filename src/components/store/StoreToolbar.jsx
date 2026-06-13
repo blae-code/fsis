@@ -43,7 +43,7 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
                 clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)',
                 ...(active
                   ? { background: 'linear-gradient(180deg, #A87C42, #6E4D24)', color: '#15100A', borderColor: '#A87C42', boxShadow: '0 0 12px rgba(212, 146, 11, 0.35)' }
-                  : { background: 'transparent', color: '#C8A05B', borderColor: '#3A2F20' }),
+                  : { background: 'transparent', color: '#6FA08F', borderColor: '#2E423B' }),
               }}
             >
               {c.label}

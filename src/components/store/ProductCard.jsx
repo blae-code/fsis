@@ -57,15 +57,15 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
             {product.category === 'salvage_commodity' || !FallbackIcon ? (
               <CommodityIcon code={product.code} size={34} />
             ) : (
-              <FallbackIcon className="w-5 h-5" style={{ color: '#E0A22E' }} />
+              <FallbackIcon className="w-5 h-5" style={{ color: '#6FA08F' }} />
             )}
           </div>
           <div className="flex flex-col items-end gap-1.5">
             <span
               className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
               style={{
-                background: 'linear-gradient(180deg, #A87C42, #6E4D24)',
-                color: '#15100A',
+                background: 'linear-gradient(180deg, #5C8273, #3A5A4E)',
+                color: '#0D1411',
                 clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)',
               }}
             >
@@ -87,7 +87,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         <div>
           <h3 className="font-mono text-sm font-bold" style={{ color: '#D8CFC0' }}>
             {product.product_name}
-            {product.code && <span className="ml-2 text-xs" style={{ color: '#E0A22E' }}>[{product.code}]</span>}
+            {product.code && <span className="ml-2 text-xs" style={{ color: '#6FA08F' }}>[{product.code}]</span>}
           </h3>
           {product.description && (
             <p className="text-xs mt-1 leading-relaxed" style={{ color: '#9C9080' }}>{product.description}</p>
@@ -129,8 +129,8 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
       <div
         className="mx-auto px-7 py-0.5 text-[9px] font-mono tracking-[0.25em]"
         style={{
-          background: 'linear-gradient(180deg, #3A2F20, #241C12)',
-          color: '#C8A05B',
+          background: 'linear-gradient(180deg, #233530, #161F1C)',
+          color: '#6FA08F',
           clipPath: 'polygon(0 0, 100% 0, calc(100% - 10px) 100%, 10px 100%)',
         }}
       >

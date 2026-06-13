@@ -94,7 +94,7 @@ export default function MyOrders({ onReorder }) {
 
   return (
     <div className="space-y-4 max-w-2xl">
-      <div className="flex items-center justify-between font-mono text-xs tracking-[0.2em]" style={{ color: '#C8A05B' }}>
+      <div className="flex items-center justify-between font-mono text-xs tracking-[0.2em]" style={{ color: '#6FA08F' }}>
         <span className="flex items-center gap-2">
           <PackageCheck className="w-3.5 h-3.5" /> ORDER TRACKING
         </span>
@@ -188,7 +188,7 @@ export default function MyOrders({ onReorder }) {
                       placed_date: o.created_date,
                     })}
                     className="px-2.5 py-1 font-mono text-[9px] font-bold border inline-flex items-center gap-1 hover:brightness-125 transition-all"
-                    style={{ borderColor: '#5C4424', color: '#C8A05B', background: '#161310' }}
+                    style={{ borderColor: '#3C5A50', color: '#7FB3A0', background: '#101413' }}
                   >
                     <FileDown className="w-2.5 h-2.5" /> INVOICE
                   </button>
@@ -196,7 +196,7 @@ export default function MyOrders({ onReorder }) {
                     <button
                       onClick={() => onReorder(o.items)}
                       className="px-2.5 py-1 font-mono text-[9px] font-bold border inline-flex items-center gap-1 hover:brightness-125 transition-all"
-                      style={{ borderColor: '#5C4424', color: '#C8A05B', background: '#161310' }}
+                      style={{ borderColor: '#3C5A50', color: '#7FB3A0', background: '#101413' }}
                     >
                       <RotateCcw className="w-2.5 h-2.5" /> REORDER
                     </button>
@@ -206,7 +206,7 @@ export default function MyOrders({ onReorder }) {
             </div>
             {o.handoff_passphrase && !['delivered', 'cancelled'].includes(o.status) && (
               <div className="flex items-center gap-2 font-mono text-[10px]" title="Spoken at the in-person handoff to verify identity on both sides">
-                <KeyRound className="w-3 h-3 shrink-0" style={{ color: '#C8A05B' }} />
+                <KeyRound className="w-3 h-3 shrink-0" style={{ color: '#6FA08F' }} />
                 <span style={{ color: '#8A7E6C' }}>HANDOFF PASSPHRASE:</span>
                 <span className="font-bold tracking-[0.12em]" style={{ color: '#E0A22E' }}>{o.handoff_passphrase}</span>
               </div>

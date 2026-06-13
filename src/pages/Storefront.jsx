@@ -152,7 +152,7 @@ export default function Storefront() {
             </div>
             <div>
               <h1 className="font-mono text-sm font-bold tracking-[0.18em]" style={{ color: '#D8CFC0' }}>FAIRSHARE INDUSTRIAL SOLUTIONS</h1>
-              <p className="text-[10px] font-mono" style={{ color: '#B0793A' }}>{FSIS.divisionCodes.join(' • ')} — "{FSIS.motto}"</p>
+              <p className="text-[10px] font-mono" style={{ color: '#6FA08F' }}>{FSIS.divisionCodes.join(' • ')} — "{FSIS.motto}"</p>
             </div>
           </div>
           {user?.role === 'admin' && (
@@ -196,7 +196,7 @@ export default function Storefront() {
                 <div className="absolute top-1/2 -translate-y-1/2 right-2 hidden xl:block pointer-events-none opacity-80">
                   <HexCrate size={150} />
                 </div>
-                <p className="font-mono text-[10px] tracking-[0.3em] mb-2" style={{ color: '#D4920B' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
+                <p className="font-mono text-[10px] tracking-[0.3em] mb-2" style={{ color: '#6FA08F' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
                 <h2 className="font-mono text-2xl 2xl:text-3xl font-bold leading-tight">
                   <span style={{ color: '#E5DDD0' }}>Honest salvage.</span>{' '}
                   <span style={{ color: '#C8893B' }}>Fair prices.</span>
@@ -276,7 +276,7 @@ export default function Storefront() {
         <p className="text-[9px] font-mono" style={{ color: '#8A7E6C' }}>
           All prices in aUEC. Unofficial fan project — not affiliated with Cloud Imperium Games.
         </p>
-        <button onClick={() => setShowOnboarding(true)} className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#C8A05B' }}>
+        <button onClick={() => setShowOnboarding(true)} className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#6FA08F' }}>
           SETUP GUIDE
         </button>
       </footer>

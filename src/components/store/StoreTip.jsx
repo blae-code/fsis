@@ -7,10 +7,10 @@ export function Kbd({ children }) {
     <span
       className="inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 font-mono text-[9px] font-bold border"
       style={{
-        borderColor: '#5C4424',
-        color: '#E0A22E',
-        background: '#1A150E',
-        boxShadow: 'inset 0 -1px 0 #5C4424',
+        borderColor: '#3C5A50',
+        color: '#8FBFAE',
+        background: '#101614',
+        boxShadow: 'inset 0 -1px 0 #3C5A50',
         borderRadius: 2,
       }}
     >

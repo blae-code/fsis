@@ -40,7 +40,7 @@ export default function MarketTicker() {
     <div className="border-b overflow-hidden flex items-center" style={{ borderColor: '#2A2118', background: '#0F0D0B' }}>
       <span
         className="flex items-center gap-1.5 text-[9px] tracking-[0.2em] shrink-0 px-4 py-1.5 font-mono z-10 border-r"
-        style={{ color: '#B0793A', background: '#0F0D0B', borderColor: '#2A2118' }}
+        style={{ color: '#6FA08F', background: '#0F0D0B', borderColor: '#2A2118' }}
       >
         <TrendingUp className="w-3 h-3" /> LIVE MARKET
       </span>

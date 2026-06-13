@@ -73,7 +73,7 @@ export default function OrderPanel({ cart, setCart, user }) {
         clipPath: 'polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px)',
       }}
     >
-      <div className="flex items-center gap-2 font-mono text-xs tracking-[0.2em]" style={{ color: '#C8A05B' }}>
+      <div className="flex items-center gap-2 font-mono text-xs tracking-[0.2em]" style={{ color: '#6FA08F' }}>
         <ShoppingCart className="w-3.5 h-3.5" /> ORDER MANIFEST
       </div>
 
