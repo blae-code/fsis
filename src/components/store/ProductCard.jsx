@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Hammer, Wrench, Plus } from 'lucide-react';
+import { Hammer, Wrench } from 'lucide-react';
+import AddToCartControl from '@/components/store/AddToCartControl';
 import CommodityIcon from '@/components/brand/CommodityIcon';
 import SerialStrip from '@/components/brand/SerialStrip';
 import MarketBadge from '@/components/store/MarketBadge';
@@ -21,17 +22,30 @@ export default function ProductCard({ product, onAdd, onView, marketBest }) {
   const FallbackIcon = meta.icon;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col">
-      <div
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col group/card"
+      style={{ perspective: 900 }}
+    >
+      <motion.div
         onClick={() => onView?.(product)}
-        className="relative flex flex-col gap-3 p-4 border flex-1 cursor-pointer hover:brightness-110 transition-all"
+        whileHover={{ rotateX: 2.5, rotateY: -2.5, y: -4 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+        className="relative flex flex-col gap-3 p-4 border flex-1 cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
         style={{
           borderColor: '#5C4A33',
+          transformStyle: 'preserve-3d',
           clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
           backgroundImage: `linear-gradient(rgba(12, 11, 10, 0.45), rgba(12, 11, 10, 0.72)), url(${PLATE_TEXTURE})`,
           backgroundSize: 'cover',
         }}
       >
+        {/* Sheen sweep on hover */}
+        <span
+          className="absolute inset-y-0 w-1/3 pointer-events-none -left-1/2 group-hover/card:left-[120%] transition-[left] duration-700 ease-out"
+          style={{ background: 'linear-gradient(105deg, transparent, rgba(232, 177, 58, 0.10), transparent)' }}
+        />
         <div className="flex items-start justify-between">
           <div
             className="w-12 h-12 flex items-center justify-center border"
@@ -85,21 +99,10 @@ export default function ProductCard({ product, onAdd, onView, marketBest }) {
             <span className="font-mono text-[10px] px-2 py-1 border" style={{ borderColor: '#3A2F20', color: '#8A7E6C' }}>
               {lotNumber(product.id)}
             </span>
-            <button
-              disabled={!inStock}
-              onClick={(e) => { e.stopPropagation(); onAdd(product); }}
-              className="h-8 px-5 rounded-full font-mono text-[11px] font-bold inline-flex items-center gap-1 disabled:opacity-40 disabled:pointer-events-none hover:brightness-110 transition-all"
-              style={{
-                background: 'linear-gradient(180deg, #E8B13A, #BD7E16)',
-                color: '#1A1206',
-                boxShadow: 'inset 0 1px 0 rgba(255, 235, 190, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5)',
-              }}
-            >
-              <Plus className="w-3 h-3" strokeWidth={3} /> ADD
-            </button>
+            <AddToCartControl disabled={!inStock} onAdd={() => onAdd(product)} />
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Category tab */}
       <div

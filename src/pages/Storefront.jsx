@@ -21,6 +21,7 @@ import JobsBoard from '@/components/store/JobsBoard';
 import StoreOnboarding from '@/components/store/StoreOnboarding';
 import { AnimatePresence } from 'framer-motion';
 import SystemStatus from '@/components/store/SystemStatus';
+import HexCrate from '@/components/three/HexCrate';
 import { FSIS } from '@/lib/fsisLore';
 
 const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/44c3176b4_generated_image.png';
@@ -172,6 +173,10 @@ export default function Storefront() {
                   backgroundPosition: 'center right',
                 }}
               >
+                {/* Floating 3D hex crate */}
+                <div className="absolute top-1/2 -translate-y-1/2 right-2 hidden xl:block pointer-events-none opacity-80">
+                  <HexCrate size={150} />
+                </div>
                 <p className="font-mono text-[10px] tracking-[0.3em] mb-2" style={{ color: '#D4920B' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
                 <h2 className="font-mono text-2xl 2xl:text-3xl font-bold leading-tight">
                   <span style={{ color: '#E5DDD0' }}>Honest salvage.</span>{' '}
