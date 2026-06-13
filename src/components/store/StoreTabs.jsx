@@ -52,6 +52,7 @@ export default function StoreTabs({ active, onChange }) {
             <span className="relative inline-flex items-center gap-1.5">
               <Icon className="w-3 h-3" />
               {label}
+              <span className="text-[7px] -mt-1.5" style={{ color: isActive ? '#E0A22E' : '#54493B' }}>{key}</span>
             </span>
           </button>
           </StoreTip>

@@ -6,17 +6,7 @@ import SerialStrip from '@/components/brand/SerialStrip';
 import ScanlineOverlay from '@/components/onboarding/ScanlineOverlay';
 import TypedStatus from '@/components/onboarding/TypedStatus';
 import StatusNodes from '@/components/os/onboarding/StatusNodes';
-import HexCrate from '@/components/three/HexCrate';
 import { useFullscreen } from '@/lib/useFullscreen';
-
-const Kbd = ({ children }) => (
-  <kbd
-    className="px-1.5 py-0.5 text-[8px] font-bold border rounded-sm"
-    style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#1A150E', boxShadow: 'inset 0 -1px 0 #3A2F20' }}
-  >
-    {children}
-  </kbd>
-);
 
 const isStandalone = () =>
   typeof window !== 'undefined' &&
@@ -29,7 +19,7 @@ const stepWrap = {
   transition: { duration: 0.3 },
 };
 
-/** First-visit onboarding: welcome → install to desktop → fullscreen → enter store. */
+/** First-visit patron onboarding: welcome → install to desktop → fullscreen → enter store. */
 export default function StoreOnboarding({ onComplete }) {
   const [step, setStep] = useState(0);
   const [deferred, setDeferred] = useState(null);
@@ -105,11 +95,6 @@ export default function StoreOnboarding({ onComplete }) {
             clipPath: 'polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px)',
           }}
         >
-          {/* Floating 3D hex crate — ambient, behind content */}
-          <div className="absolute -top-4 -right-4 pointer-events-none opacity-40 hidden sm:block">
-            <HexCrate size={110} />
-          </div>
-
           {/* Header */}
           <div className="flex items-center gap-3 mb-7">
             <FsisLogo size={30} />
@@ -258,9 +243,7 @@ export default function StoreOnboarding({ onComplete }) {
           {/* Serial footer + keyboard hints */}
           <div className="flex items-center justify-between mt-5">
             <SerialStrip seed="FSIS-PATRON-LINK" label="PATRON LINK • SEC-7" />
-            <span className="flex items-center gap-1.5 text-[8px] tracking-[0.15em]" style={{ color: '#54493B' }}>
-              <Kbd>ENTER</Kbd> ADVANCE <span className="mx-0.5">•</span> <Kbd>←</Kbd> BACK <span className="mx-0.5">•</span> <Kbd>ESC</Kbd> SKIP
-            </span>
+            <span className="text-[8px] tracking-[0.2em]" style={{ color: '#54493B' }}>ENTER ↵ ADVANCE • ESC SKIP</span>
           </div>
 
           <ScanlineOverlay />

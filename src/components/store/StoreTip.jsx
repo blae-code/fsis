@@ -20,7 +20,8 @@ export function Kbd({ children }) {
 }
 
 /** Bronze command-deck tooltip — label, optional description and shortcut keycap. */
-export default function StoreTip({ label, desc, kbd, side = 'top', children }) {
+export default function StoreTip({ label, desc, kbd, shortcut, side = 'top', children }) {
+  kbd = kbd || shortcut;
   return (
     <TooltipProvider delayDuration={250}>
       <Tooltip>

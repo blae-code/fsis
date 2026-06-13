@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
+import StoreTip, { Kbd } from '@/components/store/StoreTip';
 import StoreTip from '@/components/store/StoreTip';
 
 const CATEGORIES = [
