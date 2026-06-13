@@ -85,12 +85,12 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         </div>
 
         <div>
-          <h3 className="font-mono text-sm font-bold" style={{ color: '#D8CFC0' }}>
+          <h3 className="font-mono text-[15px] font-bold leading-snug" style={{ color: '#EDE5D6' }}>
             {product.product_name}
             {product.code && <span className="ml-2 text-xs" style={{ color: '#6FA08F' }}>[{product.code}]</span>}
           </h3>
           {product.description && (
-            <p className="text-xs mt-1 leading-relaxed" style={{ color: '#9C9080' }}>{product.description}</p>
+            <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#877D6D' }}>{product.description}</p>
           )}
         </div>
 
@@ -99,8 +99,8 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
           <div className="font-mono space-y-1.5">
             <div className="flex items-center gap-2 flex-wrap">
               <span>
-                <span className="text-xl font-bold" style={{ color: '#E0A22E' }}>{product.price_auec.toLocaleString()}</span>
-                <span className="text-[10px] ml-1.5" style={{ color: '#8A7E6C' }}>aUEC/{product.unit || 'SCU'}</span>
+                <span className="text-2xl font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{product.price_auec.toLocaleString()}</span>
+                <span className="text-[10px] ml-1.5" style={{ color: '#6B6155' }}>aUEC/{product.unit || 'SCU'}</span>
               </span>
               <MarketBadge price={product.price_auec} marketBest={marketBest} />
             </div>
@@ -112,7 +112,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
           </div>
           <div className="flex items-center justify-between">
             <StoreTip label="LOT SERIAL" desc="FSIS reclamation lot number — quoted on your delivery manifest.">
-              <span className="font-mono text-[10px] px-2 py-1 border" style={{ borderColor: '#3A2F20', color: '#8A7E6C' }}>
+              <span className="font-mono text-[9px] px-2 py-1 border" style={{ borderColor: '#2E2519', color: '#6B6155' }}>
                 {lotNumber(product.id)}
               </span>
             </StoreTip>

@@ -151,7 +151,7 @@ export default function Storefront() {
               <FsisLogo size={24} />
             </div>
             <div>
-              <h1 className="font-mono text-sm font-bold tracking-[0.18em]" style={{ color: '#D8CFC0' }}>FAIRSHARE INDUSTRIAL SOLUTIONS</h1>
+              <h1 className="font-mono text-sm font-bold tracking-[0.18em]" style={{ color: '#EDE5D6' }}>FAIRSHARE INDUSTRIAL SOLUTIONS</h1>
               <p className="text-[10px] font-mono" style={{ color: '#6FA08F' }}>{FSIS.divisionCodes.join(' • ')} — "{FSIS.motto}"</p>
             </div>
           </div>
@@ -197,11 +197,11 @@ export default function Storefront() {
                   <HexCrate size={150} />
                 </div>
                 <p className="font-mono text-[10px] tracking-[0.3em] mb-2" style={{ color: '#6FA08F' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
-                <h2 className="font-mono text-2xl 2xl:text-3xl font-bold leading-tight">
-                  <span style={{ color: '#E5DDD0' }}>Honest salvage.</span>{' '}
-                  <span style={{ color: '#C8893B' }}>Fair prices.</span>
+                <h2 className="font-mono text-3xl 2xl:text-4xl font-bold leading-tight tracking-tight">
+                  <span style={{ color: '#F2EADC' }}>Honest salvage.</span>{' '}
+                  <span style={{ color: '#E0A22E' }}>Fair prices.</span>
                 </h2>
-                <p className="text-xs 2xl:text-sm mt-3 max-w-md font-mono leading-relaxed" style={{ color: '#B8AC9A' }}>
+                <p className="text-xs 2xl:text-sm mt-3 max-w-md font-mono leading-relaxed" style={{ color: '#A89C8A' }}>
                   Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
                 </p>
               </div>

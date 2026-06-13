@@ -112,9 +112,9 @@ export default function OrderPanel({ cart, setCart, user }) {
             </AnimatePresence>
           </div>
 
-          <div className="flex justify-between font-mono text-sm font-bold border-t pt-3" style={{ borderColor: '#3A2F20' }}>
-            <span style={{ color: '#D8CFC0' }}>TOTAL</span>
-            <span style={{ color: '#E0A22E' }}>{total.toLocaleString()} aUEC</span>
+          <div className="flex items-baseline justify-between font-mono border-t pt-3" style={{ borderColor: '#3A2F20' }}>
+            <span className="text-xs font-bold tracking-[0.15em]" style={{ color: '#A89C8A' }}>TOTAL</span>
+            <span className="text-lg font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{total.toLocaleString()} aUEC</span>
           </div>
 
           <div className="space-y-3">

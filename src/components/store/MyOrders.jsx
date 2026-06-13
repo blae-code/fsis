@@ -156,7 +156,7 @@ export default function MyOrders({ onReorder }) {
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <div className="text-xs font-mono font-bold" style={{ color: '#E0A22E' }}>{o.tracking_code}</div>
+                <div className="text-sm font-mono font-bold tracking-wide" style={{ color: '#F0B43A' }}>{o.tracking_code}</div>
                 <div className="text-xs font-mono truncate mt-0.5" style={{ color: '#D8CFC0' }}>
                   {(o.items || []).map((i) => `${i.quantity}x ${i.code || i.product_name}`).join(', ')}
                 </div>

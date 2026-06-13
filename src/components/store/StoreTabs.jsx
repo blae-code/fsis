@@ -26,7 +26,7 @@ export default function StoreTabs({ active, onChange }) {
           <button
             onClick={() => onChange(id)}
             className="relative flex items-center gap-1.5 px-3 py-2 transition-colors"
-            style={{ color: isActive ? '#F0E6D2' : '#8A7E6C' }}
+            style={{ color: isActive ? '#F4ECDB' : '#6F6557' }}
           >
             {isActive && (
               <motion.span
