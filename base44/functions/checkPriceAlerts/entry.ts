@@ -43,19 +43,21 @@ Deno.serve(async (req) => {
 
       if (alert.notify_email !== false && alert.created_by) {
         const dirWord = alert.direction === 'below' ? 'dropped below' : 'hit';
+        const commodityLabel = market.commodity_name ? `${market.commodity_name} (${alert.commodity_code})` : alert.commodity_code;
         await base44.asServiceRole.integrations.Core.SendEmail({
           from_name: 'FSIS.bot Market Watch',
           to: alert.created_by,
-          subject: `⚠ ${alert.commodity_code} ${dirWord} ${alert.target_price_auec.toLocaleString()} aUEC — sell window open`,
+          subject: `⚠ ${alert.commodity_code} ${dirWord} ${alert.target_price_auec.toLocaleString()} aUEC — market alert`,
           body: [
-            `FSIS.bot MARKET ALERT — ${alert.commodity_code}`,
+            `FSIS.bot MARKET ALERT — ${commodityLabel}`,
             ``,
             `Best sell price ${dirWord} your target of ${alert.target_price_auec.toLocaleString()} aUEC.`,
             ``,
             `Current best: ${market.price_sell.toLocaleString()} aUEC/unit`,
             `Terminal: ${market.terminal_name || 'Unknown'}${market.star_system ? ` — ${market.star_system}` : ''}`,
+            `Patch: ${market.patch_version || 'unknown'}`,
             ``,
-            `Open the Salvage app ALERTS tab to re-arm this alert.`,
+            `Open the Salvage app → ALERTS tab to re-arm or delete this alert.`,
             ``,
             `"Every credit accounted for."`,
           ].join('\n'),

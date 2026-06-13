@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
@@ -6,13 +6,34 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Bell, BellRing, Plus, Trash2, RotateCcw, Loader2 } from 'lucide-react';
 
-const COMMODITIES = ['RMC', 'CMR', 'CMS'];
 const panel = { borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 8%)' };
 const fieldStyle = { borderColor: 'hsl(33, 18%, 18%)' };
 
 export default function PriceAlerts({ bestPrices = {} }) {
   const queryClient = useQueryClient();
   const [form, setForm] = useState({ commodity_code: 'RMC', direction: 'above', target_price_auec: '' });
+
+  // Load all unique commodity codes from UEX price cache
+  const { data: allPrices = [] } = useQuery({
+    queryKey: ['commodity_prices_all'],
+    queryFn: () => base44.entities.commodity_price.list('-price_sell', 2000),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const commodities = useMemo(() => {
+    const codes = [...new Set(allPrices.map((p) => p.commodity_code).filter(Boolean))].sort();
+    // Always include salvage codes even if not in cache yet
+    const base = ['RMC', 'CMR', 'CMS'];
+    const merged = [...new Set([...base, ...codes])].sort();
+    return merged;
+  }, [allPrices]);
+
+  // Best sell price for selected commodity (from full cache)
+  const selectedBest = useMemo(() => {
+    if (!form.commodity_code) return null;
+    const matches = allPrices.filter((p) => p.commodity_code === form.commodity_code && p.price_sell > 0);
+    return matches.reduce((best, p) => (!best || p.price_sell > best.price_sell) ? p : best, null);
+  }, [allPrices, form.commodity_code]);
 
   const { data: alerts = [], isLoading } = useQuery({
     queryKey: ['price_alerts'],
@@ -50,12 +71,12 @@ export default function PriceAlerts({ bestPrices = {} }) {
     <div className="p-4 space-y-4 font-mono">
       {/* New alert */}
       <div className="border rounded p-3 space-y-2" style={panel}>
-        <p className="text-[9px] tracking-[0.2em] text-muted-foreground">NEW PRICE ALERT</p>
+        <p className="text-[9px] tracking-[0.2em] text-muted-foreground">NEW MARKET ALERT — ANY UEX COMMODITY</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <Select value={form.commodity_code} onValueChange={(v) => setForm({ ...form, commodity_code: v })}>
             <SelectTrigger className="h-8 text-xs font-mono" style={fieldStyle}><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {COMMODITIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+            <SelectContent className="max-h-64 overflow-y-auto">
+              {commodities.map((c) => <SelectItem key={c} value={c} className="text-xs font-mono">{c}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={form.direction} onValueChange={(v) => setForm({ ...form, direction: v })}>
@@ -83,13 +104,19 @@ export default function PriceAlerts({ bestPrices = {} }) {
             ARM ALERT
           </Button>
         </div>
-        {bestPrices[form.commodity_code] && (
+        {selectedBest ? (
           <p className="text-[10px] text-muted-foreground">
-            Current best {form.commodity_code}: <span className="text-primary">{bestPrices[form.commodity_code].price_sell.toLocaleString()} aUEC</span> @ {bestPrices[form.commodity_code].terminal_name}
+            Current best <span className="text-primary font-bold">{form.commodity_code}</span>:{' '}
+            <span className="text-primary">{selectedBest.price_sell.toLocaleString()} aUEC/unit</span>
+            {' '}@ {selectedBest.terminal_name}{selectedBest.star_system ? ` — ${selectedBest.star_system}` : ''}
+          </p>
+        ) : (
+          <p className="text-[10px] text-muted-foreground">
+            No price data cached for <span className="text-primary">{form.commodity_code}</span> — run a UEX sync first.
           </p>
         )}
         <p className="text-[9px] text-muted-foreground">
-          Checked automatically after every UEX price sync — you'll get an email when a threshold is crossed.
+          Alerts are checked automatically after every UEX sync. You'll get an in-app notification when a threshold is crossed.
         </p>
       </div>
 
