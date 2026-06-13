@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Boxes, AlertCircle, RefreshCw } from 'lucide-react';
 import CommodityIcon from '@/components/brand/CommodityIcon';
+import CargoLotTracker from '@/components/apps/salvage/CargoLotTracker';
 
 const CODES  = ['RMC', 'CMR', 'CMS'];
 const FIELD  = { RMC: 'rmc_scu', CMR: 'cmr_scu', CMS: 'cms_scu' };
@@ -280,6 +281,12 @@ export default function InventoryView({ bestPrices }) {
             <p className="text-[10px]" style={{ color: DIM }}>No active salvage sessions holding stock.</p>
           </div>
         )}
+      </section>
+
+      {/* ── Cargo lot tracker ───────────────────────────────── */}
+      <section>
+        <SectionHead>CARGO LOTS — BULK TRACKER</SectionHead>
+        <CargoLotTracker />
       </section>
 
       <p className="text-[9px]" style={{ color: '#3A3028' }}>
