@@ -6,6 +6,9 @@ import LedgerEntryForm from '@/components/apps/ledger/LedgerEntryForm';
 import LedgerSummary from '@/components/apps/ledger/LedgerSummary';
 import TransactionLog from '@/components/apps/ledger/TransactionLog';
 import LedgerScan from '@/components/apps/ledger/LedgerScan';
+import CashflowChart from '@/components/apps/ledger/CashflowChart';
+import WalletTracker from '@/components/apps/ledger/WalletTracker';
+import LedgerAudit from '@/components/apps/ledger/LedgerAudit';
 
 export default function LedgerContent() {
   const queryClient = useQueryClient();
@@ -38,6 +41,24 @@ export default function LedgerContent() {
           >
             OCR SCAN
           </TabsTrigger>
+          <TabsTrigger
+            value="wallet"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            WALLET
+          </TabsTrigger>
+          <TabsTrigger
+            value="cashflow"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            CASHFLOW
+          </TabsTrigger>
+          <TabsTrigger
+            value="audit"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
+          >
+            AI AUDIT
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="log" className="flex-1 flex flex-col min-h-0 m-0">
@@ -47,6 +68,18 @@ export default function LedgerContent() {
 
         <TabsContent value="scan" className="flex-1 overflow-auto m-0">
           <LedgerScan />
+        </TabsContent>
+
+        <TabsContent value="wallet" className="flex-1 overflow-auto m-0">
+          <WalletTracker entries={entries} />
+        </TabsContent>
+
+        <TabsContent value="cashflow" className="flex-1 overflow-auto m-0">
+          <CashflowChart entries={entries} />
+        </TabsContent>
+
+        <TabsContent value="audit" className="flex-1 overflow-auto m-0">
+          <LedgerAudit />
         </TabsContent>
       </Tabs>
     </div>
