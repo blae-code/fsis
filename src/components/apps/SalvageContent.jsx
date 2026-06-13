@@ -294,6 +294,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
           >
             LOG
           </TabsTrigger>
+          <TabsTrigger
+            value="procqueue"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            PROC QUEUE
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="market" className="flex-1 overflow-auto m-0">
@@ -559,6 +565,9 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
 
         <TabsContent value="scanlog" className="flex-1 overflow-auto m-0">
           <ScanLog />
+        </TabsContent>
+        <TabsContent value="procqueue" className="flex-1 overflow-auto m-0">
+          <ProcessingQueue />
         </TabsContent>
       </Tabs>
 
