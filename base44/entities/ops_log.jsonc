@@ -4,39 +4,40 @@
   "properties": {
     "action": {
       "type": "string",
-      "description": "What happened, e.g. work_order.settled, order.cancelled, product.repriced"
+      "description": "What happened, e.g. 'work_order.settled', 'order.status_changed', 'product.repriced'"
     },
     "entity_type": {
       "type": "string",
-      "description": "Which entity was affected"
+      "description": "Which entity was affected, e.g. work_order, order, product"
     },
     "entity_id": {
       "type": "string",
-      "description": "ID of the affected entity"
+      "description": "ID of the affected record"
     },
     "entity_name": {
       "type": "string",
-      "description": "Human-readable name of the entity at log time"
+      "description": "Human-readable name of the record at time of action"
     },
     "actor": {
       "type": "string",
-      "description": "Who performed the action \u2014 handle or 'FSIS.bot'"
+      "description": "Who performed the action \u2014 user handle or 'FSIS.bot'"
     },
-    "detail": {
-      "type": "string",
-      "description": "Optional extra context"
+    "before": {
+      "type": "object",
+      "description": "Relevant fields before the change"
     },
-    "old_value": {
-      "type": "string",
-      "description": "Previous value (serialised)"
+    "after": {
+      "type": "object",
+      "description": "Relevant fields after the change"
     },
-    "new_value": {
+    "notes": {
       "type": "string",
-      "description": "New value (serialised)"
+      "description": "Additional context"
     }
   },
   "required": [
-    "action"
+    "action",
+    "entity_type"
   ],
   "rls": {
     "read": {
@@ -44,7 +45,17 @@
         "role": "admin"
       }
     },
-    "write": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
       "user_condition": {
         "role": "admin"
       }

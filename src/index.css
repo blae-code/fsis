@@ -36,6 +36,15 @@
     --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
+    /* Typography scale tokens for extreme contrast hierarchy */
+    --text-hero: 2.25rem;      /* 36px — primary KPI numbers */
+    --text-title: 1.125rem;    /* 18px — section headers */
+    --text-label: 0.625rem;    /* 10px — standard labels */
+    --text-micro: 0.5rem;      /* 8px — tracking-heavy micro-labels */
+    --tracking-micro: 0.25em;
+    --tracking-label: 0.18em;
+    --tracking-tight: 0.05em;
+
     --jade: 38 72% 52%;
     --jade-glow: 42 85% 60%;
     --teal-deep: 30 30% 18%;

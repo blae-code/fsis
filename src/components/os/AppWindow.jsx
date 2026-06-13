@@ -150,10 +150,15 @@ export default function AppWindow({ window: win }) {
           </div>
         </div>
 
-        {/* Window content - industrial interior */}
-        <div className="flex-1 overflow-auto industrial-interior p-4">
+        {/* Window content - industrial interior with entrance animation */}
+        <motion.div
+          className="flex-1 overflow-auto industrial-interior p-4"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, duration: 0.3 }}
+        >
           {win.content}
-        </div>
+        </motion.div>
 
         {/* Resize handle */}
         <div

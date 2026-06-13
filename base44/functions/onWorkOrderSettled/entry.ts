@@ -58,17 +58,6 @@ Deno.serve(async (req) => {
       await svc.work_order.update(wo.id, { settled_date: today });
     }
 
-    // Write audit log entry
-    await svc.ops_log.create({
-      action: 'work_order.settled',
-      entity_type: 'work_order',
-      entity_id: wo.id,
-      entity_name: wo.order_name,
-      actor: 'FSIS.bot',
-      detail: `Net ${net.toLocaleString()} aUEC · ${entries.length} payouts · ${totalShares} shares`,
-      new_value: `net:${net}`,
-    }).catch(() => {}); // non-fatal
-
     // ── Append to Google Sheets master log ──────────────────────────────────
     try {
       const sheetSettings = await svc.app_setting.filter({ key: 'work_order_log_sheet_id' });
@@ -121,6 +110,22 @@ Deno.serve(async (req) => {
       console.error('Sheets logging error (non-fatal):', sheetsErr.message);
     }
     // ────────────────────────────────────────────────────────────────────────
+
+    // ── Write audit log entry ─────────────────────────────────────────────────
+    try {
+      await svc.ops_log.create({
+        action: 'work_order.settled',
+        entity_type: 'work_order',
+        entity_id: wo.id,
+        entity_name: wo.order_name,
+        actor: 'FSIS.bot',
+        after: { status: 'settled', settled_date: today, net_auec: net, payouts: entries.length },
+        notes: `${entries.length} crew payout${entries.length !== 1 ? 's' : ''} booked. Net ${net.toLocaleString()} aUEC.`,
+      });
+    } catch (logErr) {
+      console.error('Audit log write failed (non-fatal):', logErr.message);
+    }
+    // ─────────────────────────────────────────────────────────────────────────
 
     console.log(`Work order ${wo.id} settled: ${entries.length} crew payouts booked, net ${net}`);
     return Response.json({ applied: true, payouts: entries.length, net_auec: net });
