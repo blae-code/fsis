@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { ClipboardList, MapPin } from 'lucide-react';
+import OrderPriceAdjust from '@/components/apps/orders/OrderPriceAdjust';
 
 const STATUSES = ['new', 'confirmed', 'in_fulfillment', 'delivered', 'cancelled'];
 
@@ -65,7 +66,7 @@ export default function OrdersContent() {
                   <span className="text-[9px] text-muted-foreground">{new Date(o.created_date).toLocaleString()}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-primary">{(o.total_auec || 0).toLocaleString()} aUEC</span>
+                  <OrderPriceAdjust order={o} />
                   <Select value={o.status} onValueChange={(status) => updateMutation.mutate({ id: o.id, status })}>
                     <SelectTrigger className="h-7 w-36 text-[10px]" style={{ borderColor: 'hsl(33, 18%, 17%)' }}>
                       <SelectValue />
