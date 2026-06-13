@@ -1,128 +1,290 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
-import { Boxes, AlertCircle } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { Boxes, AlertCircle, RefreshCw } from 'lucide-react';
 import CommodityIcon from '@/components/brand/CommodityIcon';
 
-const CODES = ['RMC', 'CMR', 'CMS'];
-const FIELD = { RMC: 'rmc_scu', CMR: 'cmr_scu', CMS: 'cms_scu' };
-const NAMES = { RMC: 'Recycled Material Composite', CMR: 'Construction Mat. (Reclaimed)', CMS: 'Construction Mat. (Salvaged)' };
-const ACTIVE_STATUSES = ['planning', 'in-progress', 'hauling'];
+const CODES  = ['RMC', 'CMR', 'CMS'];
+const FIELD  = { RMC: 'rmc_scu', CMR: 'cmr_scu', CMS: 'cms_scu' };
+const ACTIVE = ['planning', 'in-progress', 'hauling'];
 
-const panel = { borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 8%)' };
+const AMBER  = '#E0A22E';
+const TEAL   = '#6FA08F';
+const DIM    = '#7A6E60';
+const DIMMER = '#3A3028';
+const PANEL  = { background: '#111009', borderColor: '#2A2118' };
+const PANEL_HI = { background: '#141108', borderColor: '#5C4424' };
+
+function fmt(n) {
+  if (!n) return '0';
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 1_000)     return `${(n / 1_000).toFixed(0)}k`;
+  return n.toLocaleString();
+}
+
+function StockGauge({ value, max }) {
+  const pct = max > 0 ? Math.min(1, value / max) : 0;
+  const color = value === 0 ? '#5A3030' : pct < 0.2 ? '#C8893B' : TEAL;
+  return (
+    <div className="h-1.5 w-full" style={{ background: '#1A1510', transform: 'skewX(-10deg)' }}>
+      <motion.div
+        className="h-full"
+        style={{ background: color, transformOrigin: 'left' }}
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: pct }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      />
+    </div>
+  );
+}
+
+function SectionHead({ children }) {
+  return (
+    <div className="flex items-center gap-2 font-mono text-[9px] tracking-[0.28em] mb-2" style={{ color: '#B0793A' }}>
+      <span className="w-2 h-px shrink-0" style={{ background: '#B0793A' }} />
+      {children}
+      <span className="flex-1 h-px" style={{ background: 'rgba(90,62,28,0.2)' }} />
+    </div>
+  );
+}
 
 export default function InventoryView({ bestPrices }) {
-  const { data: sessions = [], isLoading } = useQuery({
+  const queryClient = useQueryClient();
+
+  const { data: sessions = [], isLoading: sessLoading } = useQuery({
     queryKey: ['salvage_sessions_inventory'],
     queryFn: () => base44.entities.salvage_session.list('-updated_date', 200),
   });
 
-  const active = sessions.filter((s) => ACTIVE_STATUSES.includes(s.status));
+  const { data: products = [], isLoading: prodLoading } = useQuery({
+    queryKey: ['products_inventory'],
+    queryFn: () => base44.entities.product.filter({ available: true }, 'sort_order'),
+  });
 
-  const totals = CODES.reduce((acc, code) => {
-    acc[code] = active.reduce((sum, s) => sum + (s[FIELD[code]] || 0), 0);
+  // Real-time subscription to product stock changes
+  useEffect(() => {
+    const unsub = base44.entities.product.subscribe(() => {
+      queryClient.invalidateQueries({ queryKey: ['products_inventory'] });
+    });
+    return unsub;
+  }, [queryClient]);
+
+  const isLoading = sessLoading || prodLoading;
+
+  // ── Session-based stock (in-flight SCU) ──────────────────────────────────
+  const activeSessions = sessions.filter((s) => ACTIVE.includes(s.status));
+  const sessionTotals = CODES.reduce((acc, code) => {
+    acc[code] = activeSessions.reduce((sum, s) => sum + (s[FIELD[code]] || 0), 0);
     return acc;
   }, {});
-
   // 1 SCU = 100 units for commodity pricing
-  const valueOf = (code, scu) => Math.round(scu * 100 * (bestPrices?.[code]?.price_sell || 0));
-  const totalValue = CODES.reduce((sum, code) => sum + valueOf(code, totals[code]), 0);
+  const sessionValueOf = (code, scu) => Math.round(scu * 100 * (bestPrices?.[code]?.price_sell || 0));
+  const sessionTotalValue = CODES.reduce((s, code) => s + sessionValueOf(code, sessionTotals[code]), 0);
+
+  // ── Product-based stock (storefront listings) ────────────────────────────
+  const salvageProds  = products.filter((p) => p.category === 'salvage_commodity');
+  const otherProds    = products.filter((p) => p.category !== 'salvage_commodity');
+
+  const prodValueOf = (p) => (p.stock || 0) * (bestPrices?.[p.code]?.price_sell || p.price_auec || 0);
+  const prodTotalValue = products.reduce((s, p) => s + prodValueOf(p), 0);
+  const maxStock = Math.max(...products.map((p) => p.stock || 0), 1);
+
+  // ── Grand total ──────────────────────────────────────────────────────────
+  const grandTotal = sessionTotalValue + prodTotalValue;
 
   if (isLoading) {
-    return <div className="text-center py-12 text-xs font-mono text-muted-foreground">Loading inventory…</div>;
+    return (
+      <div className="flex items-center justify-center gap-2 py-16 font-mono text-xs" style={{ color: DIM }}>
+        <RefreshCw className="w-4 h-4 animate-spin" style={{ color: AMBER }} />
+        Loading inventory…
+      </div>
+    );
   }
 
   return (
-    <div className="p-4 space-y-4 font-mono">
-      {/* Stock totals */}
-      <div className="grid grid-cols-3 gap-3">
-        {CODES.map((code) => {
-          const scu = totals[code];
-          const value = valueOf(code, scu);
-          return (
-            <div key={code} className="p-3 rounded border text-center space-y-1.5" style={panel}>
-              <div className="flex justify-center"><CommodityIcon code={code} size={30} /></div>
-              <div className="text-[9px] text-muted-foreground tracking-[0.15em]">{code}</div>
-              <div className="text-xl font-bold text-primary xian-glow-subtle">{scu.toLocaleString()}</div>
-              <div className="text-[9px] text-muted-foreground">SCU IN STOCK</div>
-              {value > 0 && (
-                <div className="text-[10px] text-foreground/80 pt-1 border-t" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
-                  ~{value.toLocaleString()} aUEC
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+    <div className="p-4 space-y-5 font-mono">
 
-      {/* Total estimated value */}
-      <div className="p-3 rounded border flex items-center justify-between" style={panel}>
-        <span className="flex items-center gap-2 text-[10px] text-muted-foreground tracking-[0.2em]">
-          <Boxes className="w-3.5 h-3.5 text-primary" /> TOTAL STOCK VALUE (@ BEST SELL)
-        </span>
-        <span className="text-sm font-bold text-primary">
-          {totalValue > 0 ? `${totalValue.toLocaleString()} aUEC` : 'No price data synced'}
-        </span>
-      </div>
-
-      {/* Stock by location (EVE-style asset view) */}
-      {active.length > 0 && (
-        <div className="space-y-1.5">
-          <div className="text-[10px] text-muted-foreground tracking-[0.2em]">STOCK BY LOCATION</div>
-          {Object.entries(
-            active.reduce((acc, s) => {
-              const loc = s.location || 'UNASSIGNED';
-              if (!acc[loc]) acc[loc] = { RMC: 0, CMR: 0, CMS: 0 };
-              CODES.forEach((code) => { acc[loc][code] += s[FIELD[code]] || 0; });
-              return acc;
-            }, {})
-          ).map(([loc, q]) => (
-            <div key={loc} className="p-2.5 rounded border flex items-center justify-between gap-3" style={panel}>
-              <span className="text-xs text-foreground truncate">{loc}</span>
-              <div className="flex gap-3 shrink-0 text-right">
-                {CODES.map((code) => (
-                  <div key={code}>
-                    <div className="text-[8px] text-muted-foreground">{code}</div>
-                    <div className={`text-[11px] font-bold ${q[code] > 0 ? 'text-primary' : 'text-muted-foreground/50'}`}>{q[code].toLocaleString()}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+      {/* ── Grand total banner ──────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+        className="border p-4 flex items-center justify-between"
+        style={{ ...PANEL_HI, clipPath: 'polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)' }}
+      >
+        <div className="flex items-center gap-2 text-[10px] tracking-[0.2em]" style={{ color: TEAL }}>
+          <Boxes className="w-4 h-4" />
+          TOTAL ESTIMATED ASSET VALUE
         </div>
-      )}
+        <div>
+          <span className="text-2xl font-bold" style={{ color: AMBER, textShadow: `0 0 20px ${AMBER}44` }}>
+            {grandTotal > 0 ? fmt(grandTotal) : '—'}
+          </span>
+          {grandTotal > 0 && <span className="ml-1.5 text-[10px]" style={{ color: DIM }}>aUEC</span>}
+        </div>
+      </motion.div>
 
-      {/* Per-session breakdown */}
-      <div className="space-y-1.5">
-        <div className="text-[10px] text-muted-foreground tracking-[0.2em]">HOLDINGS BY SESSION ({active.length} ACTIVE)</div>
-        {active.length === 0 ? (
-          <div className="text-center py-8 rounded border" style={panel}>
-            <AlertCircle className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
-            <p className="text-[10px] text-muted-foreground">No active salvage sessions holding stock.</p>
-            <p className="text-[9px] text-muted-foreground mt-1">Stock counts sessions in planning, in-progress, or hauling status.</p>
+      {/* ── Storefront product stock ────────────────────────────── */}
+      <section>
+        <SectionHead>STOREFRONT STOCK — LISTED PRODUCTS</SectionHead>
+
+        {products.length === 0 ? (
+          <div className="border p-6 text-center" style={PANEL}>
+            <AlertCircle className="w-5 h-5 mx-auto mb-2" style={{ color: DIM }} />
+            <p className="text-[10px]" style={{ color: DIM }}>No products listed on the storefront.</p>
           </div>
-        ) : active.map((s) => (
-          <div key={s.id} className="p-2.5 rounded border flex items-center gap-3" style={panel}>
-            <div className="flex-1 min-w-0">
-              <div className="text-xs text-foreground truncate">{s.session_name}</div>
-              <div className="text-[9px] text-muted-foreground">{s.ship || 'Unknown ship'} • {s.status.toUpperCase()}{s.location ? ` • ${s.location}` : ''}</div>
+        ) : (
+          <div className="space-y-1.5">
+            {/* Header row */}
+            <div className="grid grid-cols-[1fr_80px_80px_100px_80px] gap-2 px-2 text-[8px] tracking-[0.18em]" style={{ color: DIMMER }}>
+              <span>PRODUCT</span>
+              <span className="text-right">STOCK</span>
+              <span className="text-right">UNIT</span>
+              <span className="text-right">MKT PRICE</span>
+              <span className="text-right">VALUE</span>
             </div>
-            <div className="flex gap-3 shrink-0 text-right">
-              {CODES.map((code) => (
-                <div key={code}>
-                  <div className="text-[8px] text-muted-foreground">{code}</div>
-                  <div className={`text-[11px] font-bold ${(s[FIELD[code]] || 0) > 0 ? 'text-primary' : 'text-muted-foreground/50'}`}>
-                    {(s[FIELD[code]] || 0).toLocaleString()}
+
+            {[...salvageProds, ...otherProds].map((p, i) => {
+              const mktPrice = bestPrices?.[p.code]?.price_sell;
+              const value = prodValueOf(p);
+              const isOOS = (p.stock || 0) === 0;
+              return (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.03 }}
+                  className="border"
+                  style={{ ...PANEL, borderColor: isOOS ? '#3A1A1A' : '#2A2118' }}
+                >
+                  <div className="grid grid-cols-[1fr_80px_80px_100px_80px] gap-2 items-center px-2.5 py-2">
+                    {/* Name */}
+                    <div className="flex items-center gap-2 min-w-0">
+                      <CommodityIcon code={p.code} size={20} />
+                      <div className="min-w-0">
+                        <div className="text-[11px] truncate" style={{ color: isOOS ? DIM : '#D8CFC0' }}>
+                          {p.product_name}
+                        </div>
+                        {p.code && (
+                          <div className="text-[8px]" style={{ color: TEAL }}>[{p.code}]</div>
+                        )}
+                      </div>
+                    </div>
+                    {/* Stock qty */}
+                    <div className="text-right">
+                      <span className="text-[13px] font-bold" style={{ color: isOOS ? '#8A3030' : AMBER }}>
+                        {(p.stock || 0).toLocaleString()}
+                      </span>
+                    </div>
+                    {/* Unit */}
+                    <div className="text-right text-[9px]" style={{ color: DIM }}>{p.unit || 'SCU'}</div>
+                    {/* Market price */}
+                    <div className="text-right text-[10px]" style={{ color: mktPrice ? '#D8CFC0' : DIMMER }}>
+                      {mktPrice ? `${mktPrice.toLocaleString()} aUEC` : 'no data'}
+                    </div>
+                    {/* Value */}
+                    <div className="text-right text-[11px] font-bold" style={{ color: value > 0 ? TEAL : DIMMER }}>
+                      {value > 0 ? fmt(value) : '—'}
+                    </div>
+                  </div>
+                  {/* Gauge bar */}
+                  <StockGauge value={p.stock || 0} max={maxStock} />
+                </motion.div>
+              );
+            })}
+
+            {/* Subtotal */}
+            <div className="border p-2.5 flex justify-between items-center text-[10px]" style={{ ...PANEL, borderColor: '#3A2E1E' }}>
+              <span style={{ color: DIM }}>STOREFRONT SUBTOTAL</span>
+              <span className="font-bold" style={{ color: TEAL }}>
+                {prodTotalValue > 0 ? `${fmt(prodTotalValue)} aUEC` : bestPrices && Object.keys(bestPrices).length > 0 ? '0 aUEC' : 'sync UEX for values'}
+              </span>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* ── In-flight SCU (sessions) ────────────────────────────── */}
+      <section>
+        <SectionHead>IN-FLIGHT STOCK — ACTIVE SALVAGE SESSIONS</SectionHead>
+
+        <div className="grid grid-cols-3 gap-3 mb-3">
+          {CODES.map((code) => {
+            const scu   = sessionTotals[code];
+            const value = sessionValueOf(code, scu);
+            return (
+              <motion.div
+                key={code}
+                initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+                className="border p-3 text-center space-y-1"
+                style={PANEL}
+              >
+                <div className="flex justify-center"><CommodityIcon code={code} size={26} /></div>
+                <div className="text-[8px] tracking-[0.18em]" style={{ color: TEAL }}>{code}</div>
+                <div className="text-xl font-bold" style={{ color: scu > 0 ? AMBER : DIMMER, textShadow: scu > 0 ? `0 0 12px ${AMBER}33` : 'none' }}>
+                  {scu.toLocaleString()}
+                </div>
+                <div className="text-[8px]" style={{ color: DIM }}>SCU</div>
+                <div className="text-[9px] pt-1 border-t" style={{ borderColor: '#2A2118', color: value > 0 ? '#D8CFC0' : DIMMER }}>
+                  {value > 0 ? `~${fmt(value)} aUEC` : '—'}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Subtotal */}
+        <div className="border p-2.5 flex justify-between items-center text-[10px] mb-3" style={{ ...PANEL, borderColor: '#3A2E1E' }}>
+          <span style={{ color: DIM }}>IN-FLIGHT SUBTOTAL</span>
+          <span className="font-bold" style={{ color: TEAL }}>
+            {sessionTotalValue > 0 ? `${fmt(sessionTotalValue)} aUEC` : '—'}
+          </span>
+        </div>
+
+        {/* Location breakdown */}
+        {activeSessions.length > 0 && (() => {
+          const byLoc = activeSessions.reduce((acc, s) => {
+            const loc = s.location || 'UNASSIGNED';
+            if (!acc[loc]) acc[loc] = { RMC: 0, CMR: 0, CMS: 0 };
+            CODES.forEach((c) => { acc[loc][c] += s[FIELD[c]] || 0; });
+            return acc;
+          }, {});
+          return (
+            <div className="space-y-1.5">
+              <div className="text-[9px] tracking-[0.2em]" style={{ color: DIMMER }}>HOLDINGS BY SESSION ({activeSessions.length} ACTIVE)</div>
+              {activeSessions.map((s) => (
+                <div key={s.id} className="border flex items-center gap-3 px-2.5 py-2" style={PANEL}>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[11px] truncate" style={{ color: '#D8CFC0' }}>{s.session_name}</div>
+                    <div className="text-[9px]" style={{ color: DIM }}>
+                      {s.ship || 'Unknown ship'} · {s.status.toUpperCase()}{s.location ? ` · ${s.location}` : ''}
+                    </div>
+                  </div>
+                  <div className="flex gap-3 shrink-0">
+                    {CODES.map((code) => (
+                      <div key={code} className="text-right">
+                        <div className="text-[8px]" style={{ color: DIMMER }}>{code}</div>
+                        <div className="text-[11px] font-bold" style={{ color: (s[FIELD[code]] || 0) > 0 ? AMBER : DIMMER }}>
+                          {(s[FIELD[code]] || 0).toLocaleString()}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-        ))}
-      </div>
+          );
+        })()}
 
-      <p className="text-[9px] text-muted-foreground/60">
-        Inventory aggregates {NAMES.RMC}, {NAMES.CMR}, and {NAMES.CMS} across active salvage sessions. Values use best sell prices from the UEX cache (1 SCU = 100 units).
+        {activeSessions.length === 0 && (
+          <div className="border p-6 text-center" style={PANEL}>
+            <AlertCircle className="w-5 h-5 mx-auto mb-2" style={{ color: DIM }} />
+            <p className="text-[10px]" style={{ color: DIM }}>No active salvage sessions holding stock.</p>
+          </div>
+        )}
+      </section>
+
+      <p className="text-[9px]" style={{ color: '#3A3028' }}>
+        Storefront stock updates in real-time via WebSocket. Session stock aggregates active (planning / in-progress / hauling) sessions.
+        Values use UEX best-sell prices where available, falling back to listed store price. 1 SCU = 100 commodity units.
       </p>
     </div>
   );
