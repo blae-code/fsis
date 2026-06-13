@@ -6,8 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ShoppingCart, Trash2, Loader2 } from 'lucide-react';
+import { ShoppingCart, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ManifestReceipt from '@/components/store/ManifestReceipt';
+import HoldToTransmit from '@/components/store/HoldToTransmit';
 import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
@@ -84,8 +86,16 @@ export default function OrderPanel({ cart, setCart, user }) {
       ) : (
         <>
           <div className="space-y-2">
+            <AnimatePresence initial={false}>
             {cart.map((item) => (
-              <div key={item.product_id} className="flex items-center gap-2 text-xs font-mono">
+              <motion.div
+                key={item.product_id}
+                initial={{ opacity: 0, x: 16, height: 0 }}
+                animate={{ opacity: 1, x: 0, height: 'auto' }}
+                exit={{ opacity: 0, x: -16, height: 0 }}
+                transition={{ duration: 0.22, ease: 'easeOut' }}
+                className="flex items-center gap-2 text-xs font-mono overflow-hidden"
+              >
                 <span className="flex-1 truncate" style={{ color: '#D8CFC0' }}>{item.code || item.product_name}</span>
                 <Input
                   type="number" min="1" value={item.quantity}
@@ -97,8 +107,9 @@ export default function OrderPanel({ cart, setCart, user }) {
                 <button onClick={() => setCart(cart.filter((i) => i.product_id !== item.product_id))} className="hover:opacity-70" style={{ color: '#8A7E6C' }}>
                   <Trash2 className="w-3 h-3" />
                 </button>
-              </div>
+              </motion.div>
             ))}
+            </AnimatePresence>
           </div>
 
           <div className="flex justify-between font-mono text-sm font-bold border-t pt-3" style={{ borderColor: '#3A2F20' }}>
@@ -161,18 +172,11 @@ export default function OrderPanel({ cart, setCart, user }) {
             </p>
           )}
 
-          <button
-            className="w-full h-9 font-mono text-xs font-bold rounded-full disabled:opacity-40 disabled:pointer-events-none hover:brightness-110 transition-all inline-flex items-center justify-center"
-            disabled={!handle || orderMutation.isPending}
-            onClick={() => { setPlaced(null); orderMutation.mutate(); }}
-            style={{
-              background: 'linear-gradient(180deg, #E8B13A, #BD7E16)',
-              color: '#1A1206',
-              boxShadow: 'inset 0 1px 0 rgba(255, 235, 190, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5)',
-            }}
-          >
-            {orderMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'TRANSMIT ORDER'}
-          </button>
+          <HoldToTransmit
+            disabled={!handle}
+            pending={orderMutation.isPending}
+            onConfirm={() => { setPlaced(null); orderMutation.mutate(); }}
+          />
         </>
       )}
     </div>
