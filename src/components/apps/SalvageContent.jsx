@@ -26,6 +26,7 @@ import HaulBoard from '@/components/apps/salvage/HaulBoard';
 import PriceAlerts from '@/components/apps/salvage/PriceAlerts';
 import StockAlerts from '@/components/apps/salvage/StockAlerts';
 import ProfitDashboard from '@/components/apps/salvage/ProfitDashboard';
+import ProcessingQueue from '@/components/apps/loot/ProcessingQueue';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 

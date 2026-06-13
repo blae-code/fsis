@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckSquare, Square, ChevronDown, MapPin, ArrowRight, Trash2, Loader2, Plus } from 'lucide-react';
+import { CheckSquare, Square, MapPin, ArrowRight, Trash2, Loader2, Plus, Search, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 
@@ -48,6 +48,8 @@ export default function CargoLotTracker() {
   const [applying, setApplying]       = useState(false);
   const [addOpen, setAddOpen]         = useState(false);
   const [newLot, setNewLot]           = useState({ lot_name: '', commodity_code: '', quantity_scu: '', origin: '', destination: '', status: 'collected' });
+  const [search, setSearch]           = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
 
   const { data: lots = [], isLoading } = useQuery({
     queryKey: ['cargo_lots'],
@@ -70,14 +72,6 @@ export default function CargoLotTracker() {
     mutationFn: (id) => base44.entities.cargo_lot.delete(id),
     onSuccess: () => { invalidate(); setSelected((s) => { const n = new Set(s); return n; }); },
   });
-
-  const toggleAll = useCallback(() => {
-    if (selected.size === lots.length && lots.length > 0) {
-      setSelected(new Set());
-    } else {
-      setSelected(new Set(lots.map((l) => l.id)));
-    }
-  }, [lots, selected.size]);
 
   const toggleOne = useCallback((id) => {
     setSelected((s) => {
@@ -104,16 +98,65 @@ export default function CargoLotTracker() {
     setApplying(false);
   };
 
-  const allSelected = lots.length > 0 && selected.size === lots.length;
-  const someSelected = selected.size > 0 && selected.size < lots.length;
+  // ── Filtered lots ────────────────────────────────────────
+  const q = search.trim().toLowerCase();
+  const visibleLots = lots.filter((l) => {
+    if (filterStatus && l.status !== filterStatus) return false;
+    if (!q) return true;
+    return (
+      (l.lot_name || '').toLowerCase().includes(q) ||
+      (l.commodity_code || '').toLowerCase().includes(q) ||
+      (l.destination || '').toLowerCase().includes(q) ||
+      (l.origin || '').toLowerCase().includes(q)
+    );
+  });
+
+  const allSelected = visibleLots.length > 0 && visibleLots.every((l) => selected.has(l.id));
+  const someSelected = visibleLots.some((l) => selected.has(l.id)) && !allSelected;
+
+  const toggleAll = useCallback(() => {
+    if (allSelected) {
+      setSelected((s) => { const n = new Set(s); visibleLots.forEach((l) => n.delete(l.id)); return n; });
+    } else {
+      setSelected((s) => { const n = new Set(s); visibleLots.forEach((l) => n.add(l.id)); return n; });
+    }
+  }, [visibleLots, allSelected]);
 
   return (
     <div className="space-y-3 font-mono">
 
+      {/* ── Search + filter bar ──────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="relative flex-1 min-w-[140px]">
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 pointer-events-none" style={{ color: DIM }} />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name, code, destination…"
+            className="w-full h-7 pl-6 pr-6 bg-transparent border text-[10px] font-mono outline-none"
+            style={{ borderColor: '#2A2118', color: '#D8CFC0' }}
+          />
+          {search && (
+            <button onClick={() => setSearch('')} className="absolute right-1.5 top-1/2 -translate-y-1/2" style={{ color: DIM }}>
+              <X className="w-3 h-3" />
+            </button>
+          )}
+        </div>
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <SelectTrigger className="h-7 w-32 text-[10px] font-mono shrink-0" style={{ borderColor: '#2A2118', background: '#0C0A07' }}>
+            <SelectValue placeholder="All status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={null} className="text-xs font-mono">ALL STATUS</SelectItem>
+            {STATUS_OPTS.map((s) => <SelectItem key={s} value={s} className="text-xs font-mono">{s.toUpperCase()}</SelectItem>)}
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* ── Header row ───────────────────────────────────────── */}
       <div className="flex items-center justify-between gap-3">
         <div className="text-[9px] tracking-[0.2em]" style={{ color: DIM }}>
-          {lots.length} LOT{lots.length !== 1 ? 'S' : ''} TRACKED
+          {visibleLots.length}/{lots.length} LOT{lots.length !== 1 ? 'S' : ''}
           {selected.size > 0 && (
             <span style={{ color: AMBER }}> · {selected.size} SELECTED</span>
           )}
@@ -248,9 +291,9 @@ export default function CargoLotTracker() {
         <div className="flex justify-center py-8">
           <Loader2 className="w-4 h-4 animate-spin" style={{ color: AMBER }} />
         </div>
-      ) : lots.length === 0 ? (
+      ) : visibleLots.length === 0 ? (
         <div className="border p-8 text-center text-[10px]" style={{ ...PANEL, color: DIM }}>
-          No cargo lots logged. Add one above.
+          {lots.length === 0 ? 'No cargo lots logged. Add one above.' : 'No lots match your search.'}
         </div>
       ) : (
         <div className="space-y-1">
@@ -271,7 +314,7 @@ export default function CargoLotTracker() {
             <span />
           </div>
 
-          {lots.map((lot, i) => {
+          {visibleLots.map((lot, i) => {
             const isSel = selected.has(lot.id);
             return (
               <motion.div

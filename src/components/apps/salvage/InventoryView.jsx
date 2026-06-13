@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Boxes, AlertCircle, RefreshCw } from 'lucide-react';
+import { Boxes, AlertCircle, RefreshCw, Search, X } from 'lucide-react';
 import CommodityIcon from '@/components/brand/CommodityIcon';
 import CargoLotTracker from '@/components/apps/salvage/CargoLotTracker';
 
@@ -52,6 +52,7 @@ function SectionHead({ children }) {
 
 export default function InventoryView({ bestPrices }) {
   const queryClient = useQueryClient();
+  const [search, setSearch] = useState('');
 
   const { data: sessions = [], isLoading: sessLoading } = useQuery({
     queryKey: ['salvage_sessions_inventory'],
