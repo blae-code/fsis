@@ -1,14 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Package, ClipboardList, Info, Calculator, Briefcase } from 'lucide-react';
 import StoreTip from '@/components/store/StoreTip';
+import { CatalogSigil, QuoteSigil, OrdersSigil, JobsSigil, AboutSigil } from '@/components/brand/DivisionSigils';
 
 const TABS = [
-  { id: 'catalog', label: 'CATALOG', icon: Package, tip: 'Browse wares & add to manifest', key: '1' },
-  { id: 'quote', label: 'BULK QUOTE', icon: Calculator, tip: 'Build a bulk pricing estimate', key: '2' },
-  { id: 'orders', label: 'MY ORDERS', icon: ClipboardList, tip: 'Track orders by code', key: '3' },
-  { id: 'jobs', label: 'JOBS', icon: Briefcase, tip: 'Open contractor postings', key: '4' },
-  { id: 'about', label: 'ABOUT FSIS', icon: Info, tip: 'Company dossier & system status', key: '5' },
+  { id: 'catalog', label: 'CATALOG', icon: CatalogSigil, tip: 'Browse wares & add to manifest', key: '1' },
+  { id: 'quote', label: 'BULK QUOTE', icon: QuoteSigil, tip: 'Build a bulk pricing estimate', key: '2' },
+  { id: 'orders', label: 'MY ORDERS', icon: OrdersSigil, tip: 'Track orders by code', key: '3' },
+  { id: 'jobs', label: 'JOBS', icon: JobsSigil, tip: 'Open contractor postings', key: '4' },
+  { id: 'about', label: 'ABOUT FSIS', icon: AboutSigil, tip: 'Company dossier & system status', key: '5' },
 ];
 
 /** Storefront selector rail — bronze plate glides between sections instead of
@@ -50,7 +50,7 @@ export default function StoreTabs({ active, onChange }) {
               />
             )}
             <span className="relative inline-flex items-center gap-1.5">
-              <Icon className="w-3 h-3" />
+              <Icon size={13} />
               {label}
               <span className="text-[7px] -mt-1.5" style={{ color: isActive ? '#E0A22E' : '#54493B' }}>{key}</span>
             </span>

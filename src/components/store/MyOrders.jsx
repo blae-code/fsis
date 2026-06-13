@@ -5,7 +5,11 @@ import { trackOrder } from '@/functions/trackOrder';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { PackageCheck, Search, Loader2, RotateCcw, KeyRound, FileDown } from 'lucide-react';
+import { PackageCheck, Search, Loader2, RotateCcw, FileDown } from 'lucide-react';
+import HandoffSigil from '@/components/brand/HandoffSigil';
+import LocationMarker from '@/components/brand/LocationMarker';
+import { IdleDockingBay } from '@/components/brand/EmptyStates';
+import { locationKind } from '@/lib/storeLocations';
 import { downloadInvoice } from '@/lib/invoicePdf';
 import OrderTimeline from '@/components/store/OrderTimeline';
 import CancelOrder from '@/components/store/CancelOrder';
@@ -142,9 +146,10 @@ export default function MyOrders({ onReorder }) {
 
       {/* Tracked orders */}
       {allOrders.length === 0 && !isLoading ? (
-        <div className="border p-6 text-center" style={{ borderColor: '#3A2F20' }}>
+        <div className="border p-6 text-center space-y-3" style={{ borderColor: '#3A2F20' }}>
+          <IdleDockingBay width={190} />
           <p className="text-xs font-mono" style={{ color: '#9C9080' }}>
-            No tracked orders — place an order, sign in to your account, or enter a tracking code or receipt passphrase above.
+            Bay standing by — place an order, sign in to your account, or enter a tracking code or receipt passphrase above.
           </p>
         </div>
       ) : isLoading && allOrders.length === 0 ? (
@@ -168,8 +173,16 @@ export default function MyOrders({ onReorder }) {
                 <div className="text-xs font-mono truncate mt-0.5" style={{ color: '#D8CFC0' }}>
                   {(o.items || []).map((i) => `${i.quantity}x ${i.code || i.product_name}`).join(', ')}
                 </div>
-                <div className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>
-                  PLACED {new Date(o.created_date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })} {o.delivery_location && `• ${o.delivery_location}`}
+                <div className="text-[10px] font-mono flex items-center gap-1 flex-wrap" style={{ color: '#8A7E6C' }}>
+                  PLACED {new Date(o.created_date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                  {o.delivery_location && (
+                    <span className="inline-flex items-center gap-1">
+                      • {locationKind(o.delivery_location) && (
+                        <span style={{ color: '#6FA08F' }}><LocationMarker kind={locationKind(o.delivery_location)} size={12} /></span>
+                      )}
+                      {o.delivery_location}
+                    </span>
+                  )}
                 </div>
                 {!['delivered', 'cancelled'].includes(o.status) && etaFor(o.delivery_location) && (
                   <div className="text-[10px] font-mono" style={{ color: '#7BA05B' }}>
@@ -226,7 +239,7 @@ export default function MyOrders({ onReorder }) {
             </div>
             {o.handoff_passphrase && !['delivered', 'cancelled'].includes(o.status) && (
               <div className="flex items-center gap-2 font-mono text-[10px]" title="Spoken at the in-person handoff to verify identity on both sides">
-                <KeyRound className="w-3 h-3 shrink-0" style={{ color: '#6FA08F' }} />
+                <span className="shrink-0 inline-flex"><HandoffSigil size={15} color="#6FA08F" /></span>
                 <span style={{ color: '#8A7E6C' }}>HANDOFF PASSPHRASE:</span>
                 <span className="font-bold tracking-[0.12em]" style={{ color: '#E0A22E' }}>{o.handoff_passphrase}</span>
               </div>

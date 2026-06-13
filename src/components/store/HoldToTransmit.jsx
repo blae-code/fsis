@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, RadioTower } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import UplinkGlyph from '@/components/brand/UplinkGlyph';
 
 const HOLD_MS = 1000;
 
@@ -53,9 +54,9 @@ export default function HoldToTransmit({ disabled, pending, onConfirm }) {
         {pending ? (
           <><Loader2 className="w-4 h-4 animate-spin" /> TRANSMITTING…</>
         ) : holding ? (
-          <><RadioTower className="w-4 h-4" /> CHARGING UPLINK…</>
+          <><UplinkGlyph size={16} charging /> CHARGING UPLINK…</>
         ) : (
-          <><RadioTower className="w-4 h-4" /> HOLD TO TRANSMIT ORDER</>
+          <><UplinkGlyph size={16} /> HOLD TO TRANSMIT ORDER</>
         )}
       </span>
     </button>

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { storeCache } from '@/lib/localCache';
-import { ShoppingCart, RadioTower, KeyRound, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import { ManifestSlate, UplinkWave, HandoffMeet } from '@/components/brand/StepPictograms';
 
 const STEPS = [
-  { icon: ShoppingCart, title: 'BUILD MANIFEST', desc: 'Add wares from the catalog and set quantities.' },
-  { icon: RadioTower, title: 'TRANSMIT ORDER', desc: 'Hold to transmit — you get a tracking code & passphrase.' },
-  { icon: KeyRound, title: 'IN-PERSON HANDOFF', desc: 'Meet the FSIS crew in the \u2019verse and speak your passphrase.' },
+  { icon: ManifestSlate, title: 'BUILD MANIFEST', desc: 'Add wares from the catalog and set quantities.' },
+  { icon: UplinkWave, title: 'TRANSMIT ORDER', desc: 'Hold to transmit — you get a tracking code & passphrase.' },
+  { icon: HandoffMeet, title: 'IN-PERSON HANDOFF', desc: 'Meet the FSIS crew in the \u2019verse and speak your passphrase.' },
 ];
 
 /** Dismissible 3-step explainer for first-time buyers — in-game commerce is
@@ -36,7 +37,7 @@ export default function HowItWorksStrip() {
             </span>
             <div className="min-w-0">
               <p className="font-mono text-[10px] font-bold tracking-[0.12em] flex items-center gap-1.5" style={{ color: '#D8CFC0' }}>
-                <Icon className="w-3 h-3" style={{ color: '#6FA08F' }} /> {title}
+                <span style={{ color: '#6FA08F' }}><Icon size={14} /></span> {title}
               </p>
               <p className="text-[10px] font-mono leading-relaxed mt-0.5" style={{ color: '#877D6D' }}>{desc}</p>
             </div>

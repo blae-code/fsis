@@ -12,6 +12,7 @@ import ManifestReceipt from '@/components/store/ManifestReceipt';
 import OrderReceiptModal from '@/components/store/OrderReceiptModal';
 import HoldToTransmit from '@/components/store/HoldToTransmit';
 import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
+import LocationMarker from '@/components/brand/LocationMarker';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 
@@ -139,7 +140,10 @@ export default function OrderPanel({ cart, setCart, user }) {
                 <SelectContent>
                   {DELIVERY_LOCATIONS.map((l) => (
                     <SelectItem key={l.name} value={l.name} className="text-xs font-mono">
-                      {l.name} — {l.region}
+                      <span className="inline-flex items-center gap-1.5">
+                        <span style={{ color: '#6FA08F' }}><LocationMarker kind={l.kind} size={13} /></span>
+                        {l.name} — {l.region}
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>

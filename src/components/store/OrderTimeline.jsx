@@ -1,12 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Inbox, CheckCircle2, Truck, PackageCheck, XCircle } from 'lucide-react';
+import { ReceivedGlyph, ConfirmedGlyph, FulfillmentGlyph, DeliveredGlyph, CancelledGlyph } from '@/components/brand/TimelineGlyphs';
 
 const STEPS = [
-  { id: 'new', label: 'RECEIVED', icon: Inbox },
-  { id: 'confirmed', label: 'CONFIRMED', icon: CheckCircle2 },
-  { id: 'in_fulfillment', label: 'IN FULFILLMENT', icon: Truck },
-  { id: 'delivered', label: 'DELIVERED', icon: PackageCheck },
+  { id: 'new', label: 'RECEIVED', icon: ReceivedGlyph },
+  { id: 'confirmed', label: 'CONFIRMED', icon: ConfirmedGlyph },
+  { id: 'in_fulfillment', label: 'IN FULFILLMENT', icon: FulfillmentGlyph },
+  { id: 'delivered', label: 'DELIVERED', icon: DeliveredGlyph },
 ];
 
 /** Horizontal buyer-facing status timeline for an order */
@@ -14,7 +14,7 @@ export default function OrderTimeline({ status }) {
   if (status === 'cancelled') {
     return (
       <div className="flex items-center gap-1.5 font-mono text-[10px]" style={{ color: '#C05050' }}>
-        <XCircle className="w-3.5 h-3.5" /> ORDER CANCELLED
+        <CancelledGlyph size={14} /> ORDER CANCELLED
       </div>
     );
   }
@@ -59,7 +59,7 @@ export default function OrderTimeline({ status }) {
                   boxShadow: isCurrent ? '0 0 10px rgba(224, 162, 46, 0.4)' : 'none',
                 }}
               >
-                <Icon className="w-3 h-3" />
+                <Icon size={14} />
               </div>
               <span className="font-mono text-[8px] tracking-wider" style={{ color: done ? '#C8A05B' : '#5C5246' }}>
                 {label}

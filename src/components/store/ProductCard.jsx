@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Hammer, Wrench, ShoppingCart, Pin } from 'lucide-react';
+import { ShoppingCart, Pin } from 'lucide-react';
+import CategoryCrest from '@/components/brand/CategoryCrest';
+import HazardCorner from '@/components/brand/HazardCorner';
 import AddToCartControl from '@/components/store/AddToCartControl';
 import StoreTip from '@/components/store/StoreTip';
 import CommodityIcon from '@/components/brand/CommodityIcon';
@@ -13,14 +15,13 @@ const PLATE_TEXTURE = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea625
 
 const CATEGORY_META = {
   salvage_commodity: { label: 'SALVAGE' },
-  fabricated: { label: 'FABRICATED', icon: Hammer },
-  service: { label: 'SERVICE', icon: Wrench },
+  fabricated: { label: 'FABRICATED' },
+  service: { label: 'SERVICE' },
 };
 
 export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
-  const FallbackIcon = meta.icon;
   const inCart = inCartQty > 0;
 
   return (
@@ -44,6 +45,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
           backgroundSize: 'cover',
         }}
       >
+        {!inStock && <HazardCorner size={32} />}
         {/* Sheen sweep on hover */}
         <span
           className="absolute inset-y-0 w-1/3 pointer-events-none -left-1/2 group-hover/card:left-[120%] transition-[left] duration-700 ease-out"
@@ -54,10 +56,10 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
             className="w-12 h-12 flex items-center justify-center border"
             style={{ borderColor: '#4A3B28', background: 'rgba(10, 9, 7, 0.6)' }}
           >
-            {product.category === 'salvage_commodity' || !FallbackIcon ? (
+            {product.category === 'salvage_commodity' ? (
               <CommodityIcon code={product.code} size={34} />
             ) : (
-              <FallbackIcon className="w-5 h-5" style={{ color: '#6FA08F' }} />
+              <CategoryCrest category={product.category} size={28} color="#6FA08F" />
             )}
           </div>
           <div className="flex flex-col items-end gap-1.5">
@@ -72,13 +74,14 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
                 </button>
               </StoreTip>
               <span
-                className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
+                className="inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
                 style={{
                   background: 'linear-gradient(180deg, #5C8273, #3A5A4E)',
                   color: '#0D1411',
                   clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)',
                 }}
               >
+                <CategoryCrest category={product.category} size={10} color="#0D1411" />
                 {meta.label}
               </span>
             </div>
