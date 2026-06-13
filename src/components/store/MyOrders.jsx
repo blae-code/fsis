@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { storeCache } from '@/lib/localCache';
 import { trackOrder } from '@/functions/trackOrder';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import { PackageCheck, Search, Loader2, RotateCcw, KeyRound, FileDown } from 'lucide-react';
 import { downloadInvoice } from '@/lib/invoicePdf';
 import OrderTimeline from '@/components/store/OrderTimeline';
@@ -16,7 +17,11 @@ export default function MyOrders({ onReorder }) {
   const [lookupError, setLookupError] = useState('');
   const [looking, setLooking] = useState(false);
 
-  const { data: orders = [], isLoading } = useQuery({
+  const { toast } = useToast();
+  const prevStatuses = useRef({});
+  const [updatedCodes, setUpdatedCodes] = useState([]);
+
+  const { data: orders = [], isLoading, dataUpdatedAt } = useQuery({
     queryKey: ['tracked_orders', codes.join(',')],
     queryFn: async () => {
       const results = await Promise.all(
@@ -25,7 +30,30 @@ export default function MyOrders({ onReorder }) {
       return results.filter(Boolean).sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
     enabled: codes.length > 0,
+    refetchInterval: 30 * 1000,
+    refetchIntervalInBackground: true,
   });
+
+  // Detect live status changes — flash the card and notify the buyer
+  useEffect(() => {
+    const changed = [];
+    orders.forEach((o) => {
+      const prev = prevStatuses.current[o.tracking_code];
+      if (prev && prev !== o.status) {
+        changed.push(o.tracking_code);
+        toast({
+          title: `${o.tracking_code} — STATUS UPDATE`,
+          description: `Your order is now ${o.status.replace(/_/g, ' ').toUpperCase()}.`,
+        });
+      }
+      prevStatuses.current[o.tracking_code] = o.status;
+    });
+    if (changed.length > 0) {
+      setUpdatedCodes(changed);
+      const t = setTimeout(() => setUpdatedCodes([]), 4000);
+      return () => clearTimeout(t);
+    }
+  }, [orders, toast]);
 
   const handleLookup = async () => {
     const code = lookup.trim().toUpperCase();
@@ -46,8 +74,19 @@ export default function MyOrders({ onReorder }) {
 
   return (
     <div className="space-y-4 max-w-2xl">
-      <div className="flex items-center gap-2 font-mono text-xs tracking-[0.2em]" style={{ color: '#C8A05B' }}>
-        <PackageCheck className="w-3.5 h-3.5" /> ORDER TRACKING
+      <div className="flex items-center justify-between font-mono text-xs tracking-[0.2em]" style={{ color: '#C8A05B' }}>
+        <span className="flex items-center gap-2">
+          <PackageCheck className="w-3.5 h-3.5" /> ORDER TRACKING
+        </span>
+        {codes.length > 0 && (
+          <span className="flex items-center gap-1.5 text-[9px] tracking-[0.15em]" style={{ color: '#7BA05B' }}>
+            <span className="relative flex w-2 h-2">
+              <span className="absolute inline-flex w-full h-full rounded-full animate-ping" style={{ background: '#7BA05B', opacity: 0.6 }} />
+              <span className="relative inline-flex w-2 h-2 rounded-full" style={{ background: '#7BA05B' }} />
+            </span>
+            LIVE — {dataUpdatedAt ? `SYNCED ${new Date(dataUpdatedAt).toLocaleTimeString([], { timeStyle: 'short' })}` : 'TRACKING'}
+          </span>
+        )}
       </div>
 
       {/* Lookup by code */}
@@ -86,7 +125,15 @@ export default function MyOrders({ onReorder }) {
         </div>
       ) : (
         orders.map((o) => (
-          <div key={o.tracking_code} className="border p-4 space-y-3" style={{ borderColor: '#2A2118', background: '#121110' }}>
+          <div
+            key={o.tracking_code}
+            className="border p-4 space-y-3 transition-all duration-700"
+            style={{
+              borderColor: updatedCodes.includes(o.tracking_code) ? '#D4920B' : '#2A2118',
+              background: '#121110',
+              boxShadow: updatedCodes.includes(o.tracking_code) ? '0 0 20px rgba(212, 146, 11, 0.35)' : 'none',
+            }}
+          >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <div className="text-xs font-mono font-bold" style={{ color: '#E0A22E' }}>{o.tracking_code}</div>
