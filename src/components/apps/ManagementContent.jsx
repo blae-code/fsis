@@ -13,6 +13,7 @@ import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
 import InventoryManager from '@/components/apps/management/InventoryManager';
 import SalvageCommodityDashboard from '@/components/apps/management/SalvageCommodityDashboard';
 import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
+import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
 
 const AMBER  = '#E0A22E';
 const DIM    = '#7A6E60';
