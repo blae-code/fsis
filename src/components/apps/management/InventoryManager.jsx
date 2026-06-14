@@ -218,14 +218,14 @@ export default function InventoryManager() {
     queryFn: () => base44.entities.product.list('sort_order'),
   });
 
-  const diagDef = DIAG_FILTERS.find(d => d.id === diagFilter) || DIAG_FILTERS[0];
+  const activeDiag = DIAG_FILTERS.find((f) => f.id === diagFilter) || DIAG_FILTERS[0];
 
-  const visible = useMemo(() => products.filter((p) => {
-    const matchCat   = filter === 'all' || p.category === filter;
+  const visible = products.filter((p) => {
+    const matchCat    = filter === 'all' || p.category === filter;
     const matchSearch = !search || p.product_name?.toLowerCase().includes(search.toLowerCase()) || p.code?.toLowerCase().includes(search.toLowerCase());
-    const matchDiag  = diagDef.match(p);
+    const matchDiag   = activeDiag.match(p);
     return matchCat && matchSearch && matchDiag;
-  }), [products, filter, search, diagFilter]);
+  });
 
   // Summary stats
   const total   = products.length;
@@ -234,71 +234,74 @@ export default function InventoryManager() {
   const healthy = products.filter((p) => (p.stock ?? 0) >= THRESHOLDS.healthy).length;
 
   return (
-    <div className="flex gap-4 font-mono min-h-0">
+    <div className="flex gap-4 font-mono h-full">
 
-      {/* ── Diagnostic sidebar ───────────────────────────────── */}
+      {/* ── Diagnostic sidebar ── */}
       <div className="shrink-0 w-48 space-y-1">
-        <div className="text-[7px] tracking-[0.28em] px-1 pb-1.5 border-b mb-2" style={{ color: '#3A2A14', borderColor: '#2A2118' }}>
-          CONDITION FILTER
+        <div className="text-[8px] tracking-[0.25em] mb-3 flex items-center gap-1.5" style={{ color: '#6A5A40' }}>
+          <span style={{ color: AMBER }}>◈</span> DIAGNOSTIC FILTER
         </div>
-        {DIAG_FILTERS.map(({ id, label, icon: Icon, color, desc }) => {
-          const active = diagFilter === id;
-          const count  = id === 'all' ? products.length : products.filter(DIAG_FILTERS.find(d => d.id === id).match).length;
+        {DIAG_FILTERS.map((f) => {
+          const Icon    = f.icon;
+          const active  = diagFilter === f.id;
+          const count   = f.id === 'all' ? products.length : products.filter(f.match).length;
           return (
-            <button
-              key={id}
-              onClick={() => setDiag(id)}
-              className="w-full text-left p-2.5 border transition-colors"
+            <motion.button
+              key={f.id}
+              onClick={() => setDiag(f.id)}
+              whileHover={{ x: 2 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              className="w-full text-left p-2.5 rounded border transition-colors"
               style={{
-                background:  active ? `${color}12` : '#0A0806',
-                borderColor: active ? `${color}50` : '#1A1208',
-                borderLeft:  active ? `3px solid ${color}` : '3px solid transparent',
+                background:   active ? `${f.color}12` : 'hsl(30,10%,7%)',
+                borderColor:  active ? `${f.color}50` : 'hsl(33,18%,14%)',
               }}
             >
-              <div className="flex items-center gap-1.5 mb-1">
-                <Icon className="w-3 h-3 shrink-0" style={{ color: active ? color : '#4A3A24' }} />
-                <span className="text-[8px] tracking-[0.14em] font-bold leading-tight" style={{ color: active ? color : '#6A5A40' }}>
-                  {label}
+              <div className="flex items-center gap-2 mb-1">
+                <Icon className="w-3 h-3 shrink-0" style={{ color: active ? f.color : '#5A4A34' }} />
+                <span className="text-[8px] tracking-[0.15em] font-bold leading-tight"
+                  style={{ color: active ? f.color : '#8A7A60' }}>
+                  {f.label}
                 </span>
               </div>
-              <div className="text-[7px] leading-tight pl-4.5" style={{ color: '#3A2A14' }}>{desc}</div>
-              <div className="mt-1.5 pl-4.5">
-                <span className="text-[10px] font-bold" style={{ color: active ? color : '#4A3A24' }}>{count}</span>
-                <span className="text-[7px] ml-1" style={{ color: '#3A2A14' }}>items</span>
+              <div className="flex items-center justify-between">
+                <span className="text-[7px]" style={{ color: '#4A3A28' }}>{f.desc}</span>
+                <span className="text-[9px] font-bold ml-1 shrink-0" style={{ color: active ? f.color : '#5A4A34' }}>
+                  {count}
+                </span>
               </div>
-            </button>
+              {active && (
+                <motion.div
+                  layoutId="diag-indicator"
+                  className="mt-1.5 h-px w-full"
+                  style={{ background: `linear-gradient(90deg, ${f.color}80, transparent)` }}
+                />
+              )}
+            </motion.button>
           );
         })}
 
-        {/* Divider + active filter indicator */}
-        <div className="pt-3 border-t" style={{ borderColor: '#2A2118' }}>
-          <div className="text-[7px] tracking-[0.2em] px-1 mb-1" style={{ color: '#3A2A14' }}>ACTIVE</div>
-          <div className="px-1 text-[8px] font-bold" style={{ color: diagDef.color }}>{diagDef.label}</div>
-          <div className="px-1 text-[7px] mt-0.5" style={{ color: '#3A2A14' }}>{visible.length} of {products.length} shown</div>
-        </div>
-      </div>
-
-      {/* ── Main content ─────────────────────────────────────── */}
-      <div className="flex-1 min-w-0 space-y-3">
-        {/* KPI strip */}
-        <div className="grid grid-cols-4 gap-2">
+        {/* Divider */}
+        <div className="pt-3 border-t" style={{ borderColor: 'hsl(33,18%,14%)' }}>
+          <div className="text-[8px] tracking-[0.2em] mb-2" style={{ color: '#4A3A28' }}>STOCK STATUS</div>
           {[
-            { label: 'TOTAL WARES',  value: total,   color: AMBER },
-            { label: 'EMPTY',        value: empty,   color: RED },
-            { label: 'LOW STOCK',    value: low,     color: YELLOW },
-            { label: 'WELL STOCKED', value: healthy, color: GREEN },
+            { label: 'EMPTY',   value: empty,   color: RED },
+            { label: 'LOW',     value: low,     color: YELLOW },
+            { label: 'HEALTHY', value: healthy, color: GREEN },
           ].map(({ label, value, color }) => (
-            <div key={label} className="p-2.5 rounded border text-center" style={panel}>
-              <div className="text-lg font-bold" style={{ color }}>{value}</div>
-              <div className="text-[8px] tracking-[0.18em] mt-0.5" style={{ color: '#6A5A40' }}>{label}</div>
+            <div key={label} className="flex justify-between items-center py-1">
+              <span className="text-[8px]" style={{ color: '#5A4A34' }}>{label}</span>
+              <span className="text-[9px] font-bold font-mono" style={{ color }}>{value}</span>
             </div>
           ))}
         </div>
+      </div>
 
+      {/* ── Main panel ── */}
+      <div className="flex-1 min-w-0 space-y-3">
         {/* Category filter rail */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
           <button
-            key="all"
             onClick={() => setFilter('all')}
             className="shrink-0 px-3 py-1 rounded-sm text-[9px] tracking-[0.15em] transition-colors"
             style={{ background: filter === 'all' ? DIM : 'transparent', color: filter === 'all' ? AMBER : '#6A5A40', border: `1px solid ${filter === 'all' ? AMBER + '40' : '#2A2018'}` }}
@@ -329,6 +332,22 @@ export default function InventoryManager() {
           className="h-8 text-xs"
           style={border}
         />
+
+        {/* Active filter label */}
+        {diagFilter !== 'all' && (
+          <div className="flex items-center gap-2 text-[9px]" style={{ color: activeDiag.color }}>
+            <span>▸</span>
+            <span className="tracking-[0.15em]">SHOWING: {activeDiag.label}</span>
+            <span style={{ color: '#4A3A28' }}>· {visible.length} item{visible.length !== 1 ? 's' : ''}</span>
+            <button
+              onClick={() => setDiag('all')}
+              className="ml-auto text-[8px] tracking-[0.12em] transition-colors"
+              style={{ color: '#5A4A34' }}
+            >
+              CLEAR ×
+            </button>
+          </div>
+        )}
 
         {/* Stock rows */}
         {isLoading ? (
