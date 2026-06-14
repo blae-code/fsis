@@ -18,6 +18,7 @@ import CommandPalette from '@/components/os/CommandPalette';
 import MobileNav from '@/components/os/MobileNav';
 import ProprietorKey from '@/components/os/ProprietorKey';
 import CommandAccess from '@/components/os/CommandAccess';
+import OpsAlertToast from '@/components/os/OpsAlertToast';
 
 function DesktopShell({ userRole }) {
   const { windows } = useWindows();
@@ -73,6 +74,9 @@ function DesktopShell({ userRole }) {
 
       {/* Hidden command access sequence — admin only */}
       <CommandAccess userRole={userRole} />
+
+      {/* Ops alert toasts — contract & salvage session notifications */}
+      <OpsAlertToast />
     </div>
   );
 }

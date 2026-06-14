@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, X, Package, AlertTriangle, DollarSign, Users } from 'lucide-react';
+import { Bell, X, Package, AlertTriangle, DollarSign, FileSignature, Crosshair } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -8,7 +8,7 @@ const AMBER = '#E0A22E';
 const TEAL  = '#6FA08F';
 const RED   = '#C05050';
 
-function buildNotifications(orders = [], stockAlerts = [], priceAlerts = [], workOrders = []) {
+function buildNotifications(orders = [], stockAlerts = [], priceAlerts = [], workOrders = [], contracts = [], salvageSessions = []) {
   const notes = [];
 
   // New orders
@@ -56,6 +56,36 @@ function buildNotifications(orders = [], stockAlerts = [], priceAlerts = [], wor
     });
   }
 
+  // New open contracts (last 48h)
+  const recentContracts = contracts.filter(c => {
+    const age = (Date.now() - new Date(c.created_date)) / 3600000;
+    return c.status === 'open' && age < 48;
+  });
+  recentContracts.slice(0, 3).forEach(c => notes.push({
+    id: `contract_${c.id}`,
+    type: 'contract',
+    icon: FileSignature,
+    color: AMBER,
+    title: `Contract — ${c.title}`,
+    sub: [c.contract_type?.replace(/_/g,' ').toUpperCase(), c.payout_auec ? `${c.payout_auec.toLocaleString()} aUEC` : null].filter(Boolean).join(' · '),
+    ts: c.created_date,
+  }));
+
+  // New salvage sessions (last 24h)
+  const recentSalvage = salvageSessions.filter(s => {
+    const age = (Date.now() - new Date(s.created_date)) / 3600000;
+    return age < 24;
+  });
+  recentSalvage.slice(0, 2).forEach(s => notes.push({
+    id: `salvage_${s.id}`,
+    type: 'salvage',
+    icon: Crosshair,
+    color: TEAL,
+    title: `Salvage session — ${s.session_name}`,
+    sub: [s.ship, s.location].filter(Boolean).join(' · '),
+    ts: s.created_date,
+  }));
+
   return notes.slice(0, 8);
 }
 
@@ -64,11 +94,13 @@ export default function NotificationBell() {
   const [dismissed, setDismissed] = useState(() => JSON.parse(localStorage.getItem('fsis_dismissed_notifs') || '[]'));
   const panelRef = useRef(null);
 
-  const { data: orders = [] }      = useQuery({ queryKey: ['notif_orders'],     queryFn: () => base44.entities.order.filter({ status: 'new' }, '-created_date', 10),    refetchInterval: 30000 });
-  const { data: workOrders = [] }  = useQuery({ queryKey: ['notif_wo'],         queryFn: () => base44.entities.work_order.filter({ status: 'open' }, '-created_date', 20), refetchInterval: 60000 });
-  const { data: priceAlerts = [] } = useQuery({ queryKey: ['notif_palerts'],    queryFn: () => base44.entities.price_alert.list('-updated_date', 10),                     refetchInterval: 120000 });
+  const { data: orders = [] }          = useQuery({ queryKey: ['notif_orders'],    queryFn: () => base44.entities.order.filter({ status: 'new' }, '-created_date', 10),    refetchInterval: 30000 });
+  const { data: workOrders = [] }      = useQuery({ queryKey: ['notif_wo'],        queryFn: () => base44.entities.work_order.filter({ status: 'open' }, '-created_date', 20), refetchInterval: 60000 });
+  const { data: priceAlerts = [] }     = useQuery({ queryKey: ['notif_palerts'],   queryFn: () => base44.entities.price_alert.list('-updated_date', 10),                     refetchInterval: 120000 });
+  const { data: contracts = [] }       = useQuery({ queryKey: ['notif_contracts'], queryFn: () => base44.entities.contract.filter({ status: 'open' }, '-created_date', 5),   refetchInterval: 60000 });
+  const { data: salvageSessions = [] } = useQuery({ queryKey: ['notif_salvage'],   queryFn: () => base44.entities.salvage_session.list('-created_date', 5),                  refetchInterval: 60000 });
 
-  const all = buildNotifications(orders, [], priceAlerts, workOrders);
+  const all = buildNotifications(orders, [], priceAlerts, workOrders, contracts, salvageSessions);
   const active = all.filter(n => !dismissed.includes(n.id));
   const count = active.length;
 
