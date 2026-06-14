@@ -15,6 +15,7 @@ import { resolveContentById } from '@/lib/resolveAppContent.jsx';
 import { localCache } from '@/lib/localCache';
 import CommandPalette from '@/components/os/CommandPalette';
 import MobileNav from '@/components/os/MobileNav';
+import ProprietorKey from '@/components/os/ProprietorKey';
 
 function DesktopShell() {
   const { windows } = useWindows();
@@ -57,6 +58,9 @@ function DesktopShell() {
 
         {/* PWA install prompt */}
         <InstallPrompt />
+
+        {/* Proprietor access key — admin only */}
+        <ProprietorKey />
       </div>
 
       {/* Mobile bottom nav */}
