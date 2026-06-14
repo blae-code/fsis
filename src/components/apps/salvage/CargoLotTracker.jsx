@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -49,12 +49,25 @@ export default function CargoLotTracker() {
   const [addOpen, setAddOpen]         = useState(false);
   const [search, setSearch]           = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+
+  // Filter labels map to underlying lot statuses
+  const FILTER_OPTIONS = [
+    { id: 'all',       label: 'ALL',            match: null },
+    { id: 'collected', label: 'READY FOR SALE', match: 'collected' },
+    { id: 'processed', label: 'IN TRANSIT',     match: 'processed' },
+    { id: 'sold',      label: 'SOLD',           match: 'sold' },
+  ];
   const [newLot, setNewLot]           = useState({ lot_name: '', commodity_code: '', quantity_scu: '', origin: '', destination: '', status: 'collected' });
 
   const { data: lots = [], isLoading } = useQuery({
     queryKey: ['cargo_lots'],
     queryFn: () => base44.entities.cargo_lot.list('-created_date', 200),
   });
+
+  const displayedLots = useMemo(() => {
+    const activeFilter = FILTER_OPTIONS.find(f => f.id === filterStatus);
+    return lots.filter(l => !activeFilter?.match || l.status === activeFilter.match);
+  }, [lots, filterStatus]);
 
   const activeLots = lots.filter(l => l.status !== 'sold');
   const totalActiveScu = activeLots.reduce((s, l) => s + (l.quantity_scu || 0), 0);
@@ -255,6 +268,32 @@ export default function CargoLotTracker() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ── Status filter pills ──────────────────────────────── */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {FILTER_OPTIONS.map(f => {
+          const active = filterStatus === f.id;
+          const count  = f.match ? lots.filter(l => l.status === f.match).length : lots.length;
+          return (
+            <button
+              key={f.id}
+              onClick={() => setFilterStatus(f.id)}
+              className="flex items-center gap-1.5 px-3 py-1 text-[9px] tracking-[0.14em] font-bold transition-colors"
+              style={{
+                background: active ? '#2A1E0A' : 'transparent',
+                border: `1px solid ${active ? AMBER + '60' : '#2A2118'}`,
+                color: active ? AMBER : DIM,
+                clipPath: 'polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%)',
+              }}
+            >
+              {f.label}
+              <span className="text-[8px] px-1 rounded-sm" style={{ background: active ? AMBER + '22' : '#1A1208', color: active ? AMBER : '#3A3028' }}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
       {/* ── Active cargo summary ─────────────────────────────── */}
       {activeLots.length > 0 && (
