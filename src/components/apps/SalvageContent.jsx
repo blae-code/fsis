@@ -28,6 +28,7 @@ import StockAlerts from '@/components/apps/salvage/StockAlerts';
 import ProfitDashboard from '@/components/apps/salvage/ProfitDashboard';
 import ProcessingQueue from '@/components/apps/loot/ProcessingQueue';
 import CargoLotTracker from '@/components/apps/salvage/CargoLotTracker';
+import HaulRouteOverview from '@/components/apps/salvage/HaulRouteOverview';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -224,6 +225,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             LOTS
           </TabsTrigger>
           <TabsTrigger
+            value="haulmap"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            HAUL MAP
+          </TabsTrigger>
+          <TabsTrigger
             value="alerts"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
           >
@@ -386,6 +393,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
         <TabsContent value="lots" className="flex-1 overflow-auto m-0">
           <div className="p-4">
             <CargoLotTracker />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="haulmap" className="flex-1 overflow-auto m-0">
+          <div className="p-4">
+            <HaulRouteOverview />
           </div>
         </TabsContent>
 
