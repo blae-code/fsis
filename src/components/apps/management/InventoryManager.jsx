@@ -209,19 +209,23 @@ const CATEGORY_GROUPS = [
 ];
 
 export default function InventoryManager() {
-  const [filter, setFilter] = useState('salvage_commodity');
-  const [search, setSearch] = useState('');
+  const [filter, setFilter]     = useState('salvage_commodity');
+  const [diagFilter, setDiag]   = useState('all');
+  const [search, setSearch]     = useState('');
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['inv_products'],
     queryFn: () => base44.entities.product.list('sort_order'),
   });
 
-  const visible = products.filter((p) => {
-    const matchCat = filter === 'all' || p.category === filter;
+  const diagDef = DIAG_FILTERS.find(d => d.id === diagFilter) || DIAG_FILTERS[0];
+
+  const visible = useMemo(() => products.filter((p) => {
+    const matchCat   = filter === 'all' || p.category === filter;
     const matchSearch = !search || p.product_name?.toLowerCase().includes(search.toLowerCase()) || p.code?.toLowerCase().includes(search.toLowerCase());
-    return matchCat && matchSearch;
-  });
+    const matchDiag  = diagDef.match(p);
+    return matchCat && matchSearch && matchDiag;
+  }), [products, filter, search, diagFilter]);
 
   // Summary stats
   const total   = products.length;
@@ -230,76 +234,122 @@ export default function InventoryManager() {
   const healthy = products.filter((p) => (p.stock ?? 0) >= THRESHOLDS.healthy).length;
 
   return (
-    <div className="space-y-4 font-mono">
-      {/* KPI strip */}
-      <div className="grid grid-cols-4 gap-2">
-        {[
-          { label: 'TOTAL WARES',  value: total,   color: AMBER },
-          { label: 'EMPTY',        value: empty,   color: RED },
-          { label: 'LOW STOCK',    value: low,     color: YELLOW },
-          { label: 'WELL STOCKED', value: healthy, color: GREEN },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="p-2.5 rounded border text-center" style={panel}>
-            <div className="text-lg font-bold" style={{ color }}>{value}</div>
-            <div className="text-[8px] tracking-[0.18em] mt-0.5" style={{ color: '#6A5A40' }}>{label}</div>
-          </div>
-        ))}
-      </div>
+    <div className="flex gap-4 font-mono min-h-0">
 
-      {/* Category filter rail */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-        <button
-          key="all"
-          onClick={() => setFilter('all')}
-          className="shrink-0 px-3 py-1 rounded-sm text-[9px] tracking-[0.15em] transition-colors"
-          style={{ background: filter === 'all' ? DIM : 'transparent', color: filter === 'all' ? AMBER : '#6A5A40', border: `1px solid ${filter === 'all' ? AMBER + '40' : '#2A2018'}` }}
-        >
-          ALL
-        </button>
-        {CATEGORY_GROUPS.map(({ key, label }) => {
-          const count = products.filter((p) => p.category === key).length;
-          if (count === 0) return null;
+      {/* ── Diagnostic sidebar ───────────────────────────────── */}
+      <div className="shrink-0 w-48 space-y-1">
+        <div className="text-[7px] tracking-[0.28em] px-1 pb-1.5 border-b mb-2" style={{ color: '#3A2A14', borderColor: '#2A2118' }}>
+          CONDITION FILTER
+        </div>
+        {DIAG_FILTERS.map(({ id, label, icon: Icon, color, desc }) => {
+          const active = diagFilter === id;
+          const count  = id === 'all' ? products.length : products.filter(DIAG_FILTERS.find(d => d.id === id).match).length;
           return (
             <button
-              key={key}
-              onClick={() => setFilter(key)}
-              className="shrink-0 px-3 py-1 rounded-sm text-[9px] tracking-[0.12em] transition-colors"
-              style={{ background: filter === key ? DIM : 'transparent', color: filter === key ? AMBER : '#6A5A40', border: `1px solid ${filter === key ? AMBER + '40' : '#2A2018'}` }}
+              key={id}
+              onClick={() => setDiag(id)}
+              className="w-full text-left p-2.5 border transition-colors"
+              style={{
+                background:  active ? `${color}12` : '#0A0806',
+                borderColor: active ? `${color}50` : '#1A1208',
+                borderLeft:  active ? `3px solid ${color}` : '3px solid transparent',
+              }}
             >
-              {label} <span style={{ color: filter === key ? AMBER : '#3A2A14' }}>({count})</span>
+              <div className="flex items-center gap-1.5 mb-1">
+                <Icon className="w-3 h-3 shrink-0" style={{ color: active ? color : '#4A3A24' }} />
+                <span className="text-[8px] tracking-[0.14em] font-bold leading-tight" style={{ color: active ? color : '#6A5A40' }}>
+                  {label}
+                </span>
+              </div>
+              <div className="text-[7px] leading-tight pl-4.5" style={{ color: '#3A2A14' }}>{desc}</div>
+              <div className="mt-1.5 pl-4.5">
+                <span className="text-[10px] font-bold" style={{ color: active ? color : '#4A3A24' }}>{count}</span>
+                <span className="text-[7px] ml-1" style={{ color: '#3A2A14' }}>items</span>
+              </div>
             </button>
           );
         })}
+
+        {/* Divider + active filter indicator */}
+        <div className="pt-3 border-t" style={{ borderColor: '#2A2118' }}>
+          <div className="text-[7px] tracking-[0.2em] px-1 mb-1" style={{ color: '#3A2A14' }}>ACTIVE</div>
+          <div className="px-1 text-[8px] font-bold" style={{ color: diagDef.color }}>{diagDef.label}</div>
+          <div className="px-1 text-[7px] mt-0.5" style={{ color: '#3A2A14' }}>{visible.length} of {products.length} shown</div>
+        </div>
       </div>
 
-      {/* Search */}
-      <Input
-        placeholder="Search by name or code…"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="h-8 text-xs"
-        style={border}
-      />
+      {/* ── Main content ─────────────────────────────────────── */}
+      <div className="flex-1 min-w-0 space-y-3">
+        {/* KPI strip */}
+        <div className="grid grid-cols-4 gap-2">
+          {[
+            { label: 'TOTAL WARES',  value: total,   color: AMBER },
+            { label: 'EMPTY',        value: empty,   color: RED },
+            { label: 'LOW STOCK',    value: low,     color: YELLOW },
+            { label: 'WELL STOCKED', value: healthy, color: GREEN },
+          ].map(({ label, value, color }) => (
+            <div key={label} className="p-2.5 rounded border text-center" style={panel}>
+              <div className="text-lg font-bold" style={{ color }}>{value}</div>
+              <div className="text-[8px] tracking-[0.18em] mt-0.5" style={{ color: '#6A5A40' }}>{label}</div>
+            </div>
+          ))}
+        </div>
 
-      {/* Stock rows */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="w-5 h-5 animate-spin" style={{ color: AMBER }} />
+        {/* Category filter rail */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+          <button
+            key="all"
+            onClick={() => setFilter('all')}
+            className="shrink-0 px-3 py-1 rounded-sm text-[9px] tracking-[0.15em] transition-colors"
+            style={{ background: filter === 'all' ? DIM : 'transparent', color: filter === 'all' ? AMBER : '#6A5A40', border: `1px solid ${filter === 'all' ? AMBER + '40' : '#2A2018'}` }}
+          >
+            ALL
+          </button>
+          {CATEGORY_GROUPS.map(({ key, label }) => {
+            const count = products.filter((p) => p.category === key).length;
+            if (count === 0) return null;
+            return (
+              <button
+                key={key}
+                onClick={() => setFilter(key)}
+                className="shrink-0 px-3 py-1 rounded-sm text-[9px] tracking-[0.12em] transition-colors"
+                style={{ background: filter === key ? DIM : 'transparent', color: filter === key ? AMBER : '#6A5A40', border: `1px solid ${filter === key ? AMBER + '40' : '#2A2018'}` }}
+              >
+                {label} <span style={{ color: filter === key ? AMBER : '#3A2A14' }}>({count})</span>
+              </button>
+            );
+          })}
         </div>
-      ) : visible.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 gap-3">
-          <PackageSearch className="w-8 h-8" style={{ color: '#3A2A14' }} />
-          <p className="text-[10px] tracking-[0.2em]" style={{ color: '#5A4A34' }}>NO WARES MATCH FILTER</p>
-        </div>
-      ) : (
-        <div className="space-y-1.5">
-          {visible.map((p) => <StockRow key={p.id} product={p} />)}
-        </div>
-      )}
 
-      <p className="text-[9px] text-center pb-2" style={{ color: '#3A2A14' }}>
-        Click any stock number to edit in-line · Bars reference 500 SCU max
-      </p>
+        {/* Search */}
+        <Input
+          placeholder="Search by name or code…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-8 text-xs"
+          style={border}
+        />
+
+        {/* Stock rows */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-5 h-5 animate-spin" style={{ color: AMBER }} />
+          </div>
+        ) : visible.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 gap-3">
+            <PackageSearch className="w-8 h-8" style={{ color: '#3A2A14' }} />
+            <p className="text-[10px] tracking-[0.2em]" style={{ color: '#5A4A34' }}>NO WARES MATCH FILTER</p>
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            {visible.map((p) => <StockRow key={p.id} product={p} />)}
+          </div>
+        )}
+
+        <p className="text-[9px] text-center pb-2" style={{ color: '#3A2A14' }}>
+          Click any stock number to edit in-line · Bars reference 500 SCU max
+        </p>
+      </div>
     </div>
   );
 }
