@@ -20,12 +20,12 @@ import LootContent from '@/components/apps/LootContent';
 // Used both when opening from the Dock and when restoring a saved session.
 export function resolveAppContent(app) {
   switch (app.id) {
+    case 'settings':
+      return { title: 'SETTINGS — System Control', content: <SettingsContent /> };
     case 'about':
       return { title: 'ABOUT — FSIS', content: <AboutContent /> };
     case 'salvage':
-      return { title: 'SALVAGE — FairShare Pricing', content: <SalvageContent /> };
-    case 'settings':
-      return { title: 'SETTINGS — System Control', content: <SettingsContent /> };
+      return { title: 'SALVAGE — Operations & Market', content: <SalvageContent /> };
     case 'comms':
       return { title: 'COMMS — OD3ICA SRS Relay', content: <CommsContent /> };
     case 'fabrication':

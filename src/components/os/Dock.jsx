@@ -6,15 +6,18 @@ import { useWindows } from '@/lib/windowContext.jsx';
 import { resolveAppContent } from '@/lib/resolveAppContent.jsx';
 
 // Apps only available to admins (management/internal tooling)
-const ADMIN_ONLY_APPS = new Set(['management', 'salvage', 'ledger', 'orders', 'performance', 'fairshare', 'fabrication', 'matdex', 'loot']);
+const ADMIN_ONLY_APPS = new Set(['management', 'salvage', 'ledger', 'orders', 'performance', 'fairshare', 'fabrication', 'matdex', 'loot', 'station', 'contracts', 'comms', 'routemap', 'settings']);
 
 export default function Dock({ userRole }) {
   const { openWindow } = useWindows();
   const { apps } = useApps();
 
+  // Never show offline (sequestered) apps in the dock
+  const activeApps = apps.filter(app => app.status !== 'offline');
+
   const visibleApps = userRole === 'admin'
-    ? apps
-    : apps.filter(app => !ADMIN_ONLY_APPS.has(app.id));
+    ? activeApps
+    : activeApps.filter(app => !ADMIN_ONLY_APPS.has(app.id));
 
   const handleAppClick = (app) => {
     const { title, content } = resolveAppContent(app);
