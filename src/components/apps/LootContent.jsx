@@ -22,13 +22,11 @@ export default function LootContent() {
           <TabsTrigger value="queue"    className={TAB_STYLE}>PROCESSING QUEUE</TabsTrigger>
           <TabsTrigger value="repair"   className={TAB_STYLE}>REPAIR ROI</TabsTrigger>
           <TabsTrigger value="aging"    className={TAB_STYLE}>AGING</TabsTrigger>
-          <TabsTrigger value="queue"   className={TAB_STYLE}>PROC QUEUE</TabsTrigger>
         </TabsList>
         <TabsContent value="manifest" className="flex-1 overflow-auto m-0"><LootManifest /></TabsContent>
         <TabsContent value="queue"    className="flex-1 overflow-auto m-0"><ProcessingQueue /></TabsContent>
         <TabsContent value="repair"   className="flex-1 overflow-auto m-0"><RepairROI /></TabsContent>
         <TabsContent value="aging"    className="flex-1 overflow-auto m-0"><LootInventoryAging /></TabsContent>
-        <TabsContent value="queue"   className="flex-1 overflow-auto m-0"><ProcessingQueue /></TabsContent>
       </Tabs>
 
       <div className="p-2 border-t text-center" style={{ borderColor: 'hsl(33, 18%, 18%)', background: 'hsl(30, 10%, 6%)' }}>
