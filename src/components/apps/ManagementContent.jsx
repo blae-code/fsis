@@ -12,6 +12,7 @@ import OrdersContent from '@/components/apps/OrdersContent';
 import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
 import InventoryManager from '@/components/apps/management/InventoryManager';
 import SalvageCommodityDashboard from '@/components/apps/management/SalvageCommodityDashboard';
+import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
 
 const AMBER  = '#E0A22E';
 const DIM    = '#7A6E60';
@@ -27,6 +28,7 @@ const TABS = [
   { id: 'salvage',   label: 'SALVAGE',    glyph: '◈' },
   { id: 'inventory', label: 'INVENTORY',  glyph: '▦' },
   { id: 'auditlog',  label: 'AUDIT LOG',  glyph: '⬚' },
+  { id: 'ops',       label: 'OPS DECK',   glyph: '◉' },
 ];
 
 export default function ManagementContent() {
@@ -105,6 +107,7 @@ export default function ManagementContent() {
         {activeTab === 'salvage'   && <div className="p-4"><SalvageCommodityDashboard /></div>}
         {activeTab === 'inventory' && <div className="p-4"><InventoryManager /></div>}
         {activeTab === 'auditlog'  && <OpsAuditLog />}
+        {activeTab === 'ops'       && <OpsCommandDeck />}
       </div>
     </div>
   );
