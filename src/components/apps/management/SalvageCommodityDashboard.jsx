@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
+import SalvageStockChart from './SalvageStockChart';
 
 const AMBER = '#E0A22E';
 const TEAL  = '#5F9A8C';
@@ -200,6 +201,9 @@ export default function SalvageCommodityDashboard() {
               </motion.div>
             ))}
           </div>
+
+          {/* Stock over time chart */}
+          <SalvageStockChart sessions={filtered} />
 
           {/* Commodity breakdown bars */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
