@@ -5,9 +5,16 @@ import AppIcon from './AppIcon';
 import { useWindows } from '@/lib/windowContext.jsx';
 import { resolveAppContent } from '@/lib/resolveAppContent.jsx';
 
-export default function Dock() {
+// Apps only available to admins (management/internal tooling)
+const ADMIN_ONLY_APPS = new Set(['management', 'salvage', 'ledger', 'orders', 'performance', 'fairshare', 'fabrication', 'matdex', 'loot']);
+
+export default function Dock({ userRole }) {
   const { openWindow } = useWindows();
   const { apps } = useApps();
+
+  const visibleApps = userRole === 'admin'
+    ? apps
+    : apps.filter(app => !ADMIN_ONLY_APPS.has(app.id));
 
   const handleAppClick = (app) => {
     const { title, content } = resolveAppContent(app);
@@ -41,7 +48,7 @@ export default function Dock() {
         />
 
         <div className="flex items-center gap-1">
-          {apps.map((app, i) => (
+          {visibleApps.map((app, i) => (
             <AppIcon key={app.id} app={app} onClick={handleAppClick} index={i} />
           ))}
         </div>

@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { Navigate } from 'react-router-dom';
 import BootSequence from '@/components/os/BootSequence';
 import OperatorOnboarding from '@/components/os/onboarding/OperatorOnboarding';
 import StatusBar from '@/components/os/StatusBar';
@@ -17,7 +18,7 @@ import CommandPalette from '@/components/os/CommandPalette';
 import MobileNav from '@/components/os/MobileNav';
 import ProprietorKey from '@/components/os/ProprietorKey';
 
-function DesktopShell() {
+function DesktopShell({ userRole }) {
   const { windows } = useWindows();
   const [cmdOpen, setCmdOpen] = React.useState(false);
 
@@ -44,7 +45,7 @@ function DesktopShell() {
       {/* Desktop area */}
       <div className="flex-1 relative flex flex-col items-center justify-center">
         {/* App Dock - centered */}
-        <Dock />
+        <Dock userRole={userRole} />
 
         {/* Floating windows */}
         <AnimatePresence>
@@ -73,10 +74,9 @@ function DesktopShell() {
 }
 
 export default function Desktop() {
-  // Skip the full boot sequence on return visits for a faster, app-like feel
   const [booted, setBooted] = useState(() => localCache.hasBooted());
 
-  const { data: user, refetch } = useQuery({ queryKey: ['user'], queryFn: () => base44.auth.me() });
+  const { data: user, isLoading, refetch } = useQuery({ queryKey: ['user'], queryFn: () => base44.auth.me() });
   const needsOnboarding = booted && user && !user.onboarded;
 
   const handleBootComplete = useCallback(() => {
@@ -84,10 +84,15 @@ export default function Desktop() {
     setBooted(true);
   }, []);
 
+  // Guests (not logged in) have no business on the OS desktop — send them to the storefront
+  if (!isLoading && !user) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <WindowProvider resolveContent={resolveContentById}>
       {!booted && <BootSequence onComplete={handleBootComplete} />}
-      {booted && <DesktopShell />}
+      {booted && <DesktopShell userRole={user?.role} />}
       <AnimatePresence>
         {needsOnboarding && (
           <OperatorOnboarding user={user} onComplete={refetch} />
