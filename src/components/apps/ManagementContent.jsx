@@ -30,6 +30,7 @@ const TABS = [
   { id: 'inventory', label: 'INVENTORY',  glyph: '▦' },
   { id: 'auditlog',  label: 'AUDIT LOG',  glyph: '⬚' },
   { id: 'ops',       label: 'OPS DECK',   glyph: '◉' },
+  { id: 'market',    label: 'MARKET',     glyph: '◇' },
 ];
 
 export default function ManagementContent() {
@@ -109,6 +110,7 @@ export default function ManagementContent() {
         {activeTab === 'inventory' && <div className="p-4"><InventoryManager /></div>}
         {activeTab === 'auditlog'  && <OpsAuditLog />}
         {activeTab === 'ops'       && <OpsCommandDeck />}
+        {activeTab === 'market'    && <div className="p-4"><MarketPriceComparator /></div>}
       </div>
     </div>
   );

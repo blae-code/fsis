@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,7 +15,12 @@ const PANEL  = { background: '#111009', borderColor: '#2A2118' };
 const STATUS_OPTS = ['collected', 'processed', 'sold'];
 const STATUS_COLOR = { collected: '#6FA08F', processed: '#E0A22E', sold: '#8FBFAE' };
 
-
+const FILTER_OPTIONS = [
+  { id: 'all',       label: 'ALL',            match: null },
+  { id: 'collected', label: 'READY FOR SALE', match: 'collected' },
+  { id: 'processed', label: 'IN TRANSIT',     match: 'processed' },
+  { id: 'sold',      label: 'SOLD',           match: 'sold' },
+];
 
 const DESTINATIONS = [
   'TDD Orison', 'TDD New Babbage', 'TDD Lorville', 'TDD Area18',
@@ -51,6 +56,14 @@ export default function CargoLotTracker() {
   const [addOpen, setAddOpen]         = useState(false);
   const [search, setSearch]           = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+
+  // Filter labels map to underlying lot statuses
+  const FILTER_OPTIONS = [
+    { id: 'all',       label: 'ALL',            match: null },
+    { id: 'collected', label: 'READY FOR SALE', match: 'collected' },
+    { id: 'processed', label: 'IN TRANSIT',     match: 'processed' },
+    { id: 'sold',      label: 'SOLD',           match: 'sold' },
+  ];
   const [newLot, setNewLot]           = useState({ lot_name: '', commodity_code: '', quantity_scu: '', origin: '', destination: '', status: 'collected' });
 
   const { data: lots = [], isLoading } = useQuery({
@@ -58,7 +71,11 @@ export default function CargoLotTracker() {
     queryFn: () => base44.entities.cargo_lot.list('-created_date', 200),
   });
 
-  const filteredLots = filterStatus === 'all' ? lots : lots.filter(l => l.status === filterStatus);
+  const displayedLots = useMemo(() => {
+    const activeFilter = FILTER_OPTIONS.find(f => f.id === filterStatus);
+    return lots.filter(l => !activeFilter?.match || l.status === activeFilter.match);
+  }, [lots, filterStatus]);
+
   const activeLots = lots.filter(l => l.status !== 'sold');
   const totalActiveScu = activeLots.reduce((s, l) => s + (l.quantity_scu || 0), 0);
   const totalEstValue  = activeLots.reduce((s, l) => s + (l.est_value_auec || 0), 0);
@@ -88,12 +105,12 @@ export default function CargoLotTracker() {
   });
 
   const toggleAll = useCallback(() => {
-    if (selected.size === filteredLots.length && filteredLots.length > 0) {
+    if (selected.size === lots.length && lots.length > 0) {
       setSelected(new Set());
     } else {
-      setSelected(new Set(filteredLots.map((l) => l.id)));
+      setSelected(new Set(lots.map((l) => l.id)));
     }
-  }, [filteredLots, selected.size]);
+  }, [lots, selected.size]);
 
   const toggleOne = useCallback((id) => {
     setSelected((s) => {
@@ -120,8 +137,8 @@ export default function CargoLotTracker() {
     setApplying(false);
   };
 
-  const allSelected  = filteredLots.length > 0 && selected.size === filteredLots.length;
-  const someSelected = selected.size > 0 && selected.size < filteredLots.length;
+  const allSelected = lots.length > 0 && selected.size === lots.length;
+  const someSelected = selected.size > 0 && selected.size < lots.length;
 
   return (
     <div className="space-y-3 font-mono">
@@ -259,25 +276,27 @@ export default function CargoLotTracker() {
         )}
       </AnimatePresence>
 
-      {/* ── Filter tabs ──────────────────────────────────────── */}
-      <div className="flex gap-1 flex-wrap">
-        {FILTER_OPTIONS.map(opt => {
-          const active = filterStatus === opt.id;
-          const count  = opt.match === null ? lots.length : lots.filter(l => l.status === opt.match).length;
+      {/* ── Status filter pills ──────────────────────────────── */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {FILTER_OPTIONS.map(f => {
+          const active = filterStatus === f.id;
+          const count  = f.match ? lots.filter(l => l.status === f.match).length : lots.length;
           return (
             <button
-              key={opt.id}
-              onClick={() => setFilterStatus(opt.id)}
-              className="flex items-center gap-1.5 px-3 py-1 text-[8px] tracking-[0.14em] font-bold transition-colors"
+              key={f.id}
+              onClick={() => setFilterStatus(f.id)}
+              className="flex items-center gap-1.5 px-3 py-1 text-[9px] tracking-[0.14em] font-bold transition-colors"
               style={{
-                background: active ? '#2A1E0C' : '#0D0B08',
-                border:     `1px solid ${active ? '#B0793A' : '#2A2118'}`,
-                color:      active ? AMBER : DIM,
-                clipPath:   'polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%)',
+                background: active ? '#2A1E0A' : 'transparent',
+                border: `1px solid ${active ? AMBER + '60' : '#2A2118'}`,
+                color: active ? AMBER : DIM,
+                clipPath: 'polygon(5px 0, 100% 0, calc(100% - 5px) 100%, 0 100%)',
               }}
             >
-              {opt.label}
-              <span style={{ color: active ? AMBER : DIMMER }}>{count}</span>
+              {f.label}
+              <span className="text-[8px] px-1 rounded-sm" style={{ background: active ? AMBER + '22' : '#1A1208', color: active ? AMBER : '#3A3028' }}>
+                {count}
+              </span>
             </button>
           );
         })}
@@ -308,9 +327,9 @@ export default function CargoLotTracker() {
         <div className="flex justify-center py-8">
           <Loader2 className="w-4 h-4 animate-spin" style={{ color: AMBER }} />
         </div>
-      ) : filteredLots.length === 0 ? (
+      ) : displayedLots.length === 0 ? (
         <div className="border p-8 text-center text-[10px]" style={{ ...PANEL, color: DIM }}>
-          {lots.length === 0 ? 'No cargo lots logged. Add one above.' : 'No lots match this filter.'}
+          {lots.length === 0 ? 'No cargo lots logged. Add one above.' : 'No lots match the selected filter.'}
         </div>
       ) : (
         <div className="space-y-1">
@@ -331,7 +350,7 @@ export default function CargoLotTracker() {
             <span />
           </div>
 
-          {filteredLots.map((lot, i) => {
+          {displayedLots.map((lot, i) => {
             const isSel = selected.has(lot.id);
             return (
               <motion.div
