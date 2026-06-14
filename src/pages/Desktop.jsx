@@ -17,6 +17,7 @@ import { localCache } from '@/lib/localCache';
 import CommandPalette from '@/components/os/CommandPalette';
 import MobileNav from '@/components/os/MobileNav';
 import ProprietorKey from '@/components/os/ProprietorKey';
+import CommandAccess from '@/components/os/CommandAccess';
 
 function DesktopShell({ userRole }) {
   const { windows } = useWindows();
@@ -69,6 +70,9 @@ function DesktopShell({ userRole }) {
 
       {/* Command palette */}
       <CommandPalette open={cmdOpen} onClose={() => setCmdOpen(false)} />
+
+      {/* Hidden command access sequence — admin only */}
+      <CommandAccess userRole={userRole} />
     </div>
   );
 }
