@@ -56,6 +56,17 @@ export default function CargoLotTracker() {
     queryFn: () => base44.entities.cargo_lot.list('-created_date', 200),
   });
 
+  const activeLots = lots.filter(l => l.status !== 'sold');
+  const totalActiveScu = activeLots.reduce((s, l) => s + (l.quantity_scu || 0), 0);
+  const totalEstValue  = activeLots.reduce((s, l) => s + (l.est_value_auec || 0), 0);
+
+  function fmtAuec(n) {
+    if (!n) return '—';
+    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M aUEC`;
+    if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}k aUEC`;
+    return `${n.toLocaleString()} aUEC`;
+  }
+
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['cargo_lots'] });
 
   const createMutation = useMutation({
@@ -244,6 +255,26 @@ export default function CargoLotTracker() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ── Active cargo summary ─────────────────────────────── */}
+      {activeLots.length > 0 && (
+        <div className="border px-3 py-2 flex flex-wrap items-center gap-x-6 gap-y-1" style={{ background: '#0D0B08', borderColor: '#2A2118' }}>
+          <div className="flex items-center gap-2">
+            <span className="text-[8px] tracking-[0.18em]" style={{ color: DIM }}>ACTIVE LOTS</span>
+            <span className="text-[11px] font-bold" style={{ color: AMBER }}>{activeLots.length}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[8px] tracking-[0.18em]" style={{ color: DIM }}>TOTAL SCU</span>
+            <span className="text-[11px] font-bold" style={{ color: AMBER }}>{totalActiveScu.toLocaleString()}</span>
+          </div>
+          <div className="flex items-center gap-2 ml-auto">
+            <span className="text-[8px] tracking-[0.18em]" style={{ color: DIM }}>EST. MARKET VALUE</span>
+            <span className="text-[13px] font-bold" style={{ color: totalEstValue > 0 ? '#7BA05B' : DIM }}>
+              {fmtAuec(totalEstValue)}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* ── Lot table ────────────────────────────────────────── */}
       {isLoading ? (
