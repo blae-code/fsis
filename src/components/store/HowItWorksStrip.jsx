@@ -26,7 +26,12 @@ export default function HowItWorksStrip() {
       >
         <X className="w-3.5 h-3.5" />
       </button>
-      <p className="font-mono text-[9px] tracking-[0.25em] mb-2.5" style={{ color: '#6FA08F' }}>HOW BUYING WORKS</p>
+      <div className="flex items-center justify-between mb-2.5 flex-wrap gap-2">
+        <p className="font-mono text-[9px] tracking-[0.25em]" style={{ color: '#6FA08F' }}>HOW BUYING WORKS</p>
+        <p className="font-mono text-[9px] tracking-[0.12em] px-2 py-0.5 border" style={{ borderColor: '#2E423B', color: '#6FA08F', background: 'rgba(95,154,140,0.06)' }}>
+          ◈ NO ACCOUNT REQUIRED — JUST YOUR IN-GAME HANDLE
+        </p>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-0">
         {STEPS.map(({ icon: Icon, title, desc }, i) => (
           <div key={title} className="flex items-start gap-2.5 relative">

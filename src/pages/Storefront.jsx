@@ -187,13 +187,32 @@ export default function Storefront() {
               <p className="text-[10px] font-mono" style={{ color: '#6FA08F' }}>{FSIS.divisionCodes.join(' • ')} — "{FSIS.motto}"</p>
             </div>
           </div>
-          {user?.role === 'admin' && (
-            <Button asChild variant="outline" size="sm" className="h-8 text-[10px] font-mono gap-1.5 bg-transparent" style={{ borderColor: '#5C4424', color: '#C8A05B' }}>
-              <Link to="/ops">
-                <MonitorCog className="w-3.5 h-3.5" /> OPERATOR TERMINAL
-              </Link>
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {/* Access tier badge — always visible, no PII */}
+            {!user ? (
+              <div className="hidden sm:flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] px-2 py-1 border" style={{ borderColor: '#2A2A1A', color: '#7A7A50', background: '#0C0C08' }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />
+                GUEST ACCESS — NO ACCOUNT NEEDED
+              </div>
+            ) : user.role === 'admin' ? (
+              <div className="hidden sm:flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] px-2 py-1 border" style={{ borderColor: '#5C4424', color: '#C8893B', background: '#100A04' }}>
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#E0A22E' }} />
+                PROPRIETOR
+              </div>
+            ) : (
+              <div className="hidden sm:flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] px-2 py-1 border" style={{ borderColor: '#1A2A2A', color: '#6FA08F', background: '#080C0C' }}>
+                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#6FA08F' }} />
+                CONTRACTOR
+              </div>
+            )}
+            {user?.role === 'admin' && (
+              <Button asChild variant="outline" size="sm" className="h-8 text-[10px] font-mono gap-1.5 bg-transparent" style={{ borderColor: '#5C4424', color: '#C8A05B' }}>
+                <Link to="/ops">
+                  <MonitorCog className="w-3.5 h-3.5" /> OPERATOR TERMINAL
+                </Link>
+              </Button>
+            )}
+          </div>
         </div>
       </header>
 
