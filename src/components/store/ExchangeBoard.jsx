@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import DeltaGlyph from '@/components/brand/glyphs/DeltaGlyph';
+import DeltaGlyph from '@/components/brand/DeltaGlyph';
 
 const BRONZE = '#B0793A';
 const AMBER = '#D4920B';
