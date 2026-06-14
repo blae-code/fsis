@@ -163,6 +163,41 @@ function StockRow({ product }) {
   );
 }
 
+const DIAG_FILTERS = [
+  {
+    id: 'all',
+    label: 'ALL ITEMS',
+    icon: Layers,
+    color: '#E0A22E',
+    desc: 'Full inventory',
+    match: () => true,
+  },
+  {
+    id: 'resale',
+    label: 'READY FOR RESALE',
+    icon: CheckCircle,
+    color: '#4EBF7A',
+    desc: 'New or refurb · listed or repaired',
+    match: (p) => p.condition_grade === 'new' || p.condition_grade === 'refurb',
+  },
+  {
+    id: 'repair',
+    label: 'NEEDS REPAIR',
+    icon: Wrench,
+    color: '#D4A830',
+    desc: 'Used condition · repair recommended',
+    match: (p) => p.condition_grade === 'used',
+  },
+  {
+    id: 'scrap',
+    label: 'SCRAP ONLY',
+    icon: Skull,
+    color: '#C05050',
+    desc: 'Worn · salvage or scrap value only',
+    match: (p) => p.condition_grade === 'worn',
+  },
+];
+
 const CATEGORY_GROUPS = [
   { key: 'salvage_commodity', label: 'SALVAGE COMMODITIES' },
   { key: 'fabricated',        label: 'FABRICATED' },

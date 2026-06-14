@@ -57,13 +57,7 @@ export default function CargoLotTracker() {
   const [search, setSearch]           = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
 
-  // Filter labels map to underlying lot statuses
-  const FILTER_OPTIONS = [
-    { id: 'all',       label: 'ALL',            match: null },
-    { id: 'collected', label: 'READY FOR SALE', match: 'collected' },
-    { id: 'processed', label: 'IN TRANSIT',     match: 'processed' },
-    { id: 'sold',      label: 'SOLD',           match: 'sold' },
-  ];
+
   const [newLot, setNewLot]           = useState({ lot_name: '', commodity_code: '', quantity_scu: '', origin: '', destination: '', status: 'collected' });
 
   const { data: lots = [], isLoading } = useQuery({
