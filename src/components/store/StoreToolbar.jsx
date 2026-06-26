@@ -1,7 +1,7 @@
 import React, { useId } from 'react';
 import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
-import StoreTip, { Kbd } from '@/components/store/StoreTip';
+import { RotateCcw, Search, X } from 'lucide-react';
+import { Kbd } from '@/components/store/StoreTip';
 import CategoryRadialMenu from '@/components/store/CategoryRadialMenu';
 
 
@@ -12,8 +12,9 @@ const SORTS = [
   { key: 'stock',      label: 'STOCK' },
 ];
 
-export default function StoreToolbar({ search, setSearch, category, setCategory, sort, setSort, count }) {
+export default function StoreToolbar({ search, setSearch, category, setCategory, sort, setSort, count, total, onReset }) {
   const sortId = useId();
+  const hasFilters = Boolean(search) || category !== 'all' || sort !== 'featured';
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 font-mono flex-wrap">
@@ -33,9 +34,21 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
             background: 'rgba(10, 9, 7, 0.5)',
           }}
         />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-          <Kbd>/</Kbd>
-        </span>
+        {search ? (
+          <button
+            type="button"
+            onClick={() => setSearch('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 hover:brightness-125"
+            style={{ color: '#8A7E6C' }}
+            aria-label="Clear search"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        ) : (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <Kbd>/</Kbd>
+          </span>
+        )}
       </div>
 
       {/* Category radial menu */}
@@ -73,7 +86,19 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
         })}
       </div>
 
-      <span className="text-[9px] shrink-0" style={{ color: '#6B6155' }}>{count} WARES</span>
+      <div className="flex items-center gap-2 shrink-0">
+        <span className="text-[9px]" style={{ color: hasFilters ? '#C8893B' : '#6B6155' }}>{count}{total != null ? `/${total}` : ''} WARES</span>
+        {hasFilters && (
+          <button
+            type="button"
+            onClick={onReset}
+            className="h-8 px-2 flex items-center gap-1 border text-[9px] tracking-[0.12em] hover:brightness-125"
+            style={{ borderColor: '#3A2F20', color: '#8A7E6C', background: '#0C0A07', clipPath: 'polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)' }}
+          >
+            <RotateCcw className="w-3 h-3" /> RESET
+          </button>
+        )}
+      </div>
     </div>
   );
 }

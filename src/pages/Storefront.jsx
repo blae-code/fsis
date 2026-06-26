@@ -23,6 +23,7 @@ import StoreOnboarding from '@/components/store/StoreOnboarding';
 import MobileCartBar from '@/components/store/MobileCartBar';
 import ActiveOrderBanner from '@/components/store/ActiveOrderBanner';
 import HowItWorksStrip from '@/components/store/HowItWorksStrip';
+import StoreGuidedFinder from '@/components/store/StoreGuidedFinder';
 import RecentDeliveries from '@/components/store/RecentDeliveries';
 import { useToast } from '@/components/ui/use-toast';
 import { DerelictHull } from '@/components/brand/glyphs/EmptyStates';
@@ -40,6 +41,7 @@ export default function Storefront() {
   const [tab, setTab] = useState('catalog');
   const [detailProduct, setDetailProduct] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(() => !storeCache.hasOnboarded());
+  const [preferredLocation, setPreferredLocation] = useState('');
   const [sort, setSort] = useState('featured');
   const [pins, setPins] = useState(() => storeCache.getPins());
   const { toast } = useToast();
@@ -258,7 +260,7 @@ export default function Storefront() {
           <div className="shrink-0 flex flex-wrap items-center justify-between gap-3">
             <StoreTabs active={tab} onChange={setTab} />
             {tab === 'catalog' && (
-              <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} sort={sort} setSort={setSort} count={filteredProducts.length} />
+              <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} sort={sort} setSort={setSort} count={filteredProducts.length} total={products.length} onReset={() => { setSearch(''); setCategory('all'); setSort('featured'); }} />
             )}
           </div>
 
@@ -266,6 +268,15 @@ export default function Storefront() {
           <div className="flex-1 min-h-0 lg:overflow-y-auto pr-1">
             {tab === 'catalog' && (
               <div className="space-y-4">
+                <StoreGuidedFinder onChoose={(action) => {
+                  if (action === 'quote' || action === 'orders') {
+                    setTab(action);
+                    return;
+                  }
+                  setTab('catalog');
+                  setCategory(action);
+                  setSearch('');
+                }} />
                 <HowItWorksStrip />
                 <motion.div
                   className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
@@ -304,7 +315,7 @@ export default function Storefront() {
                 <RecentDeliveries />
               </div>
             )}
-            {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty, loc) => { addToCart(p, qty); if (loc) setTab('catalog'); }} />}
+            {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty, loc) => { addToCart(p, qty); if (loc) setPreferredLocation(loc); setTab('catalog'); }} />}
             {tab === 'orders' && <MyOrders onReorder={reorder} />}
             {/* ARCHIVED: jobs, dashboard, report tabs sequestered for future operator development */}
             {tab === 'about' && (
@@ -318,7 +329,7 @@ export default function Storefront() {
 
         {/* Order panel — pinned, scrolls internally if needed (drawer on mobile) */}
         <div className="hidden lg:block min-h-0 lg:overflow-y-auto">
-          <OrderPanel cart={cart} setCart={setCart} user={user} />
+          <OrderPanel cart={cart} setCart={setCart} user={user} preferredLocation={preferredLocation} />
         </div>
       </main>
 
@@ -335,7 +346,7 @@ export default function Storefront() {
       </div>
 
       <ActiveOrderBanner onViewOrders={() => setTab('orders')} />
-      <MobileCartBar cart={cart} setCart={setCart} user={user} />
+      <MobileCartBar cart={cart} setCart={setCart} user={user} preferredLocation={preferredLocation} />
 
       <footer className="shrink-0 border-t py-1.5 px-4 flex flex-wrap items-center justify-center gap-x-4" style={{ borderColor: '#2A2118' }}>
         <p className="text-[9px] font-mono" style={{ color: '#6B6155' }}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { placeOrder } from '@/functions/placeOrder';
 import { storeCache } from '@/lib/localCache';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -12,21 +12,26 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ManifestReceipt from '@/components/store/ManifestReceipt';
 import OrderReceiptModal from '@/components/store/OrderReceiptModal';
 import HoldToTransmit from '@/components/store/HoldToTransmit';
+import CheckoutReadiness from '@/components/store/CheckoutReadiness';
 import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
 import LocationMarker from '@/components/brand/glyphs/LocationMarker';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 
-export default function OrderPanel({ cart, setCart, user }) {
+export default function OrderPanel({ cart, setCart, user, preferredLocation = '' }) {
   const queryClient = useQueryClient();
   const saved = storeCache.getCustomer();
   const [handle, setHandle] = useState(saved?.handle || user?.full_name || '');
-  const [location, setLocation] = useState(saved?.location || '');
+  const [location, setLocation] = useState(saved?.location || preferredLocation || '');
   const [notes, setNotes] = useState('');
   const [svcWindow, setSvcWindow] = useState('');
   const [discountCode, setDiscountCode] = useState('');
   const [placed, setPlaced] = useState(null); // manifest snapshot of last placed order
   const [showReceipt, setShowReceipt] = useState(false);
+
+  useEffect(() => {
+    if (preferredLocation) setLocation(preferredLocation);
+  }, [preferredLocation]);
 
   const total = cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
   const hasService = cart.some((i) => i.category === 'service');
@@ -85,6 +90,8 @@ export default function OrderPanel({ cart, setCart, user }) {
       <div className="flex items-center gap-2 font-mono text-xs tracking-[0.2em]" style={{ color: '#6FA08F' }}>
         <ShoppingCart className="w-3.5 h-3.5" /> ORDER MANIFEST
       </div>
+
+      <CheckoutReadiness cart={cart} handle={handle} location={location} />
 
       {placed && <ManifestReceipt order={placed} />}
       <OrderReceiptModal order={placed} open={showReceipt} onClose={() => setShowReceipt(false)} />
