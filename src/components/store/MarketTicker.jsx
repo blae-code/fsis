@@ -48,7 +48,7 @@ export default function MarketTicker() {
         <motion.div
           className="flex whitespace-nowrap font-mono w-max"
           animate={{ x: ['0%', '-50%'] }}
-          transition={{ duration: Math.max(20, entries.length * 9), repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: Math.max(45, entries.length * 16), repeat: Infinity, ease: 'linear' }}
         >
           {track('a')}
           {track('b')}

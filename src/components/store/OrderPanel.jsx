@@ -172,9 +172,12 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
                 onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
                 className="h-8 text-xs font-mono"
                 style={fieldStyle}
-                placeholder="Org members enter code here"
+                placeholder="REDSCAR-2956"
               />
-              <p className="text-[9px] font-mono" style={{ color: '#6B6155' }}>Verified at checkout — itemized on your receipt.</p>
+              <div className="border px-2.5 py-2 font-mono" style={{ borderColor: '#5C4424', background: 'rgba(224, 162, 46, 0.07)' }}>
+                <p className="text-[10px] font-bold tracking-[0.12em]" style={{ color: '#E0A22E' }}>REDSCAR NOMADS PREFERRED RATE</p>
+                <p className="mt-1 text-[9px] leading-relaxed" style={{ color: '#A89C8A' }}>Members enter <span style={{ color: '#F2EADC' }}>REDSCAR-2956</span> to apply preferential pricing at checkout.</p>
+              </div>
             </div>
             <div className="space-y-1">
               <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>NOTES</Label>

@@ -53,7 +53,7 @@ export default function OpsFeed() {
         <motion.div
           className="flex w-max"
           animate={{ x: ['0%', '-50%'] }}
-          transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: 90, repeat: Infinity, ease: 'linear' }}
         >
           <Row />
           <Row />
