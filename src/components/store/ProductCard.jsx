@@ -47,7 +47,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col group/card"
+      className="flex flex-col group/card h-full"
       style={{ perspective: 900 }}
     >
       <motion.div
@@ -55,7 +55,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         onClick={() => onView?.(product)}
         whileHover={{ rotateX: 2.5, rotateY: -2.5, y: -4 }}
         transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-        className="relative flex flex-col gap-3 p-4 border flex-1 cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
+        className="relative flex flex-col gap-3 p-4 border h-[455px] cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
         style={{
           borderColor: inCart ? '#C8893B' : `${accent}66`,
           boxShadow: inCart ? '0 0 16px rgba(212, 146, 11, 0.18), inset 0 0 18px rgba(212, 146, 11, 0.05)' : `inset 0 0 24px ${accent}10`,
@@ -149,14 +149,12 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         </div>
 
         <div>
-          <h3 className="font-mono text-[15px] font-bold leading-snug" style={{ color: '#EDE5D6' }}>
+          <h3 className="font-mono text-[15px] font-bold leading-snug" style={{ color: '#EDE5D6', minHeight: '2.65rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {product.product_name}
             {product.code && <span className="ml-2 text-xs" style={{ color: accent }}>[{product.code}]</span>}
           </h3>
-          {product.description && (
-            <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#877D6D' }}>{product.description}</p>
-          )}
-          <div className="flex flex-wrap gap-1.5 mt-2">
+          <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#877D6D', minHeight: '2.65rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', visibility: product.description ? 'visible' : 'hidden' }}>{product.description || ' '}</p>
+          <div className="flex flex-wrap gap-1.5 mt-2 min-h-[24px]">
             <span className="text-[8px] font-mono font-bold tracking-[0.13em] px-2 py-0.5 border" style={{ borderColor: `${availabilityColor}55`, color: availabilityColor, background: `${availabilityColor}14` }}>{availabilityLabel}</span>
             {isBestValue && <span className="text-[8px] font-mono font-bold tracking-[0.13em] px-2 py-0.5 border" style={{ borderColor: '#8A8F4566', color: '#9ED0BD', background: 'rgba(111,160,143,0.12)' }}>BEST REDSCAR VALUE</span>}
           </div>
@@ -165,7 +163,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         <div className="mt-auto space-y-2">
           <SerialStrip seed={product.id} label="FSIS CERTIFIED" />
           <div className="font-mono space-y-1.5">
-            <div className="flex items-start gap-2 flex-wrap">
+            <div className="flex items-start gap-2 flex-wrap min-h-[78px]">
               <div>
                 <div className="text-[8px] font-bold tracking-[0.16em]" style={{ color: '#6B6155' }}>STANDARD PRICE</div>
                 <span className="text-2xl font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{displayPrice.toLocaleString()}</span>
