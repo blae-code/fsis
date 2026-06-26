@@ -1,8 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 // Public guest checkout: validates the cart against the live catalog server-side,
-// recomputes pricing, issues a tracking code, and creates the order via service role
-// so buyers don't need an account.
+// recomputes pricing, reserves physical stock, issues a tracking code, and creates
+// the order via service role so buyers don't need an account.
 
 Deno.serve(async (req) => {
   try {
@@ -62,7 +62,26 @@ Deno.serve(async (req) => {
     const rnd = crypto.getRandomValues(new Uint32Array(3));
     const handoff_passphrase = `${WORDS_A[rnd[0] % WORDS_A.length]}-${WORDS_B[rnd[1] % WORDS_B.length]}-${10 + (rnd[2] % 90)}`;
 
-    const order = await svc.order.create({
+    const reservedProducts = [];
+    try {
+      for (const item of lines) {
+        const product = products.find((p) => p.id === item.product_id);
+        if (!product || product.category === 'service') continue;
+        const nextStock = Math.max(0, (product.stock || 0) - item.quantity);
+        await svc.product.update(product.id, { stock: nextStock });
+        reservedProducts.push({ id: product.id, name: product.product_name, quantity: item.quantity });
+      }
+    } catch (error) {
+      for (const reserved of reservedProducts) {
+        const current = await svc.product.get(reserved.id).catch(() => null);
+        if (current) await svc.product.update(reserved.id, { stock: (current.stock || 0) + reserved.quantity }).catch(() => {});
+      }
+      return Response.json({ error: `Unable to reserve stock: ${error.message}` }, { status: 500 });
+    }
+
+    let order;
+    try {
+      order = await svc.order.create({
       customer_handle: customer_handle.trim(),
       tracking_code,
       handoff_passphrase,
@@ -71,10 +90,18 @@ Deno.serve(async (req) => {
       discount_code: applied ? applied.code : '',
       discount_percent: applied ? applied.discount_percent : 0,
       discount_auec,
-      delivery_location: delivery_location.trim(),
-      customer_notes: customer_notes || '',
-      status: 'new',
-    });
+        delivery_location: delivery_location.trim(),
+        customer_notes: customer_notes || '',
+        internal_notes: reservedProducts.length ? `STOCK RESERVED ON CHECKOUT: ${reservedProducts.map((p) => `${p.name} ×${p.quantity}`).join(', ')}` : '',
+        status: 'new',
+      });
+    } catch (error) {
+      for (const reserved of reservedProducts) {
+        const current = await svc.product.get(reserved.id).catch(() => null);
+        if (current) await svc.product.update(reserved.id, { stock: (current.stock || 0) + reserved.quantity }).catch(() => {});
+      }
+      throw error;
+    }
 
     if (applied) {
       await svc.discount_code.update(applied.id, { uses: (applied.uses || 0) + 1 });
@@ -89,6 +116,7 @@ Deno.serve(async (req) => {
       discount_auec,
       discount_percent: applied ? applied.discount_percent : 0,
       handoff_passphrase,
+      stock_reserved: reservedProducts.length > 0,
     });
   } catch (error) {
     console.error('placeOrder error:', error);

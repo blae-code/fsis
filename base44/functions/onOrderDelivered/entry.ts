@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 // FSIS.bot fulfillment agent: when an order is marked delivered, auto-log the
-// sale income in the Ledger and decrement storefront stock per line item.
+// sale income in the Ledger. Storefront stock is reserved at checkout.
 
 Deno.serve(async (req) => {
   try {
@@ -50,17 +50,8 @@ Deno.serve(async (req) => {
       actions.push(`logged ${total.toLocaleString()} aUEC income`);
     }
 
-    // 2. Decrement storefront stock
-    const products = await svc.product.list();
-    for (const item of order.items || []) {
-      const product = products.find((p) => p.id === item.product_id) ||
-        products.find((p) => p.product_name === item.product_name);
-      if (product && item.quantity) {
-        const newStock = Math.max(0, (product.stock || 0) - item.quantity);
-        await svc.product.update(product.id, { stock: newStock });
-        actions.push(`${product.product_name}: stock ${product.stock || 0} → ${newStock}`);
-      }
-    }
+    // 2. Stock already reserved when the buyer transmitted the manifest.
+    actions.push('stock reservation retained from checkout');
 
     await svc.order.update(order.id, {
       internal_notes: [(order.internal_notes || '').trim(), `FULFILLMENT APPLIED: ${actions.join('; ') || 'no ledger or stock changes'}. ${dedupeTag}`].filter(Boolean).join('\n'),

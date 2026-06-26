@@ -12,6 +12,7 @@ import { lotNumber } from '@/lib/fsisLore';
 
 const CONDITION_COLOR = { new: '#7BA05B', refurb: '#6FA08F', used: '#C8893B', worn: '#C05050' };
 const CONDITION_LABEL = { new: 'NEW', refurb: 'REFURBISHED', used: 'USED', worn: 'WORN' };
+const REDSCAR_DISCOUNT_PERCENT = 10;
 
 function ConditionBadge({ grade, pct }) {
   if (!grade) return null;
@@ -44,6 +45,7 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
     .sort((a, b) => b.price_sell - a.price_sell)
     .slice(0, 3);
   const related = products.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 3);
+  const redscarPrice = Math.round((product.price_auec || 0) * (100 - REDSCAR_DISCOUNT_PERCENT) / 100);
 
   return (
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
@@ -89,6 +91,12 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
               <span>
                 <span className="text-2xl font-bold" style={{ color: '#E0A22E' }}>{product.price_auec.toLocaleString()}</span>
                 <span className="text-[10px] ml-1.5" style={{ color: '#8A7E6C' }}>aUEC/{product.unit || 'SCU'}</span>
+                <span className="block text-[8px] tracking-[0.16em] mt-0.5" style={{ color: '#6B6155' }}>STANDARD PRICE</span>
+              </span>
+              <span className="border px-2 py-1" style={{ borderColor: '#6FA08F66', background: 'rgba(111, 160, 143, 0.08)' }}>
+                <span className="text-lg font-bold" style={{ color: '#9ED0BD' }}>{redscarPrice.toLocaleString()}</span>
+                <span className="text-[9px] ml-1" style={{ color: '#6FA08F' }}>aUEC/{product.unit || 'SCU'}</span>
+                <span className="block text-[8px] tracking-[0.16em] mt-0.5" style={{ color: '#6FA08F' }}>REDSCAR MEMBER</span>
               </span>
               <MarketBadge price={product.price_auec} marketBest={topTerminals[0]?.price_sell} />
             </div>

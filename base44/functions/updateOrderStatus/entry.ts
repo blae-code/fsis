@@ -27,9 +27,21 @@ Deno.serve(async (req) => {
     }
 
     const note = `ADMIN STATUS CHANGE: ${order.status || 'new'} → ${status} by ${user.email || user.full_name || 'admin'} (${new Date().toISOString()})`;
+    const restoreTag = `[stock-restored:${order.id}]`;
+    const restoreNotes = [];
+    if (status === 'cancelled' && !(order.internal_notes || '').includes(restoreTag)) {
+      for (const item of order.items || []) {
+        if (!item.product_id || !item.quantity) continue;
+        const product = await svc.product.get(item.product_id).catch(() => null);
+        if (!product || product.category === 'service') continue;
+        const nextStock = (product.stock || 0) + item.quantity;
+        await svc.product.update(product.id, { stock: nextStock });
+        restoreNotes.push(`${product.product_name}: ${product.stock || 0} → ${nextStock}`);
+      }
+    }
     const updated = await svc.order.update(order.id, {
       status,
-      internal_notes: [(order.internal_notes || '').trim(), note].filter(Boolean).join('\n'),
+      internal_notes: [(order.internal_notes || '').trim(), note, restoreNotes.length ? `STOCK RESTORED: ${restoreNotes.join('; ')} ${restoreTag}` : status === 'cancelled' ? restoreTag : ''].filter(Boolean).join('\n'),
     });
 
     await svc.ops_log.create({

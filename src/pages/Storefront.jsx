@@ -26,6 +26,8 @@ import HowItWorksStrip from '@/components/store/HowItWorksStrip';
 import StoreGuidedFinder from '@/components/store/StoreGuidedFinder';
 import StoreFaq from '@/components/store/StoreFaq';
 import StoreLiveStatusPanel from '@/components/store/StoreLiveStatusPanel';
+import RedscarTrustStrip from '@/components/store/RedscarTrustStrip';
+import ProductCompareTray from '@/components/store/ProductCompareTray';
 import StorefrontAtmosphere from '@/components/store/StorefrontAtmosphere';
 import BuyerProgressRail from '@/components/store/BuyerProgressRail';
 import CatalogQuickFilters, { matchesQuickFilter } from '@/components/store/CatalogQuickFilters';
@@ -50,6 +52,7 @@ export default function Storefront() {
   const [preferredLocation, setPreferredLocation] = useState('');
   const [sort, setSort] = useState('featured');
   const [pins, setPins] = useState(() => storeCache.getPins());
+  const [compareIds, setCompareIds] = useState([]);
   const { toast } = useToast();
 
   // Persist in-progress cart so returning purchasers pick up where they left off
@@ -128,16 +131,20 @@ export default function Storefront() {
     }
   };
 
-  // Refill the manifest from a past order's line items
+  // Refill the manifest from a past order's line items, capped against live stock.
   const reorder = (items) => {
     setCart((prev) => {
       let next = [...prev];
       items.forEach((item) => {
+        const live = products.find((p) => p.id === item.product_id);
+        const cap = live?.category === 'service' ? Infinity : (live?.stock ?? item.quantity);
         const existing = next.find((i) => i.product_id === item.product_id);
+        const current = existing?.quantity || 0;
+        const allowed = Math.max(0, Math.min(item.quantity, cap - current));
+        if (allowed <= 0) return;
         if (existing) {
-          next = next.map((i) => i.product_id === item.product_id ? { ...i, quantity: i.quantity + item.quantity } : i);
+          next = next.map((i) => i.product_id === item.product_id ? { ...i, quantity: i.quantity + allowed, stock: cap === Infinity ? null : cap } : i);
         } else {
-          const live = products.find((p) => p.id === item.product_id);
           next.push({
             product_id: item.product_id,
             product_name: item.product_name,
@@ -145,7 +152,8 @@ export default function Storefront() {
             category: live?.category,
             unit: item.unit || 'SCU',
             unit_price: live?.price_auec ?? item.unit_price,
-            quantity: item.quantity,
+            stock: cap === Infinity ? null : cap,
+            quantity: allowed,
           });
         }
       });
@@ -170,6 +178,8 @@ export default function Storefront() {
   const sortedProducts = [...filteredProducts].sort((a, b) =>
     (pins.includes(a.id) ? 0 : 1) - (pins.includes(b.id) ? 0 : 1) || SORT_FNS[sort](a, b)
   );
+  const compareProducts = compareIds.map((id) => products.find((p) => p.id === id)).filter(Boolean);
+  const toggleCompare = (id) => setCompareIds((current) => current.includes(id) ? current.filter((p) => p !== id) : [id, ...current].slice(0, 3));
 
   return (
     <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#0C0B0A' }}>
@@ -291,7 +301,9 @@ export default function Storefront() {
                   setSearch('');
                 }} />
                 <HowItWorksStrip />
+                <RedscarTrustStrip />
                 <CatalogQuickFilters active={quickFilter} onChange={setQuickFilter} products={products} marketBestByCode={marketBestByCode} />
+                <ProductCompareTray products={compareProducts} onClear={() => setCompareIds([])} onView={setDetailProduct} />
                 <motion.div
                   className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
                   variants={{ show: { transition: { staggerChildren: 0.05 } } }}
@@ -330,6 +342,8 @@ export default function Storefront() {
                           inCartQty={cart.find((i) => i.product_id === p.id)?.quantity || 0}
                           pinned={pins.includes(p.id)}
                           onTogglePin={(id) => setPins(storeCache.togglePin(id))}
+                          compareSelected={compareIds.includes(p.id)}
+                          onToggleCompare={toggleCompare}
                           onRestockNotify={() => toast({ title: 'RESTOCK ALERT', description: `We'll list ${p.product_name} again as soon as salvage ops deliver. Check back soon.` })}
                         />
                       </motion.div>

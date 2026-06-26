@@ -28,12 +28,15 @@ const CATEGORY_META = {
 const CONDITION_COLOR = { new: '#7BA05B', refurb: '#6FA08F', used: '#C8893B', worn: '#C05050' };
 const REDSCAR_DISCOUNT_PERCENT = 10;
 
-export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin, onRestockNotify }) {
+export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin, onRestockNotify, compareSelected = false, onToggleCompare }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
   const FallbackIcon = meta.icon;
   const inCart = inCartQty > 0;
   const redscarPrice = Math.max(0, Math.round((product.price_auec || 0) * (100 - REDSCAR_DISCOUNT_PERCENT) / 100));
+  const isBestValue = marketBest && redscarPrice < marketBest;
+  const availabilityLabel = product.category === 'service' ? 'SCHEDULING REQUIRED' : !inStock ? 'RESTOCK WATCH' : (product.stock || 0) < 50 ? 'LIMITED STOCK' : 'READY NOW';
+  const availabilityColor = product.category === 'service' ? '#C8893B' : !inStock ? '#C05050' : (product.stock || 0) < 50 ? '#E0A22E' : '#6FA08F';
   const [showRestockModal, setShowRestockModal] = useState(false);
 
   return (
@@ -96,6 +99,15 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
                   <Pin className="w-3 h-3" style={{ color: pinned ? '#F0B43A' : '#6B6155', fill: pinned ? '#F0B43A' : 'none' }} />
                 </button>
               </StoreTip>
+              {onToggleCompare && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); onToggleCompare(product.id); }}
+                  className="px-2 py-1 border text-[8px] font-mono font-bold tracking-[0.12em] hover:brightness-125 transition-all"
+                  style={{ borderColor: compareSelected ? '#6FA08F' : '#2E2519', color: compareSelected ? '#9ED0BD' : '#6B6155', background: compareSelected ? 'rgba(111, 160, 143, 0.12)' : 'rgba(10, 9, 7, 0.6)' }}
+                >
+                  {compareSelected ? 'COMPARE ✓' : 'COMPARE'}
+                </button>
+              )}
               <span
                 className="inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
                 style={{
@@ -140,6 +152,10 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
           {product.description && (
             <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#877D6D' }}>{product.description}</p>
           )}
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            <span className="text-[8px] font-mono font-bold tracking-[0.13em] px-2 py-0.5 border" style={{ borderColor: `${availabilityColor}55`, color: availabilityColor, background: `${availabilityColor}14` }}>{availabilityLabel}</span>
+            {isBestValue && <span className="text-[8px] font-mono font-bold tracking-[0.13em] px-2 py-0.5 border" style={{ borderColor: '#6FA08F66', color: '#9ED0BD', background: 'rgba(111,160,143,0.12)' }}>BEST REDSCAR VALUE</span>}
+          </div>
         </div>
 
         <div className="mt-auto space-y-2">

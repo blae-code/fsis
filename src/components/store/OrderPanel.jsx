@@ -15,7 +15,7 @@ import HoldToTransmit from '@/components/store/HoldToTransmit';
 import CheckoutReadiness from '@/components/store/CheckoutReadiness';
 import DeliveryRouteCard from '@/components/store/DeliveryRouteCard';
 import BuyerSafetyPanel from '@/components/store/BuyerSafetyPanel';
-import { DELIVERY_LOCATIONS } from '@/lib/storeLocations';
+import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 const REDSCAR_CODE = 'REDSCAR-2956';
@@ -42,6 +42,7 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
   const redscarDiscountAuec = isRedscarPreferred ? Math.round((total * REDSCAR_DISCOUNT_PERCENT) / 100) : 0;
   const estimatedTotal = total - redscarDiscountAuec;
   const hasService = cart.some((i) => i.category === 'service');
+  const deliveryEta = etaFor(location);
 
   const orderMutation = useMutation({
     mutationFn: async () => {
@@ -60,6 +61,7 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
       storeCache.setCustomer({ handle, location });
       storeCache.addTrackingCode(data.tracking_code);
       queryClient.invalidateQueries({ queryKey: ['tracked_orders'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       setPlaced({
         tracking_code: data.tracking_code,
         handle,
@@ -206,6 +208,18 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
           </div>
 
           <BuyerSafetyPanel />
+
+          <div className="border p-3 font-mono space-y-2" style={{ borderColor: '#5C4424', background: 'rgba(92, 68, 36, 0.12)' }}>
+            <div className="text-[9px] font-bold tracking-[0.18em]" style={{ color: '#E0A22E' }}>FINAL TRANSMISSION CHECK</div>
+            <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
+              <span style={{ color: '#8A7E6C' }}>MANIFEST VALUE</span><span className="text-right" style={{ color: '#D8CFC0' }}>{total.toLocaleString()} aUEC</span>
+              {isRedscarPreferred && <><span style={{ color: '#6FA08F' }}>REDSCAR SAVINGS</span><span className="text-right" style={{ color: '#6FA08F' }}>-{redscarDiscountAuec.toLocaleString()} aUEC</span></>}
+              <span style={{ color: '#8A7E6C' }}>DESTINATION</span><span className="text-right" style={{ color: '#D8CFC0' }}>{location || 'UNSET'}</span>
+              {deliveryEta && <><span style={{ color: '#8A7E6C' }}>EST. WINDOW</span><span className="text-right" style={{ color: '#D8CFC0' }}>{deliveryEta} after confirmation</span></>}
+              <span style={{ color: '#F2EADC' }}>TRANSMIT TOTAL</span><span className="text-right font-bold" style={{ color: '#F0B43A' }}>{estimatedTotal.toLocaleString()} aUEC</span>
+            </div>
+            <p className="text-[9px] leading-relaxed" style={{ color: '#6FA08F' }}>Once transmitted, listed stock is reserved and your private tracking code + handoff passphrase are issued.</p>
+          </div>
 
           {orderMutation.isError && (
             <p className="text-[10px] font-mono" style={{ color: '#C05050' }}>
