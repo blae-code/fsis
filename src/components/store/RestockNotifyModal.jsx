@@ -62,7 +62,7 @@ export default function RestockNotifyModal({ product, onClose }) {
               <div>
                 <p className="text-[10px]" style={{ color: '#7A6E60' }}>
                   <span style={{ color: '#E0A22E' }}>{product.product_name}</span> is currently out of stock.
-                  Leave your handle and we'll contact you when it's available.
+                  Leave your handle and contact route. Email contacts can receive automated restock mail; Discord/Spectrum/in-game contacts are handled manually.
                 </p>
               </div>
 
@@ -73,7 +73,7 @@ export default function RestockNotifyModal({ product, onClose }) {
                 </div>
                 <div className="space-y-1">
                   <Label className="text-[9px]" style={{ color: '#8A7E6C' }}>HOW TO REACH YOU (OPTIONAL)</Label>
-                  <Input value={contact} onChange={(e) => setContact(e.target.value)} className="h-8 text-xs" style={fieldStyle} placeholder="Discord @, Spectrum, etc." />
+                  <Input value={contact} onChange={(e) => setContact(e.target.value)} className="h-8 text-xs" style={fieldStyle} placeholder="Email, Discord @, Spectrum, or in-game comms" />
                 </div>
               </div>
 

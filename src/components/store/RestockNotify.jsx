@@ -35,6 +35,9 @@ export default function RestockNotify({ product }) {
       <div className="flex items-center gap-1.5 font-mono text-[9px] tracking-[0.2em]" style={{ color: '#C8A05B' }}>
         <BellRing className="w-3 h-3" /> NOTIFY ME ON RESTOCK
       </div>
+      <p className="text-[9px] font-mono leading-relaxed" style={{ color: '#7A6E60' }}>
+        Email contacts can receive automated restock mail; Discord/Spectrum/in-game contacts are handled manually.
+      </p>
       <div className="space-y-2">
         <div className="space-y-1">
           <Label className="text-[9px] font-mono" style={{ color: '#8A7E6C' }}>IN-GAME HANDLE *</Label>

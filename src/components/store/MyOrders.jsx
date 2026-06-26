@@ -148,6 +148,9 @@ export default function MyOrders({ onReorder }) {
           </button>
         </div>
         {lookupError && <p className="text-[10px] font-mono" style={{ color: '#C05050' }}>{lookupError}</p>}
+        <p className="text-[9px] font-mono leading-relaxed" style={{ color: '#6B6155' }}>
+          Tracking codes and passphrases work like private receipts. They are saved on this device only; do not share the passphrase before handoff.
+        </p>
       </div>
 
       {/* Tracked orders */}
@@ -262,10 +265,15 @@ export default function MyOrders({ onReorder }) {
               </div>
             </div>
             {o.handoff_passphrase && !['delivered', 'cancelled'].includes(o.status) && (
-              <div className="flex items-center gap-2 font-mono text-[10px]" title="Spoken at the in-person handoff to verify identity on both sides">
-                <PassphraseSigil className="w-4 h-4 shrink-0" style={{ color: '#6FA08F' }} />
-                <span style={{ color: '#8A7E6C' }}>HANDOFF PASSPHRASE:</span>
-                <span className="font-bold tracking-[0.12em]" style={{ color: '#E0A22E' }}>{o.handoff_passphrase}</span>
+              <div className="space-y-1 font-mono">
+                <div className="flex items-center gap-2 text-[10px]" title="Spoken at the in-person handoff to verify identity on both sides">
+                  <PassphraseSigil className="w-4 h-4 shrink-0" style={{ color: '#6FA08F' }} />
+                  <span style={{ color: '#8A7E6C' }}>HANDOFF PASSPHRASE:</span>
+                  <span className="font-bold tracking-[0.12em]" style={{ color: '#E0A22E' }}>{o.handoff_passphrase}</span>
+                </div>
+                <p className="text-[8px] leading-relaxed" style={{ color: '#6B6155' }}>
+                  Keep private until meetup. Pay only in the in-game trade window after identity is verified.
+                </p>
               </div>
             )}
             {/* Confirmed handoff slot — shown prominently when proprietor has locked it in */}

@@ -92,11 +92,11 @@ export default function QuoteBuilder({ products = [], onLoad }) {
           </div>
           {backorder && (
             <p className="text-[9px]" style={{ color: '#C8893B' }}>
-              ⚠ Exceeds current stock ({product.stock || 0} {product.unit || 'SCU'}) — balance fulfilled as backorder.
+              ⚠ Exceeds current stock ({product.stock || 0} {product.unit || 'SCU'}) — FSIS will confirm partial fill, delay, substitute, or cancellation before fulfillment.
             </p>
           )}
           <p className="text-[9px]" style={{ color: '#6B6155' }}>
-            Volume discount is confirmed by the operator at order confirmation.
+            Estimate only: volume discount, stock availability, high-risk route exceptions, and delivery timing are confirmed by the operator before fulfillment.
           </p>
           <motion.button
             onClick={() => onLoad(product, qty, loc)}

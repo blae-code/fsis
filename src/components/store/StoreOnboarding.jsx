@@ -118,11 +118,11 @@ export default function StoreOnboarding({ onComplete }) {
                 <p className="text-xs leading-relaxed" style={{ color: '#B8AC9A' }}>
                   This is the FSIS trade terminal — reclaimed materials, fabricated goods, and crew services,
                   delivered across the 'verse. Browse the catalog, transmit an order, and track it with a
-                  code. No account needed.
+                  code. No account needed; pay only in-game at handoff.
                 </p>
                 <div className="space-y-2">
                   {[
-                    [ShoppingCart, 'Order from the catalog — pay on delivery in aUEC'],
+                    [ShoppingCart, 'Order from the catalog — pay only in the in-game trade window'],
                     [MonitorDown, 'Best experienced installed on your desktop'],
                     [Maximize, 'Designed to run in fullscreen, like a ship terminal'],
                   ].map(([Icon, text], i) => (

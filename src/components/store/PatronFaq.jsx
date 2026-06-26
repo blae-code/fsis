@@ -29,11 +29,19 @@ const FAQS = [
   },
   {
     q: 'What is the Bulk Quote builder?',
-    a: 'The Bulk Quote tab (shortcut: key 2) lets you calculate a price for large SCU volumes before committing to an order. It applies volume discount tiers automatically and shows the math. Hit "Load into Manifest" to move the quote into your cart.',
+    a: 'The Bulk Quote tab (shortcut: key 2) estimates large-volume pricing before you transmit an order. It shows volume tiers and route timing, but stock, discounts, backorders, high-risk destination exceptions, and final delivery timing are confirmed by FSIS before fulfillment.',
   },
   {
     q: 'Which locations does FSIS service?',
-    a: 'FSIS services major trade hubs across Stanton: Lorville (Hurston), Area18 (ArcCorp), Port Olisar / Seraphim Station (Crusader), and New Babbage (MicroTech). Delivery ETAs vary — check the Bulk Quote tab for per-location estimates. Remote locations may require a custom arrangement via the order message thread.',
+    a: 'FSIS services Port Tressler, New Babbage, Everus Harbor, Lorville, Baijini Point, Area18, Seraphim Station, Orison, and GrimHEX. Delivery ETAs vary by destination. GrimHEX and other high-risk routes may require proprietor confirmation and an escort surcharge before fulfillment.',
+  },
+  {
+    q: 'Is my stock reserved when I order?',
+    a: 'Not until FSIS confirms and fulfills it. Stock is checked when you transmit the order, then reviewed by the proprietor before confirmation. If availability changes, FSIS will contact you with a partial fill, delay, substitute, or cancellation option.',
+  },
+  {
+    q: 'How do restock alerts work?',
+    a: 'Leave your in-game handle and a contact route on an out-of-stock item. If you provide an email, FSIS can send an automated restock email. Discord, Spectrum, and in-game contacts are handled manually by the proprietor.',
   },
   {
     q: 'How do I use a discount code?',

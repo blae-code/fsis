@@ -76,8 +76,8 @@ export default function ManifestReceipt({ order }) {
           <FileDown className="w-3 h-3" /> DOWNLOAD INVOICE (PDF)
         </button>
         <SerialStrip seed={order.tracking_code} label={`ISSUED ${new Date().toLocaleDateString()}`} />
-        <p className="text-[8px]" style={{ color: '#6B6155' }}>
-          Saved on this device — track anytime under MY ORDERS. "{FSIS.motto}"
+        <p className="text-[8px] leading-relaxed" style={{ color: '#6B6155' }}>
+          Saved on this device — track anytime under MY ORDERS. FSIS confirms stock and route before fulfillment; pay only in the in-game trade window at handoff. "{FSIS.motto}"
         </p>
       </div>
     </div>

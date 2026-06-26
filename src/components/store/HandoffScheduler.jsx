@@ -58,7 +58,7 @@ export default function HandoffScheduler({ order, onClose }) {
           </div>
 
           <p className="text-[10px] leading-relaxed" style={{ color: '#7A6E60' }}>
-            Propose a time and location for the in-game transfer. The Proprietor will confirm or suggest an alternative — check back here for the confirmed slot.
+            Propose a time and location for the in-game transfer. The Proprietor will confirm or suggest an alternative — check back here for the confirmed slot. Pay only in the in-game trade window and keep your passphrase private until meetup.
           </p>
 
           {done ? (

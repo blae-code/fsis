@@ -55,7 +55,7 @@ export default function OrderReceiptModal({ order, open, onClose }) {
           <CheckCircle2 className="w-6 h-6" style={{ color: '#7BA05B' }} />
           <div>
             <h2 className="font-mono text-sm font-bold tracking-[0.15em]" style={{ color: '#F2EADC' }}>TRANSMISSION CONFIRMED</h2>
-            <p className="text-[10px] font-mono" style={{ color: '#877D6D' }}>Your order is in the FSIS queue.</p>
+            <p className="text-[10px] font-mono" style={{ color: '#877D6D' }}>Your order is in the FSIS queue pending stock and route confirmation.</p>
           </div>
         </div>
 
@@ -65,7 +65,7 @@ export default function OrderReceiptModal({ order, open, onClose }) {
         <div className="flex items-start gap-2 border p-2.5" style={{ borderColor: '#5C4424', background: 'rgba(212, 146, 11, 0.05)' }}>
           <ShieldAlert className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: '#E0A22E' }} />
           <p className="text-[10px] font-mono leading-relaxed" style={{ color: '#A89C8A' }}>
-            Save both codes now. They are saved on this device, but they're your only way to track or cancel this order from anywhere else.
+            Save both codes now. They are saved on this device, but they're your only way to track this order from anywhere else. Keep the passphrase private until handoff, and pay only in the in-game trade window after verification.
           </p>
         </div>
 

@@ -214,6 +214,7 @@ See `docs/integrations.md` for setup, health checks, and recovery procedures.
 | `docs/automations.md` | Active automation registry, health checks, duplicate policy |
 | `docs/integrations.md` | Google Sheets, UEX, email, LLM setup and recovery |
 | `docs/buyer-flow.md` | Buyer journey, edge cases, safe trade policy |
+| `docs/storefront-live-readiness.md` | Storefront go-live gate and buyer-facing copy checklist |
 | `docs/admin-runbook.md` | Daily proprietor operations and order/handoff procedures |
 | `docs/entities.md` | Field-level reference for critical entities |
 | `docs/qa-checklist.md` | Release and regression checklist |
