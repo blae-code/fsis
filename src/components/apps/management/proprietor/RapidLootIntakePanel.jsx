@@ -15,7 +15,9 @@ export default function RapidLootIntakePanel() {
   const [sourceLocation, setSourceLocation] = useState('');
   const [crewHandle, setCrewHandle] = useState('');
   const { data: specs = [] } = useQuery({ queryKey: ['item_specs_intake'], queryFn: () => base44.entities.item_spec.list('item_name', 120) });
+  const { data: existingLoot = [] } = useQuery({ queryKey: ['loot_intake_duplicates'], queryFn: () => base44.entities.loot_item.list('-created_date', 300) });
   const specHint = useMemo(() => specs.slice(0, 80).map((s) => ({ item_name: s.item_name, item_type: s.item_type, size_class: s.size_class, manufacturer: s.manufacturer, base_value_auec: s.base_value_auec })).filter((s) => s.item_name), [specs]);
+  const duplicateCount = (item) => existingLoot.filter((l) => String(l.item_name || '').toLowerCase() === String(item.item_name || '').toLowerCase() && String(l.source_op || '') === sourceOp).length;
 
   const analyze = useMutation({ mutationFn: async () => {
     let fileUrl = null;
@@ -25,7 +27,7 @@ export default function RapidLootIntakePanel() {
       file_urls: fileUrl ? [fileUrl] : null,
       response_json_schema: { type: 'object', properties: { items: { type: 'array', items: { type: 'object', properties: { item_name: { type: 'string' }, item_type: { type: 'string', enum: ['fps_gear', 'weapon', 'ship_component', 'vehicle_component', 'bulk_cargo'] }, manufacturer: { type: 'string' }, size_class: { type: 'string' }, quantity: { type: 'number' }, condition_pct: { type: 'number' }, est_sell_auec: { type: 'number' }, notes: { type: 'string' }, confidence: { type: 'number' } }, required: ['item_name'] } } }, required: ['items'] },
     });
-    return (result.items || []).map((i) => ({ ...i, quantity: i.quantity || 1, size_class: i.size_class || 'N/A', condition_pct: i.condition_pct || 100, condition_grade: gradeFor(i.condition_pct || 100), est_sell_auec: round100(i.est_sell_auec) }));
+    return (result.items || []).map((i) => ({ ...i, quantity: i.quantity || 1, size_class: i.size_class || 'N/A', condition_pct: i.condition_pct || 100, condition_grade: gradeFor(i.condition_pct || 100), est_sell_auec: round100(i.est_sell_auec), duplicate_count: duplicateCount(i) }));
   }, onSuccess: setRows });
 
   const save = useMutation({ mutationFn: () => base44.entities.loot_item.bulkCreate(rows.filter((r) => r.item_name).map((r) => ({ item_name: r.item_name, item_type: r.item_type || 'ship_component', manufacturer: r.manufacturer || '', size_class: r.size_class || 'N/A', quantity: Number(r.quantity || 1), condition_pct: Number(r.condition_pct || 100), condition_grade: gradeFor(Number(r.condition_pct || 100)), source_op: sourceOp, source_location: sourceLocation, crew_handle: crewHandle, status: 'raw', est_sell_auec: round100(r.est_sell_auec), notes: [r.notes, r.confidence ? `AI confidence: ${Math.round(r.confidence * 100)}%` : ''].filter(Boolean).join('\n') }))), onSuccess: () => { setRows([]); setNotes(''); setFile(null); qc.invalidateQueries({ queryKey: ['loot_command'] }); } });

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { updateOrderStatus } from '@/functions/updateOrderStatus';
 import { publishLootItem } from '@/functions/publishLootItem';
@@ -22,6 +22,7 @@ import LedgerSyncPanel from '@/components/apps/management/proprietor/LedgerSyncP
 import RouteClusterPanel from '@/components/apps/management/proprietor/RouteClusterPanel';
 import DemandRelistPanel from '@/components/apps/management/proprietor/DemandRelistPanel';
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
+import MarketSyncHealthPanel from '@/components/apps/management/proprietor/MarketSyncHealthPanel';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -36,6 +37,10 @@ export default function ProprietorCommandCenter() {
   const { data: logs = [] } = useQuery({ queryKey: ['ops_logs_command'], queryFn: () => base44.entities.ops_log.list('-created_date', 50) });
   const { data: ledger = [] } = useQuery({ queryKey: ['ledger_command'], queryFn: () => base44.entities.ledger_entry.list('-entry_date', 300) });
   const refresh = () => { qc.invalidateQueries({ queryKey: ['all_orders'] }); qc.invalidateQueries({ queryKey: ['loot_command'] }); qc.invalidateQueries({ queryKey: ['products_admin'] }); qc.invalidateQueries({ queryKey: ['products'] }); qc.invalidateQueries({ queryKey: ['repair_command'] }); qc.invalidateQueries({ queryKey: ['discount_codes_command'] }); qc.invalidateQueries({ queryKey: ['ops_logs_command'] }); };
+  useEffect(() => {
+    const unsubs = [base44.entities.order.subscribe(refresh), base44.entities.loot_item.subscribe(refresh), base44.entities.product.subscribe(refresh)];
+    return () => unsubs.forEach((u) => u?.());
+  }, []);
   const status = useMutation({ mutationFn: ({ id, next }) => updateOrderStatus({ order_id: id, status: next }), onSuccess: refresh });
   const price = useMutation({ mutationFn: ({ id, value }) => base44.entities.loot_item.update(id, { est_sell_auec: value }), onSuccess: refresh });
   const stock = useMutation({ mutationFn: ({ id, value }) => base44.entities.product.update(id, { stock: value }), onSuccess: refresh });
@@ -53,7 +58,7 @@ export default function ProprietorCommandCenter() {
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><HandoffSchedulerConsole orders={orders} onConfirm={(o) => handoff.mutate(o)} pending={handoff.isPending} /><RouteClusterPanel orders={orders} /></div>
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><InventoryReconciliationPanel products={products} onAdjust={(id, value) => stock.mutate({ id, value })} pending={stock.isPending} /><DemandRelistPanel restocks={restocks} loot={loot} /></div>
       <div className="grid xl:grid-cols-[1.2fr_0.8fr] gap-4"><LootAppraisalDesk loot={loot} onApplyPrice={(id, value) => price.mutate({ id, value })} onPublish={(item) => publish.mutate(item)} pricing={price.isPending} publishing={publish.isPending} /><BuyerLedger orders={orders} /></div>
-      <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><ProfitLifecyclePanel loot={loot} repairs={repairs} products={products} /><ProprietorQuickActions /></div>
+      <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><ProfitLifecyclePanel loot={loot} repairs={repairs} products={products} /><div className="space-y-4"><MarketSyncHealthPanel prices={prices} /><ProprietorQuickActions /></div></div>
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><PrivateCodeConsole codes={codes} onToggle={(code) => codeToggle.mutate(code)} pending={codeToggle.isPending} /><OpsAuditMini logs={logs} /></div>
       <DemandIntelligence products={products} restocks={restocks} />
     </div>
