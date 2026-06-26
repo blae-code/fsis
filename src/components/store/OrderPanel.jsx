@@ -18,6 +18,8 @@ import BuyerSafetyPanel from '@/components/store/BuyerSafetyPanel';
 import { DELIVERY_LOCATIONS } from '@/lib/storeLocations';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
+const REDSCAR_CODE = 'REDSCAR-2956';
+const REDSCAR_DISCOUNT_PERCENT = 10;
 
 export default function OrderPanel({ cart, setCart, user, preferredLocation = '' }) {
   const queryClient = useQueryClient();
@@ -35,6 +37,10 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
   }, [preferredLocation]);
 
   const total = cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
+  const normalizedDiscountCode = discountCode.trim().toUpperCase();
+  const isRedscarPreferred = normalizedDiscountCode === REDSCAR_CODE;
+  const redscarDiscountAuec = isRedscarPreferred ? Math.round((total * REDSCAR_DISCOUNT_PERCENT) / 100) : 0;
+  const estimatedTotal = total - redscarDiscountAuec;
   const hasService = cart.some((i) => i.category === 'service');
 
   const orderMutation = useMutation({
@@ -130,9 +136,23 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
             </AnimatePresence>
           </div>
 
-          <div className="flex items-baseline justify-between font-mono border-t pt-3" style={{ borderColor: '#3A2F20' }}>
-            <span className="text-xs font-bold tracking-[0.15em]" style={{ color: '#A89C8A' }}>TOTAL</span>
-            <span className="text-lg font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{total.toLocaleString()} aUEC</span>
+          <div className="font-mono border-t pt-3 space-y-2" style={{ borderColor: '#3A2F20' }}>
+            <div className="flex items-baseline justify-between">
+              <span className="text-xs font-bold tracking-[0.15em]" style={{ color: '#A89C8A' }}>{isRedscarPreferred ? 'SUBTOTAL' : 'TOTAL'}</span>
+              <span className="text-lg font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{total.toLocaleString()} aUEC</span>
+            </div>
+            {isRedscarPreferred && (
+              <>
+                <div className="flex items-center justify-between text-[10px] tracking-[0.12em]">
+                  <span style={{ color: '#6FA08F' }}>REDSCAR NOMADS RATE APPLIED</span>
+                  <span style={{ color: '#6FA08F' }}>-{redscarDiscountAuec.toLocaleString()} aUEC</span>
+                </div>
+                <div className="flex items-baseline justify-between border-t pt-2" style={{ borderColor: '#2A2118' }}>
+                  <span className="text-xs font-bold tracking-[0.15em]" style={{ color: '#F2EADC' }}>PREFERRED TOTAL</span>
+                  <span className="text-xl font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.22)' }}>{estimatedTotal.toLocaleString()} aUEC</span>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="space-y-3">
@@ -174,9 +194,9 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
                 style={fieldStyle}
                 placeholder="REDSCAR-2956"
               />
-              <div className="border px-2.5 py-2 font-mono" style={{ borderColor: '#5C4424', background: 'rgba(224, 162, 46, 0.07)' }}>
-                <p className="text-[10px] font-bold tracking-[0.12em]" style={{ color: '#E0A22E' }}>REDSCAR NOMADS PREFERRED RATE</p>
-                <p className="mt-1 text-[9px] leading-relaxed" style={{ color: '#A89C8A' }}>Members enter <span style={{ color: '#F2EADC' }}>REDSCAR-2956</span> to apply preferential pricing at checkout.</p>
+              <div className="border px-2.5 py-2 font-mono" style={{ borderColor: isRedscarPreferred ? '#6FA08F' : '#5C4424', background: isRedscarPreferred ? 'rgba(111, 160, 143, 0.08)' : 'rgba(224, 162, 46, 0.07)' }}>
+                <p className="text-[10px] font-bold tracking-[0.12em]" style={{ color: isRedscarPreferred ? '#6FA08F' : '#E0A22E' }}>{isRedscarPreferred ? 'REDSCAR MEMBER DETECTED' : 'REDSCAR NOMADS PREFERRED RATE'}</p>
+                <p className="mt-1 text-[9px] leading-relaxed" style={{ color: '#A89C8A' }}>{isRedscarPreferred ? `${REDSCAR_DISCOUNT_PERCENT}% preferential pricing is active in the order summary.` : 'Members enter REDSCAR-2956 to apply preferential pricing at checkout.'}</p>
               </div>
             </div>
             <div className="space-y-1">
