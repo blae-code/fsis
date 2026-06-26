@@ -14,6 +14,7 @@ import InventoryManager from '@/components/apps/management/InventoryManager';
 import SalvageCommodityDashboard from '@/components/apps/management/SalvageCommodityDashboard';
 import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
 import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
+import RestockInbox from '@/components/apps/management/RestockInbox';
 
 const AMBER  = '#E0A22E';
 const DIM    = '#7A6E60';
@@ -31,6 +32,7 @@ const TABS = [
   { id: 'auditlog',  label: 'AUDIT LOG',  glyph: '⬚' },
   { id: 'ops',       label: 'OPS DECK',   glyph: '◉' },
   { id: 'market',    label: 'MARKET',     glyph: '◇' },
+  { id: 'inbox',    label: 'INBOX',      glyph: '▣' },
 ];
 
 export default function ManagementContent() {
@@ -111,6 +113,7 @@ export default function ManagementContent() {
         {activeTab === 'auditlog'  && <OpsAuditLog />}
         {activeTab === 'ops'       && <OpsCommandDeck />}
         {activeTab === 'market'    && <div className="p-4"><MarketPriceComparator /></div>}
+        {activeTab === 'inbox'    && <div className="p-4"><RestockInbox /></div>}
       </div>
     </div>
   );

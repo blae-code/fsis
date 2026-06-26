@@ -1,0 +1,49 @@
+{
+  "name": "restock_notify",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "Product they want restocked"
+    },
+    "product_name": {
+      "type": "string",
+      "description": "Product name at time of request"
+    },
+    "handle": {
+      "type": "string",
+      "description": "In-game handle to notify"
+    },
+    "contact": {
+      "type": "string",
+      "description": "Contact method: Discord, Spectrum, etc."
+    },
+    "notified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether FSIS has notified them"
+    }
+  },
+  "required": [
+    "product_id",
+    "handle"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

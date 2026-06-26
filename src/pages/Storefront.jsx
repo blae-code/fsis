@@ -310,11 +310,27 @@ export default function Storefront() {
                 <RecentDeliveries />
               </div>
             )}
-            {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty) => { addToCart(p, qty); }} />}
+            {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty, loc) => { addToCart(p, qty); if (loc) setTab('catalog'); }} />}
             {tab === 'orders' && <MyOrders onReorder={reorder} />}
             {tab === 'jobs' && <JobsBoard />}
-            {tab === 'dashboard' && <StoreDashboard />}
-            {tab === 'report' && <WeeklyReport />}
+            {tab === 'dashboard' && (
+              user?.role === 'admin' ? <StoreDashboard /> : (
+                <div className="flex flex-col items-center justify-center py-20 gap-3 font-mono">
+                  <div className="text-2xl" style={{ color: '#5C4424' }}>◈</div>
+                  <p className="text-[10px] tracking-[0.25em]" style={{ color: '#7A6E60' }}>OPERATOR CLEARANCE REQUIRED</p>
+                  <p className="text-[9px]" style={{ color: '#4A3A28' }}>This dashboard is restricted to FSIS management.</p>
+                </div>
+              )
+            )}
+            {tab === 'report' && (
+              user?.role === 'admin' ? <WeeklyReport /> : (
+                <div className="flex flex-col items-center justify-center py-20 gap-3 font-mono">
+                  <div className="text-2xl" style={{ color: '#5C4424' }}>◈</div>
+                  <p className="text-[10px] tracking-[0.25em]" style={{ color: '#7A6E60' }}>OPERATOR CLEARANCE REQUIRED</p>
+                  <p className="text-[9px]" style={{ color: '#4A3A28' }}>Weekly reports are restricted to FSIS management.</p>
+                </div>
+              )
+            )}
             {tab === 'about' && (
               <>
                 <SystemStatus />

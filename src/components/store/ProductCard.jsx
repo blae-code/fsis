@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Pin } from 'lucide-react';
+import RestockNotifyModal from '@/components/store/RestockNotifyModal';
 import { SalvageCrest, FabricatedCrest, ServiceCrest } from '@/components/brand/glyphs/CategoryCrests';
 import HazardCorner from '@/components/brand/glyphs/HazardCorner';
 import AddToCartControl from '@/components/store/AddToCartControl';
@@ -31,6 +32,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
   const FallbackIcon = meta.icon;
   const inCart = inCartQty > 0;
+  const [showRestockModal, setShowRestockModal] = useState(false);
 
   return (
     <motion.div
@@ -160,15 +162,24 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
                 {lotNumber(product.id)}
               </span>
             </StoreTip>
-            <StoreTip label={inStock ? 'LOAD CRATE' : 'OUT OF STOCK'} desc={inStock ? 'Add one unit to your order manifest. Adjust quantity in the manifest panel.' : 'This ware is awaiting restock from salvage ops.'}>
-              <span onClick={(e) => e.stopPropagation()}>
-                <AddToCartControl disabled={!inStock} onAdd={() => onAdd(product)} />
-              </span>
-            </StoreTip>
+            {inStock ? (
+              <StoreTip label="LOAD CRATE" desc="Add one unit to your order manifest. Adjust quantity in the manifest panel.">
+                <span onClick={(e) => e.stopPropagation()}>
+                  <AddToCartControl disabled={false} onAdd={() => onAdd(product)} />
+                </span>
+              </StoreTip>
+            ) : (
+              <StoreTip label="OUT OF STOCK" desc="Get notified when this ware is restocked from salvage ops.">
+                <span onClick={(e) => { e.stopPropagation(); setShowRestockModal(true); }}>
+                  <AddToCartControl disabled={true} onAdd={() => {}} notifyMode />
+                </span>
+              </StoreTip>
+            )}
           </div>
         </div>
       </motion.div>
 
+      {showRestockModal && <RestockNotifyModal product={product} onClose={() => setShowRestockModal(false)} />}
       {/* Category tab */}
       <div
         className="mx-auto px-7 py-0.5 text-[9px] font-mono tracking-[0.25em]"

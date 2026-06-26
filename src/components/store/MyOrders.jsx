@@ -5,13 +5,15 @@ import { trackOrder } from '@/functions/trackOrder';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { PackageCheck, Search, Loader2, RotateCcw, FileDown } from 'lucide-react';
+import { PackageCheck, Search, Loader2, RotateCcw, FileDown, MessageSquare } from 'lucide-react';
+import OrderMessageThread from '@/components/store/OrderMessageThread';
 import PassphraseSigil from '@/components/brand/glyphs/PassphraseSigil';
 import LocationMarker from '@/components/brand/glyphs/LocationMarker';
 import { IdleDockBay } from '@/components/brand/glyphs/EmptyStates';
 import { downloadInvoice } from '@/lib/invoicePdf';
 import OrderTimeline from '@/components/store/OrderTimeline';
 import CancelOrder from '@/components/store/CancelOrder';
+import CargoLotEta from '@/components/store/CargoLotEta';
 import { etaFor } from '@/lib/storeLocations';
 
 // Per-status fulfillment expectation shown to buyers
@@ -32,6 +34,7 @@ export default function MyOrders({ onReorder }) {
   const { toast } = useToast();
   const prevStatuses = useRef({});
   const [updatedCodes, setUpdatedCodes] = useState([]);
+  const [messagingOrder, setMessagingOrder] = useState(null);
 
   const { data: orders = [], isLoading, dataUpdatedAt } = useQuery({
     queryKey: ['tracked_orders', codes.join(',')],
@@ -105,6 +108,7 @@ export default function MyOrders({ onReorder }) {
 
   return (
     <div className="space-y-4 max-w-2xl">
+      {messagingOrder && <OrderMessageThread order={messagingOrder} onClose={() => setMessagingOrder(null)} />}
       <div className="flex items-center justify-between font-mono text-xs tracking-[0.2em]" style={{ color: '#6FA08F' }}>
         <span className="flex items-center gap-2">
           <PackageCheck className="w-3.5 h-3.5" /> ORDER TRACKING
@@ -219,6 +223,15 @@ export default function MyOrders({ onReorder }) {
                       <RotateCcw className="w-2.5 h-2.5" /> REORDER
                     </button>
                   )}
+                  {!['delivered', 'cancelled'].includes(o.status) && (
+                    <button
+                      onClick={() => setMessagingOrder(o)}
+                      className="px-2.5 py-1 font-mono text-[9px] font-bold border inline-flex items-center gap-1 hover:brightness-125 transition-all"
+                      style={{ borderColor: '#3A4A5A', color: '#7FA0B3', background: '#0D1318' }}
+                    >
+                      <MessageSquare className="w-2.5 h-2.5" /> MESSAGE
+                    </button>
+                  )}
                   {o.status === 'new' && (
                     <CancelOrder
                       trackingCode={o.tracking_code}
@@ -239,6 +252,7 @@ export default function MyOrders({ onReorder }) {
               </div>
             )}
             <OrderTimeline status={o.status} />
+            {['confirmed', 'in_fulfillment'].includes(o.status) && <CargoLotEta order={o} />}
           </div>
         ))
       )}

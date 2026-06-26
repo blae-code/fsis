@@ -1,0 +1,53 @@
+{
+  "name": "order_message",
+  "type": "object",
+  "properties": {
+    "tracking_code": {
+      "type": "string",
+      "description": "Order tracking code this message is for"
+    },
+    "sender": {
+      "type": "string",
+      "enum": [
+        "buyer",
+        "fsis"
+      ],
+      "default": "buyer"
+    },
+    "handle": {
+      "type": "string",
+      "description": "Buyer handle"
+    },
+    "message": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "is_cancel_request": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if this is a cancellation request"
+    }
+  },
+  "required": [
+    "tracking_code",
+    "message"
+  ],
+  "rls": {
+    "create": null,
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
