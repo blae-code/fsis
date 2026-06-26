@@ -20,7 +20,7 @@ This is the proprietor-facing procedure guide for daily operation.
 | `confirmed → in_fulfillment` | Proprietor | Buyer sees order is being arranged | Use when route/crew is committed |
 | `in_fulfillment → delivered` | Proprietor | Stock decrements; ledger income created | Final fulfillment action |
 | `new → cancelled` | Buyer/admin | Order voided | No stock decrement |
-| `confirmed → cancelled` | Admin/manual | Case-by-case | Use messages to document reason |
+| `confirmed → cancelled` | Admin/manual | Case-by-case | Use messages to document reason; management status changes are written to the ops log |
 
 ## Handoff Procedure
 

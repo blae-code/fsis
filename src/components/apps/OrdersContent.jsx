@@ -1,5 +1,6 @@
 import React from 'react';
 import { base44 } from '@/api/base44Client';
+import { updateOrderStatus } from '@/functions/updateOrderStatus';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -26,7 +27,7 @@ export default function OrdersContent() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, status }) => base44.entities.order.update(id, { status }),
+    mutationFn: ({ id, status }) => updateOrderStatus({ order_id: id, status }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['all_orders'] }),
   });
 
