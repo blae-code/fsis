@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { storeCache } from '@/lib/localCache';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
 import { MonitorCog } from 'lucide-react';
 import ProductCard from '@/components/store/ProductCard';
 import OrderPanel from '@/components/store/OrderPanel';
@@ -196,12 +195,16 @@ export default function Storefront() {
                 PROPRIETOR
               </div>
             )}
+            {/* ARCHIVED: OPERATOR TERMINAL button — sequestered; proprietor accesses via icon below */}
             {user?.role === 'admin' && (
-              <Button asChild variant="outline" size="sm" className="h-8 text-[10px] font-mono gap-1.5 bg-transparent" style={{ borderColor: '#5C4424', color: '#C8A05B' }}>
-                <Link to="/ops">
-                  <MonitorCog className="w-3.5 h-3.5" /> OPERATOR TERMINAL
-                </Link>
-              </Button>
+              <Link
+                to="/ops"
+                title="Management Console"
+                className="flex items-center justify-center w-7 h-7 border opacity-40 hover:opacity-100 transition-opacity"
+                style={{ borderColor: '#3A2F20', color: '#C8A05B', background: '#0A0806' }}
+              >
+                <MonitorCog className="w-3.5 h-3.5" />
+              </Link>
             )}
           </div>
         </div>
