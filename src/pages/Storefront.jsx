@@ -36,6 +36,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { DerelictHull } from '@/components/brand/glyphs/EmptyStates';
 import { motion, AnimatePresence } from 'framer-motion';
 import SystemStatus from '@/components/store/SystemStatus';
+import StoreMaintenanceBanner from '@/components/store/StoreMaintenanceBanner';
 import HexCrate from '@/components/three/HexCrate';
 import { FSIS } from '@/lib/fsisLore';
 import { roundPrice } from '@/lib/pricing';
@@ -92,6 +93,13 @@ export default function Storefront() {
     queryFn: () => base44.auth.me(),
   });
 
+  const { data: storeStatusRows = [] } = useQuery({
+    queryKey: ['store_status_public'],
+    queryFn: () => base44.entities.store_status.list('-updated_date', 1),
+  });
+  const storeStatus = storeStatusRows[0];
+  const ordersPaused = storeStatus?.maintenance_mode || storeStatus?.orders_paused;
+
   const storefrontProducts = products.filter((p) => STOREFRONT_CATEGORIES.includes(p.category));
 
   // Live UEX best-sell per commodity for "vs market" badges (shares the ticker cache)
@@ -107,6 +115,10 @@ export default function Storefront() {
   });
 
   const addToCart = (product, qty = 1) => {
+    if (ordersPaused) {
+      toast({ title: 'ORDERS PAUSED', description: storeStatus?.public_message || 'FSIS is temporarily holding new manifests.' });
+      return;
+    }
     // Stock-aware cap — never let the manifest exceed available units
     const cap = product.category === 'service' ? Infinity : (product.stock || 0);
     const existing = cart.find((i) => i.product_id === product.id);
@@ -238,6 +250,7 @@ export default function Storefront() {
       <div className="shrink-0">
         <MarketTicker />
       </div>
+      <StoreMaintenanceBanner status={storeStatus} />
 
       {/* Main deck — fills viewport, no page scroll */}
       <main className="flex-1 min-h-0 max-w-[1720px] mx-auto w-full px-4 2xl:px-8 pt-4 pb-20 lg:pb-4 grid grid-cols-1 lg:grid-cols-[1fr_380px] 2xl:grid-cols-[1fr_400px] gap-5 overflow-y-auto lg:overflow-hidden">
@@ -373,7 +386,7 @@ export default function Storefront() {
 
         {/* Order panel — pinned, scrolls internally if needed (drawer on mobile) */}
         <div className="hidden lg:block min-h-0 lg:overflow-y-auto">
-          <OrderPanel cart={cart} setCart={setCart} user={user} preferredLocation={preferredLocation} />
+          <OrderPanel cart={cart} setCart={setCart} user={user} preferredLocation={preferredLocation} storeStatus={storeStatus} />
         </div>
       </main>
 
@@ -390,7 +403,7 @@ export default function Storefront() {
       </div>
 
       <ActiveOrderBanner onViewOrders={() => setTab('orders')} />
-      <MobileCartBar cart={cart} setCart={setCart} user={user} preferredLocation={preferredLocation} />
+      <MobileCartBar cart={cart} setCart={setCart} user={user} preferredLocation={preferredLocation} storeStatus={storeStatus} />
 
       <footer className="shrink-0 border-t py-1.5 px-4 flex flex-wrap items-center justify-center gap-x-4" style={{ borderColor: '#2A2118' }}>
         <p className="text-[9px] font-mono" style={{ color: '#6B6155' }}>

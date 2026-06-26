@@ -1,0 +1,49 @@
+{
+  "name": "store_status",
+  "type": "object",
+  "properties": {
+    "setting_key": {
+      "type": "string",
+      "description": "Singleton key, normally primary"
+    },
+    "maintenance_mode": {
+      "type": "boolean",
+      "default": false
+    },
+    "orders_paused": {
+      "type": "boolean",
+      "default": false
+    },
+    "public_message": {
+      "type": "string",
+      "description": "Buyer-facing status message shown on the storefront"
+    },
+    "internal_note": {
+      "type": "string"
+    },
+    "updated_by": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "setting_key"
+  ],
+  "rls": {
+    "read": null,
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

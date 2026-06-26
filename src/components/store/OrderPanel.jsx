@@ -20,7 +20,7 @@ import { roundPrice } from '@/lib/pricing';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 
-export default function OrderPanel({ cart, setCart, user, preferredLocation = '' }) {
+export default function OrderPanel({ cart, setCart, user, preferredLocation = '', storeStatus }) {
   const queryClient = useQueryClient();
   const saved = storeCache.getCustomer();
   const [handle, setHandle] = useState(saved?.handle || user?.full_name || '');
@@ -40,6 +40,7 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
   const estimatedTotal = total;
   const hasService = cart.some((i) => i.category === 'service');
   const deliveryEta = etaFor(location);
+  const ordersPaused = storeStatus?.maintenance_mode || storeStatus?.orders_paused;
 
   const orderMutation = useMutation({
     mutationFn: async () => {
@@ -98,6 +99,7 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
       </div>
 
       <CheckoutReadiness cart={cart} handle={handle} location={location} />
+      {ordersPaused && <div className="border p-3 font-mono" style={{ borderColor: '#8A3A2E', background: '#1A0D08' }}><p className="text-[10px] font-bold tracking-[0.16em]" style={{ color: '#C05050' }}>ORDERS TEMPORARILY PAUSED</p><p className="text-[9px] mt-1" style={{ color: '#D8CFC0' }}>{storeStatus?.public_message || 'FSIS is performing maintenance and will resume order intake soon.'}</p></div>}
 
       {placed && <ManifestReceipt order={placed} />}
       <OrderReceiptModal order={placed} open={showReceipt} onClose={() => setShowReceipt(false)} />
@@ -219,7 +221,7 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
           )}
 
           <HoldToTransmit
-            disabled={!handle.trim() || !location}
+            disabled={ordersPaused || !handle.trim() || !location}
             pending={orderMutation.isPending}
             onConfirm={() => { setPlaced(null); orderMutation.mutate(); }}
           />
