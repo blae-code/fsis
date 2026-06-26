@@ -26,12 +26,14 @@ const CATEGORY_META = {
 };
 
 const CONDITION_COLOR = { new: '#7BA05B', refurb: '#6FA08F', used: '#C8893B', worn: '#C05050' };
+const REDSCAR_DISCOUNT_PERCENT = 10;
 
 export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin, onRestockNotify }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
   const FallbackIcon = meta.icon;
   const inCart = inCartQty > 0;
+  const redscarPrice = Math.max(0, Math.round((product.price_auec || 0) * (100 - REDSCAR_DISCOUNT_PERCENT) / 100));
   const [showRestockModal, setShowRestockModal] = useState(false);
 
   return (
@@ -143,11 +145,17 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         <div className="mt-auto space-y-2">
           <SerialStrip seed={product.id} label="FSIS CERTIFIED" />
           <div className="font-mono space-y-1.5">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span>
+            <div className="flex items-start gap-2 flex-wrap">
+              <div>
+                <div className="text-[8px] font-bold tracking-[0.16em]" style={{ color: '#6B6155' }}>STANDARD PRICE</div>
                 <span className="text-2xl font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{product.price_auec.toLocaleString()}</span>
                 <span className="text-[10px] ml-1.5" style={{ color: '#6B6155' }}>aUEC/{product.unit || 'SCU'}</span>
-              </span>
+              </div>
+              <div className="px-2.5 py-1 border" style={{ borderColor: '#6FA08F66', background: 'rgba(111, 160, 143, 0.08)', clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)' }}>
+                <div className="text-[8px] font-bold tracking-[0.16em]" style={{ color: '#6FA08F' }}>REDSCAR MEMBER</div>
+                <span className="text-lg font-bold tracking-tight" style={{ color: '#9ED0BD' }}>{redscarPrice.toLocaleString()}</span>
+                <span className="text-[9px] ml-1" style={{ color: '#6FA08F' }}>aUEC/{product.unit || 'SCU'}</span>
+              </div>
               <MarketBadge price={product.price_auec} marketBest={marketBest} />
             </div>
             {product.category === 'service' ? (
