@@ -1,12 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Search, Package, Truck, ClipboardList } from 'lucide-react';
+import { Search, Package, ClipboardList } from 'lucide-react';
 
 const OPTIONS = [
   { key: 'materials', icon: Package, label: 'BUY MATERIALS', sub: 'RMC / CMR / CMS', action: 'salvage_commodity' },
   { key: 'loot', icon: Package, label: 'BROWSE LOOT', sub: 'Gear, weapons, components', action: 'loot' },
-  { key: 'services', icon: Truck, label: 'BOOK LOGISTICS', sub: 'Delivery & service work', action: 'service' },
-  { key: 'quote', icon: Search, label: 'BUILD BULK QUOTE', sub: 'Estimate larger loads', action: 'quote' },
+  { key: 'quote', icon: Search, label: 'BUILD BULK QUOTE', sub: 'Estimate larger salvage loads', action: 'quote' },
   { key: 'orders', icon: ClipboardList, label: 'TRACK ORDER', sub: 'Use saved or manual code', action: 'orders' },
 ];
 
@@ -20,7 +19,7 @@ export default function StoreGuidedFinder({ onChoose }) {
         </div>
         <p className="text-[9px] max-w-md" style={{ color: '#7A6E60' }}>Choose a path and FSIS will focus the storefront for that task.</p>
       </div>
-      <div className="grid grid-cols-2 xl:grid-cols-5 gap-2">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-2">
         {OPTIONS.map(({ key, icon: Icon, label, sub, action }) => (
           <motion.button
             key={key}

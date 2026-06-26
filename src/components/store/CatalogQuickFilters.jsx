@@ -8,7 +8,6 @@ const FILTERS = [
   { key: 'best_value', label: 'BEST VALUE', accent: '#A35A2A' },
   { key: 'low_stock', label: 'LOW STOCK', accent: '#E0A22E' },
   { key: 'loot', label: 'LOOTED', accent: '#8A8F45' },
-  { key: 'services', label: 'SERVICES', accent: '#B86F4F' },
 ];
 
 export function matchesQuickFilter(product, filter, marketBestByCode = {}) {
@@ -20,7 +19,6 @@ export function matchesQuickFilter(product, filter, marketBestByCode = {}) {
   if (filter === 'best_value') return Boolean(marketBest && roundPrice(product.price_auec) <= marketBest);
   if (filter === 'low_stock') return product.category !== 'service' && stock > 0 && stock < 50;
   if (filter === 'loot') return ['fps_gear', 'weapon', 'ship_component', 'vehicle_component'].includes(product.category);
-  if (filter === 'services') return product.category === 'service';
   return true;
 }
 

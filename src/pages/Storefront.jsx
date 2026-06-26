@@ -41,6 +41,7 @@ import { FSIS } from '@/lib/fsisLore';
 import { roundPrice } from '@/lib/pricing';
 
 const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/44c3176b4_generated_image.png';
+const STOREFRONT_CATEGORIES = ['salvage_commodity', 'fps_gear', 'weapon', 'ship_component', 'vehicle_component'];
 
 export default function Storefront() {
   const [cart, setCart] = useState(() => storeCache.getCart());
@@ -91,6 +92,8 @@ export default function Storefront() {
     queryFn: () => base44.auth.me(),
   });
 
+  const storefrontProducts = products.filter((p) => STOREFRONT_CATEGORIES.includes(p.category));
+
   // Live UEX best-sell per commodity for "vs market" badges (shares the ticker cache)
   const { data: marketPrices = [] } = useQuery({
     queryKey: ['ticker_prices'],
@@ -137,7 +140,7 @@ export default function Storefront() {
     setCart((prev) => {
       let next = [...prev];
       items.forEach((item) => {
-        const live = products.find((p) => p.id === item.product_id);
+        const live = storefrontProducts.find((p) => p.id === item.product_id);
         const cap = live?.category === 'service' ? Infinity : (live?.stock ?? item.quantity);
         const existing = next.find((i) => i.product_id === item.product_id);
         const current = existing?.quantity || 0;
@@ -162,7 +165,7 @@ export default function Storefront() {
     });
   };
 
-  const filteredProducts = products.filter((p) => {
+  const filteredProducts = storefrontProducts.filter((p) => {
     const q = search.toLowerCase();
     const matchQ = !q || p.product_name?.toLowerCase().includes(q) || p.code?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q);
     const isLootCategory = ['fps_gear', 'weapon', 'ship_component', 'vehicle_component'].includes(p.category);
@@ -180,7 +183,7 @@ export default function Storefront() {
   const sortedProducts = [...filteredProducts].sort((a, b) =>
     (pins.includes(a.id) ? 0 : 1) - (pins.includes(b.id) ? 0 : 1) || SORT_FNS[sort](a, b)
   );
-  const compareProducts = compareIds.map((id) => products.find((p) => p.id === id)).filter(Boolean);
+  const compareProducts = compareIds.map((id) => storefrontProducts.find((p) => p.id === id)).filter(Boolean);
   const toggleCompare = (id) => setCompareIds((current) => current.includes(id) ? current.filter((p) => p !== id) : [id, ...current].slice(0, 3));
 
   return (
@@ -274,7 +277,7 @@ export default function Storefront() {
               </div>
               <div className="flex flex-col">
                 <ExchangeBoard />
-                <StoreLiveStatusPanel products={products} marketPrices={marketPrices} />
+                <StoreLiveStatusPanel products={storefrontProducts} marketPrices={marketPrices} />
               </div>
             </div>
           </div>
@@ -283,7 +286,7 @@ export default function Storefront() {
           <div className="shrink-0 flex flex-wrap items-center justify-between gap-3">
             <StoreTabs active={tab} onChange={setTab} />
             {tab === 'catalog' && (
-              <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} sort={sort} setSort={setSort} quickFilter={quickFilter} count={filteredProducts.length} total={products.length} onReset={() => { setSearch(''); setCategory('all'); setQuickFilter('all'); setSort('featured'); }} />
+              <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} sort={sort} setSort={setSort} quickFilter={quickFilter} count={filteredProducts.length} total={storefrontProducts.length} onReset={() => { setSearch(''); setCategory('all'); setQuickFilter('all'); setSort('featured'); }} />
             )}
           </div>
 
@@ -304,7 +307,7 @@ export default function Storefront() {
                 }} />
                 <HowItWorksStrip />
                 <RedscarTrustStrip />
-                <CatalogQuickFilters active={quickFilter} onChange={setQuickFilter} products={products} marketBestByCode={marketBestByCode} />
+                <CatalogQuickFilters active={quickFilter} onChange={setQuickFilter} products={storefrontProducts} marketBestByCode={marketBestByCode} />
                 <ProductCompareTray products={compareProducts} onClear={() => setCompareIds([])} onView={setDetailProduct} />
                 <motion.div
                   className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
@@ -316,9 +319,9 @@ export default function Storefront() {
                     <div className="col-span-full flex flex-col items-center gap-3 py-10">
                       <DerelictHull width={180} />
                       <p className="text-center text-xs font-mono" style={{ color: '#8A7E6C' }}>
-                        {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your current filters.'}
+                        {storefrontProducts.length === 0 ? 'No salvage or loot listings yet — check back soon.' : 'No salvage or loot listings match your current filters.'}
                       </p>
-                      {products.length > 0 && (
+                      {storefrontProducts.length > 0 && (
                         <button
                           type="button"
                           onClick={() => { setSearch(''); setCategory('all'); setQuickFilter('all'); setSort('featured'); }}
@@ -355,7 +358,7 @@ export default function Storefront() {
                 <RecentDeliveries />
               </div>
             )}
-            {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty, loc) => { addToCart(p, qty); if (loc) setPreferredLocation(loc); setTab('catalog'); }} />}
+            {tab === 'quote' && <QuoteBuilder products={storefrontProducts} onLoad={(p, qty, loc) => { addToCart(p, qty); if (loc) setPreferredLocation(loc); setTab('catalog'); }} />}
             {tab === 'orders' && <MyOrders onReorder={reorder} />}
             {tab === 'faq' && <StoreFaq onNavigate={setTab} />}
             {/* ARCHIVED: jobs, dashboard, report tabs sequestered for future operator development */}
@@ -376,7 +379,7 @@ export default function Storefront() {
 
       <ProductDetail
         product={detailProduct}
-        products={products}
+        products={storefrontProducts}
         onClose={() => setDetailProduct(null)}
         onAdd={addToCart}
         onView={setDetailProduct}
