@@ -25,6 +25,9 @@ import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidL
 import MarketSyncHealthPanel from '@/components/apps/management/proprietor/MarketSyncHealthPanel';
 import OpsAssistantPanel from '@/components/apps/management/proprietor/OpsAssistantPanel';
 import MobileCommandRail from '@/components/apps/management/proprietor/MobileCommandRail';
+import ProprietorAtmosphere from '@/components/apps/management/proprietor/ProprietorAtmosphere';
+import ProprietorCommandHero from '@/components/apps/management/proprietor/ProprietorCommandHero';
+import ProprietorProgressRail from '@/components/apps/management/proprietor/ProprietorProgressRail';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -50,9 +53,12 @@ export default function ProprietorCommandCenter() {
   const codeToggle = useMutation({ mutationFn: (code) => base44.entities.discount_code.update(code.id, { active: !code.active }), onSuccess: refresh });
   const publish = useMutation({ mutationFn: (item) => publishLootItem({ loot_item_id: item.id, price_auec: item.est_sell_auec, quantity: item.quantity || 1 }), onSuccess: refresh });
   return (
-    <div className="h-full overflow-auto p-4 space-y-4 font-mono" style={{ background: '#080604' }}>
-      <div className="border p-4" style={{ borderColor: '#5C4424', background: 'linear-gradient(135deg,#14110D,#0C0A07)', clipPath: 'polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)' }}><p className="text-[9px] tracking-[0.3em]" style={{ color: '#8A8F45' }}>// SOLO PROPRIETOR OPERATING SYSTEM</p><h2 className="text-xl font-bold tracking-[0.16em]" style={{ color: '#EDE5D6' }}>PROPRIETOR COMMAND CENTER</h2><p className="text-[10px] mt-1" style={{ color: '#9C9080' }}>One desk for fulfillment, resale appraisal, inventory demand, buyer history, pricing rules, and alerts.</p></div>
+    <div className="relative h-full overflow-auto p-4 font-mono" style={{ background: '#080604' }}>
+      <ProprietorAtmosphere />
+      <div className="relative z-10 space-y-4">
+      <ProprietorCommandHero orders={orders} products={products} loot={loot} ledger={ledger} prices={prices} />
       <CommandKpiStrip orders={orders} products={products} loot={loot} />
+      <ProprietorProgressRail orders={orders} loot={loot} products={products} restocks={restocks} />
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><RapidLootIntakePanel /><OpsAssistantPanel /></div>
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><ProprietorTriageBoard orders={orders} messages={messages} loot={loot} products={products} /><DailyCloseoutPanel orders={orders} messages={messages} /></div>
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><MarginWatchPanel products={products} prices={prices} /><LedgerSyncPanel entries={ledger} /></div>
@@ -64,6 +70,7 @@ export default function ProprietorCommandCenter() {
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><PrivateCodeConsole codes={codes} onToggle={(code) => codeToggle.mutate(code)} pending={codeToggle.isPending} /><OpsAuditMini logs={logs} /></div>
       <DemandIntelligence products={products} restocks={restocks} />
       <MobileCommandRail />
+      </div>
     </div>
   );
 }
