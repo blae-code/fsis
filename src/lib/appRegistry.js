@@ -101,9 +101,9 @@ const APPS = [
   {
     id: 'fairshare',
     name: 'FairShare',
-    description: 'Crew payroll & work orders — sequestered',
+    description: 'Crew payroll & work orders',
     icon: 'Coins',
-    status: 'offline',
+    status: 'active',
     color: 'hsl(42, 60%, 50%)',
   },
   {

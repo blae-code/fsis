@@ -33,6 +33,7 @@ import DebugLogPanel from '@/components/apps/management/proprietor/DebugLogPanel
 import CommandInboxPanel from '@/components/apps/management/proprietor/CommandInboxPanel';
 import MaintenanceModePanel from '@/components/apps/management/proprietor/MaintenanceModePanel';
 import OrderSlaPanel from '@/components/apps/management/proprietor/OrderSlaPanel';
+import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -66,6 +67,7 @@ export default function ProprietorCommandCenter() {
       <ProprietorProgressRail orders={orders} loot={loot} products={products} restocks={restocks} />
       <CommandInboxPanel orders={orders} products={products} loot={loot} messages={messages} restocks={restocks} prices={prices} />
       <div className="grid xl:grid-cols-[0.8fr_1.2fr] gap-4"><MaintenanceModePanel /><OrderSlaPanel orders={orders} /></div>
+      <PaydayManagementPanel />
       <LaunchReadinessPanel orders={orders} products={products} loot={loot} prices={prices} messages={messages} />
       <DebugLogPanel />
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><RapidLootIntakePanel /><OpsAssistantPanel /></div>

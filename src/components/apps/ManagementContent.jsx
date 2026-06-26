@@ -16,6 +16,7 @@ import ProprietorCommandCenter from '@/components/apps/management/ProprietorComm
 import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
 import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
 import RestockInbox from '@/components/apps/management/RestockInbox';
+import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
 
 const AMBER  = '#E0A22E';
 const DIM    = '#7A6E60';
@@ -25,6 +26,7 @@ const TABS = [
   // ARCHIVED: { id: 'jobs', label: 'JOB BOARD', glyph: '✦' }, — operator feature
   // ARCHIVED: { id: 'crew', label: 'CREW',       glyph: '◉' }, — operator feature
   { id: 'command',   label: 'COMMAND',    glyph: '◈' },
+  { id: 'payday',    label: 'PAYDAY',     glyph: '◉' },
   { id: 'overview',  label: 'OVERVIEW',   glyph: '◈' },
   { id: 'store',     label: 'STORE',      glyph: '⬡' },
   { id: 'discounts', label: 'DISCOUNTS',  glyph: '◆' },
@@ -105,6 +107,7 @@ export default function ManagementContent() {
       {/* Content */}
       <div className="flex-1 overflow-auto">
         {activeTab === 'command'   && <ProprietorCommandCenter />}
+        {activeTab === 'payday'    && <PaydayManagementPanel />}
         {activeTab === 'overview'  && <div className="p-4"><ManagementView /></div>}
         {activeTab === 'store'     && <div className="p-4"><ProductManager /></div>}
         {activeTab === 'discounts' && <div className="p-4"><DiscountManager /></div>}
