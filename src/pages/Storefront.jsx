@@ -165,7 +165,8 @@ export default function Storefront() {
   const filteredProducts = products.filter((p) => {
     const q = search.toLowerCase();
     const matchQ = !q || p.product_name?.toLowerCase().includes(q) || p.code?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q);
-    const matchC = category === 'all' || p.category === category;
+    const isLootCategory = ['fps_gear', 'weapon', 'ship_component', 'vehicle_component'].includes(p.category);
+    const matchC = category === 'all' || (category === 'loot' ? isLootCategory : p.category === category);
     const matchQuick = matchesQuickFilter(p, quickFilter, marketBestByCode);
     return matchQ && matchC && matchQuick;
   });

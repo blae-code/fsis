@@ -13,9 +13,10 @@ const PANEL  = '#0C0907';
    angles are in degrees; 0 = right, so 270 = top.        */
 const ITEMS = [
   { key: 'all',               label: 'ALL WARES',  sublabel: 'Show everything',   angle: 270, color: AMBER,  Icon: null },
-  { key: 'salvage_commodity', label: 'SALVAGE',    sublabel: 'Reclaimed materials', angle: 0,  color: '#C8893B', Icon: SalvageCrest },
-  { key: 'fabricated',       label: 'FABRICATED',  sublabel: 'Crafted goods',      angle: 90, color: TEAL,  Icon: FabricatedCrest },
-  { key: 'service',          label: 'LOGISTICS',   sublabel: 'Services & contracts', angle: 180, color: '#8FBFAE', Icon: ServiceCrest },
+  { key: 'salvage_commodity', label: 'SALVAGE',    sublabel: 'Reclaimed materials', angle: 342, color: '#C8893B', Icon: SalvageCrest },
+  { key: 'loot',              label: 'LOOTED',     sublabel: 'Gear, weapons, parts', angle: 54, color: '#8A8F45', Icon: FabricatedCrest },
+  { key: 'fabricated',        label: 'FABRICATED', sublabel: 'Crafted goods',       angle: 126, color: TEAL,  Icon: FabricatedCrest },
+  { key: 'service',           label: 'LOGISTICS',  sublabel: 'Services & contracts', angle: 198, color: '#B86F4F', Icon: ServiceCrest },
 ];
 
 // Convert polar to cartesian, r in px, angle in degrees

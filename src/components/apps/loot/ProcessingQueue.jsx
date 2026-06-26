@@ -3,6 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wrench, TrendingUp, Plus, ChevronRight, ChevronDown, Check, X, Loader2 } from 'lucide-react';
+import { publishLootItem } from '@/functions/publishLootItem';
+import { roundPrice } from '@/lib/pricing';
 import { differenceInDays } from 'date-fns';
 
 const AMBER  = '#E0A22E';
@@ -45,7 +47,7 @@ function fmt(n) {
 }
 
 // ── Queue item card ─────────────────────────────────────────────────────────
-function QueueCard({ item, onUpdate, onDelete }) {
+function QueueCard({ item, onUpdate, onDelete, onPublish }) {
   const [open, setOpen]       = useState(false);
   const [repairCostInput, setRepairCostInput] = useState('');
   const [estSellInput, setEstSellInput]       = useState(item.est_sell_auec ?? '');
@@ -55,7 +57,7 @@ function QueueCard({ item, onUpdate, onDelete }) {
   const ageDays    = differenceInDays(new Date(), new Date(item.created_date));
   const repairRate = REPAIR_RATE[item.item_type] || 0;
   const repairEst  = Math.max(0, (100 - (item.condition_pct ?? 0)) * repairRate);
-  const estSell    = item.est_sell_auec || 0;
+  const estSell    = roundPrice(item.est_sell_auec || 0);
   const roi        = estSell > 0 ? estSell - repairEst : null;
   const advice     = conditionAdvice(item.condition_pct ?? 0);
   const isActive   = !['sold','scrapped','listed'].includes(item.status);
@@ -91,7 +93,11 @@ function QueueCard({ item, onUpdate, onDelete }) {
   }
 
   async function advance() {
-    const next = { raw: 'repairing', repairing: 'repaired', repaired: 'listed' }[item.status];
+    if (item.status === 'repaired') {
+      await onPublish(item);
+      return;
+    }
+    const next = { raw: 'repairing', repairing: 'repaired' }[item.status];
     if (next) await onUpdate(item.id, { status: next });
   }
 
@@ -253,7 +259,7 @@ function QueueCard({ item, onUpdate, onDelete }) {
                       className="px-2.5 py-1 text-[9px] font-mono font-bold border flex items-center gap-1 disabled:opacity-40"
                       style={{ color: AMBER, borderColor: `${AMBER}55`, background: `${AMBER}0E` }}
                     >
-                      → {({ raw: 'START REPAIR', repairing: 'MARK REPAIRED', repaired: 'LIST IT' }[item.status])}
+                      → {({ raw: 'START REPAIR', repairing: 'MARK REPAIRED', repaired: 'LIST ON STOREFRONT' }[item.status])}
                     </button>
                   )}
                   <button
@@ -369,6 +375,13 @@ export default function ProcessingQueue() {
     mutationFn: ({ id, data }) => base44.entities.loot_item.update(id, data),
     onSuccess: invalidate,
   });
+  const publishMutation = useMutation({
+    mutationFn: (item) => publishLootItem({ loot_item_id: item.id, price_auec: roundPrice(item.est_sell_auec || 0), quantity: item.quantity || 1 }),
+    onSuccess: () => {
+      invalidate();
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.loot_item.delete(id),
     onSuccess: invalidate,
@@ -376,6 +389,7 @@ export default function ProcessingQueue() {
 
   const handleUpdate = (id, data) => updateMutation.mutateAsync({ id, data });
   const handleDelete = (id) => deleteMutation.mutate(id);
+  const handlePublish = (item) => publishMutation.mutateAsync(item);
 
   // Stage counts
   const stageCounts = useMemo(() => {
@@ -480,7 +494,7 @@ export default function ProcessingQueue() {
         ) : (
           <AnimatePresence>
             {filtered.map((item) => (
-              <QueueCard key={item.id} item={item} onUpdate={handleUpdate} onDelete={handleDelete} />
+              <QueueCard key={item.id} item={item} onUpdate={handleUpdate} onDelete={handleDelete} onPublish={handlePublish} />
             ))}
           </AnimatePresence>
         )}

@@ -53,6 +53,25 @@ Deno.serve(async (req) => {
     // 2. Stock already reserved when the buyer transmitted the manifest.
     actions.push('stock reservation retained from checkout');
 
+    // 3. If this order contained recovered loot, close the loot lifecycle.
+    for (const line of order.items || []) {
+      if (!line.product_id) continue;
+      const product = await svc.product.get(line.product_id);
+      if (!product?.loot_item_id) continue;
+
+      const lineTotal = (line.unit_price || 0) * (line.quantity || 1);
+      await svc.loot_item.update(product.loot_item_id, {
+        status: 'sold',
+        actual_sell_auec: lineTotal,
+        linked_product_id: product.id,
+      });
+
+      if ((product.stock || 0) <= 0) {
+        await svc.product.update(product.id, { available: false });
+      }
+      actions.push(`closed loot sale for ${line.product_name}`);
+    }
+
     await svc.order.update(order.id, {
       internal_notes: [(order.internal_notes || '').trim(), `FULFILLMENT APPLIED: ${actions.join('; ') || 'no ledger or stock changes'}. ${dedupeTag}`].filter(Boolean).join('\n'),
     });
