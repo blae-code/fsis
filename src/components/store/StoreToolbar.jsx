@@ -12,9 +12,9 @@ const SORTS = [
   { key: 'stock',      label: 'STOCK' },
 ];
 
-export default function StoreToolbar({ search, setSearch, category, setCategory, sort, setSort, count, total, onReset }) {
+export default function StoreToolbar({ search, setSearch, category, setCategory, sort, setSort, quickFilter = 'all', count, total, onReset }) {
   const sortId = useId();
-  const hasFilters = Boolean(search) || category !== 'all' || sort !== 'featured';
+  const hasFilters = Boolean(search) || category !== 'all' || quickFilter !== 'all' || sort !== 'featured';
 
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3 font-mono flex-wrap">

@@ -6,15 +6,16 @@ import { Input } from '@/components/ui/input'; // still used for handle, locatio
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ShieldAlert, ShoppingCart, Trash2 } from 'lucide-react';
+import { ShoppingCart, Trash2 } from 'lucide-react';
 import ManifestStepper from '@/components/store/ManifestStepper';
 import { motion, AnimatePresence } from 'framer-motion';
 import ManifestReceipt from '@/components/store/ManifestReceipt';
 import OrderReceiptModal from '@/components/store/OrderReceiptModal';
 import HoldToTransmit from '@/components/store/HoldToTransmit';
 import CheckoutReadiness from '@/components/store/CheckoutReadiness';
-import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
-import LocationMarker from '@/components/brand/glyphs/LocationMarker';
+import DeliveryRouteCard from '@/components/store/DeliveryRouteCard';
+import BuyerSafetyPanel from '@/components/store/BuyerSafetyPanel';
+import { DELIVERY_LOCATIONS } from '@/lib/storeLocations';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 
@@ -153,13 +154,7 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
                   ))}
                 </SelectContent>
               </Select>
-              {location && (
-                <p className="text-[9px] font-mono" style={{ color: '#7BA05B' }}>
-                  <LocationMarker name={location} className="w-3 h-3 inline -mt-0.5 mr-1" style={{ color: '#6FA08F' }} />
-                  EST DELIVERY {etaFor(location)} after confirmation
-                  {DELIVERY_LOCATIONS.find((l) => l.name === location)?.note ? ` • ${DELIVERY_LOCATIONS.find((l) => l.name === location).note}` : ''}
-                </p>
-              )}
+              <DeliveryRouteCard location={location} />
               <p className="text-[9px] font-mono" style={{ color: '#6B6155' }}>
                 Availability and route exceptions are confirmed by FSIS before fulfillment.
               </p>
@@ -187,12 +182,7 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
             </div>
           </div>
 
-          <div className="flex items-start gap-2 border p-2.5 font-mono" style={{ borderColor: '#5C4424', background: 'rgba(212, 146, 11, 0.05)' }}>
-            <ShieldAlert className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: '#E0A22E' }} />
-            <p className="text-[9px] leading-relaxed" style={{ color: '#A89C8A' }}>
-              Pay only in the in-game trade window at handoff. Save your tracking code and keep the passphrase private until meetup; stock is reviewed before FSIS confirms fulfillment.
-            </p>
-          </div>
+          <BuyerSafetyPanel />
 
           {orderMutation.isError && (
             <p className="text-[10px] font-mono" style={{ color: '#C05050' }}>

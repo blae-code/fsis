@@ -25,6 +25,10 @@ import ActiveOrderBanner from '@/components/store/ActiveOrderBanner';
 import HowItWorksStrip from '@/components/store/HowItWorksStrip';
 import StoreGuidedFinder from '@/components/store/StoreGuidedFinder';
 import StoreFaq from '@/components/store/StoreFaq';
+import StoreLiveStatusPanel from '@/components/store/StoreLiveStatusPanel';
+import StorefrontAtmosphere from '@/components/store/StorefrontAtmosphere';
+import BuyerProgressRail from '@/components/store/BuyerProgressRail';
+import CatalogQuickFilters, { matchesQuickFilter } from '@/components/store/CatalogQuickFilters';
 import RecentDeliveries from '@/components/store/RecentDeliveries';
 import { useToast } from '@/components/ui/use-toast';
 import { DerelictHull } from '@/components/brand/glyphs/EmptyStates';
@@ -39,6 +43,7 @@ export default function Storefront() {
   const [cart, setCart] = useState(() => storeCache.getCart());
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [quickFilter, setQuickFilter] = useState('all');
   const [tab, setTab] = useState('catalog');
   const [detailProduct, setDetailProduct] = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(() => !storeCache.hasOnboarded());
@@ -152,7 +157,8 @@ export default function Storefront() {
     const q = search.toLowerCase();
     const matchQ = !q || p.product_name?.toLowerCase().includes(q) || p.code?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q);
     const matchC = category === 'all' || p.category === category;
-    return matchQ && matchC;
+    const matchQuick = matchesQuickFilter(p, quickFilter, marketBestByCode);
+    return matchQ && matchC && matchQuick;
   });
 
   const SORT_FNS = {
@@ -177,9 +183,10 @@ export default function Storefront() {
           />
         )}
       </AnimatePresence>
+      <StorefrontAtmosphere />
 
       {/* Header */}
-      <header className="shrink-0 border-b z-10" style={{ borderColor: '#2A2118', background: 'rgba(12, 11, 10, 0.92)' }}>
+      <header className="shrink-0 border-b z-10 relative" style={{ borderColor: '#2A2118', background: 'rgba(12, 11, 10, 0.92)' }}>
         <div className="max-w-[1720px] mx-auto px-4 2xl:px-8 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-1.5" style={{ background: 'linear-gradient(160deg, #8A6430, #4A3722)', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}>
@@ -253,7 +260,10 @@ export default function Storefront() {
                   Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
                 </p>
               </div>
-              <ExchangeBoard />
+              <div className="flex flex-col">
+                <ExchangeBoard />
+                <StoreLiveStatusPanel products={products} marketPrices={marketPrices} />
+              </div>
             </div>
           </div>
 
@@ -261,9 +271,11 @@ export default function Storefront() {
           <div className="shrink-0 flex flex-wrap items-center justify-between gap-3">
             <StoreTabs active={tab} onChange={setTab} />
             {tab === 'catalog' && (
-              <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} sort={sort} setSort={setSort} count={filteredProducts.length} total={products.length} onReset={() => { setSearch(''); setCategory('all'); setSort('featured'); }} />
+              <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} sort={sort} setSort={setSort} quickFilter={quickFilter} count={filteredProducts.length} total={products.length} onReset={() => { setSearch(''); setCategory('all'); setQuickFilter('all'); setSort('featured'); }} />
             )}
           </div>
+
+          <BuyerProgressRail activeTab={tab} cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)} />
 
           {/* Active section — scrolls internally only if it overflows */}
           <div className="flex-1 min-h-0 lg:overflow-y-auto pr-1">
@@ -279,6 +291,7 @@ export default function Storefront() {
                   setSearch('');
                 }} />
                 <HowItWorksStrip />
+                <CatalogQuickFilters active={quickFilter} onChange={setQuickFilter} products={products} marketBestByCode={marketBestByCode} />
                 <motion.div
                   className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4"
                   variants={{ show: { transition: { staggerChildren: 0.05 } } }}
@@ -289,8 +302,18 @@ export default function Storefront() {
                     <div className="col-span-full flex flex-col items-center gap-3 py-10">
                       <DerelictHull width={180} />
                       <p className="text-center text-xs font-mono" style={{ color: '#8A7E6C' }}>
-                        {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your search.'}
+                        {products.length === 0 ? 'No wares listed yet — check back soon.' : 'No wares match your current filters.'}
                       </p>
+                      {products.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => { setSearch(''); setCategory('all'); setQuickFilter('all'); setSort('featured'); }}
+                          className="border px-3 py-2 text-[9px] font-mono font-bold tracking-[0.14em] hover:brightness-125"
+                          style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#0C0A07' }}
+                        >
+                          CLEAR DIAGNOSTICS
+                        </button>
+                      )}
                     </div>
                   ) : (
                     sortedProducts.map((p, i) => (
