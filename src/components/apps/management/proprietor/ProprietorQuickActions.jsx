@@ -16,7 +16,7 @@ export default function ProprietorQuickActions() {
         <button disabled={reprice.isPending} onClick={() => reprice.mutate()} className="border px-3 py-2 text-[9px] font-bold disabled:opacity-40" style={{ borderColor: '#C8893B', color: '#E0A22E' }}>{reprice.isPending ? 'REPRICING…' : 'REPRICE CATALOG +8%'}</button>
       </div>
       {(uex.isSuccess || reprice.isSuccess) && <p className="text-[9px]" style={{ color: '#8A8F45' }}>Command action completed.</p>}
-      {(uex.isError || reprice.isError) && <p className="text-[9px]" style={{ color: '#C05050' }}>Action failed — check function logs.</p>}
+      {(uex.isError || reprice.isError) && <p className="text-[9px]" style={{ color: '#C05050' }}>Action failed — review system diagnostics.</p>}
     </section>
   );
 }
