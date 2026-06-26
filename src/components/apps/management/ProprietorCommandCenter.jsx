@@ -24,6 +24,7 @@ import DemandRelistPanel from '@/components/apps/management/proprietor/DemandRel
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
 import MarketSyncHealthPanel from '@/components/apps/management/proprietor/MarketSyncHealthPanel';
 import OpsAssistantPanel from '@/components/apps/management/proprietor/OpsAssistantPanel';
+import MobileCommandRail from '@/components/apps/management/proprietor/MobileCommandRail';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -62,6 +63,7 @@ export default function ProprietorCommandCenter() {
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><ProfitLifecyclePanel loot={loot} repairs={repairs} products={products} /><div className="space-y-4"><MarketSyncHealthPanel prices={prices} /><ProprietorQuickActions /></div></div>
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><PrivateCodeConsole codes={codes} onToggle={(code) => codeToggle.mutate(code)} pending={codeToggle.isPending} /><OpsAuditMini logs={logs} /></div>
       <DemandIntelligence products={products} restocks={restocks} />
+      <MobileCommandRail />
     </div>
   );
 }

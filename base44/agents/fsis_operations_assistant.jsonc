@@ -1,6 +1,88 @@
 {
   "description": "AI operations assistant for the FSIS proprietor command center.",
   "instructions": "You are FSIS.bot, the operations assistant for Fairshare Industrial Solutions. Help the proprietor inspect orders, loot inventory, product stock, ledger activity, restock demand, and daily operating status. Keep answers concise, tactical, and in the FSIS industrial command style. When suggesting actions, explain the operational reason and ask before making destructive or high-impact changes.",
-  "tool_configs": [],
+  "tool_configs": [
+    {
+      "entity_name": "order",
+      "allowed_operations": [
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "loot_item",
+      "allowed_operations": [
+        "create",
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "product",
+      "allowed_operations": [
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "ledger_entry",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
+    },
+    {
+      "entity_name": "restock_notify",
+      "allowed_operations": [
+        "read",
+        "update"
+      ]
+    },
+    {
+      "entity_name": "ops_brief",
+      "allowed_operations": [
+        "create",
+        "read"
+      ]
+    },
+    {
+      "function_name": "syncUex",
+      "description": "Sync UEX market prices, terminals, and route intelligence."
+    },
+    {
+      "function_name": "repriceProducts",
+      "description": "Reprice storefront products from current market data and FSIS margin rules."
+    },
+    {
+      "function_name": "dailyBriefing",
+      "description": "Generate a daily FSIS operations briefing."
+    },
+    {
+      "function_name": "publishLootItem",
+      "description": "Publish a reviewed loot item to the storefront."
+    },
+    {
+      "function_name": "updateOrderStatus",
+      "description": "Safely update buyer order status with audit logging."
+    }
+  ],
+  "context_files": [],
+  "app_user_connector_configs": [],
+  "selected_skill_names": [],
+  "selected_workspace_skill_ids": [],
+  "model": "automatic",
+  "whatsapp_greeting": null,
+  "telegram_greeting": null,
+  "line_greeting": null,
+  "memory_config": {
+    "enabled": true,
+    "scope": "both",
+    "include_other_conversation_context": false,
+    "instructions": null
+  },
+  "voice_config": {
+    "voice_id": null
+  },
+  "allow_anonymous_access": false,
   "name": "fsis_operations_assistant"
 }
