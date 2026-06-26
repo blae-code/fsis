@@ -1,20 +1,34 @@
 {
+  "name": "commodity_price",
+  "type": "object",
   "properties": {
     "commodity_name": {
-      "description": "Full commodity name, e.g. Recycled Material Composite",
-      "type": "string"
+      "type": "string",
+      "description": "Full commodity name, e.g. Recycled Material Composite"
     },
     "commodity_code": {
-      "description": "Short code, e.g. RMC, CMR, CMS",
-      "type": "string"
+      "type": "string",
+      "description": "FSIS-normalized commodity short code, e.g. RMC, CMR, CMS"
+    },
+    "uex_commodity_code": {
+      "type": "string",
+      "description": "Native UEX commodity code before FSIS normalization"
+    },
+    "uex_commodity_id": {
+      "type": "string",
+      "description": "UEX internal commodity id"
+    },
+    "uex_terminal_id": {
+      "type": "string",
+      "description": "UEX internal terminal id"
     },
     "is_salvage_output": {
-      "description": "True for salvage-produced commodities (RMC, CMR, CMS)",
-      "type": "boolean"
+      "type": "boolean",
+      "description": "True for FSIS salvage-produced commodities (RMC, CMR, CMS)"
     },
     "terminal_name": {
-      "description": "Terminal where this price applies",
-      "type": "string"
+      "type": "string",
+      "description": "Terminal where this price applies"
     },
     "terminal_code": {
       "type": "string"
@@ -22,34 +36,85 @@
     "star_system": {
       "type": "string"
     },
-    "price_sell": {
-      "description": "aUEC per unit the terminal pays (what you sell for)",
-      "type": "number"
-    },
-    "price_buy": {
-      "description": "aUEC per unit to buy here, if applicable",
-      "type": "number"
-    },
-    "is_best_sell": {
-      "description": "Flagged as a top-paying terminal for this commodity in the latest sync",
-      "type": "boolean"
-    },
-    "uex_updated_at": {
-      "description": "Timestamp UEX reports for this price (data freshness)",
+    "planet": {
       "type": "string"
     },
+    "orbit": {
+      "type": "string"
+    },
+    "price_sell": {
+      "type": "number",
+      "description": "aUEC per unit the terminal pays (what you sell for)"
+    },
+    "price_sell_avg": {
+      "type": "number",
+      "description": "UEX average sell price"
+    },
+    "price_buy": {
+      "type": "number",
+      "description": "aUEC per unit to buy here, if applicable"
+    },
+    "price_buy_avg": {
+      "type": "number",
+      "description": "UEX average buy price"
+    },
+    "scu_buy": {
+      "type": "number",
+      "description": "Reported buy demand in SCU"
+    },
+    "scu_buy_avg": {
+      "type": "number",
+      "description": "Average buy demand in SCU"
+    },
+    "scu_sell_stock": {
+      "type": "number",
+      "description": "Reported sell stock in SCU"
+    },
+    "scu_sell_stock_avg": {
+      "type": "number",
+      "description": "Average sell stock in SCU"
+    },
+    "scu_sell": {
+      "type": "number",
+      "description": "Reported sell volume in SCU"
+    },
+    "scu_sell_avg": {
+      "type": "number",
+      "description": "Average sell volume in SCU"
+    },
+    "status_buy": {
+      "type": "number"
+    },
+    "status_sell": {
+      "type": "number"
+    },
+    "container_sizes": {
+      "type": "string",
+      "description": "Available container sizes as CSV"
+    },
+    "quality": {
+      "type": "number",
+      "description": "UEX quality/confidence score"
+    },
+    "is_best_sell": {
+      "type": "boolean",
+      "description": "Flagged as a top-paying terminal for this commodity in the latest sync"
+    },
+    "uex_updated_at": {
+      "type": "string",
+      "description": "Timestamp UEX reports for this price"
+    },
     "confidence": {
-      "description": "UEX data confidence/quality flag",
       "type": "string"
     },
     "patch_version": {
-      "description": "Star Citizen patch the price was reported under",
-      "type": "string"
+      "type": "string",
+      "description": "Star Citizen patch the price was reported under"
     },
     "synced_at": {
-      "description": "When FSIS cached this record from UEX",
+      "type": "string",
       "format": "date-time",
-      "type": "string"
+      "description": "When FSIS cached this record from UEX"
     }
   },
   "required": [
@@ -61,17 +126,15 @@
         "role": "admin"
       }
     },
-    "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
     "update": {
       "user_condition": {
         "role": "admin"
       }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
     }
-  },
-  "type": "object",
-  "name": "commodity_price"
+  }
 }

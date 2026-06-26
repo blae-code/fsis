@@ -10,12 +10,12 @@ This file tracks known limitations that are accepted for now but should not be f
 **Buyer language:** Availability is confirmed by FSIS before fulfillment.  
 **Future fix:** Add inventory reservation records with expiration.
 
-## 2. UEX Market Scope Is Limited
+## 2. UEX Item Market Scope Is Limited
 
-**Status:** Known gap  
-**Risk:** Only salvage commodity pricing is automated; components/gear/weapons lack automatic market reference.  
-**Current mitigation:** Manual pricing for non-salvage wares.  
-**Future fix:** Expand UEX/data provider coverage or add curated item reference tables.
+**Status:** Partially mitigated  
+**Risk:** Commodity pricing, terminals, and salvage routes are now automated through UEX; components/gear/weapons still lack automatic item-price references.  
+**Current mitigation:** Use expanded UEX commodity cache for all commodity-coded wares and manual pricing for non-commodity wares.  
+**Future fix:** Add UEX item-price sync or curated item reference tables for components, FPS gear, and weapons.
 
 ## 3. GrimHEX Surcharge Is Manual
 

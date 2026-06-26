@@ -1,32 +1,86 @@
 {
+  "name": "terminal",
+  "type": "object",
   "properties": {
-    "is_salvage_relevant": {
-      "description": "Buys RMC/CM or otherwise relevant to salvage selling",
-      "type": "boolean"
+    "uex_terminal_id": {
+      "type": "string",
+      "description": "UEX internal terminal id for cross-reference"
     },
-    "moon": {
+    "terminal_name": {
+      "type": "string",
+      "description": "Display name of the terminal/location"
+    },
+    "terminal_code": {
+      "type": "string"
+    },
+    "terminal_type": {
+      "type": "string",
+      "description": "e.g. commodity, admin, refinery, cargo, shop"
+    },
+    "star_system": {
       "type": "string"
     },
     "planet": {
       "type": "string"
     },
-    "star_system": {
+    "orbit": {
       "type": "string"
     },
-    "terminal_code": {
+    "moon": {
       "type": "string"
     },
-    "terminal_name": {
-      "description": "Display name of the terminal/location",
+    "city": {
       "type": "string"
     },
-    "terminal_type": {
-      "description": "e.g. TDD, station, outpost, refinery",
+    "space_station": {
       "type": "string"
     },
-    "uex_terminal_id": {
-      "description": "UEX internal terminal id for cross-reference",
+    "outpost": {
       "type": "string"
+    },
+    "company": {
+      "type": "string"
+    },
+    "faction": {
+      "type": "string"
+    },
+    "is_salvage_relevant": {
+      "type": "boolean",
+      "description": "Buys RMC/CMR/CMS or otherwise relevant to salvage selling"
+    },
+    "is_available": {
+      "type": "boolean"
+    },
+    "is_refinery": {
+      "type": "boolean"
+    },
+    "is_cargo_center": {
+      "type": "boolean"
+    },
+    "is_refuel": {
+      "type": "boolean"
+    },
+    "is_repair": {
+      "type": "boolean"
+    },
+    "has_loading_dock": {
+      "type": "boolean"
+    },
+    "has_docking_port": {
+      "type": "boolean"
+    },
+    "has_freight_elevator": {
+      "type": "boolean"
+    },
+    "max_container_size": {
+      "type": "number"
+    },
+    "game_version": {
+      "type": "string"
+    },
+    "synced_at": {
+      "type": "string",
+      "format": "date-time"
     }
   },
   "required": [
@@ -38,17 +92,15 @@
         "role": "admin"
       }
     },
-    "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
     "update": {
       "user_condition": {
         "role": "admin"
       }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
     }
-  },
-  "type": "object",
-  "name": "terminal"
+  }
 }

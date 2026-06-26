@@ -7,7 +7,7 @@ This guide covers external dependencies required for production operation.
 | Integration | Used by | Required setup | Failure symptom |
 |---|---|---|---|
 | Google Sheets | `syncLedgerToSheets`, weekly reports | Authorized Google Sheets connector and ledger sheet setting | Ledger exports fail or no rows appear |
-| UEX market feed | `syncUex`, `repriceProducts`, market ticker, price alerts | UEX API configuration/secret if required by function | Stale/empty market prices |
+| UEX market feed | `syncUex`, `repriceProducts`, market ticker, price alerts, haul routing | Public UEX API endpoints for commodity prices, terminals, and salvage routes | Stale/empty market prices or route suggestions |
 | Base44 email | `notifyRestock`, stock alerts, price alerts, reports | Built-in email integration | Buyers/operators do not receive notifications |
 | Base44 LLM | `dailyBriefing`, `salvageAdvisor`, OCR analysis | Built-in LLM integration/credits | AI summaries or OCR fail |
 | File upload/private files | Ledger and salvage image analysis | Built-in file handling | OCR cannot process screenshots |
@@ -18,8 +18,8 @@ This guide covers external dependencies required for production operation.
 2. Authorize Google Sheets connector.
 3. Create or select the ledger spreadsheet.
 4. Store the ledger sheet ID in app settings.
-5. Configure UEX access if the current `syncUex` implementation requires a secret.
-6. Run `syncUex` manually and verify `commodity_price` records update.
+5. Run `syncUex` manually and verify commodity prices, terminals, and salvage routes update.
+6. Confirm RMC/CMR/CMS price snapshots were captured for storefront repricing.
 7. Run `repriceProducts` manually on a test product set.
 8. Place a test order from the storefront.
 9. Track the order by code/passphrase.
@@ -38,7 +38,7 @@ This guide covers external dependencies required for production operation.
 
 ## UEX Notes
 
-Current documented market scope is limited to salvage commodity coverage. Ship components, FPS gear, and weapons do not currently receive automatic UEX-backed market references unless explicitly added.
+`syncUex` now caches all UEX commodity terminal prices, terminal metadata, and top FSIS-relevant salvage routes. FSIS normalizes UEX `Construction Materials` and `Scrap` into the storefront-facing `CMR` and `CMS` codes so repricing, alerts, and haul planning use the same language as the store. Ship components, FPS gear, and weapons still do not receive automatic UEX-backed market references unless item-price sync is added.
 
 ## Email Behavior
 

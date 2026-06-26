@@ -1,42 +1,103 @@
 {
+  "name": "route",
+  "type": "object",
   "properties": {
     "commodity_code": {
       "type": "string"
     },
-    "destination_system": {
+    "commodity_name": {
       "type": "string"
     },
-    "destination_terminal": {
+    "uex_commodity_id": {
       "type": "string"
     },
-    "distance": {
-      "description": "Distance/units as reported by UEX",
-      "type": "number"
+    "uex_route_id": {
+      "type": "string"
     },
     "origin_system": {
+      "type": "string"
+    },
+    "origin_planet": {
       "type": "string"
     },
     "origin_terminal": {
       "type": "string"
     },
+    "origin_terminal_code": {
+      "type": "string"
+    },
+    "destination_system": {
+      "type": "string"
+    },
+    "destination_planet": {
+      "type": "string"
+    },
+    "destination_terminal": {
+      "type": "string"
+    },
+    "destination_terminal_code": {
+      "type": "string"
+    },
+    "price_origin": {
+      "type": "number",
+      "description": "aUEC per unit at origin"
+    },
+    "price_destination_sell": {
+      "type": "number",
+      "description": "aUEC per unit at destination"
+    },
+    "profit_per_scu": {
+      "type": "number",
+      "description": "Estimated aUEC profit per SCU for this route"
+    },
+    "profit_total": {
+      "type": "number",
+      "description": "Estimated total profit for UEX reported reachable SCU"
+    },
+    "roi_percent": {
+      "type": "number"
+    },
+    "scu_origin": {
+      "type": "number"
+    },
+    "scu_destination": {
+      "type": "number"
+    },
+    "scu_reachable": {
+      "type": "number"
+    },
+    "distance": {
+      "type": "number",
+      "description": "Distance/units as reported by UEX"
+    },
+    "score": {
+      "type": "number",
+      "description": "UEX route score/ranking"
+    },
+    "origin_has_freight_elevator": {
+      "type": "boolean"
+    },
+    "destination_has_freight_elevator": {
+      "type": "boolean"
+    },
+    "origin_has_refuel": {
+      "type": "boolean"
+    },
+    "destination_has_refuel": {
+      "type": "boolean"
+    },
+    "origin_is_ground": {
+      "type": "boolean"
+    },
+    "destination_is_ground": {
+      "type": "boolean"
+    },
     "patch_version": {
       "type": "string"
     },
-    "price_destination_sell": {
-      "description": "aUEC per unit at destination",
-      "type": "number"
-    },
-    "profit_per_scu": {
-      "description": "Estimated aUEC profit per SCU for this route",
-      "type": "number"
-    },
-    "score": {
-      "description": "UEX route score/ranking",
-      "type": "number"
-    },
     "synced_at": {
-      "format": "date-time",
-      "type": "string"
+      "type": "string",
+      "format": "date-time"
     }
   },
   "required": [
@@ -48,17 +109,15 @@
         "role": "admin"
       }
     },
-    "delete": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
     "update": {
       "user_condition": {
         "role": "admin"
       }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
     }
-  },
-  "type": "object",
-  "name": "route"
+  }
 }
