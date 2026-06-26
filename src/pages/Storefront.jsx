@@ -24,6 +24,7 @@ import MobileCartBar from '@/components/store/MobileCartBar';
 import ActiveOrderBanner from '@/components/store/ActiveOrderBanner';
 import HowItWorksStrip from '@/components/store/HowItWorksStrip';
 import StoreGuidedFinder from '@/components/store/StoreGuidedFinder';
+import StoreFaq from '@/components/store/StoreFaq';
 import RecentDeliveries from '@/components/store/RecentDeliveries';
 import { useToast } from '@/components/ui/use-toast';
 import { DerelictHull } from '@/components/brand/glyphs/EmptyStates';
@@ -53,8 +54,8 @@ export default function Storefront() {
 
   // Global shortcuts: "/" focuses search, 1–5 switch sections
   useEffect(() => {
-    // ARCHIVED: keys 4 (jobs), 5 (dashboard), 6 (report) sequestered for future operator development
-  const TAB_KEYS = { 1: 'catalog', 2: 'quote', 3: 'orders', 4: 'about' };
+    // ARCHIVED: keys 6+ sequestered for future operator development
+  const TAB_KEYS = { 1: 'catalog', 2: 'quote', 3: 'orders', 4: 'faq', 5: 'about' };
     const onKey = (e) => {
       if (showOnboarding || detailProduct) return;
       const t = e.target;
@@ -317,6 +318,7 @@ export default function Storefront() {
             )}
             {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty, loc) => { addToCart(p, qty); if (loc) setPreferredLocation(loc); setTab('catalog'); }} />}
             {tab === 'orders' && <MyOrders onReorder={reorder} />}
+            {tab === 'faq' && <StoreFaq onNavigate={setTab} />}
             {/* ARCHIVED: jobs, dashboard, report tabs sequestered for future operator development */}
             {tab === 'about' && (
               <>

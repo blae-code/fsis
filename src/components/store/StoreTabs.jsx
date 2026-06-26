@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import StoreTip from '@/components/store/StoreTip';
+import { HelpCircle } from 'lucide-react';
 import { CatalogSigil, QuoteSigil, OrdersSigil, AboutSigil } from '@/components/brand/glyphs/DivisionSigils';
 // ARCHIVED: JobsSigil, ReportSigil, DashboardSigil — sequestered for future operator development
 
@@ -13,7 +14,8 @@ const TABS = [
   { id: 'catalog',   label: 'CATALOG',   icon: CatalogSigil,   tip: 'Browse wares & add to manifest',  key: '1' },
   { id: 'quote',     label: 'BULK QUOTE',icon: QuoteSigil,     tip: 'Build a bulk pricing estimate',    key: '2' },
   { id: 'orders',    label: 'MY ORDERS', icon: OrdersSigil,    tip: 'Track orders by code',             key: '3' },
-  { id: 'about',     label: 'ABOUT FSIS',icon: AboutSigil,     tip: 'Company dossier & system status',  key: '4' },
+  { id: 'faq',       label: 'FAQ',       icon: HelpCircle,     tip: 'How to use the storefront',        key: '4' },
+  { id: 'about',     label: 'ABOUT FSIS',icon: AboutSigil,     tip: 'Company dossier & system status',  key: '5' },
 ];
 
 /** Storefront selector rail — bronze plate glides between sections instead of
@@ -21,7 +23,7 @@ const TABS = [
 export default function StoreTabs({ active, onChange }) {
   return (
     <div
-      className="relative flex gap-0.5 font-mono text-[10px] tracking-[0.15em] p-0.5"
+      className="relative flex gap-0.5 font-mono text-[10px] tracking-[0.15em] p-0.5 max-w-full overflow-x-auto"
       style={{ background: '#0E0C0A', border: '1px solid #2A2118', clipPath: 'polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px)' }}
     >
       {TABS.map(({ id, label, icon: Icon, tip, key }) => {
@@ -33,7 +35,7 @@ export default function StoreTabs({ active, onChange }) {
             whileHover={!isActive ? { color: '#B8AC9A', y: -1 } : {}}
             whileTap={{ scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 380, damping: 24 }}
-            className="relative flex items-center gap-1.5 px-3 py-2"
+            className="relative flex items-center gap-1.5 px-3 py-2 shrink-0"
             style={{ color: isActive ? '#F4ECDB' : '#6F6557' }}
           >
             {isActive && (
