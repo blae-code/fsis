@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { updateHandoff } from '@/functions/updateHandoff';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -16,11 +16,11 @@ export default function HandoffScheduler({ order, onClose }) {
   const [done, setDone] = useState(false);
 
   const mutation = useMutation({
-    mutationFn: () => base44.entities.order.update(order.id, {
+    mutationFn: () => updateHandoff({
+      tracking_code: order.tracking_code,
       handoff_proposed_time: time.trim(),
       handoff_location: location.trim(),
       handoff_contact: contact.trim(),
-      handoff_status: 'requested',
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tracked_orders'] });

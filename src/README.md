@@ -145,25 +145,28 @@ Buyer proposes via `HandoffScheduler`; proprietor confirms/counters via `Handoff
 | Function | Trigger | Purpose |
 |---|---|---|
 | `placeOrder` | Storefront checkout | Creates order, generates tracking code + passphrase |
-| `processNewOrder` | Entity: order create | Post-processing after order placed |
-| `trackOrder` | Buyer lookup | Returns order status by tracking code or passphrase |
+| `processNewOrder` | Entity: order create (auto) | Auto-triage: verifies stock/pricing, auto-confirms clean orders |
+| `trackOrder` | Buyer lookup | Returns full order status incl. all handoff confirmation fields |
+| `updateHandoff` | Buyer action (guest-safe) | Proposes/updates handoff slot — uses service role so anonymous buyers can update their own order |
 | `cancelOrder` | Buyer request | Voids a `new` order |
-| `onOrderDelivered` | Entity: order update → delivered | Ledger entry + ops log |
+| `onOrderDelivered` | Entity: order update → delivered (auto) | Ledger income entry + stock decrement per line item |
 | `recentDeliveries` | Scheduled / on-demand | Public feed of recent fulfilled orders |
-| `syncUex` | Scheduled | Pulls latest commodity prices from UEX API |
-| `repriceProducts` | Manual (admin) | Re-anchors store prices to current UEX market data |
-| `syncLedgerToSheets` | Entity: work_order settled | Pushes ledger data to Google Sheets |
-| `onWorkOrderSettled` | Entity: work_order settle | Distributes crew shares, writes ledger |
+| `syncUex` | Scheduled every 15 min (auto) | Pulls live commodity prices from UEX API; also writes `price_snapshot` history |
+| `repriceProducts` | Scheduled daily (auto) | Re-anchors store prices to current UEX best-sell + FSIS margin |
+| `syncLedgerToSheets` | Scheduled weekly Monday (auto) | Exports ledger summary to Google Sheets |
+| `onWorkOrderSettled` | Entity: work_order update → settled (auto) | Distributes crew shares, writes ledger expense entries |
+| `notifyRestock` | Entity: restock_notify update → notified (auto) | Emails buyer (if email contact present) when proprietor marks a restock request notified |
 | `analyzeLedgerImage` | Manual (admin) | OCR scan of in-game wallet screenshots |
 | `analyzeSalvageImage` | Manual (admin) | OCR scan of salvage haul screens |
-| `applyScanToInventory` | Post-scan | Applies OCR results to cargo lot inventory |
-| `checkPriceAlerts` | Scheduled | Fires price alert notifications |
-| `checkStockAlerts` | Scheduled | Fires restock notifications |
-| `dailyBriefing` | Scheduled | Generates daily ops summary |
+| `applyScanToInventory` | Entity: salvage_scan create (auto) | Applies OCR results to cargo lot inventory |
+| `checkPriceAlerts` | Scheduled every 15 min (auto) | Compares UEX cache against armed price alerts; emails operator on hit |
+| `checkStockAlerts` | Entity: product update (auto) | Fires when product stock falls below armed threshold; emails operator |
+| `dailyBriefing` | Scheduled daily 07:00 PST (auto) | LLM-composed daily ops summary |
 | `salvageAdvisor` | On-demand | LLM-assisted haul strategy recommendations |
 | `auditLedger` | Manual (admin) | Consistency check on ledger entries |
-| `weeklyLedgerReport` | Scheduled | Weekly P&L summary |
-| `openPaydayCycle` / `closePaydayCycle` | Manual (admin) | Manage weekly crew payout windows |
+| `weeklyLedgerReport` | Scheduled weekly Monday (auto) | Weekly P&L export to Google Sheets |
+| `openPaydayCycle` | Scheduled Fridays (auto) | Opens weekly 72h crew payout decision window |
+| `closePaydayCycle` | Scheduled hourly (auto) | Closes expired pay day windows, settles elections, banks deferred shares |
 | `submitPaydayElection` / `contractorPayday` / `getMyPayday` | Crew | Crew cash-in/defer elections |
 
 ---
@@ -195,6 +198,19 @@ Buyer proposes via `HandoffScheduler`; proprietor confirms/counters via `Handoff
 - **Base44 LLM** (`InvokeLLM`) — salvage advisor, OCR analysis, daily briefing
 
 ---
+
+## Known Gaps & Design Decisions
+
+| # | Area | Status | Notes |
+|---|---|---|---|
+| 1 | **Stock reservation** | Known gap | Stock is validated at `placeOrder` but not reserved until `onOrderDelivered` decrements it. Two concurrent orders for the same last units can both succeed. Acceptable for solo-op low-volume; fix with a reservation pattern if volume grows. |
+| 2 | **syncUex admin-auth** | ✅ Working | Automation runs successfully with admin context. `last_run_status: success` confirmed. |
+| 3 | **trackOrder handoff fields** | ✅ Fixed | Response now includes all `handoff_confirmed_*` and `handoff_status` fields — buyers see confirmed slots in `MyOrders`. |
+| 4 | **Guest HandoffScheduler RLS** | ✅ Fixed | `HandoffScheduler` now calls the `updateHandoff` backend function (service role) instead of direct entity update — anonymous buyers can schedule handoffs. |
+| 5 | **restock_notify outbound** | ✅ Fixed | `notifyRestock` function + automation: when proprietor marks `notified: true`, an email is sent if buyer provided an email address as contact. Non-email contacts (Discord, Spectrum) are logged in ops_log for manual follow-up. |
+| 6 | **UEX scope** | Known gap | `syncUex` covers only 3 salvage commodity codes (RMC, CMR, Scrap). Ship components, FPS gear, and weapons have no auto-market-ref. |
+| 7 | **Duplicate automations** | ✅ Cleaned | 4 duplicate payday/ledger automations archived. |
+| 8 | **GrimHEX surcharge** | Known gap | `storeLocations.js` notes "escort surcharge may apply" for GrimHEX but no code enforces it — manual at fulfillment. |
 
 ## Development Notes
 
