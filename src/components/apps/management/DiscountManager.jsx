@@ -55,8 +55,9 @@ export default function DiscountManager() {
     <div className="space-y-4">
       <div className="p-3 rounded border space-y-2" style={panel}>
         <div className="text-[10px] text-muted-foreground tracking-[0.2em] flex items-center gap-1.5">
-          <TicketPercent className="w-3 h-3" /> ISSUE DISCOUNT CODE
+          <TicketPercent className="w-3 h-3" /> ISSUE PRIVATE DISCOUNT CODE
         </div>
+        <p className="text-[10px] text-muted-foreground">Codes are only visible here in the proprietor console; the public storefront accepts issued codes without publishing them.</p>
         <div className="grid grid-cols-[8rem_1fr_4.5rem_auto] gap-2">
           <Input placeholder="CODE" value={code} onChange={(e) => setCode(e.target.value)} className="h-8 text-xs uppercase" style={border} />
           <Input placeholder="Label, e.g. Redscar Nomads org rate" value={label} onChange={(e) => setLabel(e.target.value)} className="h-8 text-xs" style={border} />

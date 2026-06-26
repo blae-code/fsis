@@ -19,8 +19,6 @@ import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
 import { roundPrice } from '@/lib/pricing';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
-const REDSCAR_CODE = 'REDSCAR-2956';
-const REDSCAR_DISCOUNT_PERCENT = 10;
 
 export default function OrderPanel({ cart, setCart, user, preferredLocation = '' }) {
   const queryClient = useQueryClient();
@@ -38,10 +36,8 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
   }, [preferredLocation]);
 
   const total = cart.reduce((sum, item) => sum + roundPrice(item.unit_price) * item.quantity, 0);
-  const normalizedDiscountCode = discountCode.trim().toUpperCase();
-  const isRedscarPreferred = normalizedDiscountCode === REDSCAR_CODE;
-  const redscarDiscountAuec = isRedscarPreferred ? roundPrice((total * REDSCAR_DISCOUNT_PERCENT) / 100) : 0;
-  const estimatedTotal = roundPrice(total - redscarDiscountAuec);
+  const hasDiscountCode = discountCode.trim().length > 0;
+  const estimatedTotal = total;
   const hasService = cart.some((i) => i.category === 'service');
   const deliveryEta = etaFor(location);
 
@@ -141,20 +137,14 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
 
           <div className="font-mono border-t pt-3 space-y-2" style={{ borderColor: '#3A2F20' }}>
             <div className="flex items-baseline justify-between">
-              <span className="text-xs font-bold tracking-[0.15em]" style={{ color: '#A89C8A' }}>{isRedscarPreferred ? 'SUBTOTAL' : 'TOTAL'}</span>
+              <span className="text-xs font-bold tracking-[0.15em]" style={{ color: '#A89C8A' }}>TOTAL</span>
               <span className="text-lg font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{total.toLocaleString()} aUEC</span>
             </div>
-            {isRedscarPreferred && (
-              <>
-                <div className="flex items-center justify-between text-[10px] tracking-[0.12em]">
-                  <span style={{ color: '#8A8F45' }}>REDSCAR NOMADS RATE APPLIED</span>
-                  <span style={{ color: '#8A8F45' }}>-{redscarDiscountAuec.toLocaleString()} aUEC</span>
-                </div>
-                <div className="flex items-baseline justify-between border-t pt-2" style={{ borderColor: '#2A2118' }}>
-                  <span className="text-xs font-bold tracking-[0.15em]" style={{ color: '#F2EADC' }}>PREFERRED TOTAL</span>
-                  <span className="text-xl font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.22)' }}>{estimatedTotal.toLocaleString()} aUEC</span>
-                </div>
-              </>
+            {hasDiscountCode && (
+              <div className="flex items-center justify-between text-[10px] tracking-[0.12em]">
+                <span style={{ color: '#8A8F45' }}>PRIVATE CODE ENTERED</span>
+                <span style={{ color: '#8A8F45' }}>VERIFIED ON TRANSMIT</span>
+              </div>
             )}
           </div>
 
@@ -195,11 +185,11 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
                 onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
                 className="h-8 text-xs font-mono"
                 style={fieldStyle}
-                placeholder="REDSCAR-2956"
+                placeholder="Enter issued code"
               />
-              <div className="border px-2.5 py-2 font-mono" style={{ borderColor: isRedscarPreferred ? '#8A8F45' : '#5C4424', background: isRedscarPreferred ? 'rgba(111, 160, 143, 0.08)' : 'rgba(224, 162, 46, 0.07)' }}>
-                <p className="text-[10px] font-bold tracking-[0.12em]" style={{ color: isRedscarPreferred ? '#8A8F45' : '#E0A22E' }}>{isRedscarPreferred ? 'REDSCAR MEMBER DETECTED' : 'REDSCAR NOMADS PREFERRED RATE'}</p>
-                <p className="mt-1 text-[9px] leading-relaxed" style={{ color: '#A89C8A' }}>{isRedscarPreferred ? `${REDSCAR_DISCOUNT_PERCENT}% preferential pricing is active in the order summary.` : 'Members enter REDSCAR-2956 to apply preferential pricing at checkout.'}</p>
+              <div className="border px-2.5 py-2 font-mono" style={{ borderColor: hasDiscountCode ? '#8A8F45' : '#5C4424', background: hasDiscountCode ? 'rgba(138, 143, 69, 0.08)' : 'rgba(224, 162, 46, 0.07)' }}>
+                <p className="text-[10px] font-bold tracking-[0.12em]" style={{ color: hasDiscountCode ? '#8A8F45' : '#E0A22E' }}>{hasDiscountCode ? 'PRIVATE CODE ENTERED' : 'PRIVATE DISCOUNT CODE'}</p>
+                <p className="mt-1 text-[9px] leading-relaxed" style={{ color: '#A89C8A' }}>{hasDiscountCode ? 'FSIS will verify this code securely when the manifest is transmitted.' : 'Issued codes are managed by the proprietor and are not published on the storefront.'}</p>
               </div>
             </div>
             <div className="space-y-1">
@@ -214,7 +204,7 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
             <div className="text-[9px] font-bold tracking-[0.18em]" style={{ color: '#E0A22E' }}>FINAL TRANSMISSION CHECK</div>
             <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
               <span style={{ color: '#8A7E6C' }}>MANIFEST VALUE</span><span className="text-right" style={{ color: '#D8CFC0' }}>{total.toLocaleString()} aUEC</span>
-              {isRedscarPreferred && <><span style={{ color: '#8A8F45' }}>REDSCAR SAVINGS</span><span className="text-right" style={{ color: '#8A8F45' }}>-{redscarDiscountAuec.toLocaleString()} aUEC</span></>}
+              {hasDiscountCode && <><span style={{ color: '#8A8F45' }}>PRIVATE CODE</span><span className="text-right" style={{ color: '#8A8F45' }}>VERIFY ON TRANSMIT</span></>}
               <span style={{ color: '#8A7E6C' }}>DESTINATION</span><span className="text-right" style={{ color: '#D8CFC0' }}>{location || 'UNSET'}</span>
               {deliveryEta && <><span style={{ color: '#8A7E6C' }}>EST. WINDOW</span><span className="text-right" style={{ color: '#D8CFC0' }}>{deliveryEta} after confirmation</span></>}
               <span style={{ color: '#F2EADC' }}>TRANSMIT TOTAL</span><span className="text-right font-bold" style={{ color: '#F0B43A' }}>{estimatedTotal.toLocaleString()} aUEC</span>
