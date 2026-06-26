@@ -1,0 +1,69 @@
+{
+  "name": "qa_check",
+  "type": "object",
+  "properties": {
+    "check_key": {
+      "type": "string",
+      "description": "Stable identifier for the QA/readiness check"
+    },
+    "phase": {
+      "type": "string",
+      "description": "Launch readiness phase this check belongs to"
+    },
+    "group": {
+      "type": "string",
+      "description": "Checklist group, e.g. Storefront, Proprietor, Security"
+    },
+    "label": {
+      "type": "string",
+      "description": "What must be verified"
+    },
+    "role": {
+      "type": "string",
+      "description": "Primary user role covered by this check"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "blocker",
+        "important",
+        "polish"
+      ],
+      "default": "important"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "not_tested",
+        "pass",
+        "review",
+        "blocked"
+      ],
+      "default": "not_tested"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "last_tested_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "check_key",
+    "phase",
+    "label"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
