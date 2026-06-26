@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import FsisSeal from '@/components/brand/FsisSeal';
 import { FSIS, OPERATOR, FOUNDING_STORY, CORE_VALUES, FLEET_REGISTRY, FLEET_NOTE, PRINCIPLES } from '@/lib/fsisLore';
+import PatronFaq from '@/components/store/PatronFaq';
 
 export default function AboutFsis() {
   return (
@@ -77,6 +78,8 @@ export default function AboutFsis() {
           ))}
         </div>
       </div>
+
+      <PatronFaq />
     </section>
   );
 }

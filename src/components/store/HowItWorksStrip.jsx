@@ -3,11 +3,15 @@ import { motion } from 'framer-motion';
 import { storeCache } from '@/lib/localCache';
 import { X } from 'lucide-react';
 import { ManifestPicto, TransmitPicto, HandoffPicto } from '@/components/brand/glyphs/StepPictograms';
+import { Clock } from 'lucide-react';
+
+const ClockIcon = ({ className }) => <Clock className={className} />;
 
 const STEPS = [
-  { icon: ManifestPicto, title: 'BUILD MANIFEST', desc: 'Add wares from the catalog and set quantities.' },
-  { icon: TransmitPicto, title: 'TRANSMIT ORDER', desc: 'Hold to transmit — you get a tracking code & passphrase.' },
-  { icon: HandoffPicto, title: 'IN-PERSON HANDOFF', desc: 'Meet the FSIS crew in the \u2019verse and speak your passphrase.' },
+  { icon: ManifestPicto,  title: 'BUILD MANIFEST',    desc: 'Add wares from the catalog and set quantities. Use Bulk Quote for large SCU orders.' },
+  { icon: TransmitPicto,  title: 'TRANSMIT ORDER',    desc: 'Hold to transmit — you receive a tracking code, passphrase, and handoff scheduling link.' },
+  { icon: ClockIcon,      title: 'SCHEDULE HANDOFF',  desc: 'Propose a meetup time and location via the order card. FSIS confirms or counters.' },
+  { icon: HandoffPicto,   title: 'IN-PERSON HANDOFF', desc: 'Meet the crew in the \'verse, speak your passphrase, and complete the aUEC trade window.' },
 ];
 
 /** Dismissible 3-step explainer for first-time buyers — in-game commerce is
@@ -32,7 +36,7 @@ export default function HowItWorksStrip() {
           ◈ NO ACCOUNT REQUIRED — JUST YOUR IN-GAME HANDLE
         </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-0">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-0">
         {STEPS.map(({ icon: Icon, title, desc }, i) => (
           <div key={title} className="flex items-start gap-2.5 relative">
             {/* Step connector line between items */}
