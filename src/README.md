@@ -30,7 +30,7 @@ Lore and branding constants live in `lib/fsisLore.js` — single source of truth
 | Layer | Path | Notes |
 |---|---|---|
 | **Storefront** | `/` → `pages/Storefront` | Public-facing; no login required to browse or order |
-| **Management Console** | `/ops` → `pages/Desktop` | Admin-only; accessed via the dim `⚙` icon in the storefront header |
+| **Management Console / OS Desktop** | `/ops` → `pages/Desktop` | Internal shell; unauthenticated users are redirected, while admin modules rely on role/entity guards |
 | **Loot Tracker** | `/loot` → `pages/LootTracker` | Internal salvage pipeline |
 | **Auth** | `/login`, `/register`, `/forgot-password`, `/reset-password` | Platform-managed; proprietor logs in to unlock admin views |
 
@@ -59,10 +59,15 @@ Lore and branding constants live in `lib/fsisLore.js` — single source of truth
 | `2` | Bulk Quote tab |
 | `3` | My Orders tab |
 | `4` | About tab |
-| `/` or `F` | Focus search bar |
-| `Cmd+K` | Command palette |
-| `F11` | Toggle fullscreen |
-| `F`→`S`→`I`→`S` | Proprietor key-chord — navigates to `/ops` |
+| `/` | Focus storefront search bar |
+| `F11` | Toggle fullscreen where supported |
+
+Management desktop shortcuts:
+
+| Key | Action |
+|---|---|
+| `Cmd/Ctrl+K` | Open management command palette |
+| `F`→`S`→`I`→`S` | Admin-only command access inside the OS desktop |
 
 ### Local storage (`lib/localCache.js`)
 Two independent caches backed by `localStorage`:
@@ -75,13 +80,13 @@ Two independent caches backed by `localStorage`:
 Session data is namespaced by user ID via `setCacheScope()` so multiple accounts on the same browser stay isolated. All reads/writes are non-fatal (quota errors silently swallowed).
 
 ### Proprietor access
-The **Management Console** is accessible to admin users only via a small `⚙` icon in the top-right header corner (intentionally dim — hover to reveal). This replaces the previously visible "OPERATOR TERMINAL" button which has been archived.
+The public storefront exposes management access only as a small dim `⚙` icon for admin users in the top-right header corner. The old visible "OPERATOR TERMINAL" button is archived. Inside the OS desktop, admin users can also use the hidden `F`→`S`→`I`→`S` command sequence to open the Management module.
 
 ---
 
 ## Management Console (`pages/Desktop`)
 
-Reached at `/ops`. Redirects unauthenticated users (`!user`) back to `/`. The `F`–`S`–`I`–`S` key-chord typed anywhere on the storefront (via `CommandAccess`) also navigates here for the proprietor.
+Reached at `/ops`. Unauthenticated users are redirected back to `/`. Admin-only business modules are additionally protected by role checks and entity permissions. The `F`–`S`–`I`–`S` key-chord is documented as an OS desktop command-access shortcut, not a public storefront shortcut.
 
 ### Tabs
 
@@ -196,6 +201,26 @@ Buyer proposes via `HandoffScheduler`; proprietor confirms/counters via `Handoff
 - **Google Sheets** (authorized) — ledger sync via `syncLedgerToSheets`
 - **UEX API** — commodity price feed via `syncUex` backend function
 - **Base44 LLM** (`InvokeLLM`) — salvage advisor, OCR analysis, daily briefing
+
+See `docs/integrations.md` for setup, health checks, and recovery procedures.
+
+---
+
+## Documentation Runbooks
+
+| Document | Purpose |
+|---|---|
+| `docs/access-control.md` | Guest/user/contractor/admin access matrix |
+| `docs/automations.md` | Active automation registry, health checks, duplicate policy |
+| `docs/integrations.md` | Google Sheets, UEX, email, LLM setup and recovery |
+| `docs/buyer-flow.md` | Buyer journey, edge cases, safe trade policy |
+| `docs/admin-runbook.md` | Daily proprietor operations and order/handoff procedures |
+| `docs/entities.md` | Field-level reference for critical entities |
+| `docs/qa-checklist.md` | Release and regression checklist |
+| `docs/known-gaps.md` | Limitations, mitigations, and future fixes |
+| `docs/troubleshooting.md` | Symptom-based recovery guide |
+| `docs/archived-features.md` | Sequestered modules and reactivation requirements |
+| `docs/brand-naming.md` | Canonical naming and tone rules |
 
 ---
 

@@ -14,7 +14,7 @@ const STEPS = [
   { icon: HandoffPicto,   title: 'IN-PERSON HANDOFF', desc: 'Meet the crew in the \'verse, speak your passphrase, and complete the aUEC trade window.' },
 ];
 
-/** Dismissible 3-step explainer for first-time buyers — in-game commerce is
+/** Dismissible 4-step explainer for first-time buyers — in-game commerce is
  *  unusual and the handoff flow needs spelling out once. */
 export default function HowItWorksStrip() {
   const [hidden, setHidden] = useState(() => storeCache.hasDismissedHowTo());

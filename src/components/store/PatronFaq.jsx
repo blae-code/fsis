@@ -41,7 +41,7 @@ const FAQS = [
   },
   {
     q: 'What keyboard shortcuts are available?',
-    a: 'Keys 1–4 switch between catalog tabs. / or F focuses the search bar. Cmd+K opens the command palette. F11 toggles fullscreen. On the order transmit button, hold the button until the progress ring completes to confirm.',
+    a: 'On the storefront, keys 1–4 switch tabs and / focuses the search bar. In the management desktop, Cmd/Ctrl+K opens the command palette. F11 toggles fullscreen where supported. On the order transmit button, hold until the progress ring completes to confirm.',
   },
 ];
 
