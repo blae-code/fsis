@@ -5,7 +5,7 @@ import { ChevronDown, Search } from 'lucide-react';
 const FAQ_SECTIONS = [
   { id: 'start', title: 'START HERE', items: [
     ['How do I use the storefront?', 'Browse the catalog, add wares to your manifest, choose a delivery location, enter your in-game handle, then hold the transmit control to place the order. No account is required.'],
-    ['What should I do first?', 'Use Buyer Nav on the catalog: Buy Materials for salvage commodities, Book Logistics for services, Build Bulk Quote for larger orders, or Track Order if you already have a code.'],
+    ['What should I do first?', 'Use Buyer Nav on the catalog: Buy Materials for salvage commodities, Browse Loot for recovered gear and components, Build Bulk Quote for larger salvage loads, or Track Order if you already have a code.'],
     ['Do I need an account?', 'No. Your tracking code and private passphrase identify the order. If you are logged in, the order is also linked to your profile automatically.'],
   ]},
   { id: 'ordering', title: 'ORDERING', items: [
@@ -45,11 +45,17 @@ export default function StoreFaq({ onNavigate }) {
 
   return (
     <section className="max-w-4xl space-y-4 pb-6 font-mono">
-      <div className="border p-4" style={{ borderColor: '#5C4424', background: '#12100C', clipPath: 'polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)' }}>
-        <p className="text-[9px] tracking-[0.3em]" style={{ color: '#6FA08F' }}>// VISITOR FAQ</p>
-        <h2 className="text-lg font-bold tracking-[0.14em]" style={{ color: '#EDE5D6' }}>HOW TO SUCCESSFULLY USE FSIS</h2>
-        <p className="text-[10px] mt-1 max-w-2xl leading-relaxed" style={{ color: '#9C9080' }}>Fast answers for browsing, ordering, tracking, payment, and in-game handoff.</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
+      <div className="border p-4 relative overflow-hidden" style={{ borderColor: '#5C4424', background: 'linear-gradient(135deg, #14110D, #0E0C09)', clipPath: 'polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)' }}>
+        <div className="absolute right-4 top-4 text-[48px] leading-none opacity-10" style={{ color: '#E0A22E' }}>FAQ</div>
+        <p className="text-[9px] tracking-[0.3em]" style={{ color: '#8A8F45' }}>// VISITOR FAQ</p>
+        <h2 className="text-lg font-bold tracking-[0.14em]" style={{ color: '#EDE5D6' }}>BUYER FIELD MANUAL</h2>
+        <p className="text-[10px] mt-1 max-w-2xl leading-relaxed" style={{ color: '#9C9080' }}>Fast answers for browsing recovered inventory, building a salvage-material quote, tracking orders, paying safely, and completing handoff.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-4">
+          {['Pick recovered stock', 'Transmit private manifest', 'Verify handoff passphrase'].map((step, idx) => (
+            <div key={step} className="border p-2" style={{ borderColor: '#3A2F20', background: '#0C0A07' }}><div className="text-[8px] tracking-[0.18em]" style={{ color: '#7A6E60' }}>STEP {idx + 1}</div><div className="text-[10px] font-bold" style={{ color: '#E0A22E' }}>{step}</div></div>
+          ))}
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
           {QUICK_LINKS.map((link) => (
             <button key={link.tab} type="button" onClick={() => onNavigate(link.tab)} className="border px-3 py-2 text-[9px] font-bold tracking-[0.14em] hover:brightness-125" style={{ borderColor: '#3A2F20', color: '#D8CFC0', background: '#0C0A07' }}>{link.label}</button>
           ))}
@@ -71,7 +77,7 @@ export default function StoreFaq({ onNavigate }) {
 
           {visible.length === 0 ? <p className="text-[10px]" style={{ color: '#8A7E6C' }}>No FAQ entries match that search.</p> : visible.map((section) => (
             <div key={section.id} className="space-y-2">
-              {query && <h3 className="text-[9px] tracking-[0.22em]" style={{ color: '#6FA08F' }}>{section.title}</h3>}
+              {query && <h3 className="text-[9px] tracking-[0.22em]" style={{ color: '#8A8F45' }}>{section.title}</h3>}
               {section.items.map(([question, answer], idx) => {
                 const key = `${section.id}-${idx}`;
                 const isOpen = open === key;

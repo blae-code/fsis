@@ -70,6 +70,10 @@ export default function MyOrders({ onReorder }) {
     return [...map.values()].sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
   }, [orders, accountOrders]);
 
+  const activeOrders = allOrders.filter((o) => !['delivered', 'cancelled'].includes(o.status));
+  const deliveredOrders = allOrders.filter((o) => o.status === 'delivered');
+  const totalValue = allOrders.reduce((sum, o) => sum + (Number(o.total_auec) || 0), 0);
+
   // Detect live status changes — flash the card and notify the buyer
   useEffect(() => {
     const changed = [];
@@ -109,48 +113,39 @@ export default function MyOrders({ onReorder }) {
   };
 
   return (
-    <div className="space-y-4 max-w-2xl">
+    <div className="space-y-4 max-w-4xl font-mono">
       {messagingOrder && <OrderMessageThread order={messagingOrder} onClose={() => setMessagingOrder(null)} />}
       {handoffOrder && <HandoffScheduler order={handoffOrder} onClose={() => setHandoffOrder(null)} />}
-      <div className="flex items-center justify-between font-mono text-xs tracking-[0.2em]" style={{ color: '#6FA08F' }}>
-        <span className="flex items-center gap-2">
-          <PackageCheck className="w-3.5 h-3.5" /> ORDER TRACKING
-        </span>
-        {codes.length > 0 && (
-          <span className="flex items-center gap-1.5 text-[9px] tracking-[0.15em]" style={{ color: '#7BA05B' }}>
-            <span className="relative flex w-2 h-2">
-              <span className="absolute inline-flex w-full h-full rounded-full animate-ping" style={{ background: '#7BA05B', opacity: 0.6 }} />
-              <span className="relative inline-flex w-2 h-2 rounded-full" style={{ background: '#7BA05B' }} />
+      <div className="border p-4 relative overflow-hidden" style={{ borderColor: '#5C4424', background: 'linear-gradient(135deg, #14110D, #0E0C09)', clipPath: 'polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)' }}>
+        <div className="absolute right-4 top-4 text-[52px] leading-none opacity-10" style={{ color: '#E0A22E' }}>FSIS</div>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-[9px] tracking-[0.28em]" style={{ color: '#8A8F45' }}>// BUYER ORDER OPERATIONS</p>
+            <h2 className="text-lg font-bold tracking-[0.14em]" style={{ color: '#EDE5D6' }}>ACTIVE ORDER BOARD</h2>
+            <p className="text-[10px] mt-1 max-w-2xl leading-relaxed" style={{ color: '#9C9080' }}>Track live fulfillment, download receipts, coordinate handoff, and keep the private passphrase secured until meetup.</p>
+          </div>
+          {codes.length > 0 && (
+            <span className="shrink-0 flex items-center gap-1.5 text-[9px] tracking-[0.15em]" style={{ color: '#8A8F45' }}>
+              <span className="relative flex w-2 h-2"><span className="absolute inline-flex w-full h-full rounded-full animate-ping" style={{ background: '#8A8F45', opacity: 0.6 }} /><span className="relative inline-flex w-2 h-2 rounded-full" style={{ background: '#8A8F45' }} /></span>
+              LIVE — {dataUpdatedAt ? `SYNCED ${new Date(dataUpdatedAt).toLocaleTimeString([], { timeStyle: 'short' })}` : 'TRACKING'}
             </span>
-            LIVE — {dataUpdatedAt ? `SYNCED ${new Date(dataUpdatedAt).toLocaleTimeString([], { timeStyle: 'short' })}` : 'TRACKING'}
-          </span>
-        )}
+          )}
+        </div>
+        <div className="grid grid-cols-3 gap-2 mt-4">
+          {[['TRACKED', allOrders.length], ['ACTIVE', activeOrders.length], ['DELIVERED', deliveredOrders.length]].map(([label, value]) => (
+            <div key={label} className="border p-2 text-center" style={{ borderColor: '#3A2F20', background: '#0C0A07' }}><div className="text-base font-bold" style={{ color: '#E0A22E' }}>{value}</div><div className="text-[8px] tracking-[0.16em]" style={{ color: '#7A6E60' }}>{label}</div></div>
+          ))}
+        </div>
+        <div className="mt-3 text-[9px] tracking-[0.12em]" style={{ color: '#C8A05B' }}>TOTAL TRACKED VALUE: {totalValue.toLocaleString()} aUEC</div>
       </div>
 
-      {/* Lookup by code */}
-      <div className="space-y-1">
+      <div className="border p-3 space-y-2" style={{ borderColor: '#2A2118', background: '#100E0B' }}>
         <div className="flex gap-2">
-          <Input
-            value={lookup}
-            onChange={(e) => setLookup(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleLookup()}
-            placeholder="Tracking code (FSIS-3F9A2C) or receipt passphrase (IRON-VULTURE-47)"
-            className="h-8 text-xs font-mono flex-1"
-            style={{ borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' }}
-          />
-          <button
-            onClick={handleLookup}
-            disabled={looking || !lookup.trim()}
-            className="h-8 px-4 font-mono text-[10px] font-bold inline-flex items-center gap-1.5 disabled:opacity-40 hover:brightness-110 transition-all"
-            style={{ background: 'linear-gradient(180deg, #A87C42, #6E4D24)', color: '#15100A' }}
-          >
-            {looking ? <Loader2 className="w-3 h-3 animate-spin" /> : <Search className="w-3 h-3" />} TRACK
-          </button>
+          <Input value={lookup} onChange={(e) => setLookup(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleLookup()} placeholder="Tracking code (FSIS-3F9A2C) or receipt passphrase (IRON-VULTURE-47)" className="h-8 text-xs font-mono flex-1" style={{ borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' }} />
+          <button onClick={handleLookup} disabled={looking || !lookup.trim()} className="h-8 px-4 font-mono text-[10px] font-bold inline-flex items-center gap-1.5 disabled:opacity-40 hover:brightness-110 transition-all" style={{ background: 'linear-gradient(180deg, #E0A22E, #A86D1E)', color: '#15100A' }}>{looking ? <Loader2 className="w-3 h-3 animate-spin" /> : <Search className="w-3 h-3" />} TRACK</button>
         </div>
-        {lookupError && <p className="text-[10px] font-mono" style={{ color: '#C05050' }}>{lookupError}</p>}
-        <p className="text-[9px] font-mono leading-relaxed" style={{ color: '#6B6155' }}>
-          Tracking codes and passphrases work like private receipts. They are saved on this device only; do not share the passphrase before handoff.
-        </p>
+        {lookupError && <p className="text-[10px]" style={{ color: '#C05050' }}>{lookupError}</p>}
+        <p className="text-[9px] leading-relaxed" style={{ color: '#6B6155' }}>Tracking codes and passphrases work like private receipts. They are saved on this device only; do not share the passphrase before handoff.</p>
       </div>
 
       {/* Tracked orders */}
@@ -185,7 +180,7 @@ export default function MyOrders({ onReorder }) {
                 <div className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>
                   PLACED {new Date(o.created_date).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
                   {o.delivery_location && (
-                    <> • <LocationMarker name={o.delivery_location} className="w-3 h-3 inline -mt-0.5" style={{ color: '#6FA08F' }} /> {o.delivery_location}</>
+                    <> • <LocationMarker name={o.delivery_location} className="w-3 h-3 inline -mt-0.5" style={{ color: '#8A8F45' }} /> {o.delivery_location}</>
                   )}
                 </div>
                 {!['delivered', 'cancelled'].includes(o.status) && etaFor(o.delivery_location) && (
@@ -216,7 +211,7 @@ export default function MyOrders({ onReorder }) {
                       placed_date: o.created_date,
                     })}
                     className="px-2.5 py-1 font-mono text-[9px] font-bold border inline-flex items-center gap-1 hover:brightness-125 transition-all"
-                    style={{ borderColor: '#3C5A50', color: '#7FB3A0', background: '#101413' }}
+                    style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#120D08' }}
                   >
                     <FileDown className="w-2.5 h-2.5" /> INVOICE
                   </button>
@@ -224,7 +219,7 @@ export default function MyOrders({ onReorder }) {
                     <button
                       onClick={() => onReorder(o.items)}
                       className="px-2.5 py-1 font-mono text-[9px] font-bold border inline-flex items-center gap-1 hover:brightness-125 transition-all"
-                      style={{ borderColor: '#3C5A50', color: '#7FB3A0', background: '#101413' }}
+                      style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#120D08' }}
                     >
                       <RotateCcw className="w-2.5 h-2.5" /> REORDER
                     </button>
@@ -233,7 +228,7 @@ export default function MyOrders({ onReorder }) {
                     <button
                       onClick={() => setMessagingOrder(o)}
                       className="px-2.5 py-1 font-mono text-[9px] font-bold border inline-flex items-center gap-1 hover:brightness-125 transition-all"
-                      style={{ borderColor: '#3A4A5A', color: '#7FA0B3', background: '#0D1318' }}
+                      style={{ borderColor: '#5C4424', color: '#C8893B', background: '#120D08' }}
                     >
                       <MessageSquare className="w-2.5 h-2.5" /> MESSAGE
                     </button>
@@ -267,7 +262,7 @@ export default function MyOrders({ onReorder }) {
             {o.handoff_passphrase && !['delivered', 'cancelled'].includes(o.status) && (
               <div className="space-y-1 font-mono">
                 <div className="flex items-center gap-2 text-[10px]" title="Spoken at the in-person handoff to verify identity on both sides">
-                  <PassphraseSigil className="w-4 h-4 shrink-0" style={{ color: '#6FA08F' }} />
+                  <PassphraseSigil className="w-4 h-4 shrink-0" style={{ color: '#8A8F45' }} />
                   <span style={{ color: '#8A7E6C' }}>HANDOFF PASSPHRASE:</span>
                   <span className="font-bold tracking-[0.12em]" style={{ color: '#E0A22E' }}>{o.handoff_passphrase}</span>
                 </div>
@@ -282,7 +277,7 @@ export default function MyOrders({ onReorder }) {
                 <div className="text-[8px] tracking-[0.2em]" style={{ color: '#4A7A4A' }}>◈ HANDOFF CONFIRMED BY PROPRIETOR</div>
                 <div className="text-[10px] font-bold" style={{ color: '#7BA05B' }}>{o.handoff_confirmed_time}</div>
                 {o.handoff_confirmed_location && (
-                  <div className="text-[10px]" style={{ color: '#6FA08F' }}>📍 {o.handoff_confirmed_location}</div>
+                  <div className="text-[10px]" style={{ color: '#8A8F45' }}>📍 {o.handoff_confirmed_location}</div>
                 )}
                 {o.handoff_proprietor_note && (
                   <div className="text-[10px] italic" style={{ color: '#6A8070' }}>"{o.handoff_proprietor_note}"</div>
