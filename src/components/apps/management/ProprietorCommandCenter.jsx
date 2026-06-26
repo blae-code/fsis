@@ -29,6 +29,7 @@ import ProprietorAtmosphere from '@/components/apps/management/proprietor/Propri
 import ProprietorCommandHero from '@/components/apps/management/proprietor/ProprietorCommandHero';
 import ProprietorProgressRail from '@/components/apps/management/proprietor/ProprietorProgressRail';
 import LaunchReadinessPanel from '@/components/apps/management/proprietor/LaunchReadinessPanel';
+import DebugLogPanel from '@/components/apps/management/proprietor/DebugLogPanel';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -61,6 +62,7 @@ export default function ProprietorCommandCenter() {
       <CommandKpiStrip orders={orders} products={products} loot={loot} />
       <ProprietorProgressRail orders={orders} loot={loot} products={products} restocks={restocks} />
       <LaunchReadinessPanel orders={orders} products={products} loot={loot} prices={prices} messages={messages} />
+      <DebugLogPanel />
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><RapidLootIntakePanel /><OpsAssistantPanel /></div>
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><ProprietorTriageBoard orders={orders} messages={messages} loot={loot} products={products} /><DailyCloseoutPanel orders={orders} messages={messages} /></div>
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><MarginWatchPanel products={products} prices={prices} /><LedgerSyncPanel entries={ledger} /></div>
