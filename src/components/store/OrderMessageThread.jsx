@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { sendOrderMessage } from '@/functions/sendOrderMessage';
+import { useMutation } from '@tanstack/react-query';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,9 +15,9 @@ export default function OrderMessageThread({ order, onClose }) {
   const [done, setDone] = useState(false);
 
   const mutation = useMutation({
-    mutationFn: () => base44.entities.order_message.create({
+    mutationFn: () => sendOrderMessage({
       tracking_code: order.tracking_code,
-      sender: 'buyer',
+      handoff_passphrase: order.handoff_passphrase,
       handle: handle.trim(),
       message: message.trim(),
       is_cancel_request: isCancelReq,

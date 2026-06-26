@@ -17,6 +17,7 @@ This document describes the public buyer experience and the edge cases that must
 - Do not send aUEC outside the trade window.
 - Verify the handoff passphrase before completing the trade.
 - If anything feels wrong, stop and message FSIS through the order card.
+- Order messages require the saved tracking code or passphrase and are accepted only while the order is still active.
 
 ## Tracking Code & Passphrase
 

@@ -47,7 +47,7 @@ If an order exceeds available stock before confirmation:
 1. Do not confirm automatically.
 2. Message buyer with available quantity and options.
 3. Offer partial fill, delay/backorder, substitute ware, or cancellation.
-4. Document the outcome in order messages/internal notes.
+4. Document the outcome in order messages/internal notes; buyer cancellation requests now also write an internal note and ops-log entry.
 
 ## GrimHEX / High-Risk Destination Procedure
 

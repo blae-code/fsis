@@ -22,7 +22,18 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Order is already being processed and can no longer be cancelled — contact FSIS.' }, { status: 400 });
     }
 
-    await svc.order.update(order.id, { status: 'cancelled' });
+    await svc.order.update(order.id, {
+      status: 'cancelled',
+      internal_notes: [(order.internal_notes || '').trim(), `BUYER CANCELLED while order was new (${new Date().toISOString()})`].filter(Boolean).join('\n'),
+    });
+    await svc.ops_log.create({
+      action: 'order.cancelled_by_buyer',
+      entity_type: 'order',
+      entity_id: order.id,
+      entity_name: `Order from ${order.customer_handle}`,
+      actor: order.customer_handle,
+      notes: `Cancelled by buyer using tracking code ${order.tracking_code}`,
+    }).catch(() => {});
     return Response.json({ ok: true });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
