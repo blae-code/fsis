@@ -34,6 +34,7 @@ import CommandInboxPanel from '@/components/apps/management/proprietor/CommandIn
 import MaintenanceModePanel from '@/components/apps/management/proprietor/MaintenanceModePanel';
 import OrderSlaPanel from '@/components/apps/management/proprietor/OrderSlaPanel';
 import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
+import CommandSection from '@/components/apps/management/proprietor/CommandSection';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -65,21 +66,35 @@ export default function ProprietorCommandCenter() {
       <ProprietorCommandHero orders={orders} products={products} loot={loot} ledger={ledger} prices={prices} />
       <CommandKpiStrip orders={orders} products={products} loot={loot} />
       <ProprietorProgressRail orders={orders} loot={loot} products={products} restocks={restocks} />
-      <CommandInboxPanel orders={orders} products={products} loot={loot} messages={messages} restocks={restocks} prices={prices} />
-      <div className="grid xl:grid-cols-[0.8fr_1.2fr] gap-4"><MaintenanceModePanel /><OrderSlaPanel orders={orders} /></div>
-      <PaydayManagementPanel />
-      <LaunchReadinessPanel orders={orders} products={products} loot={loot} prices={prices} messages={messages} />
-      <DebugLogPanel />
-      <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><RapidLootIntakePanel /><OpsAssistantPanel /></div>
-      <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><ProprietorTriageBoard orders={orders} messages={messages} loot={loot} products={products} /><DailyCloseoutPanel orders={orders} messages={messages} /></div>
-      <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><MarginWatchPanel products={products} prices={prices} /><LedgerSyncPanel entries={ledger} /></div>
-      <div className="grid xl:grid-cols-[1.1fr_1fr] gap-4"><FulfillmentQueue orders={orders} onStatus={(id, next) => status.mutate({ id, next })} pending={status.isPending} /><ProprietorAlerts orders={orders} loot={loot} messages={messages} products={products} prices={prices} /></div>
-      <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><HandoffSchedulerConsole orders={orders} onConfirm={(o) => handoff.mutate(o)} pending={handoff.isPending} /><RouteClusterPanel orders={orders} /></div>
-      <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><InventoryReconciliationPanel products={products} onAdjust={(id, value) => stock.mutate({ id, value })} pending={stock.isPending} /><DemandRelistPanel restocks={restocks} loot={loot} /></div>
-      <div className="grid xl:grid-cols-[1.2fr_0.8fr] gap-4"><LootAppraisalDesk loot={loot} onApplyPrice={(id, value) => price.mutate({ id, value })} onPublish={(item) => publish.mutate(item)} pricing={price.isPending} publishing={publish.isPending} /><BuyerLedger orders={orders} /></div>
-      <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><ProfitLifecyclePanel loot={loot} repairs={repairs} products={products} /><div className="space-y-4"><MarketSyncHealthPanel prices={prices} /><ProprietorQuickActions /></div></div>
-      <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><PrivateCodeConsole codes={codes} onToggle={(code) => codeToggle.mutate(code)} pending={codeToggle.isPending} /><OpsAuditMini logs={logs} /></div>
-      <DemandIntelligence products={products} restocks={restocks} />
+
+      <CommandSection eyebrow="DAILY WORK" title="PRIMARY OPERATIONS" description="Start here for the two most frequent loops: intake recovered loot, then fulfill active buyer orders.">
+        <div className="grid xl:grid-cols-[1fr_1.1fr] gap-4"><RapidLootIntakePanel /><FulfillmentQueue orders={orders} onStatus={(id, next) => status.mutate({ id, next })} pending={status.isPending} /></div>
+        <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><CommandInboxPanel orders={orders} products={products} loot={loot} messages={messages} restocks={restocks} prices={prices} /><ProprietorAlerts orders={orders} loot={loot} messages={messages} products={products} prices={prices} /></div>
+      </CommandSection>
+
+      <CommandSection eyebrow="NEXT ACTIONS" title="HANDOFFS & SLA CONTROL" description="Manage buyer coordination, stuck orders, route clustering, and storefront availability without leaving the top workflow.">
+        <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><OrderSlaPanel orders={orders} /><HandoffSchedulerConsole orders={orders} onConfirm={(o) => handoff.mutate(o)} pending={handoff.isPending} /></div>
+        <div className="grid xl:grid-cols-[0.8fr_1.2fr] gap-4"><MaintenanceModePanel /><RouteClusterPanel orders={orders} /></div>
+      </CommandSection>
+
+      <CommandSection eyebrow="INVENTORY PIPELINE" title="LOOT APPRAISAL & STOCK RECONCILIATION" description="Price recovered items, publish listings, refill low stock, and watch restock demand.">
+        <div className="grid xl:grid-cols-[1.2fr_0.8fr] gap-4"><LootAppraisalDesk loot={loot} onApplyPrice={(id, value) => price.mutate({ id, value })} onPublish={(item) => publish.mutate(item)} pricing={price.isPending} publishing={publish.isPending} /><InventoryReconciliationPanel products={products} onAdjust={(id, value) => stock.mutate({ id, value })} pending={stock.isPending} /></div>
+        <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><DemandRelistPanel restocks={restocks} loot={loot} /><ProfitLifecyclePanel loot={loot} repairs={repairs} products={products} /></div>
+      </CommandSection>
+
+      <CommandSection eyebrow="MARGIN & PAYOUTS" title="FINANCE, PAYDAY, AND MARKET WATCH" description="Review ledger exports, buyer value, payroll cycles, market health, and private codes after daily fulfillment is under control.">
+        <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><MarginWatchPanel products={products} prices={prices} /><LedgerSyncPanel entries={ledger} /></div>
+        <PaydayManagementPanel />
+        <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><BuyerLedger orders={orders} /><PrivateCodeConsole codes={codes} onToggle={(code) => codeToggle.mutate(code)} pending={codeToggle.isPending} /></div>
+        <DemandIntelligence products={products} restocks={restocks} />
+      </CommandSection>
+
+      <CommandSection eyebrow="COMMAND SUPPORT" title="ASSISTANT, CLOSEOUT, AND READINESS" description="Use these for planning, QA, diagnostics, quick actions, and operational audit after the core queue is clear.">
+        <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><OpsAssistantPanel /><ProprietorTriageBoard orders={orders} messages={messages} loot={loot} products={products} /></div>
+        <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><DailyCloseoutPanel orders={orders} messages={messages} /><div className="space-y-4"><MarketSyncHealthPanel prices={prices} /><ProprietorQuickActions /></div></div>
+        <LaunchReadinessPanel orders={orders} products={products} loot={loot} prices={prices} messages={messages} />
+        <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><DebugLogPanel /><OpsAuditMini logs={logs} /></div>
+      </CommandSection>
       <MobileCommandRail />
       </div>
     </div>
