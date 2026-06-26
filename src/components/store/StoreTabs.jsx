@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import StoreTip from '@/components/store/StoreTip';
 import { HelpCircle } from 'lucide-react';
-import { CatalogSigil, QuoteSigil, OrdersSigil, AboutSigil } from '@/components/brand/glyphs/DivisionSigils';
+import { CatalogSigil, OrdersSigil } from '@/components/brand/glyphs/DivisionSigils';
 // ARCHIVED: JobsSigil, ReportSigil, DashboardSigil — sequestered for future operator development
 
 // ARCHIVED TABS (operator features — sequestered for future development):
@@ -11,11 +11,9 @@ import { CatalogSigil, QuoteSigil, OrdersSigil, AboutSigil } from '@/components/
 // { id: 'report',    label: 'REPORT',    icon: ReportSigil,    tip: 'Weekly sales & cargo output summary', key: '6' },
 
 const TABS = [
-  { id: 'catalog',   label: 'CATALOG',   icon: CatalogSigil,   tip: 'Browse wares & add to manifest',  key: '1' },
-  { id: 'quote',     label: 'BULK QUOTE',icon: QuoteSigil,     tip: 'Build a bulk pricing estimate',    key: '2' },
-  { id: 'orders',    label: 'MY ORDERS', icon: OrdersSigil,    tip: 'Track orders by code',             key: '3' },
-  { id: 'faq',       label: 'FAQ',       icon: HelpCircle,     tip: 'How to use the storefront',        key: '4' },
-  { id: 'about',     label: 'ABOUT FSIS',icon: AboutSigil,     tip: 'Company dossier & system status',  key: '5' },
+  { id: 'catalog', label: 'INVENTORY', icon: CatalogSigil, tip: 'Browse wares and add them to your manifest', key: '1' },
+  { id: 'orders', label: 'ACTIVE ORDERS', icon: OrdersSigil, tip: 'Track current orders by code', key: '2' },
+  { id: 'faq', label: 'FAQ', icon: HelpCircle, tip: 'Read purchase, delivery, and safety answers', key: '3' },
 ];
 
 /** Storefront selector rail — bronze plate glides between sections instead of
