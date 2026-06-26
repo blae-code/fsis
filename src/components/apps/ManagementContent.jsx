@@ -20,10 +20,11 @@ const AMBER  = '#E0A22E';
 const DIM    = '#7A6E60';
 const DIMMER = '#3A3028';
 
+// ARCHIVED TABS (operator/crew features — sequestered for future development):
+// { id: 'jobs',  label: 'JOB BOARD', glyph: '✦' },
+// { id: 'crew',  label: 'CREW',      glyph: '◉' },
+
 const TABS = [
-const TABS = [
-  // ARCHIVED: { id: 'jobs', label: 'JOB BOARD', glyph: '✦' }, — operator feature
-  // ARCHIVED: { id: 'crew', label: 'CREW',       glyph: '◉' }, — operator feature
   { id: 'overview',  label: 'OVERVIEW',   glyph: '◈' },
   { id: 'store',     label: 'STORE',      glyph: '⬡' },
   { id: 'discounts', label: 'DISCOUNTS',  glyph: '◆' },

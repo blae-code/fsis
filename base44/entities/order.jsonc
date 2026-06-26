@@ -80,6 +80,41 @@
     "internal_notes": {
       "type": "string",
       "description": "Business-side notes, not shown to customer"
+    },
+    "handoff_proposed_time": {
+      "type": "string",
+      "description": "Buyer-proposed handoff window, e.g. 'Friday ~2100 UTC' or 'Weekend evenings PST'"
+    },
+    "handoff_location": {
+      "type": "string",
+      "description": "In-game meetup location proposed by buyer, e.g. 'Lorville, Teasa Spaceport'"
+    },
+    "handoff_contact": {
+      "type": "string",
+      "description": "Best way to reach buyer for coordination, e.g. 'Spectrum DM @handle', 'Discord handle#1234'"
+    },
+    "handoff_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "requested",
+        "confirmed",
+        "completed"
+      ],
+      "default": "none",
+      "description": "Handoff coordination state"
+    },
+    "handoff_confirmed_time": {
+      "type": "string",
+      "description": "Proprietor-confirmed meetup time (free text)"
+    },
+    "handoff_confirmed_location": {
+      "type": "string",
+      "description": "Proprietor-confirmed meetup location (may differ from buyer proposal)"
+    },
+    "handoff_proprietor_note": {
+      "type": "string",
+      "description": "Note from proprietor to buyer about the handoff"
     }
   },
   "required": [

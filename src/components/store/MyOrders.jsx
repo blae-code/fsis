@@ -5,8 +5,9 @@ import { trackOrder } from '@/functions/trackOrder';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { PackageCheck, Search, Loader2, RotateCcw, FileDown, MessageSquare } from 'lucide-react';
+import { PackageCheck, Search, Loader2, RotateCcw, FileDown, MessageSquare, CalendarClock } from 'lucide-react';
 import OrderMessageThread from '@/components/store/OrderMessageThread';
+import HandoffScheduler from '@/components/store/HandoffScheduler';
 import PassphraseSigil from '@/components/brand/glyphs/PassphraseSigil';
 import LocationMarker from '@/components/brand/glyphs/LocationMarker';
 import { IdleDockBay } from '@/components/brand/glyphs/EmptyStates';
@@ -35,6 +36,7 @@ export default function MyOrders({ onReorder }) {
   const prevStatuses = useRef({});
   const [updatedCodes, setUpdatedCodes] = useState([]);
   const [messagingOrder, setMessagingOrder] = useState(null);
+  const [handoffOrder, setHandoffOrder] = useState(null);
 
   const { data: orders = [], isLoading, dataUpdatedAt } = useQuery({
     queryKey: ['tracked_orders', codes.join(',')],
@@ -109,6 +111,7 @@ export default function MyOrders({ onReorder }) {
   return (
     <div className="space-y-4 max-w-2xl">
       {messagingOrder && <OrderMessageThread order={messagingOrder} onClose={() => setMessagingOrder(null)} />}
+      {handoffOrder && <HandoffScheduler order={handoffOrder} onClose={() => setHandoffOrder(null)} />}
       <div className="flex items-center justify-between font-mono text-xs tracking-[0.2em]" style={{ color: '#6FA08F' }}>
         <span className="flex items-center gap-2">
           <PackageCheck className="w-3.5 h-3.5" /> ORDER TRACKING
@@ -232,6 +235,20 @@ export default function MyOrders({ onReorder }) {
                       <MessageSquare className="w-2.5 h-2.5" /> MESSAGE
                     </button>
                   )}
+                  {['confirmed', 'in_fulfillment'].includes(o.status) && (
+                    <button
+                      onClick={() => setHandoffOrder(o)}
+                      className="px-2.5 py-1 font-mono text-[9px] font-bold border inline-flex items-center gap-1 hover:brightness-125 transition-all"
+                      style={{
+                        borderColor: o.handoff_status === 'confirmed' ? '#3C5A3C' : '#5C4424',
+                        color: o.handoff_status === 'confirmed' ? '#7BA05B' : '#E0A22E',
+                        background: o.handoff_status === 'confirmed' ? '#0C130C' : '#180E04',
+                      }}
+                    >
+                      <CalendarClock className="w-2.5 h-2.5" />
+                      {o.handoff_status === 'confirmed' ? 'HANDOFF ✓' : o.handoff_status === 'requested' ? 'HANDOFF PENDING' : 'SCHEDULE HANDOFF'}
+                    </button>
+                  )}
                   {o.status === 'new' && (
                     <CancelOrder
                       trackingCode={o.tracking_code}
@@ -249,6 +266,22 @@ export default function MyOrders({ onReorder }) {
                 <PassphraseSigil className="w-4 h-4 shrink-0" style={{ color: '#6FA08F' }} />
                 <span style={{ color: '#8A7E6C' }}>HANDOFF PASSPHRASE:</span>
                 <span className="font-bold tracking-[0.12em]" style={{ color: '#E0A22E' }}>{o.handoff_passphrase}</span>
+              </div>
+            )}
+            {/* Confirmed handoff slot — shown prominently when proprietor has locked it in */}
+            {o.handoff_status === 'confirmed' && o.handoff_confirmed_time && (
+              <div className="border p-2.5 space-y-1 font-mono" style={{ borderColor: '#3C5A3C', background: '#0C130C' }}>
+                <div className="text-[8px] tracking-[0.2em]" style={{ color: '#4A7A4A' }}>◈ HANDOFF CONFIRMED BY PROPRIETOR</div>
+                <div className="text-[10px] font-bold" style={{ color: '#7BA05B' }}>{o.handoff_confirmed_time}</div>
+                {o.handoff_confirmed_location && (
+                  <div className="text-[10px]" style={{ color: '#6FA08F' }}>📍 {o.handoff_confirmed_location}</div>
+                )}
+                {o.handoff_proprietor_note && (
+                  <div className="text-[10px] italic" style={{ color: '#6A8070' }}>"{o.handoff_proprietor_note}"</div>
+                )}
+                <div className="text-[9px] mt-0.5" style={{ color: '#4A6A5A' }}>
+                  Use passphrase <span style={{ color: '#E0A22E' }}>{o.handoff_passphrase}</span> to verify identity at the meetup.
+                </div>
               </div>
             )}
             <OrderTimeline status={o.status} />

@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { ClipboardList, MapPin } from 'lucide-react';
 import OrderPriceAdjust from '@/components/apps/orders/OrderPriceAdjust';
+import HandoffCoordinator, { HandoffStatusBadge } from '@/components/apps/orders/HandoffCoordinator';
 
 const STATUSES = ['new', 'confirmed', 'in_fulfillment', 'delivered', 'cancelled'];
 
@@ -89,8 +90,14 @@ export default function OrdersContent() {
                   <span className="flex items-center gap-1"><MapPin className="w-2.5 h-2.5" /> {o.delivery_location}</span>
                 )}
                 {o.customer_notes && <span>"{o.customer_notes}"</span>}
-                <span>contact: {o.created_by}</span>
               </div>
+
+              {/* Handoff coordination */}
+              {!['delivered', 'cancelled'].includes(o.status) && (
+                <div className="pt-1 border-t" style={{ borderColor: 'hsl(33, 18%, 14%)' }}>
+                  <HandoffCoordinator order={o} />
+                </div>
+              )}
             </div>
           ))
         )}
