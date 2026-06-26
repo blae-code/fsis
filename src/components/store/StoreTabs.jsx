@@ -11,9 +11,9 @@ import { CatalogSigil, OrdersSigil } from '@/components/brand/glyphs/DivisionSig
 // { id: 'report',    label: 'REPORT',    icon: ReportSigil,    tip: 'Weekly sales & cargo output summary', key: '6' },
 
 const TABS = [
-  { id: 'catalog', label: 'INVENTORY', icon: CatalogSigil, tip: 'Browse wares and add them to your manifest', key: '1', accent: '#6FA08F', dark: '#263E36' },
+  { id: 'catalog', label: 'INVENTORY', icon: CatalogSigil, tip: 'Browse wares and add them to your manifest', key: '1', accent: '#8A8F45', dark: '#263E36' },
   { id: 'orders', label: 'ACTIVE ORDERS', icon: OrdersSigil, tip: 'Track current orders by code', key: '2', accent: '#C8893B', dark: '#5A3718' },
-  { id: 'faq', label: 'FAQ', icon: HelpCircle, tip: 'Read purchase, delivery, and safety answers', key: '3', accent: '#8C7AC8', dark: '#3B315F' },
+  { id: 'faq', label: 'FAQ', icon: HelpCircle, tip: 'Read purchase, delivery, and safety answers', key: '3', accent: '#A35A2A', dark: '#3B315F' },
 ];
 
 /** Storefront selector rail — bronze plate glides between sections instead of

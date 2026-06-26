@@ -16,21 +16,21 @@ import { lotNumber } from '@/lib/fsisLore';
 const PLATE_TEXTURE = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/3910df846_generated_image.png';
 
 const CATEGORY_META = {
-  salvage_commodity: { label: 'SALVAGE', crest: SalvageCrest, accent: '#6FA08F', dark: '#263E36', text: '#0D1411' },
+  salvage_commodity: { label: 'SALVAGE', crest: SalvageCrest, accent: '#8A8F45', dark: '#263E36', text: '#0D1411' },
   fabricated: { label: 'FABRICATED', icon: FabricatedCrest, crest: FabricatedCrest, accent: '#C8893B', dark: '#5A3718', text: '#1A1006' },
-  service: { label: 'SERVICE', icon: ServiceCrest, crest: ServiceCrest, accent: '#8C7AC8', dark: '#3B315F', text: '#130F20' },
+  service: { label: 'SERVICE', icon: ServiceCrest, crest: ServiceCrest, accent: '#A35A2A', dark: '#3B315F', text: '#130F20' },
   fps_gear: { label: 'GEAR', crest: ServiceCrest, accent: '#7BA05B', dark: '#334B25', text: '#10170A' },
   weapon: { label: 'WEAPON', crest: ServiceCrest, accent: '#C05050', dark: '#5A2222', text: '#1C0808' },
-  ship_component: { label: 'COMPONENT', crest: FabricatedCrest, accent: '#4F8FB8', dark: '#1F4258', text: '#08141C' },
+  ship_component: { label: 'COMPONENT', crest: FabricatedCrest, accent: '#8F5A32', dark: '#1F4258', text: '#08141C' },
   vehicle_component: { label: 'VEH COMP', crest: FabricatedCrest, accent: '#B86F4F', dark: '#5A2F1F', text: '#1A0C06' },
 };
 
-const CONDITION_COLOR = { new: '#7BA05B', refurb: '#6FA08F', used: '#C8893B', worn: '#C05050' };
+const CONDITION_COLOR = { new: '#7BA05B', refurb: '#8A8F45', used: '#C8893B', worn: '#C05050' };
 const REDSCAR_DISCOUNT_PERCENT = 10;
 
 export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin, onRestockNotify, compareSelected = false, onToggleCompare }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
-  const accent = meta.accent || '#6FA08F';
+  const accent = meta.accent || '#8A8F45';
   const darkAccent = meta.dark || '#263E36';
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
   const FallbackIcon = meta.icon;
@@ -38,7 +38,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
   const redscarPrice = Math.max(0, Math.round((product.price_auec || 0) * (100 - REDSCAR_DISCOUNT_PERCENT) / 100));
   const isBestValue = marketBest && redscarPrice < marketBest;
   const availabilityLabel = product.category === 'service' ? 'SCHEDULING REQUIRED' : !inStock ? 'RESTOCK WATCH' : (product.stock || 0) < 50 ? 'LIMITED STOCK' : 'READY NOW';
-  const availabilityColor = product.category === 'service' ? '#C8893B' : !inStock ? '#C05050' : (product.stock || 0) < 50 ? '#E0A22E' : '#6FA08F';
+  const availabilityColor = product.category === 'service' ? '#C8893B' : !inStock ? '#C05050' : (product.stock || 0) < 50 ? '#E0A22E' : '#8A8F45';
   const [showRestockModal, setShowRestockModal] = useState(false);
 
   return (
@@ -105,7 +105,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
                 <button
                   onClick={(e) => { e.stopPropagation(); onToggleCompare(product.id); }}
                   className="px-2 py-1 border text-[8px] font-mono font-bold tracking-[0.12em] hover:brightness-125 transition-all"
-                  style={{ borderColor: compareSelected ? '#6FA08F' : '#2E2519', color: compareSelected ? '#9ED0BD' : '#6B6155', background: compareSelected ? 'rgba(111, 160, 143, 0.12)' : 'rgba(10, 9, 7, 0.6)' }}
+                  style={{ borderColor: compareSelected ? '#8A8F45' : '#2E2519', color: compareSelected ? '#9ED0BD' : '#6B6155', background: compareSelected ? 'rgba(111, 160, 143, 0.12)' : 'rgba(10, 9, 7, 0.6)' }}
                 >
                   {compareSelected ? 'COMPARE ✓' : 'COMPARE'}
                 </button>
@@ -129,7 +129,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
               </span>
             )}
             {product.size_class && product.size_class !== 'N/A' && (
-              <span className="text-[8px] font-mono font-bold px-1.5 py-0.5" style={{ color: '#6FA08F', border: '1px solid #6FA08F44', background: '#6FA08F14' }}>
+              <span className="text-[8px] font-mono font-bold px-1.5 py-0.5" style={{ color: '#8A8F45', border: '1px solid #8A8F4544', background: '#8A8F4514' }}>
                 {product.size_class}
               </span>
             )}
@@ -156,7 +156,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
           )}
           <div className="flex flex-wrap gap-1.5 mt-2">
             <span className="text-[8px] font-mono font-bold tracking-[0.13em] px-2 py-0.5 border" style={{ borderColor: `${availabilityColor}55`, color: availabilityColor, background: `${availabilityColor}14` }}>{availabilityLabel}</span>
-            {isBestValue && <span className="text-[8px] font-mono font-bold tracking-[0.13em] px-2 py-0.5 border" style={{ borderColor: '#6FA08F66', color: '#9ED0BD', background: 'rgba(111,160,143,0.12)' }}>BEST REDSCAR VALUE</span>}
+            {isBestValue && <span className="text-[8px] font-mono font-bold tracking-[0.13em] px-2 py-0.5 border" style={{ borderColor: '#8A8F4566', color: '#9ED0BD', background: 'rgba(111,160,143,0.12)' }}>BEST REDSCAR VALUE</span>}
           </div>
         </div>
 
@@ -169,10 +169,10 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
                 <span className="text-2xl font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{product.price_auec.toLocaleString()}</span>
                 <span className="text-[10px] ml-1.5" style={{ color: '#6B6155' }}>aUEC/{product.unit || 'SCU'}</span>
               </div>
-              <div className="px-2.5 py-1 border" style={{ borderColor: '#8C7AC866', background: 'rgba(140, 122, 200, 0.09)', clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)' }}>
-                <div className="text-[8px] font-bold tracking-[0.16em]" style={{ color: '#B8A8F0' }}>REDSCAR MEMBER</div>
-                <span className="text-lg font-bold tracking-tight" style={{ color: '#D4C8FF' }}>{redscarPrice.toLocaleString()}</span>
-                <span className="text-[9px] ml-1" style={{ color: '#B8A8F0' }}>aUEC/{product.unit || 'SCU'}</span>
+              <div className="px-2.5 py-1 border" style={{ borderColor: '#A35A2A66', background: 'rgba(163, 90, 42, 0.12)', clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)' }}>
+                <div className="text-[8px] font-bold tracking-[0.16em]" style={{ color: '#E8C56A' }}>REDSCAR MEMBER</div>
+                <span className="text-lg font-bold tracking-tight" style={{ color: '#F2D98A' }}>{redscarPrice.toLocaleString()}</span>
+                <span className="text-[9px] ml-1" style={{ color: '#E8C56A' }}>aUEC/{product.unit || 'SCU'}</span>
               </div>
               <MarketBadge price={product.price_auec} marketBest={marketBest} />
             </div>

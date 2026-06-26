@@ -10,7 +10,7 @@ import GradeStamp from '@/components/brand/glyphs/GradeStamp';
 import RestockNotify from '@/components/store/RestockNotify';
 import { lotNumber } from '@/lib/fsisLore';
 
-const CONDITION_COLOR = { new: '#7BA05B', refurb: '#6FA08F', used: '#C8893B', worn: '#C05050' };
+const CONDITION_COLOR = { new: '#7BA05B', refurb: '#8A8F45', used: '#C8893B', worn: '#C05050' };
 const CONDITION_LABEL = { new: 'NEW', refurb: 'REFURBISHED', used: 'USED', worn: 'WORN' };
 const REDSCAR_DISCOUNT_PERCENT = 10;
 
@@ -66,7 +66,7 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
             <p className="text-[10px] mt-0.5 flex items-center flex-wrap gap-1.5" style={{ color: '#8A7E6C' }}>
               {lotNumber(product.id)} • {product.category?.replace(/_/g, ' ').toUpperCase()}
               {product.size_class && product.size_class !== 'N/A' && (
-                <span className="px-1.5 py-0.5 text-[8px] font-bold" style={{ color: '#6FA08F', border: '1px solid #6FA08F44', background: '#6FA08F14' }}>{product.size_class}</span>
+                <span className="px-1.5 py-0.5 text-[8px] font-bold" style={{ color: '#8A8F45', border: '1px solid #8A8F4544', background: '#8A8F4514' }}>{product.size_class}</span>
               )}
               {product.manufacturer && (
                 <span style={{ color: '#B0793A' }}>{product.manufacturer}</span>
@@ -93,10 +93,10 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
                 <span className="text-[10px] ml-1.5" style={{ color: '#8A7E6C' }}>aUEC/{product.unit || 'SCU'}</span>
                 <span className="block text-[8px] tracking-[0.16em] mt-0.5" style={{ color: '#6B6155' }}>STANDARD PRICE</span>
               </span>
-              <span className="border px-2 py-1" style={{ borderColor: '#6FA08F66', background: 'rgba(111, 160, 143, 0.08)' }}>
+              <span className="border px-2 py-1" style={{ borderColor: '#8A8F4566', background: 'rgba(138, 143, 69, 0.12)' }}>
                 <span className="text-lg font-bold" style={{ color: '#9ED0BD' }}>{redscarPrice.toLocaleString()}</span>
-                <span className="text-[9px] ml-1" style={{ color: '#6FA08F' }}>aUEC/{product.unit || 'SCU'}</span>
-                <span className="block text-[8px] tracking-[0.16em] mt-0.5" style={{ color: '#6FA08F' }}>REDSCAR MEMBER</span>
+                <span className="text-[9px] ml-1" style={{ color: '#8A8F45' }}>aUEC/{product.unit || 'SCU'}</span>
+                <span className="block text-[8px] tracking-[0.16em] mt-0.5" style={{ color: '#8A8F45' }}>REDSCAR MEMBER</span>
               </span>
               <MarketBadge price={product.price_auec} marketBest={topTerminals[0]?.price_sell} />
             </div>
@@ -160,7 +160,7 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
               {product.size_class && product.size_class !== 'N/A' && (
                 <div className="flex justify-between text-[10px]">
                   <span style={{ color: '#9C9080' }}>SIZE CLASS</span>
-                  <span style={{ color: '#6FA08F' }}>{product.size_class}</span>
+                  <span style={{ color: '#8A8F45' }}>{product.size_class}</span>
                 </div>
               )}
               {product.manufacturer && (

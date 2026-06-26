@@ -2,8 +2,8 @@ import React from 'react';
 
 export default function RedscarTrustStrip() {
   const items = [
-    ['REDSCAR RATE', 'Enter REDSCAR-2956 for 10% preferred pricing.', '#8C7AC8'],
-    ['NO ACCOUNT REQUIRED', 'Tracking code and handoff passphrase are issued after checkout.', '#6FA08F'],
+    ['REDSCAR RATE', 'Enter REDSCAR-2956 for 10% preferred pricing.', '#A35A2A'],
+    ['NO ACCOUNT REQUIRED', 'Tracking code and handoff passphrase are issued after checkout.', '#8A8F45'],
     ['STOCK RESERVED', 'Physical wares are held once the manifest is transmitted.', '#C8893B'],
   ];
 

@@ -96,7 +96,7 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
         clipPath: 'polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px)',
       }}
     >
-      <div className="flex items-center gap-2 font-mono text-xs tracking-[0.2em]" style={{ color: '#6FA08F' }}>
+      <div className="flex items-center gap-2 font-mono text-xs tracking-[0.2em]" style={{ color: '#8A8F45' }}>
         <ShoppingCart className="w-3.5 h-3.5" /> ORDER MANIFEST
       </div>
 
@@ -146,8 +146,8 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
             {isRedscarPreferred && (
               <>
                 <div className="flex items-center justify-between text-[10px] tracking-[0.12em]">
-                  <span style={{ color: '#6FA08F' }}>REDSCAR NOMADS RATE APPLIED</span>
-                  <span style={{ color: '#6FA08F' }}>-{redscarDiscountAuec.toLocaleString()} aUEC</span>
+                  <span style={{ color: '#8A8F45' }}>REDSCAR NOMADS RATE APPLIED</span>
+                  <span style={{ color: '#8A8F45' }}>-{redscarDiscountAuec.toLocaleString()} aUEC</span>
                 </div>
                 <div className="flex items-baseline justify-between border-t pt-2" style={{ borderColor: '#2A2118' }}>
                   <span className="text-xs font-bold tracking-[0.15em]" style={{ color: '#F2EADC' }}>PREFERRED TOTAL</span>
@@ -196,8 +196,8 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
                 style={fieldStyle}
                 placeholder="REDSCAR-2956"
               />
-              <div className="border px-2.5 py-2 font-mono" style={{ borderColor: isRedscarPreferred ? '#6FA08F' : '#5C4424', background: isRedscarPreferred ? 'rgba(111, 160, 143, 0.08)' : 'rgba(224, 162, 46, 0.07)' }}>
-                <p className="text-[10px] font-bold tracking-[0.12em]" style={{ color: isRedscarPreferred ? '#6FA08F' : '#E0A22E' }}>{isRedscarPreferred ? 'REDSCAR MEMBER DETECTED' : 'REDSCAR NOMADS PREFERRED RATE'}</p>
+              <div className="border px-2.5 py-2 font-mono" style={{ borderColor: isRedscarPreferred ? '#8A8F45' : '#5C4424', background: isRedscarPreferred ? 'rgba(111, 160, 143, 0.08)' : 'rgba(224, 162, 46, 0.07)' }}>
+                <p className="text-[10px] font-bold tracking-[0.12em]" style={{ color: isRedscarPreferred ? '#8A8F45' : '#E0A22E' }}>{isRedscarPreferred ? 'REDSCAR MEMBER DETECTED' : 'REDSCAR NOMADS PREFERRED RATE'}</p>
                 <p className="mt-1 text-[9px] leading-relaxed" style={{ color: '#A89C8A' }}>{isRedscarPreferred ? `${REDSCAR_DISCOUNT_PERCENT}% preferential pricing is active in the order summary.` : 'Members enter REDSCAR-2956 to apply preferential pricing at checkout.'}</p>
               </div>
             </div>
@@ -213,12 +213,12 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
             <div className="text-[9px] font-bold tracking-[0.18em]" style={{ color: '#E0A22E' }}>FINAL TRANSMISSION CHECK</div>
             <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
               <span style={{ color: '#8A7E6C' }}>MANIFEST VALUE</span><span className="text-right" style={{ color: '#D8CFC0' }}>{total.toLocaleString()} aUEC</span>
-              {isRedscarPreferred && <><span style={{ color: '#6FA08F' }}>REDSCAR SAVINGS</span><span className="text-right" style={{ color: '#6FA08F' }}>-{redscarDiscountAuec.toLocaleString()} aUEC</span></>}
+              {isRedscarPreferred && <><span style={{ color: '#8A8F45' }}>REDSCAR SAVINGS</span><span className="text-right" style={{ color: '#8A8F45' }}>-{redscarDiscountAuec.toLocaleString()} aUEC</span></>}
               <span style={{ color: '#8A7E6C' }}>DESTINATION</span><span className="text-right" style={{ color: '#D8CFC0' }}>{location || 'UNSET'}</span>
               {deliveryEta && <><span style={{ color: '#8A7E6C' }}>EST. WINDOW</span><span className="text-right" style={{ color: '#D8CFC0' }}>{deliveryEta} after confirmation</span></>}
               <span style={{ color: '#F2EADC' }}>TRANSMIT TOTAL</span><span className="text-right font-bold" style={{ color: '#F0B43A' }}>{estimatedTotal.toLocaleString()} aUEC</span>
             </div>
-            <p className="text-[9px] leading-relaxed" style={{ color: '#6FA08F' }}>Once transmitted, listed stock is reserved and your private tracking code + handoff passphrase are issued.</p>
+            <p className="text-[9px] leading-relaxed" style={{ color: '#8A8F45' }}>Once transmitted, listed stock is reserved and your private tracking code + handoff passphrase are issued.</p>
           </div>
 
           {orderMutation.isError && (

@@ -182,7 +182,7 @@ export default function Storefront() {
   const toggleCompare = (id) => setCompareIds((current) => current.includes(id) ? current.filter((p) => p !== id) : [id, ...current].slice(0, 3));
 
   return (
-    <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#0C0B0A', backgroundImage: 'radial-gradient(circle at 12% 8%, rgba(111, 160, 143, 0.10), transparent 24%), radial-gradient(circle at 82% 18%, rgba(140, 122, 200, 0.08), transparent 24%), radial-gradient(circle at 70% 90%, rgba(184, 111, 79, 0.08), transparent 28%)' }}>
+    <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#0C0B0A', backgroundImage: 'radial-gradient(circle at 12% 8%, rgba(138, 143, 69, 0.14), transparent 24%), radial-gradient(circle at 82% 18%, rgba(163, 90, 42, 0.12), transparent 24%), radial-gradient(circle at 70% 90%, rgba(184, 111, 79, 0.08), transparent 28%)' }}>
       <AnimatePresence>
         {showOnboarding && (
           <StoreOnboarding
@@ -204,7 +204,7 @@ export default function Storefront() {
             </div>
             <div>
               <h1 className="font-mono text-sm font-bold tracking-[0.18em]" style={{ color: '#EDE5D6' }}>FAIRSHARE INDUSTRIAL SOLUTIONS</h1>
-              <p className="text-[10px] font-mono" style={{ color: '#6FA08F' }}>{FSIS.divisionCodes.join(' • ')} — "{FSIS.motto}"</p>
+              <p className="text-[10px] font-mono" style={{ color: '#8A8F45' }}>{FSIS.divisionCodes.join(' • ')} — "{FSIS.motto}"</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -241,7 +241,7 @@ export default function Storefront() {
           <div
             className="shrink-0 p-[5px] hidden sm:block"
             style={{
-              background: 'linear-gradient(135deg, #8A6430 0%, #6FA08F 28%, #B0793A 54%, #8C7AC8 78%, #5C4424 100%)',
+              background: 'linear-gradient(135deg, #8A6430 0%, #8A8F45 28%, #B0793A 54%, #A35A2A 78%, #5C4424 100%)',
               clipPath: 'polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px)',
             }}
           >
@@ -261,7 +261,7 @@ export default function Storefront() {
                 <div className="absolute top-1/2 -translate-y-1/2 right-2 hidden xl:block pointer-events-none opacity-80">
                   <HexCrate size={150} />
                 </div>
-                <p className="font-mono text-[10px] tracking-[0.3em] mb-2" style={{ color: '#6FA08F' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
+                <p className="font-mono text-[10px] tracking-[0.3em] mb-2" style={{ color: '#8A8F45' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
                 <h2 className="font-mono text-3xl 2xl:text-4xl font-bold leading-tight tracking-tight">
                   <span style={{ color: '#F2EADC' }}>Honest salvage.</span>{' '}
                   <span style={{ color: '#E0A22E' }}>Fair prices.</span>
@@ -394,7 +394,7 @@ export default function Storefront() {
         <p className="text-[9px] font-mono" style={{ color: '#8A7E6C' }}>
           All prices in aUEC. Unofficial fan project — not affiliated with Cloud Imperium Games.
         </p>
-        <button onClick={() => setShowOnboarding(true)} className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#6FA08F' }}>
+        <button onClick={() => setShowOnboarding(true)} className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#8A8F45' }}>
           SETUP GUIDE
         </button>
       </footer>
