@@ -21,9 +21,15 @@ Deno.serve(async (req) => {
     const svc = base44.asServiceRole.entities;
     const dedupeTag = `[order:${order.id}]`;
 
-    // Guard against double-processing
+    // Guard against double-processing, including zero-aUEC/donation orders that do not create ledger income.
+    if ((order.internal_notes || '').includes(dedupeTag)) {
+      return Response.json({ skipped: true, reason: 'Already fulfilled' });
+    }
     const existing = await svc.ledger_entry.filter({ category: 'order_fulfillment' }, '-created_date', 200);
     if (existing.some((e) => (e.notes || '').includes(dedupeTag))) {
+      await svc.order.update(order.id, {
+        internal_notes: [(order.internal_notes || '').trim(), `FULFILLMENT APPLIED: ledger already booked. ${dedupeTag}`].filter(Boolean).join('\n'),
+      });
       return Response.json({ skipped: true, reason: 'Already booked' });
     }
 
@@ -55,6 +61,10 @@ Deno.serve(async (req) => {
         actions.push(`${product.product_name}: stock ${product.stock || 0} → ${newStock}`);
       }
     }
+
+    await svc.order.update(order.id, {
+      internal_notes: [(order.internal_notes || '').trim(), `FULFILLMENT APPLIED: ${actions.join('; ') || 'no ledger or stock changes'}. ${dedupeTag}`].filter(Boolean).join('\n'),
+    });
 
     console.log(`Order ${order.id} delivered: ${actions.join('; ')}`);
     return Response.json({ applied: true, actions });
