@@ -1,8 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
 // FSIS.bot order triage agent: when a storefront order is created, verify each
-// line item against live stock and pricing, annotate internal notes, and
-// auto-confirm the order if everything checks out.
+// line item against live stock, pricing, and route risk, annotate internal notes,
+// and auto-confirm only clean standard-route orders.
 
 Deno.serve(async (req) => {
   try {
@@ -23,6 +23,16 @@ Deno.serve(async (req) => {
     const products = await svc.product.list();
     const lines = [];
     let allFulfillable = true;
+
+    const deliveryLocation = String(order.delivery_location || '').trim();
+    const highRiskRoute = deliveryLocation.toUpperCase().includes('GRIMHEX');
+    if (!deliveryLocation) {
+    lines.push('✗ no delivery location supplied');
+    allFulfillable = false;
+    } else if (highRiskRoute) {
+    lines.push(`⚠ ${deliveryLocation}: high-risk route — proprietor must confirm escort/surcharge before fulfillment`);
+    allFulfillable = false;
+    }
 
     for (const item of order.items || []) {
       const product = products.find((p) => p.id === item.product_id) ||
@@ -54,7 +64,7 @@ Deno.serve(async (req) => {
     }
 
     const verdict = allFulfillable
-      ? 'ALL CLEAR — auto-confirmed, ready for fulfillment.'
+      ? 'ALL CLEAR — standard route auto-confirmed, ready for fulfillment.'
       : 'NEEDS REVIEW — see flags above before confirming.';
 
     await svc.order.update(order.id, {
@@ -69,7 +79,7 @@ Deno.serve(async (req) => {
       entity_id: order.id,
       entity_name: `Order from ${order.customer_handle}`,
       actor: 'FSIS.bot',
-      detail: `${order.total_auec?.toLocaleString() || 0} aUEC — ${order.delivery_location || 'no location'}`,
+      notes: `${order.total_auec?.toLocaleString() || 0} aUEC — ${order.delivery_location || 'no location'}`,
     }).catch(() => {});
 
     console.log(`Order ${order.id} triaged: ${allFulfillable ? 'auto-confirmed' : 'flagged for review'}`);

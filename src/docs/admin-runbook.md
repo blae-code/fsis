@@ -16,7 +16,7 @@ This is the proprietor-facing procedure guide for daily operation.
 
 | Transition | Who performs it | Side effects | Notes |
 |---|---|---|---|
-| `new → confirmed` | Proprietor or automation | Buyer can schedule handoff | Confirm stock and price first |
+| `new → confirmed` | Proprietor or standard-route automation | Buyer can schedule handoff | Confirm stock, price, and route risk first; GrimHEX/high-risk routes require proprietor review |
 | `confirmed → in_fulfillment` | Proprietor | Buyer sees order is being arranged | Use when route/crew is committed |
 | `in_fulfillment → delivered` | Proprietor | Stock decrements; ledger income created | Final fulfillment action |
 | `new → cancelled` | Buyer/admin | Order voided | No stock decrement |

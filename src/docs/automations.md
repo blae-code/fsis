@@ -6,7 +6,7 @@ This registry is the operational source of truth for scheduled, entity-triggered
 
 | Automation | Type | Trigger | Function | Expected side effects | Notes |
 |---|---|---|---|---|---|
-| Process New Order | Entity | `order` create | `processNewOrder` | Reviews stock/pricing, may auto-confirm clean orders, writes ops context | Keep one active copy only |
+| Process New Order | Entity | `order` create | `processNewOrder` | Reviews stock/pricing/route risk, auto-confirms only clean standard-route orders, writes ops context | Keep one active copy only |
 | Order Delivered | Entity | `order` update to `delivered` | `onOrderDelivered` | Decrements stock, creates ledger income, writes ops log | Delivery is the stock-decrement event |
 | Restock Notify — Buyer Outbound | Entity | `restock_notify` update where `notified = true` | `notifyRestock` | Emails buyer if contact is an email; logs manual follow-up otherwise | Canonical restock notification path |
 | Work Order Settled | Entity | `work_order` update to `settled` | `onWorkOrderSettled` | Creates crew payout/ledger records | Archived duplicates should remain archived |

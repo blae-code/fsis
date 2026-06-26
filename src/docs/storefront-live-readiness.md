@@ -23,7 +23,7 @@ The Storefront is live-ready only when all of these pass:
 15. Buyer can see confirmed proprietor time/location/note.
 16. Restock request lands in proprietor inbox.
 17. Restock copy explains email automation vs manual Discord/Spectrum follow-up.
-18. GrimHEX/high-risk destination copy warns that surcharge may apply.
+18. GrimHEX/high-risk destination copy warns that surcharge may apply and auto-confirmation does not bypass proprietor review.
 19. Bulk Quote clearly says estimates are subject to stock, discount, backorder, and route confirmation.
 20. Mobile checkout, product detail, My Orders, and handoff modals remain usable.
 
