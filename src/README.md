@@ -1,9 +1,27 @@
 # FSIS — FairShare Industrial Solutions
 ### Star Citizen Trade Terminal · Proprietor OS
 
-> *"Honest salvage. Fair prices."*
+> *"Every credit accounted for."*
 
 A dual-interface web OS for solo-proprietor in-game commerce. Buyers get a polished storefront; the proprietor gets a full management console behind a discreet access point.
+
+---
+
+## Identity
+
+| Field | Value |
+|---|---|
+| **Full name** | FairShare Industrial Solutions |
+| **Abbreviation** | FSIS |
+| **Founded** | 12 JUN 2956 SET (12 JUN 2026 IRL) — opening day of Alien Week |
+| **HQ** | Port Tressler, microTech — Stanton System |
+| **License** | UEE-CR 2956/SAL-77741 |
+| **Divisions** | Salvage Ops · Fabrication · Logistics |
+| **Org affiliation** | Redscar Nomads (preferential trade rate) |
+| **Proprietor** | `blae` — founder, sole operator, engineer of record |
+| **Fleet** | FSIS-01 *Fair Share* — Gatac Railen, ~640 SCU (Xi'an medium cargo) |
+
+Lore and branding constants live in `lib/fsisLore.js` — single source of truth for name, motto, founded date, core values, design principles, and fleet registry.
 
 ---
 
@@ -45,6 +63,16 @@ A dual-interface web OS for solo-proprietor in-game commerce. Buyers get a polis
 | `Cmd+K` | Command palette |
 | `F11` | Toggle fullscreen |
 | `F`→`S`→`I`→`S` | Proprietor key-chord — navigates to `/ops` |
+
+### Local storage (`lib/localCache.js`)
+Two independent caches backed by `localStorage`:
+
+| Cache | Scope | Keys stored |
+|---|---|---|
+| `localCache` | Per-browser (OS desktop) | Boot flag (`fsis.booted`), window session per user |
+| `storeCache` | Per-device (storefront) | Cart, tracking codes (up to 20), pins, onboarding flag, how-to dismissed flag, customer profile |
+
+Session data is namespaced by user ID via `setCacheScope()` so multiple accounts on the same browser stay isolated. All reads/writes are non-fatal (quota errors silently swallowed).
 
 ### Proprietor access
 The **Management Console** is accessible to admin users only via a small `⚙` icon in the top-right header corner (intentionally dim — hover to reveal). This replaces the previously visible "OPERATOR TERMINAL" button which has been archived.
