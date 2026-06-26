@@ -31,9 +31,9 @@ Deno.serve(async (req) => {
 
     const order = matches[0];
 
-    // Only allow handoff scheduling on active orders
-    if (['delivered', 'cancelled'].includes(order.status)) {
-      return Response.json({ error: 'Order is closed — handoff scheduling not available' }, { status: 400 });
+    // Only allow handoff scheduling once FSIS has accepted the order for fulfillment
+    if (!['confirmed', 'in_fulfillment'].includes(order.status)) {
+      return Response.json({ error: 'Handoff scheduling opens after FSIS confirms the order' }, { status: 400 });
     }
 
     await svc.order.update(order.id, {

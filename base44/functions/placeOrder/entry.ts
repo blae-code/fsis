@@ -12,6 +12,9 @@ Deno.serve(async (req) => {
     if (!customer_handle?.trim() || !Array.isArray(items) || items.length === 0) {
       return Response.json({ error: 'Handle and at least one item are required' }, { status: 400 });
     }
+    if (!delivery_location?.trim()) {
+      return Response.json({ error: 'Delivery location is required' }, { status: 400 });
+    }
 
     const svc = base44.asServiceRole.entities;
     const products = await svc.product.filter({ available: true });
@@ -68,7 +71,7 @@ Deno.serve(async (req) => {
       discount_code: applied ? applied.code : '',
       discount_percent: applied ? applied.discount_percent : 0,
       discount_auec,
-      delivery_location: delivery_location || '',
+      delivery_location: delivery_location.trim(),
       customer_notes: customer_notes || '',
       status: 'new',
     });

@@ -23,7 +23,7 @@ This document defines who can access each FSIS surface and where that access is 
 | Request cancellation while order is new | Yes | Yes | Yes | Yes | `cancelOrder` backend function |
 | Propose handoff slot | Yes | Yes | Yes | Yes | `updateHandoff` backend function |
 | Restock alert request | Yes | Yes | Yes | Yes | `restock_notify` create permission |
-| `/ops` desktop shell | No if unauthenticated | Logged-in shell access may load | Future policy | Yes | Route/auth shell + module/entity guards |
+| `/ops` desktop shell | No | No | No by default | Yes | Route/auth shell + proprietor clearance screen |
 | Management module | No | No | No by default | Yes | Management UI + entity RLS |
 | Product management | No | No | No | Yes | Entity RLS: `product` admin writes |
 | Order management | No | No | No | Yes | Entity RLS + admin UI |
@@ -36,6 +36,7 @@ This document defines who can access each FSIS surface and where that access is 
 
 - Public buyer flows intentionally avoid account requirements.
 - A tracking code or passphrase acts like a bearer receipt: anyone with it can view that order’s public tracking details.
+- The internal OS route is admin/proprietor-only for live deployment.
 - Admin actions must not rely on UI hiding alone; entity permissions and backend function auth are the source of truth.
 - Service-role backend functions are acceptable for guest-safe actions only when the tracking code/passphrase proves order ownership.
 

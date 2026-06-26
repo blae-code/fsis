@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
+import { ShieldAlert } from 'lucide-react';
 import BootSequence from '@/components/os/BootSequence';
 import OperatorOnboarding from '@/components/os/onboarding/OperatorOnboarding';
 import StatusBar from '@/components/os/StatusBar';
@@ -19,6 +20,27 @@ import MobileNav from '@/components/os/MobileNav';
 import ProprietorKey from '@/components/os/ProprietorKey';
 import CommandAccess from '@/components/os/CommandAccess';
 import OpsAlertToast from '@/components/os/OpsAlertToast';
+
+function AccessDenied() {
+  return (
+    <div className="os-viewport flex items-center justify-center font-mono" style={{ background: '#0A0806' }}>
+      <div className="border p-6 text-center space-y-3 max-w-sm" style={{ borderColor: '#5C302A', background: '#120D0A' }}>
+        <ShieldAlert className="w-9 h-9 mx-auto" style={{ color: '#C05050' }} />
+        <div className="text-xs tracking-[0.28em] font-bold" style={{ color: '#C05050' }}>PROPRIETOR CLEARANCE REQUIRED</div>
+        <p className="text-[10px] leading-relaxed" style={{ color: '#8A7E6C' }}>
+          The FSIS operations desktop is restricted to admin personnel. Return to the public storefront for ordering and tracking.
+        </p>
+        <button
+          onClick={() => { window.location.href = '/'; }}
+          className="px-4 py-2 text-[10px] font-bold tracking-[0.15em]"
+          style={{ background: 'linear-gradient(180deg, #A87C42, #6E4D24)', color: '#15100A' }}
+        >
+          RETURN TO STOREFRONT
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function DesktopShell({ userRole }) {
   const { windows } = useWindows();
@@ -92,9 +114,22 @@ export default function Desktop() {
     setBooted(true);
   }, []);
 
-  // Guests (not logged in) have no business on the OS desktop — send them to the storefront
-  if (!isLoading && !user) {
+  if (isLoading) {
+    return (
+      <div className="os-viewport flex items-center justify-center" style={{ background: '#0A0806' }}>
+        <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Guests have no business on the OS desktop — send them to the storefront.
+  if (!user) {
     return <Navigate to="/" replace />;
+  }
+
+  // The internal OS is proprietor-focused for live deployment.
+  if (user.role !== 'admin') {
+    return <AccessDenied />;
   }
 
   return (

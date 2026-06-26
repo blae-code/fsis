@@ -30,7 +30,7 @@ Lore and branding constants live in `lib/fsisLore.js` — single source of truth
 | Layer | Path | Notes |
 |---|---|---|
 | **Storefront** | `/` → `pages/Storefront` | Public-facing; no login required to browse or order |
-| **Management Console / OS Desktop** | `/ops` → `pages/Desktop` | Internal shell; unauthenticated users are redirected, while admin modules rely on role/entity guards |
+| **Management Console / OS Desktop** | `/ops` → `pages/Desktop` | Admin/proprietor-only internal shell; unauthenticated users are redirected |
 | **Loot Tracker** | `/loot` → `pages/LootTracker` | Internal salvage pipeline |
 | **Auth** | `/login`, `/register`, `/forgot-password`, `/reset-password` | Platform-managed; proprietor logs in to unlock admin views |
 
@@ -86,7 +86,7 @@ The public storefront exposes management access only as a small dim `⚙` icon f
 
 ## Management Console (`pages/Desktop`)
 
-Reached at `/ops`. Unauthenticated users are redirected back to `/`. Admin-only business modules are additionally protected by role checks and entity permissions. The `F`–`S`–`I`–`S` key-chord is documented as an OS desktop command-access shortcut, not a public storefront shortcut.
+Reached at `/ops`. Unauthenticated users are redirected back to `/`, and non-admin users see a proprietor-clearance screen. Admin business modules remain additionally protected by role checks and entity permissions. The `F`–`S`–`I`–`S` key-chord is documented as an OS desktop command-access shortcut, not a public storefront shortcut.
 
 ### Tabs
 
