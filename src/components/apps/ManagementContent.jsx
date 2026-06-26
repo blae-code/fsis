@@ -12,6 +12,7 @@ import OrdersContent from '@/components/apps/OrdersContent';
 import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
 import InventoryManager from '@/components/apps/management/InventoryManager';
 import SalvageCommodityDashboard from '@/components/apps/management/SalvageCommodityDashboard';
+import ProprietorCommandCenter from '@/components/apps/management/ProprietorCommandCenter';
 import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
 import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
 import RestockInbox from '@/components/apps/management/RestockInbox';
@@ -23,6 +24,7 @@ const DIMMER = '#3A3028';
 const TABS = [
   // ARCHIVED: { id: 'jobs', label: 'JOB BOARD', glyph: '✦' }, — operator feature
   // ARCHIVED: { id: 'crew', label: 'CREW',       glyph: '◉' }, — operator feature
+  { id: 'command',   label: 'COMMAND',    glyph: '◈' },
   { id: 'overview',  label: 'OVERVIEW',   glyph: '◈' },
   { id: 'store',     label: 'STORE',      glyph: '⬡' },
   { id: 'discounts', label: 'DISCOUNTS',  glyph: '◆' },
@@ -36,7 +38,7 @@ const TABS = [
 ];
 
 export default function ManagementContent() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('command');
 
   const { data: user, isLoading } = useQuery({
     queryKey: ['user'],
@@ -102,6 +104,7 @@ export default function ManagementContent() {
 
       {/* Content */}
       <div className="flex-1 overflow-auto">
+        {activeTab === 'command'   && <ProprietorCommandCenter />}
         {activeTab === 'overview'  && <div className="p-4"><ManagementView /></div>}
         {activeTab === 'store'     && <div className="p-4"><ProductManager /></div>}
         {activeTab === 'discounts' && <div className="p-4"><DiscountManager /></div>}
