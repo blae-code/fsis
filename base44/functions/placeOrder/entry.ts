@@ -4,6 +4,8 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 // recomputes pricing, reserves physical stock, issues a tracking code, and creates
 // the order via service role so buyers don't need an account.
 
+const roundPrice = (value) => Math.round((Number(value) || 0) / 100) * 100;
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -35,7 +37,7 @@ Deno.serve(async (req) => {
         code: product.code,
         quantity,
         unit: product.unit || 'SCU',
-        unit_price: product.price_auec,
+        unit_price: roundPrice(product.price_auec),
       });
     }
 
@@ -51,8 +53,8 @@ Deno.serve(async (req) => {
       }
       applied = codes[0];
     }
-    const discount_auec = applied ? Math.round((subtotal * applied.discount_percent) / 100) : 0;
-    const total = subtotal - discount_auec;
+    const discount_auec = applied ? roundPrice((subtotal * applied.discount_percent) / 100) : 0;
+    const total = roundPrice(subtotal - discount_auec);
 
     const tracking_code = 'FSIS-' + crypto.randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase();
 

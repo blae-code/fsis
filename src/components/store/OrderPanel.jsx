@@ -16,6 +16,7 @@ import CheckoutReadiness from '@/components/store/CheckoutReadiness';
 import DeliveryRouteCard from '@/components/store/DeliveryRouteCard';
 import BuyerSafetyPanel from '@/components/store/BuyerSafetyPanel';
 import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
+import { roundPrice } from '@/lib/pricing';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 const REDSCAR_CODE = 'REDSCAR-2956';
@@ -36,11 +37,11 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
     if (preferredLocation) setLocation(preferredLocation);
   }, [preferredLocation]);
 
-  const total = cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
+  const total = cart.reduce((sum, item) => sum + roundPrice(item.unit_price) * item.quantity, 0);
   const normalizedDiscountCode = discountCode.trim().toUpperCase();
   const isRedscarPreferred = normalizedDiscountCode === REDSCAR_CODE;
-  const redscarDiscountAuec = isRedscarPreferred ? Math.round((total * REDSCAR_DISCOUNT_PERCENT) / 100) : 0;
-  const estimatedTotal = total - redscarDiscountAuec;
+  const redscarDiscountAuec = isRedscarPreferred ? roundPrice((total * REDSCAR_DISCOUNT_PERCENT) / 100) : 0;
+  const estimatedTotal = roundPrice(total - redscarDiscountAuec);
   const hasService = cart.some((i) => i.category === 'service');
   const deliveryEta = etaFor(location);
 
@@ -129,7 +130,7 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
                   max={item.stock == null ? Infinity : item.stock}
                   onChange={(qty) => setQty(item.product_id, qty)}
                 />
-                <span className="w-24 text-right" style={{ color: '#E0A22E' }}>{(item.unit_price * item.quantity).toLocaleString()}</span>
+                <span className="w-24 text-right" style={{ color: '#E0A22E' }}>{(roundPrice(item.unit_price) * item.quantity).toLocaleString()}</span>
                 <button onClick={() => setCart(cart.filter((i) => i.product_id !== item.product_id))} className="hover:opacity-70" style={{ color: '#8A7E6C' }}>
                   <Trash2 className="w-3 h-3" />
                 </button>

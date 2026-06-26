@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Copy, Check, ShieldAlert, X } from 'lucide-react';
 import PassphraseSigil from '@/components/brand/glyphs/PassphraseSigil';
+import { roundPrice } from '@/lib/pricing';
 
 function CopyRow({ label, value, big, Icon }) {
   const [copied, setCopied] = useState(false);
@@ -73,12 +74,12 @@ export default function OrderReceiptModal({ order, open, onClose }) {
           {(order.items || []).map((i) => (
             <div key={i.product_id} className="flex justify-between">
               <span>{i.quantity}x {i.code || i.product_name}</span>
-              <span>{(i.unit_price * i.quantity).toLocaleString()} aUEC</span>
+              <span>{(roundPrice(i.unit_price) * i.quantity).toLocaleString()} aUEC</span>
             </div>
           ))}
           <div className="flex justify-between border-t pt-1.5 mt-1.5 font-bold" style={{ borderColor: '#3A2F20' }}>
             <span style={{ color: '#A89C8A' }}>TOTAL{order.location ? ` — ${order.location}` : ''}</span>
-            <span style={{ color: '#F0B43A' }}>{(order.total || 0).toLocaleString()} aUEC</span>
+            <span style={{ color: '#F0B43A' }}>{roundPrice(order.total || 0).toLocaleString()} aUEC</span>
           </div>
         </div>
 

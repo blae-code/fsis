@@ -38,6 +38,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SystemStatus from '@/components/store/SystemStatus';
 import HexCrate from '@/components/three/HexCrate';
 import { FSIS } from '@/lib/fsisLore';
+import { roundPrice } from '@/lib/pricing';
 
 const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/44c3176b4_generated_image.png';
 
@@ -124,7 +125,7 @@ export default function Storefront() {
         code: product.code,
         category: product.category,
         unit: product.unit || 'SCU',
-        unit_price: product.price_auec,
+        unit_price: roundPrice(product.price_auec),
         stock: cap === Infinity ? null : cap,
         quantity: allowed,
       }]);
@@ -151,7 +152,7 @@ export default function Storefront() {
             code: item.code,
             category: live?.category,
             unit: item.unit || 'SCU',
-            unit_price: live?.price_auec ?? item.unit_price,
+            unit_price: roundPrice(live?.price_auec ?? item.unit_price),
             stock: cap === Infinity ? null : cap,
             quantity: allowed,
           });
@@ -171,8 +172,8 @@ export default function Storefront() {
 
   const SORT_FNS = {
     featured: (a, b) => (a.sort_order || 0) - (b.sort_order || 0),
-    price_asc: (a, b) => a.price_auec - b.price_auec,
-    price_desc: (a, b) => b.price_auec - a.price_auec,
+    price_asc: (a, b) => roundPrice(a.price_auec) - roundPrice(b.price_auec),
+    price_desc: (a, b) => roundPrice(b.price_auec) - roundPrice(a.price_auec),
     stock: (a, b) => (b.stock || 0) - (a.stock || 0),
   };
   const sortedProducts = [...filteredProducts].sort((a, b) =>

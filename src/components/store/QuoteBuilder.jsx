@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DELIVERY_LOCATIONS, VOLUME_TIERS, volumeDiscount } from '@/lib/storeLocations';
+import { roundPrice } from '@/lib/pricing';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 
@@ -16,10 +17,11 @@ export default function QuoteBuilder({ products = [], onLoad }) {
   const [loc, setLoc] = useState('');
 
   const product = goods.find((p) => p.id === productId);
+  const unitPrice = product ? roundPrice(product.price_auec) : 0;
   const pct = volumeDiscount(qty);
-  const subtotal = product ? product.price_auec * qty : 0;
-  const discount = Math.round((subtotal * pct) / 100);
-  const total = subtotal - discount;
+  const subtotal = product ? unitPrice * qty : 0;
+  const discount = roundPrice((subtotal * pct) / 100);
+  const total = roundPrice(subtotal - discount);
   const locMeta = DELIVERY_LOCATIONS.find((l) => l.name === loc);
   const backorder = product && product.category !== 'service' && qty > (product.stock || 0);
 
@@ -75,7 +77,7 @@ export default function QuoteBuilder({ products = [], onLoad }) {
         <div className="border p-4 font-mono space-y-1.5" style={{ borderColor: '#5C4A33', background: '#14110D' }}>
           <p className="text-[9px] tracking-[0.25em] mb-2" style={{ color: '#B0793A' }}>// QUOTE — EVERY CREDIT ACCOUNTED FOR</p>
           <div className="flex justify-between text-[11px]">
-            <span style={{ color: '#9C9080' }}>{product.code || product.product_name} × {qty.toLocaleString()} {product.unit || 'SCU'} @ {product.price_auec.toLocaleString()}</span>
+            <span style={{ color: '#9C9080' }}>{product.code || product.product_name} × {qty.toLocaleString()} {product.unit || 'SCU'} @ {unitPrice.toLocaleString()}</span>
             <span style={{ color: '#D8CFC0' }}>{subtotal.toLocaleString()}</span>
           </div>
           <div className="flex justify-between text-[11px]">

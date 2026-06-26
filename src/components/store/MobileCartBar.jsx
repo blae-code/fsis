@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ChevronUp } from 'lucide-react';
 import OrderPanel from '@/components/store/OrderPanel';
+import { roundPrice } from '@/lib/pricing';
 
 /** Mobile-only sticky manifest bar — the order panel lives below the fold on
  *  small screens, so this keeps the cart one tap away. */
@@ -19,7 +20,7 @@ function ManifestGlyph({ className }) {
 
 export default function MobileCartBar({ cart, setCart, user, preferredLocation }) {
   const count    = cart.reduce((s, i) => s + i.quantity, 0);
-  const total    = cart.reduce((s, i) => s + i.unit_price * i.quantity, 0);
+  const total    = cart.reduce((s, i) => s + roundPrice(i.unit_price) * i.quantity, 0);
   const prevRef  = useRef(count);
   const [pulse, setPulse] = React.useState(false);
 

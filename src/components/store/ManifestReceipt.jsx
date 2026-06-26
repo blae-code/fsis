@@ -5,6 +5,7 @@ import FsisLogo from '@/components/brand/FsisLogo';
 import SerialStrip from '@/components/brand/SerialStrip';
 import { FSIS } from '@/lib/fsisLore';
 import { etaFor } from '@/lib/storeLocations';
+import { roundPrice } from '@/lib/pricing';
 
 /** Stylized cargo manifest "document" shown after a successful checkout */
 export default function ManifestReceipt({ order }) {
@@ -43,19 +44,19 @@ export default function ManifestReceipt({ order }) {
           {(order.items || []).map((i) => (
             <div key={i.product_id} className="flex justify-between">
               <span style={{ color: '#9C9080' }}>{i.quantity}× {i.code || i.product_name}</span>
-              <span style={{ color: '#D8CFC0' }}>{(i.unit_price * i.quantity).toLocaleString()}</span>
+              <span style={{ color: '#D8CFC0' }}>{(roundPrice(i.unit_price) * i.quantity).toLocaleString()}</span>
             </div>
           ))}
         </div>
         {order.discount_auec > 0 && (
           <div className="flex justify-between" style={{ color: '#7BA05B' }}>
             <span>DISCOUNT ({order.discount_percent}%)</span>
-            <span>−{order.discount_auec.toLocaleString()}</span>
+            <span>−{roundPrice(order.discount_auec).toLocaleString()}</span>
           </div>
         )}
         <div className="flex justify-between border-t pt-2 text-[11px] font-bold" style={{ borderColor: '#3A2F20' }}>
           <span style={{ color: '#D8CFC0' }}>TOTAL</span>
-          <span style={{ color: '#E0A22E' }}>{(order.total || 0).toLocaleString()} aUEC</span>
+          <span style={{ color: '#E0A22E' }}>{roundPrice(order.total || 0).toLocaleString()} aUEC</span>
         </div>
         {order.passphrase && (
           <div className="border p-2.5 space-y-1" style={{ borderColor: '#5C4424', background: '#161310' }}>

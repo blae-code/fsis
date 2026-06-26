@@ -1,4 +1,5 @@
 import React from 'react';
+import { roundPrice } from '@/lib/pricing';
 
 const FILTERS = [
   { key: 'all', label: 'ALL', accent: '#C8893B' },
@@ -15,7 +16,7 @@ export function matchesQuickFilter(product, filter, marketBestByCode = {}) {
   const marketBest = product.code ? marketBestByCode[product.code] : 0;
   if (filter === 'in_stock') return product.category === 'service' || stock > 0;
   if (filter === 'bulk_ready') return product.category !== 'service' && stock >= 100;
-  if (filter === 'best_value') return Boolean(marketBest && product.price_auec <= marketBest);
+  if (filter === 'best_value') return Boolean(marketBest && roundPrice(product.price_auec) <= marketBest);
   if (filter === 'low_stock') return product.category !== 'service' && stock > 0 && stock < 50;
   if (filter === 'services') return product.category === 'service';
   return true;

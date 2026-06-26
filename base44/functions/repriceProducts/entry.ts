@@ -4,6 +4,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 // current UEX best sell price plus one consistent, published margin.
 // "Show the math" — the reference, margin, and timestamp are stored on the product.
 const DEFAULT_MARGIN_PERCENT = 8;
+const roundPrice = (value) => Math.round((Number(value) || 0) / 100) * 100;
 
 Deno.serve(async (req) => {
     try {
@@ -40,8 +41,8 @@ Deno.serve(async (req) => {
             if (!best) continue;
 
             const perUnitRef = best.price_sell; // UEX price_sell is per SCU
-            const marketRef = Math.round(perUnitRef);
-            const newPrice = Math.round(perUnitRef * (1 + marginPercent / 100));
+            const marketRef = roundPrice(perUnitRef);
+            const newPrice = roundPrice(perUnitRef * (1 + marginPercent / 100));
 
             await base44.asServiceRole.entities.product.update(product.id, {
                 price_auec: newPrice,

@@ -9,6 +9,7 @@ import MarketBadge from '@/components/store/MarketBadge';
 import GradeStamp from '@/components/brand/glyphs/GradeStamp';
 import RestockNotify from '@/components/store/RestockNotify';
 import { lotNumber } from '@/lib/fsisLore';
+import { roundPrice } from '@/lib/pricing';
 
 const CONDITION_COLOR = { new: '#7BA05B', refurb: '#8A8F45', used: '#C8893B', worn: '#C05050' };
 const CONDITION_LABEL = { new: 'NEW', refurb: 'REFURBISHED', used: 'USED', worn: 'WORN' };
@@ -45,7 +46,9 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
     .sort((a, b) => b.price_sell - a.price_sell)
     .slice(0, 3);
   const related = products.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 3);
-  const redscarPrice = Math.round((product.price_auec || 0) * (100 - REDSCAR_DISCOUNT_PERCENT) / 100);
+  const displayPrice = roundPrice(product.price_auec || 0);
+  const marketRef = roundPrice(product.market_ref_auec || 0);
+  const redscarPrice = roundPrice(displayPrice * (100 - REDSCAR_DISCOUNT_PERCENT) / 100);
 
   return (
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
@@ -89,7 +92,7 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
           <div className="flex items-end justify-between">
             <div className="flex items-center gap-2 flex-wrap">
               <span>
-                <span className="text-2xl font-bold" style={{ color: '#E0A22E' }}>{product.price_auec.toLocaleString()}</span>
+                <span className="text-2xl font-bold" style={{ color: '#E0A22E' }}>{displayPrice.toLocaleString()}</span>
                 <span className="text-[10px] ml-1.5" style={{ color: '#8A7E6C' }}>aUEC/{product.unit || 'SCU'}</span>
                 <span className="block text-[8px] tracking-[0.16em] mt-0.5" style={{ color: '#6B6155' }}>STANDARD PRICE</span>
               </span>
@@ -98,7 +101,7 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
                 <span className="text-[9px] ml-1" style={{ color: '#8A8F45' }}>aUEC/{product.unit || 'SCU'}</span>
                 <span className="block text-[8px] tracking-[0.16em] mt-0.5" style={{ color: '#8A8F45' }}>REDSCAR MEMBER</span>
               </span>
-              <MarketBadge price={product.price_auec} marketBest={topTerminals[0]?.price_sell} />
+              <MarketBadge price={displayPrice} marketBest={topTerminals[0]?.price_sell} />
             </div>
             <span className="text-[10px]" style={{ color: inStock ? '#7BA05B' : '#C05050' }}>
               {product.category === 'service' ? 'AVAILABLE ON REQUEST' : inStock ? `${product.stock} ${product.unit || 'SCU'} IN STOCK` : 'OUT OF STOCK'}
@@ -129,15 +132,15 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
               <div className="text-[9px] tracking-[0.2em]" style={{ color: '#C8A05B' }}>FAIRSHARE PRICING — THE MATH</div>
               <div className="flex justify-between text-[10px]">
                 <span style={{ color: '#9C9080' }}>UEX MARKET REFERENCE</span>
-                <span style={{ color: '#D8CFC0' }}>{product.market_ref_auec.toLocaleString()} aUEC</span>
+                <span style={{ color: '#D8CFC0' }}>{marketRef.toLocaleString()} aUEC</span>
               </div>
               <div className="flex justify-between text-[10px]">
                 <span style={{ color: '#9C9080' }}>FSIS MARGIN (+{product.margin_percent}%)</span>
-                <span style={{ color: '#D8CFC0' }}>+{(product.price_auec - product.market_ref_auec).toLocaleString()} aUEC</span>
+                <span style={{ color: '#D8CFC0' }}>+{(displayPrice - marketRef).toLocaleString()} aUEC</span>
               </div>
               <div className="flex justify-between text-[10px] pt-1 border-t font-bold" style={{ borderColor: '#2A2118' }}>
                 <span style={{ color: '#C8A05B' }}>YOUR PRICE</span>
-                <span style={{ color: '#E0A22E' }}>{product.price_auec.toLocaleString()} aUEC/{product.unit || 'SCU'}</span>
+                <span style={{ color: '#E0A22E' }}>{displayPrice.toLocaleString()} aUEC/{product.unit || 'SCU'}</span>
               </div>
               {product.repriced_at && (
                 <p className="text-[9px]" style={{ color: '#6B6155' }}>
@@ -207,7 +210,7 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
                 boxShadow: 'inset 0 1px 0 rgba(255, 235, 190, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5)',
               }}
             >
-              <ShoppingCart className="w-3.5 h-3.5" /> ADD {qty} TO MANIFEST — {(product.price_auec * qty).toLocaleString()} aUEC
+              <ShoppingCart className="w-3.5 h-3.5" /> ADD {qty} TO MANIFEST — {(displayPrice * qty).toLocaleString()} aUEC
             </button>
           </div>
 
