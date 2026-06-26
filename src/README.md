@@ -44,6 +44,7 @@ A dual-interface web OS for solo-proprietor in-game commerce. Buyers get a polis
 | `/` or `F` | Focus search bar |
 | `Cmd+K` | Command palette |
 | `F11` | Toggle fullscreen |
+| `F`→`S`→`I`→`S` | Proprietor key-chord — navigates to `/ops` |
 
 ### Proprietor access
 The **Management Console** is accessible to admin users only via a small `⚙` icon in the top-right header corner (intentionally dim — hover to reveal). This replaces the previously visible "OPERATOR TERMINAL" button which has been archived.
@@ -52,7 +53,7 @@ The **Management Console** is accessible to admin users only via a small `⚙` i
 
 ## Management Console (`pages/Desktop`)
 
-Reached at `/ops`. Role-gated: redirects non-admins. The `F`–`S`–`I`–`S` key-chord also triggers access from the storefront.
+Reached at `/ops`. Redirects unauthenticated users (`!user`) back to `/`. The `F`–`S`–`I`–`S` key-chord typed anywhere on the storefront (via `CommandAccess`) also navigates here for the proprietor.
 
 ### Tabs
 
