@@ -17,7 +17,9 @@ import FsisLogo from '@/components/brand/FsisLogo';
 import ExchangeBoard from '@/components/store/ExchangeBoard';
 import QuoteBuilder from '@/components/store/QuoteBuilder';
 import OpsFeed from '@/components/store/OpsFeed';
-import JobsBoard from '@/components/store/JobsBoard';
+// ARCHIVED: import JobsBoard from '@/components/store/JobsBoard'; (operator feature)
+// ARCHIVED: import WeeklyReport from '@/components/store/WeeklyReport'; (operator feature)
+// ARCHIVED: import StoreDashboard from '@/components/store/StoreDashboard'; (operator feature)
 import StoreOnboarding from '@/components/store/StoreOnboarding';
 import MobileCartBar from '@/components/store/MobileCartBar';
 import ActiveOrderBanner from '@/components/store/ActiveOrderBanner';
@@ -27,8 +29,6 @@ import { useToast } from '@/components/ui/use-toast';
 import { DerelictHull } from '@/components/brand/glyphs/EmptyStates';
 import { motion, AnimatePresence } from 'framer-motion';
 import SystemStatus from '@/components/store/SystemStatus';
-import WeeklyReport from '@/components/store/WeeklyReport';
-import StoreDashboard from '@/components/store/StoreDashboard';
 import HexCrate from '@/components/three/HexCrate';
 import { FSIS } from '@/lib/fsisLore';
 
@@ -52,7 +52,8 @@ export default function Storefront() {
 
   // Global shortcuts: "/" focuses search, 1–5 switch sections
   useEffect(() => {
-    const TAB_KEYS = { 1: 'catalog', 2: 'quote', 3: 'orders', 4: 'jobs', 5: 'dashboard', 6: 'report', 7: 'about' };
+    // ARCHIVED: keys 4 (jobs), 5 (dashboard), 6 (report) sequestered for future operator development
+  const TAB_KEYS = { 1: 'catalog', 2: 'quote', 3: 'orders', 4: 'about' };
     const onKey = (e) => {
       if (showOnboarding || detailProduct) return;
       const t = e.target;
@@ -188,21 +189,11 @@ export default function Storefront() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {/* Access tier badge — always visible, no PII */}
-            {!user ? (
-              <div className="hidden sm:flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] px-2 py-1 border" style={{ borderColor: '#2A2A1A', color: '#7A7A50', background: '#0C0C08' }}>
-                <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />
-                GUEST ACCESS — NO ACCOUNT NEEDED
-              </div>
-            ) : user.role === 'admin' ? (
+            {/* ARCHIVED: contractor/guest tier badges sequestered for future operator development */}
+            {user?.role === 'admin' && (
               <div className="hidden sm:flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] px-2 py-1 border" style={{ borderColor: '#5C4424', color: '#C8893B', background: '#100A04' }}>
                 <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#E0A22E' }} />
                 PROPRIETOR
-              </div>
-            ) : (
-              <div className="hidden sm:flex items-center gap-1.5 font-mono text-[9px] tracking-[0.15em] px-2 py-1 border" style={{ borderColor: '#1A2A2A', color: '#6FA08F', background: '#080C0C' }}>
-                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#6FA08F' }} />
-                CONTRACTOR
               </div>
             )}
             {user?.role === 'admin' && (
@@ -312,25 +303,7 @@ export default function Storefront() {
             )}
             {tab === 'quote' && <QuoteBuilder products={products} onLoad={(p, qty, loc) => { addToCart(p, qty); if (loc) setTab('catalog'); }} />}
             {tab === 'orders' && <MyOrders onReorder={reorder} />}
-            {tab === 'jobs' && <JobsBoard />}
-            {tab === 'dashboard' && (
-              user?.role === 'admin' ? <StoreDashboard /> : (
-                <div className="flex flex-col items-center justify-center py-20 gap-3 font-mono">
-                  <div className="text-2xl" style={{ color: '#5C4424' }}>◈</div>
-                  <p className="text-[10px] tracking-[0.25em]" style={{ color: '#7A6E60' }}>OPERATOR CLEARANCE REQUIRED</p>
-                  <p className="text-[9px]" style={{ color: '#4A3A28' }}>This dashboard is restricted to FSIS management.</p>
-                </div>
-              )
-            )}
-            {tab === 'report' && (
-              user?.role === 'admin' ? <WeeklyReport /> : (
-                <div className="flex flex-col items-center justify-center py-20 gap-3 font-mono">
-                  <div className="text-2xl" style={{ color: '#5C4424' }}>◈</div>
-                  <p className="text-[10px] tracking-[0.25em]" style={{ color: '#7A6E60' }}>OPERATOR CLEARANCE REQUIRED</p>
-                  <p className="text-[9px]" style={{ color: '#4A3A28' }}>Weekly reports are restricted to FSIS management.</p>
-                </div>
-              )
-            )}
+            {/* ARCHIVED: jobs, dashboard, report tabs sequestered for future operator development */}
             {tab === 'about' && (
               <>
                 <SystemStatus />

@@ -1,17 +1,19 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import StoreTip from '@/components/store/StoreTip';
-import { CatalogSigil, QuoteSigil, OrdersSigil, JobsSigil, AboutSigil, ReportSigil } from '@/components/brand/glyphs/DivisionSigils';
-import { DashboardSigil } from '@/components/brand/glyphs/DashboardSigil';
+import { CatalogSigil, QuoteSigil, OrdersSigil, AboutSigil } from '@/components/brand/glyphs/DivisionSigils';
+// ARCHIVED: JobsSigil, ReportSigil, DashboardSigil — sequestered for future operator development
+
+// ARCHIVED TABS (operator features — sequestered for future development):
+// { id: 'jobs',      label: 'JOBS',      icon: JobsSigil,      tip: 'Open contractor postings',            key: '4' },
+// { id: 'dashboard', label: 'DASHBOARD', icon: DashboardSigil, tip: 'Inventory levels & revenue charts',   key: '5' },
+// { id: 'report',    label: 'REPORT',    icon: ReportSigil,    tip: 'Weekly sales & cargo output summary', key: '6' },
 
 const TABS = [
-  { id: 'catalog',   label: 'CATALOG',   icon: CatalogSigil,   tip: 'Browse wares & add to manifest',         key: '1' },
-  { id: 'quote',     label: 'BULK QUOTE',icon: QuoteSigil,     tip: 'Build a bulk pricing estimate',           key: '2' },
-  { id: 'orders',    label: 'MY ORDERS', icon: OrdersSigil,    tip: 'Track orders by code',                    key: '3' },
-  { id: 'jobs',      label: 'JOBS',      icon: JobsSigil,      tip: 'Open contractor postings',                key: '4' },
-  { id: 'dashboard', label: 'DASHBOARD', icon: DashboardSigil, tip: 'Inventory levels & revenue charts',       key: '5' },
-  { id: 'report',    label: 'REPORT',    icon: ReportSigil,    tip: 'Weekly sales & cargo output summary',     key: '6' },
-  { id: 'about',     label: 'ABOUT FSIS',icon: AboutSigil,     tip: 'Company dossier & system status',         key: '7' },
+  { id: 'catalog',   label: 'CATALOG',   icon: CatalogSigil,   tip: 'Browse wares & add to manifest',  key: '1' },
+  { id: 'quote',     label: 'BULK QUOTE',icon: QuoteSigil,     tip: 'Build a bulk pricing estimate',    key: '2' },
+  { id: 'orders',    label: 'MY ORDERS', icon: OrdersSigil,    tip: 'Track orders by code',             key: '3' },
+  { id: 'about',     label: 'ABOUT FSIS',icon: AboutSigil,     tip: 'Company dossier & system status',  key: '4' },
 ];
 
 /** Storefront selector rail — bronze plate glides between sections instead of

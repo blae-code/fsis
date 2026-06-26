@@ -6,8 +6,8 @@ import { ShieldAlert } from 'lucide-react';
 import ManagementView from '@/components/apps/station/ManagementView';
 import ProductManager from '@/components/apps/management/ProductManager';
 import DiscountManager from '@/components/apps/management/DiscountManager';
-import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin';
-import CrewRoster from '@/components/apps/fairshare/CrewRoster';
+// ARCHIVED: import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin'; (operator feature)
+// ARCHIVED: import CrewRoster from '@/components/apps/fairshare/CrewRoster'; (operator feature)
 import OrdersContent from '@/components/apps/OrdersContent';
 import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
 import InventoryManager from '@/components/apps/management/InventoryManager';
@@ -21,18 +21,19 @@ const DIM    = '#7A6E60';
 const DIMMER = '#3A3028';
 
 const TABS = [
+const TABS = [
+  // ARCHIVED: { id: 'jobs', label: 'JOB BOARD', glyph: '✦' }, — operator feature
+  // ARCHIVED: { id: 'crew', label: 'CREW',       glyph: '◉' }, — operator feature
   { id: 'overview',  label: 'OVERVIEW',   glyph: '◈' },
   { id: 'store',     label: 'STORE',      glyph: '⬡' },
   { id: 'discounts', label: 'DISCOUNTS',  glyph: '◆' },
   { id: 'orders',    label: 'ORDERS',     glyph: '▸' },
-  { id: 'jobs',      label: 'JOB BOARD',  glyph: '✦' },
-  { id: 'crew',      label: 'CREW',       glyph: '◉' },
   { id: 'salvage',   label: 'SALVAGE',    glyph: '◈' },
   { id: 'inventory', label: 'INVENTORY',  glyph: '▦' },
   { id: 'auditlog',  label: 'AUDIT LOG',  glyph: '⬚' },
   { id: 'ops',       label: 'OPS DECK',   glyph: '◉' },
   { id: 'market',    label: 'MARKET',     glyph: '◇' },
-  { id: 'inbox',    label: 'INBOX',      glyph: '▣' },
+  { id: 'inbox',     label: 'INBOX',      glyph: '▣' },
 ];
 
 export default function ManagementContent() {
@@ -106,8 +107,7 @@ export default function ManagementContent() {
         {activeTab === 'store'     && <div className="p-4"><ProductManager /></div>}
         {activeTab === 'discounts' && <div className="p-4"><DiscountManager /></div>}
         {activeTab === 'orders'    && <OrdersContent />}
-        {activeTab === 'jobs'      && <JobBoardAdmin />}
-        {activeTab === 'crew'      && <CrewRoster />}
+        {/* ARCHIVED: jobs and crew tabs sequestered for future operator development */}
         {activeTab === 'salvage'   && <div className="p-4"><SalvageCommodityDashboard /></div>}
         {activeTab === 'inventory' && <div className="p-4"><InventoryManager /></div>}
         {activeTab === 'auditlog'  && <OpsAuditLog />}
