@@ -23,6 +23,7 @@ import RouteClusterPanel from '@/components/apps/management/proprietor/RouteClus
 import DemandRelistPanel from '@/components/apps/management/proprietor/DemandRelistPanel';
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
 import MarketSyncHealthPanel from '@/components/apps/management/proprietor/MarketSyncHealthPanel';
+import OpsAssistantPanel from '@/components/apps/management/proprietor/OpsAssistantPanel';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -51,7 +52,7 @@ export default function ProprietorCommandCenter() {
     <div className="h-full overflow-auto p-4 space-y-4 font-mono" style={{ background: '#080604' }}>
       <div className="border p-4" style={{ borderColor: '#5C4424', background: 'linear-gradient(135deg,#14110D,#0C0A07)', clipPath: 'polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)' }}><p className="text-[9px] tracking-[0.3em]" style={{ color: '#8A8F45' }}>// SOLO PROPRIETOR OPERATING SYSTEM</p><h2 className="text-xl font-bold tracking-[0.16em]" style={{ color: '#EDE5D6' }}>PROPRIETOR COMMAND CENTER</h2><p className="text-[10px] mt-1" style={{ color: '#9C9080' }}>One desk for fulfillment, resale appraisal, inventory demand, buyer history, pricing rules, and alerts.</p></div>
       <CommandKpiStrip orders={orders} products={products} loot={loot} />
-      <RapidLootIntakePanel />
+      <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><RapidLootIntakePanel /><OpsAssistantPanel /></div>
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><ProprietorTriageBoard orders={orders} messages={messages} loot={loot} products={products} /><DailyCloseoutPanel orders={orders} messages={messages} /></div>
       <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><MarginWatchPanel products={products} prices={prices} /><LedgerSyncPanel entries={ledger} /></div>
       <div className="grid xl:grid-cols-[1.1fr_1fr] gap-4"><FulfillmentQueue orders={orders} onStatus={(id, next) => status.mutate({ id, next })} pending={status.isPending} /><ProprietorAlerts orders={orders} loot={loot} messages={messages} products={products} prices={prices} /></div>
