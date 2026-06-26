@@ -11,9 +11,9 @@ import { CatalogSigil, OrdersSigil } from '@/components/brand/glyphs/DivisionSig
 // { id: 'report',    label: 'REPORT',    icon: ReportSigil,    tip: 'Weekly sales & cargo output summary', key: '6' },
 
 const TABS = [
-  { id: 'catalog', label: 'INVENTORY', icon: CatalogSigil, tip: 'Browse wares and add them to your manifest', key: '1' },
-  { id: 'orders', label: 'ACTIVE ORDERS', icon: OrdersSigil, tip: 'Track current orders by code', key: '2' },
-  { id: 'faq', label: 'FAQ', icon: HelpCircle, tip: 'Read purchase, delivery, and safety answers', key: '3' },
+  { id: 'catalog', label: 'INVENTORY', icon: CatalogSigil, tip: 'Browse wares and add them to your manifest', key: '1', accent: '#6FA08F', dark: '#263E36' },
+  { id: 'orders', label: 'ACTIVE ORDERS', icon: OrdersSigil, tip: 'Track current orders by code', key: '2', accent: '#C8893B', dark: '#5A3718' },
+  { id: 'faq', label: 'FAQ', icon: HelpCircle, tip: 'Read purchase, delivery, and safety answers', key: '3', accent: '#8C7AC8', dark: '#3B315F' },
 ];
 
 /** Storefront selector rail — bronze plate glides between sections instead of
@@ -24,7 +24,7 @@ export default function StoreTabs({ active, onChange }) {
       className="relative flex gap-0.5 font-mono text-[10px] tracking-[0.15em] p-0.5 max-w-full overflow-x-auto"
       style={{ background: '#0E0C0A', border: '1px solid #2A2118', clipPath: 'polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px)' }}
     >
-      {TABS.map(({ id, label, icon: Icon, tip, key }) => {
+      {TABS.map(({ id, label, icon: Icon, tip, key, accent, dark }) => {
         const isActive = active === id;
         return (
           <StoreTip key={id} label={tip} shortcut={key}>
@@ -41,8 +41,8 @@ export default function StoreTabs({ active, onChange }) {
                 layoutId="store-tab-plate"
                 className="absolute inset-0"
                 style={{
-                  background: 'linear-gradient(160deg, #8A6430, #4A3722)',
-                  border: '1px solid #B0793A',
+                  background: `linear-gradient(160deg, ${accent}, ${dark})`,
+                  border: `1px solid ${accent}`,
                   clipPath: 'polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px)',
                   boxShadow: '0 0 14px rgba(212, 146, 11, 0.25)',
                 }}
@@ -53,14 +53,14 @@ export default function StoreTabs({ active, onChange }) {
               <motion.span
                 layoutId="store-tab-rail"
                 className="absolute -bottom-px left-2 right-2 h-[2px]"
-                style={{ background: 'linear-gradient(90deg, transparent, #E0A22E, transparent)' }}
+                style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }}
                 transition={{ type: 'spring', stiffness: 420, damping: 34 }}
               />
             )}
             <span className="relative inline-flex items-center gap-1.5">
               <Icon className="w-3.5 h-3.5" />
               {label}
-              <span className="text-[7px] -mt-1.5" style={{ color: isActive ? '#E0A22E' : '#54493B' }}>{key}</span>
+              <span className="text-[7px] -mt-1.5" style={{ color: isActive ? accent : '#54493B' }}>{key}</span>
             </span>
           </motion.button>
           </StoreTip>

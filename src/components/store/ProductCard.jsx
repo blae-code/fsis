@@ -16,13 +16,13 @@ import { lotNumber } from '@/lib/fsisLore';
 const PLATE_TEXTURE = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/3910df846_generated_image.png';
 
 const CATEGORY_META = {
-  salvage_commodity: { label: 'SALVAGE', crest: SalvageCrest },
-  fabricated: { label: 'FABRICATED', icon: FabricatedCrest, crest: FabricatedCrest },
-  service: { label: 'SERVICE', icon: ServiceCrest, crest: ServiceCrest },
-  fps_gear: { label: 'GEAR', crest: ServiceCrest },
-  weapon: { label: 'WEAPON', crest: ServiceCrest },
-  ship_component: { label: 'COMPONENT', crest: FabricatedCrest },
-  vehicle_component: { label: 'VEH COMP', crest: FabricatedCrest },
+  salvage_commodity: { label: 'SALVAGE', crest: SalvageCrest, accent: '#6FA08F', dark: '#263E36', text: '#0D1411' },
+  fabricated: { label: 'FABRICATED', icon: FabricatedCrest, crest: FabricatedCrest, accent: '#C8893B', dark: '#5A3718', text: '#1A1006' },
+  service: { label: 'SERVICE', icon: ServiceCrest, crest: ServiceCrest, accent: '#8C7AC8', dark: '#3B315F', text: '#130F20' },
+  fps_gear: { label: 'GEAR', crest: ServiceCrest, accent: '#7BA05B', dark: '#334B25', text: '#10170A' },
+  weapon: { label: 'WEAPON', crest: ServiceCrest, accent: '#C05050', dark: '#5A2222', text: '#1C0808' },
+  ship_component: { label: 'COMPONENT', crest: FabricatedCrest, accent: '#4F8FB8', dark: '#1F4258', text: '#08141C' },
+  vehicle_component: { label: 'VEH COMP', crest: FabricatedCrest, accent: '#B86F4F', dark: '#5A2F1F', text: '#1A0C06' },
 };
 
 const CONDITION_COLOR = { new: '#7BA05B', refurb: '#6FA08F', used: '#C8893B', worn: '#C05050' };
@@ -30,6 +30,8 @@ const REDSCAR_DISCOUNT_PERCENT = 10;
 
 export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin, onRestockNotify, compareSelected = false, onToggleCompare }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
+  const accent = meta.accent || '#6FA08F';
+  const darkAccent = meta.dark || '#263E36';
   const inStock = (product.stock || 0) > 0 || product.category === 'service';
   const FallbackIcon = meta.icon;
   const inCart = inCartQty > 0;
@@ -53,11 +55,11 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         transition={{ type: 'spring', stiffness: 300, damping: 22 }}
         className="relative flex flex-col gap-3 p-4 border flex-1 cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
         style={{
-          borderColor: inCart ? '#C8893B' : '#5C4A33',
-          boxShadow: inCart ? '0 0 16px rgba(212, 146, 11, 0.18), inset 0 0 18px rgba(212, 146, 11, 0.05)' : 'none',
+          borderColor: inCart ? '#C8893B' : `${accent}66`,
+          boxShadow: inCart ? '0 0 16px rgba(212, 146, 11, 0.18), inset 0 0 18px rgba(212, 146, 11, 0.05)' : `inset 0 0 24px ${accent}10`,
           transformStyle: 'preserve-3d',
           clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
-          backgroundImage: `linear-gradient(rgba(12, 11, 10, 0.45), rgba(12, 11, 10, 0.72)), url(${PLATE_TEXTURE})`,
+          backgroundImage: `radial-gradient(circle at 88% 12%, ${accent}24, transparent 28%), linear-gradient(rgba(12, 11, 10, 0.42), rgba(12, 11, 10, 0.76)), url(${PLATE_TEXTURE})`,
           backgroundSize: 'cover',
         }}
       >
@@ -80,12 +82,12 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         <div className="flex items-start justify-between">
           <div
             className="w-12 h-12 flex items-center justify-center border"
-            style={{ borderColor: '#4A3B28', background: 'rgba(10, 9, 7, 0.6)' }}
+            style={{ borderColor: `${accent}55`, background: `linear-gradient(145deg, rgba(10, 9, 7, 0.72), ${darkAccent}44)` }}
           >
             {product.category === 'salvage_commodity' || !FallbackIcon ? (
               <CommodityIcon code={product.code} size={34} />
             ) : (
-              <FallbackIcon className="w-5 h-5" style={{ color: '#6FA08F' }} />
+              <FallbackIcon className="w-5 h-5" style={{ color: accent }} />
             )}
           </div>
           <div className="flex flex-col items-end gap-1.5">
@@ -111,8 +113,8 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
               <span
                 className="inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
                 style={{
-                  background: 'linear-gradient(180deg, #5C8273, #3A5A4E)',
-                  color: '#0D1411',
+                  background: `linear-gradient(180deg, ${accent}, ${darkAccent})`,
+                  color: meta.text || '#0D1411',
                   clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)',
                 }}
               >
@@ -147,7 +149,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         <div>
           <h3 className="font-mono text-[15px] font-bold leading-snug" style={{ color: '#EDE5D6' }}>
             {product.product_name}
-            {product.code && <span className="ml-2 text-xs" style={{ color: '#6FA08F' }}>[{product.code}]</span>}
+            {product.code && <span className="ml-2 text-xs" style={{ color: accent }}>[{product.code}]</span>}
           </h3>
           {product.description && (
             <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#877D6D' }}>{product.description}</p>
@@ -167,10 +169,10 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
                 <span className="text-2xl font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{product.price_auec.toLocaleString()}</span>
                 <span className="text-[10px] ml-1.5" style={{ color: '#6B6155' }}>aUEC/{product.unit || 'SCU'}</span>
               </div>
-              <div className="px-2.5 py-1 border" style={{ borderColor: '#6FA08F66', background: 'rgba(111, 160, 143, 0.08)', clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)' }}>
-                <div className="text-[8px] font-bold tracking-[0.16em]" style={{ color: '#6FA08F' }}>REDSCAR MEMBER</div>
-                <span className="text-lg font-bold tracking-tight" style={{ color: '#9ED0BD' }}>{redscarPrice.toLocaleString()}</span>
-                <span className="text-[9px] ml-1" style={{ color: '#6FA08F' }}>aUEC/{product.unit || 'SCU'}</span>
+              <div className="px-2.5 py-1 border" style={{ borderColor: '#8C7AC866', background: 'rgba(140, 122, 200, 0.09)', clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)' }}>
+                <div className="text-[8px] font-bold tracking-[0.16em]" style={{ color: '#B8A8F0' }}>REDSCAR MEMBER</div>
+                <span className="text-lg font-bold tracking-tight" style={{ color: '#D4C8FF' }}>{redscarPrice.toLocaleString()}</span>
+                <span className="text-[9px] ml-1" style={{ color: '#B8A8F0' }}>aUEC/{product.unit || 'SCU'}</span>
               </div>
               <MarketBadge price={product.price_auec} marketBest={marketBest} />
             </div>
@@ -208,8 +210,8 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
       <div
         className="mx-auto px-7 py-0.5 text-[9px] font-mono tracking-[0.25em]"
         style={{
-          background: 'linear-gradient(180deg, #233530, #161F1C)',
-          color: '#6FA08F',
+          background: `linear-gradient(180deg, ${darkAccent}, #161311)`,
+          color: accent,
           clipPath: 'polygon(0 0, 100% 0, calc(100% - 10px) 100%, 10px 100%)',
         }}
       >

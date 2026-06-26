@@ -182,7 +182,7 @@ export default function Storefront() {
   const toggleCompare = (id) => setCompareIds((current) => current.includes(id) ? current.filter((p) => p !== id) : [id, ...current].slice(0, 3));
 
   return (
-    <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#0C0B0A' }}>
+    <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#0C0B0A', backgroundImage: 'radial-gradient(circle at 12% 8%, rgba(111, 160, 143, 0.10), transparent 24%), radial-gradient(circle at 82% 18%, rgba(140, 122, 200, 0.08), transparent 24%), radial-gradient(circle at 70% 90%, rgba(184, 111, 79, 0.08), transparent 28%)' }}>
       <AnimatePresence>
         {showOnboarding && (
           <StoreOnboarding
@@ -196,7 +196,7 @@ export default function Storefront() {
       <StorefrontAtmosphere />
 
       {/* Header */}
-      <header className="shrink-0 border-b z-10 relative" style={{ borderColor: '#2A2118', background: 'rgba(12, 11, 10, 0.92)' }}>
+      <header className="shrink-0 border-b z-10 relative" style={{ borderColor: '#2A2118', background: 'linear-gradient(90deg, rgba(12, 11, 10, 0.96), rgba(17, 22, 19, 0.94), rgba(20, 14, 22, 0.92), rgba(12, 11, 10, 0.96))' }}>
         <div className="max-w-[1720px] mx-auto px-4 2xl:px-8 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-1.5" style={{ background: 'linear-gradient(160deg, #8A6430, #4A3722)', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}>
@@ -241,7 +241,7 @@ export default function Storefront() {
           <div
             className="shrink-0 p-[5px] hidden sm:block"
             style={{
-              background: 'linear-gradient(135deg, #8A6430 0%, #4A3722 35%, #B0793A 65%, #5C4424 100%)',
+              background: 'linear-gradient(135deg, #8A6430 0%, #6FA08F 28%, #B0793A 54%, #8C7AC8 78%, #5C4424 100%)',
               clipPath: 'polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px)',
             }}
           >
