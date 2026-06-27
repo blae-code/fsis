@@ -29,6 +29,7 @@ import StoreLiveStatusPanel from '@/components/store/StoreLiveStatusPanel';
 import RedscarTrustStrip from '@/components/store/RedscarTrustStrip';
 import ProductCompareTray from '@/components/store/ProductCompareTray';
 import StorefrontAtmosphere from '@/components/store/StorefrontAtmosphere';
+import ProprietorEntryway from '@/components/store/ProprietorEntryway';
 import BuyerProgressRail from '@/components/store/BuyerProgressRail';
 import CatalogQuickFilters, { matchesQuickFilter } from '@/components/store/CatalogQuickFilters';
 import RecentDeliveries from '@/components/store/RecentDeliveries';
@@ -255,6 +256,8 @@ export default function Storefront() {
       {/* Main deck — fills viewport, no page scroll */}
       <main className="flex-1 min-h-0 max-w-[1720px] mx-auto w-full px-4 2xl:px-8 pt-4 pb-20 lg:pb-4 grid grid-cols-1 lg:grid-cols-[1fr_380px] 2xl:grid-cols-[1fr_400px] gap-5 overflow-y-auto lg:overflow-hidden">
         <div className="flex flex-col min-h-0 gap-4">
+          <ProprietorEntryway user={user} />
+
           {/* Compact hero */}
           <div
             className="shrink-0 p-[5px] hidden sm:block"
