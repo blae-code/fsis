@@ -6,6 +6,14 @@
       "type": "string",
       "description": "Customer's in-game handle / display name"
     },
+    "customer_profile_id": {
+      "type": "string",
+      "description": "Linked fsis_profile id when the buyer chooses to create a custom FSIS profile"
+    },
+    "customer_profile_handle": {
+      "type": "string",
+      "description": "Profile handle snapshot at the time the order was placed"
+    },
     "tracking_code": {
       "type": "string",
       "description": "Public tracking code given to the buyer, e.g. FSIS-3F9A2C"

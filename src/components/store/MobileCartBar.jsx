@@ -18,7 +18,7 @@ function ManifestGlyph({ className }) {
   );
 }
 
-export default function MobileCartBar({ cart, setCart, user, preferredLocation, storeStatus }) {
+export default function MobileCartBar({ cart, setCart, user, buyerProfile, preferredLocation, storeStatus }) {
   const count    = cart.reduce((s, i) => s + i.quantity, 0);
   const total    = cart.reduce((s, i) => s + roundPrice(i.unit_price) * i.quantity, 0);
   const prevRef  = useRef(count);
@@ -88,7 +88,7 @@ export default function MobileCartBar({ cart, setCart, user, preferredLocation, 
           </button>
         </SheetTrigger>
         <SheetContent side="bottom" className="p-3 border-t max-h-[85vh] overflow-y-auto" style={{ background: '#0C0B0A', borderColor: '#8A6430' }}>
-          <OrderPanel cart={cart} setCart={setCart} user={user} preferredLocation={preferredLocation} storeStatus={storeStatus} />
+          <OrderPanel cart={cart} setCart={setCart} user={user} buyerProfile={buyerProfile} preferredLocation={preferredLocation} storeStatus={storeStatus} />
         </SheetContent>
       </Sheet>
     </div>

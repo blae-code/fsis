@@ -30,6 +30,7 @@ import RedscarTrustStrip from '@/components/store/RedscarTrustStrip';
 import ProductCompareTray from '@/components/store/ProductCompareTray';
 import StorefrontAtmosphere from '@/components/store/StorefrontAtmosphere';
 import ProprietorEntryway from '@/components/store/ProprietorEntryway';
+import BuyerProfilePanel from '@/components/store/BuyerProfilePanel';
 import BuyerProgressRail from '@/components/store/BuyerProgressRail';
 import CatalogQuickFilters, { matchesQuickFilter } from '@/components/store/CatalogQuickFilters';
 import RecentDeliveries from '@/components/store/RecentDeliveries';
@@ -47,6 +48,7 @@ const STOREFRONT_CATEGORIES = ['salvage_commodity', 'fps_gear', 'weapon', 'ship_
 
 export default function Storefront() {
   const [cart, setCart] = useState(() => storeCache.getCart());
+  const [buyerProfile, setBuyerProfile] = useState(() => storeCache.getProfile());
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [quickFilter, setQuickFilter] = useState('all');
@@ -307,6 +309,7 @@ export default function Storefront() {
           </div>
 
           <BuyerProgressRail activeTab={tab} cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)} />
+          <BuyerProfilePanel profile={buyerProfile} onProfileSaved={setBuyerProfile} />
 
           {/* Active section — scrolls internally only if it overflows */}
           <div className="flex-1 min-h-0 lg:overflow-y-auto pr-1">
@@ -389,7 +392,7 @@ export default function Storefront() {
 
         {/* Order panel — pinned, scrolls internally if needed (drawer on mobile) */}
         <div className="hidden lg:block min-h-0 lg:overflow-y-auto">
-          <OrderPanel cart={cart} setCart={setCart} user={user} preferredLocation={preferredLocation} storeStatus={storeStatus} />
+          <OrderPanel cart={cart} setCart={setCart} user={user} buyerProfile={buyerProfile} preferredLocation={preferredLocation} storeStatus={storeStatus} />
         </div>
       </main>
 
@@ -406,7 +409,7 @@ export default function Storefront() {
       </div>
 
       <ActiveOrderBanner onViewOrders={() => setTab('orders')} />
-      <MobileCartBar cart={cart} setCart={setCart} user={user} preferredLocation={preferredLocation} storeStatus={storeStatus} />
+      <MobileCartBar cart={cart} setCart={setCart} user={user} buyerProfile={buyerProfile} preferredLocation={preferredLocation} storeStatus={storeStatus} />
 
       <footer className="shrink-0 border-t py-1.5 px-4 flex flex-wrap items-center justify-center gap-x-4" style={{ borderColor: '#2A2118' }}>
         <p className="text-[9px] font-mono" style={{ color: '#6B6155' }}>

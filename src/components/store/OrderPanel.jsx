@@ -20,11 +20,12 @@ import { roundPrice } from '@/lib/pricing';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 
-export default function OrderPanel({ cart, setCart, user, preferredLocation = '', storeStatus }) {
+export default function OrderPanel({ cart, setCart, user, buyerProfile, preferredLocation = '', storeStatus }) {
   const queryClient = useQueryClient();
   const saved = storeCache.getCustomer();
-  const [handle, setHandle] = useState(saved?.handle || user?.full_name || '');
-  const [location, setLocation] = useState(saved?.location || preferredLocation || '');
+  const savedProfile = buyerProfile || storeCache.getProfile();
+  const [handle, setHandle] = useState(savedProfile?.handle || saved?.handle || user?.full_name || '');
+  const [location, setLocation] = useState(savedProfile?.preferred_location || saved?.location || preferredLocation || '');
   const [notes, setNotes] = useState('');
   const [svcWindow, setSvcWindow] = useState('');
   const [discountCode, setDiscountCode] = useState('');
@@ -34,6 +35,11 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
   useEffect(() => {
     if (preferredLocation) setLocation(preferredLocation);
   }, [preferredLocation]);
+
+  useEffect(() => {
+    if (buyerProfile?.handle && !handle) setHandle(buyerProfile.handle);
+    if (buyerProfile?.preferred_location && !location) setLocation(buyerProfile.preferred_location);
+  }, [buyerProfile]);
 
   const total = cart.reduce((sum, item) => sum + roundPrice(item.unit_price) * item.quantity, 0);
   const hasDiscountCode = discountCode.trim().length > 0;
@@ -51,12 +57,13 @@ export default function OrderPanel({ cart, setCart, user, preferredLocation = ''
         delivery_location: location,
         customer_notes: finalNotes,
         discount_code: discountCode.trim(),
+        profile_key: buyerProfile?.profile_key || savedProfile?.profile_key || '',
       });
       return res.data;
     },
     onSuccess: (data) => {
       // Remember this purchaser and their tracking code for next time
-      storeCache.setCustomer({ handle, location });
+      storeCache.setCustomer({ handle, location, profile_key: buyerProfile?.profile_key || savedProfile?.profile_key || '' });
       storeCache.addTrackingCode(data.tracking_code);
       queryClient.invalidateQueries({ queryKey: ['tracked_orders'] });
       queryClient.invalidateQueries({ queryKey: ['products'] });

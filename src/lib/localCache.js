@@ -50,6 +50,7 @@ export const localCache = {
 // their handle, preferred delivery location, and any in-progress cart.
 const STORE_KEYS = {
   customer: 'fsis.store.customer',
+  profile: 'fsis.store.profile',
   cart: 'fsis.store.cart',
   trackingCodes: 'fsis.store.tracking_codes',
   onboarded: 'fsis.store.onboarded',
@@ -60,6 +61,8 @@ const STORE_KEYS = {
 export const storeCache = {
   getCustomer: () => read(STORE_KEYS.customer),
   setCustomer: (profile) => write(STORE_KEYS.customer, profile),
+  getProfile: () => read(STORE_KEYS.profile),
+  setProfile: (profile) => write(STORE_KEYS.profile, profile),
   getCart: () => read(STORE_KEYS.cart) || [],
   setCart: (cart) => write(STORE_KEYS.cart, cart),
   getTrackingCodes: () => read(STORE_KEYS.trackingCodes) || [],

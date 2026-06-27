@@ -1,0 +1,77 @@
+{
+  "name": "fsis_profile",
+  "type": "object",
+  "properties": {
+    "profile_key": {
+      "type": "string",
+      "description": "Private device profile key stored locally in the PWA; not a Base44 user id"
+    },
+    "handle": {
+      "type": "string",
+      "description": "In-game RSI handle or preferred buyer callsign"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Optional display name shown in FSIS profile surfaces"
+    },
+    "contact_method": {
+      "type": "string",
+      "enum": [
+        "spectrum",
+        "discord",
+        "in_game",
+        "other",
+        "none"
+      ],
+      "default": "spectrum"
+    },
+    "contact_handle": {
+      "type": "string",
+      "description": "Optional contact handle supplied by the profile owner"
+    },
+    "preferred_location": {
+      "type": "string",
+      "description": "Preferred delivery or handoff location"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "dormant",
+        "blocked"
+      ],
+      "default": "active"
+    },
+    "source": {
+      "type": "string",
+      "description": "Where the profile originated, e.g. storefront_pwa"
+    },
+    "first_seen_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_seen_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "profile_key",
+    "handle"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

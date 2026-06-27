@@ -9,7 +9,7 @@ const roundPrice = (value) => Math.round((Number(value) || 0) / 100) * 100;
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { customer_handle, items, delivery_location, customer_notes, discount_code } = await req.json();
+    const { customer_handle, items, delivery_location, customer_notes, discount_code, profile_key } = await req.json();
 
     if (!customer_handle?.trim() || !Array.isArray(items) || items.length === 0) {
       return Response.json({ error: 'Handle and at least one item are required' }, { status: 400 });
@@ -20,6 +20,9 @@ Deno.serve(async (req) => {
 
     const svc = base44.asServiceRole.entities;
     const products = await svc.product.filter({ available: true });
+    const profileKey = String(profile_key || '').trim();
+    const matchedProfiles = profileKey.length >= 24 ? await svc.fsis_profile.filter({ profile_key: profileKey, status: 'active' }) : [];
+    const customerProfile = matchedProfiles[0] || null;
 
     const lines = [];
     for (const item of items) {
@@ -85,6 +88,8 @@ Deno.serve(async (req) => {
     try {
       order = await svc.order.create({
       customer_handle: customer_handle.trim(),
+      customer_profile_id: customerProfile?.id || '',
+      customer_profile_handle: customerProfile?.handle || '',
       tracking_code,
       handoff_passphrase,
       items: lines,
@@ -113,6 +118,7 @@ Deno.serve(async (req) => {
       ok: true,
       tracking_code,
       order_id: order.id,
+      customer_profile_id: customerProfile?.id || '',
       total_auec: total,
       subtotal_auec: subtotal,
       discount_auec,
