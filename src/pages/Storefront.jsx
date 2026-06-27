@@ -202,7 +202,7 @@ export default function Storefront() {
   const toggleCompare = (id) => setCompareIds((current) => current.includes(id) ? current.filter((p) => p !== id) : [id, ...current].slice(0, 3));
 
   return (
-    <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#0C0B0A', backgroundImage: 'radial-gradient(circle at 12% 8%, rgba(138, 143, 69, 0.14), transparent 24%), radial-gradient(circle at 82% 18%, rgba(163, 90, 42, 0.12), transparent 24%), radial-gradient(circle at 70% 90%, rgba(184, 111, 79, 0.08), transparent 28%)' }}>
+    <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#080604', backgroundImage: 'radial-gradient(circle at 12% 8%, rgba(224, 162, 46, 0.16), transparent 23%), radial-gradient(circle at 82% 18%, rgba(138, 100, 48, 0.16), transparent 25%), radial-gradient(circle at 70% 90%, rgba(92, 68, 36, 0.18), transparent 30%), linear-gradient(135deg, rgba(8, 6, 4, 0.96), rgba(18, 13, 8, 0.98) 42%, rgba(10, 8, 6, 0.96))' }}>
       <AnimatePresence>
         {showOnboarding && (
           <StoreOnboarding
@@ -216,8 +216,9 @@ export default function Storefront() {
       <StorefrontAtmosphere />
 
       {/* Header */}
-      <header className="shrink-0 border-b z-10 relative" style={{ borderColor: '#2A2118', background: 'linear-gradient(90deg, rgba(12, 11, 10, 0.96), rgba(17, 22, 19, 0.94), rgba(20, 14, 22, 0.92), rgba(12, 11, 10, 0.96))' }}>
-        <div className="max-w-[1720px] mx-auto px-4 2xl:px-8 py-2.5 flex items-center justify-between">
+      <header className="shrink-0 border-b z-10 relative overflow-hidden" style={{ borderColor: '#5C4424', background: 'linear-gradient(90deg, rgba(8, 6, 4, 0.98), rgba(20, 15, 9, 0.96), rgba(28, 18, 10, 0.94), rgba(8, 6, 4, 0.98))', boxShadow: '0 14px 34px rgba(0,0,0,0.38), inset 0 -1px 0 rgba(224,162,46,0.14)' }}>
+        <div className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #E0A22E, #8A8F45, transparent)' }} />
+        <div className="max-w-[1720px] mx-auto px-4 2xl:px-8 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-1.5" style={{ background: 'linear-gradient(160deg, #8A6430, #4A3722)', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}>
               <FsisLogo size={24} />
@@ -256,16 +257,17 @@ export default function Storefront() {
       <StoreMaintenanceBanner status={storeStatus} />
 
       {/* Main deck — fills viewport, no page scroll */}
-      <main className="flex-1 min-h-0 max-w-[1720px] mx-auto w-full px-4 2xl:px-8 pt-4 pb-20 lg:pb-4 grid grid-cols-1 lg:grid-cols-[1fr_380px] 2xl:grid-cols-[1fr_400px] gap-5 overflow-y-auto lg:overflow-hidden">
+      <main className="flex-1 min-h-0 max-w-[1720px] mx-auto w-full px-4 2xl:px-8 pt-5 pb-20 lg:pb-5 grid grid-cols-1 lg:grid-cols-[1fr_390px] 2xl:grid-cols-[1fr_420px] gap-6 overflow-y-auto lg:overflow-hidden">
         <div className="flex flex-col min-h-0 gap-4">
           <ProprietorEntryway user={user} />
 
           {/* Compact hero */}
           <div
-            className="shrink-0 p-[5px] hidden sm:block"
+            className="shrink-0 p-[6px] hidden sm:block relative"
             style={{
-              background: 'linear-gradient(135deg, #8A6430 0%, #8A8F45 28%, #B0793A 54%, #A35A2A 78%, #5C4424 100%)',
-              clipPath: 'polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px)',
+              background: 'linear-gradient(135deg, #E0A22E 0%, #8A8F45 24%, #C8893B 48%, #8A6430 74%, #3A2F20 100%)',
+              boxShadow: '0 24px 70px rgba(0,0,0,0.46), 0 0 34px rgba(224,162,46,0.10)',
+              clipPath: 'polygon(28px 0, 100% 0, 100% calc(100% - 28px), calc(100% - 28px) 100%, 0 100%, 0 28px)',
             }}
           >
             <div
@@ -275,7 +277,7 @@ export default function Storefront() {
               <div
                 className="relative p-6 md:p-7"
                 style={{
-                  backgroundImage: `linear-gradient(95deg, rgba(13, 11, 9, 0.92) 30%, rgba(13, 11, 9, 0.45) 100%), url(${HERO_BG})`,
+                  backgroundImage: `radial-gradient(circle at 16% 14%, rgba(224, 162, 46, 0.16), transparent 26%), linear-gradient(95deg, rgba(10, 8, 6, 0.96) 26%, rgba(20, 13, 7, 0.72) 60%, rgba(13, 11, 9, 0.38) 100%), url(${HERO_BG})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center right',
                 }}
@@ -284,8 +286,8 @@ export default function Storefront() {
                 <div className="absolute top-1/2 -translate-y-1/2 right-2 hidden xl:block pointer-events-none opacity-80">
                   <HexCrate size={150} />
                 </div>
-                <p className="font-mono text-[10px] tracking-[0.3em] mb-2" style={{ color: '#8A8F45' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
-                <h2 className="font-mono text-3xl 2xl:text-4xl font-bold leading-tight tracking-tight">
+                <p className="font-mono text-[10px] tracking-[0.3em] mb-2 inline-flex px-2 py-1 border" style={{ color: '#E0A22E', borderColor: '#8A6430', background: 'rgba(8,6,4,0.55)' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
+                <h2 className="font-mono text-3xl 2xl:text-5xl font-bold leading-tight tracking-tight" style={{ textShadow: '0 0 26px rgba(224,162,46,0.18)' }}>
                   <span style={{ color: '#F2EADC' }}>Honest salvage.</span>{' '}
                   <span style={{ color: '#E0A22E' }}>Fair prices.</span>
                 </h2>

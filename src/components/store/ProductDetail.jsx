@@ -53,11 +53,11 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
   return (
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className="max-w-lg border p-0 gap-0 font-mono"
-        style={{ borderColor: '#5C4A33', background: '#14110D' }}
+        className="max-w-2xl border p-0 gap-0 font-mono overflow-hidden"
+        style={{ borderColor: '#8A6430', background: 'linear-gradient(180deg, #17120C, #090705)', boxShadow: '0 30px 90px rgba(0,0,0,0.62), inset 0 1px 0 rgba(224,162,46,0.14)' }}
       >
         {/* Header */}
-        <div className="flex items-start gap-3 p-4 border-b" style={{ borderColor: '#2A2118' }}>
+        <div className="flex items-start gap-3 p-5 border-b" style={{ borderColor: '#5C4424', background: 'radial-gradient(circle at 10% 0%, rgba(224,162,46,0.12), transparent 40%)' }}>
           <div className="w-14 h-14 flex items-center justify-center border shrink-0" style={{ borderColor: '#4A3B28', background: 'rgba(10, 9, 7, 0.6)' }}>
             <CommodityIcon code={product.code} size={40} />
           </div>
@@ -87,7 +87,7 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
           <GradeStamp category={product.category} className="ml-auto mr-5 mt-1 shrink-0 hidden sm:inline-block" />
         </div>
 
-        <div className="p-4 space-y-4">
+        <div className="p-5 space-y-4">
           {/* Price + stock */}
           <div className="flex items-end justify-between">
             <div className="flex items-center gap-2 flex-wrap">

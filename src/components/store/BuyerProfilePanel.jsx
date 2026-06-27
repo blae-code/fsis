@@ -4,7 +4,7 @@ import { BadgeCheck, IdCard, Save } from 'lucide-react';
 import { upsertFsisProfile } from '@/functions/upsertFsisProfile';
 import { storeCache } from '@/lib/localCache';
 
-const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
+const fieldStyle = { borderColor: '#5C4424', background: 'linear-gradient(180deg, #14100B, #0B0906)', color: '#EDE5D6', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.06)' };
 
 export default function BuyerProfilePanel({ profile, onProfileSaved }) {
   const [open, setOpen] = useState(!profile?.profile_key);
@@ -31,7 +31,8 @@ export default function BuyerProfilePanel({ profile, onProfileSaved }) {
   const patch = (key, value) => setForm((current) => ({ ...current, [key]: value }));
 
   return (
-    <section className="border font-mono" style={{ borderColor: profile?.profile_key ? '#8A8F45' : '#5C4424', background: 'rgba(12, 10, 7, 0.82)', clipPath: 'polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)' }}>
+    <section className="border font-mono relative overflow-hidden" style={{ borderColor: profile?.profile_key ? '#8A8F45' : '#8A6430', background: 'linear-gradient(180deg, rgba(23, 18, 12, 0.92), rgba(10, 8, 6, 0.92))', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.10), 0 12px 30px rgba(0,0,0,0.24)', clipPath: 'polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)' }}>
+      <span className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(224,162,46,0.62), transparent)' }} />
       <button type="button" onClick={() => setOpen(!open)} className="w-full p-3 flex items-center justify-between gap-3 text-left">
         <span className="flex items-center gap-2">
           <IdCard className="w-4 h-4" style={{ color: '#E0A22E' }} />

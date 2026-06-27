@@ -18,7 +18,7 @@ import BuyerSafetyPanel from '@/components/store/BuyerSafetyPanel';
 import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
 import { roundPrice } from '@/lib/pricing';
 
-const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
+const fieldStyle = { borderColor: '#5C4424', background: 'linear-gradient(180deg, #14100B, #0B0906)', color: '#EDE5D6', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.06)' };
 
 export default function OrderPanel({ cart, setCart, user, buyerProfile, preferredLocation = '', storeStatus }) {
   const queryClient = useQueryClient();
@@ -96,8 +96,9 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
     <div
       className="relative border p-4 space-y-4 sticky top-4"
       style={{
-        borderColor: '#5C4A33',
-        background: '#14110D',
+        borderColor: '#8A6430',
+        background: 'linear-gradient(180deg, rgba(24, 18, 11, 0.98), rgba(10, 8, 6, 0.98))',
+        boxShadow: '0 24px 60px rgba(0,0,0,0.42), inset 0 1px 0 rgba(224,162,46,0.12)',
         clipPath: 'polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px)',
       }}
     >
@@ -112,8 +113,9 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
       <OrderReceiptModal order={placed} open={showReceipt} onClose={() => setShowReceipt(false)} />
 
       {cart.length === 0 ? (
-        <div className="border p-6 text-center" style={{ borderColor: '#3A2F20' }}>
-          <p className="text-xs font-mono" style={{ color: '#9C9080' }}>Manifest empty — add wares from the catalog</p>
+        <div className="border p-7 text-center" style={{ borderColor: '#5C4424', background: 'radial-gradient(circle at 50% 0%, rgba(224,162,46,0.10), transparent 55%), #0C0A07' }}>
+          <p className="text-xs font-mono" style={{ color: '#C8BDAA' }}>Manifest empty — add wares from the catalog</p>
+          <p className="text-[9px] mt-2 font-mono tracking-[0.14em]" style={{ color: '#8A6430' }}>PREMIUM CRATE QUEUE STANDING BY</p>
         </div>
       ) : (
         <>

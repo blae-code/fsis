@@ -21,8 +21,8 @@ const TABS = [
 export default function StoreTabs({ active, onChange }) {
   return (
     <div
-      className="relative flex gap-0.5 font-mono text-[10px] tracking-[0.15em] p-0.5 max-w-full overflow-x-auto"
-      style={{ background: '#0E0C0A', border: '1px solid #2A2118', clipPath: 'polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px)' }}
+      className="relative flex gap-1 font-mono text-[10px] tracking-[0.15em] p-1 max-w-full overflow-x-auto"
+      style={{ background: 'linear-gradient(180deg, #17120C, #0A0806)', border: '1px solid #5C4424', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.12), 0 12px 28px rgba(0,0,0,0.24)', clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
     >
       {TABS.map(({ id, label, icon: Icon, tip, key, accent, dark }) => {
         const isActive = active === id;

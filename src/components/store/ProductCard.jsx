@@ -19,10 +19,10 @@ const PLATE_TEXTURE = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea625
 const CATEGORY_META = {
   salvage_commodity: { label: 'SALVAGE', crest: SalvageCrest, accent: '#8A8F45', dark: '#263E36', text: '#0D1411' },
   fabricated: { label: 'FABRICATED', icon: FabricatedCrest, crest: FabricatedCrest, accent: '#C8893B', dark: '#5A3718', text: '#1A1006' },
-  service: { label: 'SERVICE', icon: ServiceCrest, crest: ServiceCrest, accent: '#A35A2A', dark: '#3B315F', text: '#130F20' },
-  fps_gear: { label: 'GEAR', crest: ServiceCrest, accent: '#7BA05B', dark: '#334B25', text: '#10170A' },
+  service: { label: 'SERVICE', icon: ServiceCrest, crest: ServiceCrest, accent: '#A35A2A', dark: '#4A2A18', text: '#1A0C06' },
+  fps_gear: { label: 'GEAR', crest: ServiceCrest, accent: '#8A8F45', dark: '#3C3D20', text: '#111207' },
   weapon: { label: 'WEAPON', crest: ServiceCrest, accent: '#C05050', dark: '#5A2222', text: '#1C0808' },
-  ship_component: { label: 'COMPONENT', crest: FabricatedCrest, accent: '#8F5A32', dark: '#1F4258', text: '#08141C' },
+  ship_component: { label: 'COMPONENT', crest: FabricatedCrest, accent: '#8F5A32', dark: '#4A321F', text: '#160C06' },
   vehicle_component: { label: 'VEH COMP', crest: FabricatedCrest, accent: '#B86F4F', dark: '#5A2F1F', text: '#1A0C06' },
 };
 
@@ -55,13 +55,13 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         onClick={() => onView?.(product)}
         whileHover={{ rotateX: 2.5, rotateY: -2.5, y: -4 }}
         transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-        className="relative flex flex-col gap-3 p-4 border h-[455px] cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
+        className="relative flex flex-col gap-3 p-4 border h-[472px] cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
         style={{
-          borderColor: inCart ? '#C8893B' : `${accent}66`,
-          boxShadow: inCart ? '0 0 16px rgba(212, 146, 11, 0.18), inset 0 0 18px rgba(212, 146, 11, 0.05)' : `inset 0 0 24px ${accent}10`,
+          borderColor: inCart ? '#E0A22E' : `${accent}77`,
+          boxShadow: inCart ? '0 20px 46px rgba(0,0,0,0.42), 0 0 24px rgba(224, 162, 46, 0.22), inset 0 0 22px rgba(224, 162, 46, 0.08)' : `0 16px 38px rgba(0,0,0,0.34), inset 0 0 28px ${accent}12`,
           transformStyle: 'preserve-3d',
           clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
-          backgroundImage: `radial-gradient(circle at 88% 12%, ${accent}24, transparent 28%), linear-gradient(rgba(12, 11, 10, 0.42), rgba(12, 11, 10, 0.76)), url(${PLATE_TEXTURE})`,
+          backgroundImage: `linear-gradient(180deg, rgba(255, 224, 154, 0.07), transparent 18%), radial-gradient(circle at 88% 12%, ${accent}2E, transparent 30%), linear-gradient(rgba(10, 8, 6, 0.52), rgba(10, 8, 6, 0.84)), url(${PLATE_TEXTURE})`,
           backgroundSize: 'cover',
         }}
       >

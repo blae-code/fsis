@@ -17,7 +17,7 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
   const hasFilters = Boolean(search) || category !== 'all' || quickFilter !== 'all' || sort !== 'featured';
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-3 font-mono flex-wrap">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 font-mono flex-wrap p-2 border" style={{ borderColor: '#3A2F20', background: 'linear-gradient(180deg, rgba(20, 17, 13, 0.88), rgba(10, 8, 6, 0.88))', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.08)', clipPath: 'polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)' }}>
       {/* Search */}
       <div className="relative flex-1 min-w-[160px]">
         <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#8A7E6C' }} />
@@ -26,10 +26,10 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search the catalog..."
-          className="w-full h-9 pl-9 pr-10 text-xs bg-transparent border outline-none focus:brightness-125 transition-all"
+          className="w-full h-10 pl-9 pr-10 text-xs bg-transparent border outline-none focus:brightness-125 transition-all"
           style={{
-            borderColor: '#3A2F20',
-            color: '#D8CFC0',
+            borderColor: '#5C4424',
+            color: '#EDE5D6',
             clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)',
             background: 'rgba(10, 9, 7, 0.5)',
           }}
