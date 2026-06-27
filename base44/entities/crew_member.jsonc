@@ -4,11 +4,15 @@
   "properties": {
     "handle": {
       "type": "string",
-      "description": "In-game callsign of the crew member \u2014 also links their app operator profile (callsign match) for pay day elections"
+      "description": "In-game callsign of the FSIS member \u2014 also links their app operator profile by callsign match for pay day elections"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Preferred display name for the member roster"
     },
     "role": {
       "type": "string",
-      "description": "Typical role, e.g. Pilot, Scraper, Security, Hauler"
+      "description": "Operational role, e.g. Proprietor, Pilot, Scraper, Security, Hauler"
     },
     "employment_type": {
       "type": "string",
@@ -17,7 +21,28 @@
         "contractor"
       ],
       "default": "contractor",
-      "description": "Proprietor = permanent owner (blae); all other crew are contractors"
+      "description": "Proprietor = permanent owner; all other crew are contractors unless promoted later"
+    },
+    "access_level": {
+      "type": "string",
+      "enum": [
+        "proprietor",
+        "crew",
+        "contractor",
+        "guest"
+      ],
+      "default": "contractor",
+      "description": "FSIS roster-level access identity, separate from Base44 authentication"
+    },
+    "member_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "prospect",
+        "inactive"
+      ],
+      "default": "active",
+      "description": "Roster membership status"
     },
     "default_shares": {
       "type": "number",
@@ -28,6 +53,20 @@
       "type": "boolean",
       "default": true,
       "description": "Whether they currently fly with FSIS"
+    },
+    "signature_required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this member should use an operational confirmation phrase/PIN for in-app signoffs; not a login password"
+    },
+    "signature_label": {
+      "type": "string",
+      "description": "Non-secret label or hint for the member's operational signature; never store the real login password here"
+    },
+    "joined_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the member joined FSIS"
     },
     "notes": {
       "type": "string"
