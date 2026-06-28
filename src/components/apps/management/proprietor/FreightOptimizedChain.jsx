@@ -1,8 +1,8 @@
 import React from 'react';
-import { GitBranch } from 'lucide-react';
+import { CheckCircle2, GitBranch, PackageCheck, XCircle } from 'lucide-react';
 import { riskColor } from '@/lib/warehouseUtils';
 import { missionScore } from '@/lib/freightMissionUtils';
 
-export default function FreightOptimizedChain({ missions = [] }) {
-  return <div className="space-y-1">{missions.map((m)=><div key={m.id} className="border p-2 text-[10px] flex items-center gap-2" style={{ borderColor: riskColor(m.risk_level), color: '#D8CFC0' }}><GitBranch className="w-3 h-3"/><b style={{ color:'#E0A22E' }}>#{m.chain_position}</b><span className="flex-1">{m.origin} → {m.destination}</span><span>{Math.round(missionScore(m)).toLocaleString()}</span></div>)}</div>;
+export default function FreightOptimizedChain({ missions = [], onStatus }) {
+  return <div className="space-y-1">{missions.map((m)=><div key={m.id} className="border p-2 text-[10px] space-y-2" style={{ borderColor: riskColor(m.risk_level), color: '#D8CFC0' }}><div className="flex items-center gap-2"><GitBranch className="w-3 h-3"/><b style={{ color:'#E0A22E' }}>#{m.chain_position}</b><span className="flex-1">{m.origin} → {m.destination}</span><span>{Math.round(missionScore(m)).toLocaleString()}</span></div><div className="flex flex-wrap gap-2"><button onClick={()=>onStatus(m,'loaded')} className="border px-2 py-1" style={{ borderColor:'#5C4424', color:'#C8BDAA' }}><PackageCheck className="w-3 h-3 inline mr-1"/>LOADED</button><button onClick={()=>onStatus(m,'delivered')} className="border px-2 py-1" style={{ borderColor:'#8A8F45', color:'#8A8F45' }}><CheckCircle2 className="w-3 h-3 inline mr-1"/>DONE</button><button onClick={()=>onStatus(m,'cancelled')} className="border px-2 py-1" style={{ borderColor:'#8A3A2E', color:'#C05050' }}><XCircle className="w-3 h-3 inline mr-1"/>SCRUB</button><span className="ml-auto" style={{ color:'#8A7E6C' }}>{m.status || 'planned'}</span></div></div>)}</div>;
 }

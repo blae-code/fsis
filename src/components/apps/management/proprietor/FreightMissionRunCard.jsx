@@ -1,0 +1,8 @@
+import React from 'react';
+import { AlertTriangle, Gauge } from 'lucide-react';
+import { chainStats } from '@/lib/freightMissionUtils';
+
+export default function FreightMissionRunCard({ missions = [], capacity = 0, setCapacity }) {
+  const stats = chainStats(missions, Number(capacity));
+  return <div className="border p-3 grid md:grid-cols-5 gap-3 text-[10px]" style={{ borderColor: stats.overCapacity ? '#9A3F2B' : '#3A2F20', background: stats.overCapacity ? '#1A0D08' : '#0C0A07', color: '#C8BDAA' }}><div><p style={{ color:'#8A7E6C' }}>CHAIN</p><b style={{ color:'#E0A22E' }}>{missions.length}/10 MISSIONS</b></div><div><p style={{ color:'#8A7E6C' }}>TOTAL SCU</p><b style={{ color: stats.overCapacity ? '#C05050' : '#F2EADC' }}>{stats.totalScu.toLocaleString()}</b></div><div><p style={{ color:'#8A7E6C' }}>REWARD</p><b style={{ color:'#E0A22E' }}>{stats.totalReward.toLocaleString()} aUEC</b></div><div><p style={{ color:'#8A7E6C' }}>HIGH RISK</p><b style={{ color: stats.highRisk ? '#C8893B' : '#8A8F45' }}>{stats.highRisk}</b></div><label className="flex items-center gap-2"><Gauge className="w-3 h-3"/><input type="number" value={capacity} onChange={(e)=>setCapacity(e.target.value)} className="w-full h-8 border px-2" style={{ borderColor:'#5C4424', background:'#0B0906', color:'#EDE5D6' }} placeholder="Ship SCU"/></label>{stats.overCapacity && <p className="md:col-span-5 flex gap-2" style={{ color:'#C05050' }}><AlertTriangle className="w-3 h-3"/>Chain exceeds current ship capacity. Split the run or reduce selected contracts before launch.</p>}</div>;
+}
