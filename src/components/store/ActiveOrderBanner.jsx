@@ -29,11 +29,11 @@ export default function ActiveOrderBanner({ onViewOrders }) {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 40, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-        className="fixed bottom-16 left-1/2 z-[300] font-mono"
+        className="fixed bottom-20 sm:bottom-16 left-1/2 z-[300] font-mono"
         style={{ transform: 'translateX(-50%)', width: 'min(480px, 92vw)' }}
       >
         <div
-          className="flex items-center gap-3 px-4 py-2.5"
+          className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5"
           style={{
             background: 'rgba(14,11,8,0.95)',
             border: `1px solid ${color}44`,
@@ -77,7 +77,7 @@ export default function ActiveOrderBanner({ onViewOrders }) {
 
           <button
             onClick={onViewOrders}
-            className="flex items-center gap-1 px-2.5 py-1 text-[9px] tracking-[0.1em] shrink-0 transition-all"
+            className="flex items-center gap-1 px-2.5 py-1 min-h-8 text-[9px] tracking-[0.1em] shrink-0 transition-all"
             style={{ border: `1px solid ${color}33`, color, background: `${color}0E` }}
             onMouseEnter={e => e.currentTarget.style.background = `${color}1A`}
             onMouseLeave={e => e.currentTarget.style.background = `${color}0E`}

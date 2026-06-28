@@ -26,16 +26,16 @@ export default function QuoteBuilder({ products = [], onLoad }) {
   const backorder = product && product.category !== 'service' && qty > (product.stock || 0);
 
   return (
-    <div className="max-w-2xl space-y-4">
+    <div className="max-w-4xl space-y-4">
       <div className="flex items-center gap-2 font-mono text-xs tracking-[0.2em]" style={{ color: '#C8A05B' }}>
         <Calculator className="w-3.5 h-3.5" /> BULK QUOTE BUILDER
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="space-y-1">
           <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>WARE</Label>
           <Select value={productId} onValueChange={setProductId}>
-            <SelectTrigger className="h-8 text-xs font-mono" style={fieldStyle}>
+            <SelectTrigger className="h-10 md:h-8 text-xs font-mono" style={fieldStyle}>
               <SelectValue placeholder="Select ware" />
             </SelectTrigger>
             <SelectContent>
@@ -52,13 +52,13 @@ export default function QuoteBuilder({ products = [], onLoad }) {
           <Input
             type="number" min="1" value={qty}
             onChange={(e) => setQty(Math.max(1, parseInt(e.target.value) || 1))}
-            className="h-8 text-xs font-mono" style={fieldStyle}
+            className="h-10 md:h-8 text-xs font-mono" style={fieldStyle}
           />
         </div>
         <div className="space-y-1">
           <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>DELIVERY TO</Label>
           <Select value={loc} onValueChange={setLoc}>
-            <SelectTrigger className="h-8 text-xs font-mono" style={fieldStyle}>
+            <SelectTrigger className="h-10 md:h-8 text-xs font-mono" style={fieldStyle}>
               <SelectValue placeholder="Destination" />
             </SelectTrigger>
             <SelectContent>
@@ -74,17 +74,17 @@ export default function QuoteBuilder({ products = [], onLoad }) {
 
       {/* Itemized math — FairShare: a quote must show its work */}
       {product && (
-        <div className="border p-4 font-mono space-y-1.5" style={{ borderColor: '#5C4A33', background: '#14110D' }}>
+        <div className="border p-3 sm:p-4 font-mono space-y-1.5" style={{ borderColor: '#5C4A33', background: '#14110D' }}>
           <p className="text-[9px] tracking-[0.25em] mb-2" style={{ color: '#B0793A' }}>// QUOTE — EVERY CREDIT ACCOUNTED FOR</p>
-          <div className="flex justify-between text-[11px]">
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-1 text-[11px]">
             <span style={{ color: '#9C9080' }}>{product.code || product.product_name} × {qty.toLocaleString()} {product.unit || 'SCU'} @ {unitPrice.toLocaleString()}</span>
             <span style={{ color: '#D8CFC0' }}>{subtotal.toLocaleString()}</span>
           </div>
-          <div className="flex justify-between text-[11px]">
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-1 text-[11px]">
             <span style={{ color: '#9C9080' }}>VOLUME DISCOUNT {pct > 0 ? `(${pct}%)` : '(none — see tiers below)'}</span>
             <span style={{ color: pct > 0 ? '#7BA05B' : '#6B6155' }}>{pct > 0 ? `−${discount.toLocaleString()}` : '0'}</span>
           </div>
-          <div className="flex justify-between text-[11px]">
+          <div className="flex flex-col sm:flex-row sm:justify-between gap-1 text-[11px]">
             <span style={{ color: '#9C9080' }}>DELIVERY{locMeta ? ` — ${locMeta.name}` : ''}</span>
             <span style={{ color: '#7BA05B' }}>INCLUDED{locMeta ? ` • EST ${locMeta.eta}` : ''}</span>
           </div>
@@ -105,7 +105,7 @@ export default function QuoteBuilder({ products = [], onLoad }) {
             whileHover={{ scale: 1.02, boxShadow: '0 0 20px rgba(232,177,58,0.3)' }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 380, damping: 22 }}
-            className="mt-2 w-full h-9 font-mono text-xs font-bold rounded-full inline-flex items-center justify-center gap-1.5"
+            className="mt-2 w-full min-h-10 sm:h-9 px-3 font-mono text-xs font-bold rounded-full inline-flex items-center justify-center gap-1.5 text-center"
             style={{ background: 'linear-gradient(180deg, #E8B13A, #BD7E16)', color: '#1A1206' }}
           >
             LOAD INTO MANIFEST <ArrowRight className="w-3.5 h-3.5" />
