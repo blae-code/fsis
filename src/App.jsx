@@ -8,6 +8,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Desktop from '@/pages/Desktop';
 import Storefront from '@/pages/Storefront';
 import LootTracker from '@/pages/LootTracker';
+import ManagementContent from '@/components/apps/ManagementContent';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -45,7 +46,7 @@ const AuthenticatedApp = () => {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/" element={<Storefront />} />
-      <Route path="/ops" element={<Desktop />} />
+      <Route path="/ops" element={<div className="os-viewport"><ManagementContent /></div>} />
       <Route path="/Desktop" element={<Desktop />} />
       <Route path="/desktop" element={<Desktop />} />
       <Route path="/loot" element={<LootTracker />} />
