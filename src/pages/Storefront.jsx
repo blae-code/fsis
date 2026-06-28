@@ -267,8 +267,8 @@ export default function Storefront() {
       <StoreMaintenanceBanner status={storeStatus} />
 
       {/* Main deck — fills viewport, no page scroll */}
-      <main className="flex-1 min-h-0 max-w-[1880px] mx-auto w-full px-3 sm:px-4 2xl:px-8 pt-4 sm:pt-5 pb-24 lg:pb-5 grid grid-cols-1 lg:grid-cols-[1fr_390px] 2xl:grid-cols-[1fr_440px] gap-4 sm:gap-6 overflow-y-auto lg:overflow-hidden">
-        <div className="flex flex-col min-h-0 gap-4">
+      <main className="flex-1 min-h-0 max-w-[1880px] mx-auto w-full px-3 sm:px-4 2xl:px-8 pt-4 sm:pt-5 pb-28 lg:pb-8 grid grid-cols-1 lg:grid-cols-[1fr_390px] 2xl:grid-cols-[1fr_440px] gap-4 sm:gap-6 overflow-y-auto">
+        <div className="flex flex-col gap-4 min-h-full">
           <ProprietorEntryway user={user} />
 
           {/* Compact hero */}
@@ -324,7 +324,7 @@ export default function Storefront() {
           <BuyerProfilePanel profile={buyerProfile} onProfileSaved={setBuyerProfile} />
 
           {/* Active section — scrolls internally only if it overflows */}
-          <div className="flex-1 min-h-0 lg:overflow-y-auto pr-1">
+          <div className="flex-1 min-h-[360px] pr-1">
             {tab === 'catalog' && (
               <div className="space-y-4">
                 {user?.role === 'admin' && <AdminRestockControls products={storefrontProducts} />}
@@ -410,7 +410,7 @@ export default function Storefront() {
         </div>
 
         {/* Order panel — pinned, scrolls internally if needed (drawer on mobile) */}
-        <div className="hidden lg:block min-h-0 lg:overflow-y-auto">
+        <div className="hidden lg:block min-h-0">
           <OrderPanel cart={cart} setCart={setCart} user={user} buyerProfile={buyerProfile} preferredLocation={preferredLocation} storeStatus={storeStatus} />
         </div>
       </main>
