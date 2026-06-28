@@ -47,6 +47,21 @@
       ],
       "default": "draft"
     },
+    "commodity_cost_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Total acquisition or opportunity cost of commodities assigned to this freight plan"
+    },
+    "final_sale_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Final sale or payout value expected/received for the freight plan"
+    },
+    "handling_cost_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Fuel, repair, escort, loading, or other delivery costs"
+    },
     "notes": {
       "type": "string"
     }
