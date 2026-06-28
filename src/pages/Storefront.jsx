@@ -34,6 +34,7 @@ import BuyerProfilePanel from '@/components/store/BuyerProfilePanel';
 import BuyerProgressRail from '@/components/store/BuyerProgressRail';
 import AdminRestockControls from '@/components/store/AdminRestockControls';
 import RestockInbox from '@/components/apps/management/RestockInbox';
+import AdminFulfillmentQueue from '@/components/store/AdminFulfillmentQueue';
 import CatalogQuickFilters, { matchesQuickFilter } from '@/components/store/CatalogQuickFilters';
 import RecentDeliveries from '@/components/store/RecentDeliveries';
 import { useToast } from '@/components/ui/use-toast';
@@ -392,6 +393,7 @@ export default function Storefront() {
             {tab === 'quote' && <QuoteBuilder products={storefrontProducts} onLoad={(p, qty, loc) => { addToCart(p, qty); if (loc) setPreferredLocation(loc); setTab('catalog'); }} />}
             {tab === 'orders' && (
               <div className="space-y-4">
+                {user?.role === 'admin' && <AdminFulfillmentQueue />}
                 {user?.role === 'admin' && <RestockInbox />}
                 <MyOrders onReorder={reorder} />
               </div>
