@@ -39,7 +39,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
   const displayPrice = roundPrice(product.price_auec || 0);
   const redscarPrice = Math.max(0, roundPrice(displayPrice * (100 - REDSCAR_DISCOUNT_PERCENT) / 100));
   const isBestValue = marketBest && redscarPrice < marketBest;
-  const availabilityLabel = product.category === 'service' ? 'SCHEDULING REQUIRED' : !inStock ? 'RESTOCK WATCH' : (product.stock || 0) < 50 ? 'LIMITED STOCK' : 'READY NOW';
+  const availabilityLabel = product.category === 'service' ? 'SCHEDULING REQUIRED' : !inStock ? 'RESERVE QUEUE' : (product.stock || 0) < 50 ? 'LIMITED STOCK' : 'READY NOW';
   const availabilityColor = product.category === 'service' ? '#C8893B' : !inStock ? '#C05050' : (product.stock || 0) < 50 ? '#E0A22E' : '#8A8F45';
   const [showRestockModal, setShowRestockModal] = useState(false);
 
@@ -195,7 +195,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
                 </span>
               </StoreTip>
             ) : (
-              <StoreTip label="OUT OF STOCK" desc="Get notified when this ware is restocked from salvage ops.">
+              <StoreTip label="RESERVE NEXT FOUND" desc="Request a reserve and FSIS will hold the next found stock before it returns to public inventory.">
                 <span onClick={(e) => { e.stopPropagation(); setShowRestockModal(true); }}>
                   <AddToCartControl disabled={true} onAdd={() => {}} notifyMode />
                 </span>

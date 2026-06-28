@@ -4,13 +4,14 @@ import { useMutation } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, X, Check, Loader2 } from 'lucide-react';
+import { Bell, X, Check, Loader2, PackageCheck } from 'lucide-react';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 
 export default function RestockNotifyModal({ product, onClose }) {
   const [handle, setHandle] = useState('');
   const [contact, setContact] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [done, setDone] = useState(false);
 
   const mutation = useMutation({
@@ -19,6 +20,10 @@ export default function RestockNotifyModal({ product, onClose }) {
       product_name: product.product_name,
       handle: handle.trim(),
       contact: contact.trim(),
+      request_type: 'reserve',
+      desired_quantity: Math.max(1, Number(quantity) || 1),
+      reserve_status: 'open',
+      reserved_quantity: 0,
     }),
     onSuccess: () => setDone(true),
   });
@@ -42,8 +47,8 @@ export default function RestockNotifyModal({ product, onClose }) {
           </button>
 
           <div className="flex items-center gap-2" style={{ color: '#C8A05B' }}>
-            <Bell className="w-4 h-4" />
-            <span className="text-[10px] tracking-[0.25em] font-bold">RESTOCK ALERT</span>
+            <PackageCheck className="w-4 h-4" />
+            <span className="text-[10px] tracking-[0.25em] font-bold">RESERVE REQUEST</span>
           </div>
 
           {done ? (
@@ -51,7 +56,7 @@ export default function RestockNotifyModal({ product, onClose }) {
               <Check className="w-8 h-8" style={{ color: '#7BA05B' }} />
               <p className="text-sm" style={{ color: '#D8CFC0' }}>We've logged your request.</p>
               <p className="text-[10px]" style={{ color: '#7A6E60' }}>
-                We'll reach out via {contact || 'Spectrum/Discord'} when <span style={{ color: '#E0A22E' }}>{product.product_name}</span> is back in stock.
+                FSIS will reserve {Math.max(1, Number(quantity) || 1)} for {handle || 'you'} the next time <span style={{ color: '#E0A22E' }}>{product.product_name}</span> is found, then contact you via {contact || 'Spectrum/Discord'}.
               </p>
               <button onClick={onClose} className="mt-2 px-4 py-1.5 text-[10px] font-bold" style={{ background: '#3A2810', border: '1px solid #C8893B', color: '#E0A22E' }}>
                 CLOSE
@@ -62,7 +67,7 @@ export default function RestockNotifyModal({ product, onClose }) {
               <div>
                 <p className="text-[10px]" style={{ color: '#7A6E60' }}>
                   <span style={{ color: '#E0A22E' }}>{product.product_name}</span> is currently out of stock.
-                  Leave your handle and contact route. Email contacts can receive automated restock mail; Discord/Spectrum/in-game contacts are handled manually.
+                  Request a reserve and FSIS will hold the next found unit before it returns to public inventory.
                 </p>
               </div>
 
@@ -70,6 +75,10 @@ export default function RestockNotifyModal({ product, onClose }) {
                 <div className="space-y-1">
                   <Label className="text-[9px]" style={{ color: '#8A7E6C' }}>IN-GAME HANDLE *</Label>
                   <Input value={handle} onChange={(e) => setHandle(e.target.value)} className="h-8 text-xs" style={fieldStyle} placeholder="Your RSI handle" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[9px]" style={{ color: '#8A7E6C' }}>RESERVE QUANTITY</Label>
+                  <Input type="number" min="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="h-8 text-xs" style={fieldStyle} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-[9px]" style={{ color: '#8A7E6C' }}>HOW TO REACH YOU (OPTIONAL)</Label>
@@ -90,8 +99,8 @@ export default function RestockNotifyModal({ product, onClose }) {
                   className="flex-1 py-2 text-[10px] font-bold inline-flex items-center justify-center gap-1.5 disabled:opacity-40"
                   style={{ background: 'linear-gradient(180deg, #A87C42, #6E4D24)', color: '#15100A' }}
                 >
-                  {mutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Bell className="w-3 h-3" />}
-                  NOTIFY ME
+                  {mutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <PackageCheck className="w-3 h-3" />}
+                  RESERVE NEXT
                 </motion.button>
               </div>
             </>

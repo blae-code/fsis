@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, PackageCheck } from 'lucide-react';
+import { Plus, PackageCheck, Bell } from 'lucide-react';
 
 /** Bespoke "load crate" control — angled bronze plate that latches shut with a
  *  pulse ring and LOADED confirmation instead of a traditional button. */
-export default function AddToCartControl({ disabled, onAdd }) {
+export default function AddToCartControl({ disabled, onAdd, notifyMode = false }) {
   const [state, setState] = useState('idle'); // idle | loaded
   const timer = useRef(null);
 
@@ -69,7 +69,7 @@ export default function AddToCartControl({ disabled, onAdd }) {
             exit={{ y: -8, opacity: 0 }}
             transition={{ duration: 0.16 }}
           >
-            <Plus className="w-3 h-3" strokeWidth={3} /> ADD
+            {notifyMode ? <Bell className="w-3 h-3" strokeWidth={3} /> : <Plus className="w-3 h-3" strokeWidth={3} />} {notifyMode ? 'RESERVE' : 'ADD'}
           </motion.span>
         )}
       </AnimatePresence>

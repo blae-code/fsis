@@ -37,6 +37,7 @@ import PaydayManagementPanel from '@/components/apps/management/PaydayManagement
 import CommandSection from '@/components/apps/management/proprietor/CommandSection';
 import InvoiceLedgerPanel from '@/components/apps/management/proprietor/InvoiceLedgerPanel';
 import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
+import WeeklyPerformanceSummaryPanel from '@/components/apps/management/proprietor/WeeklyPerformanceSummaryPanel';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -92,6 +93,7 @@ export default function ProprietorCommandCenter() {
       <CommandSection eyebrow="MARGIN & PAYOUTS" title="FINANCE, PAYDAY, AND MARKET WATCH" description="Review ledger exports, buyer value, payroll cycles, market health, and private codes after daily fulfillment is under control.">
         <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><MarginWatchPanel products={products} prices={prices} /><LedgerSyncPanel entries={ledger} /></div>
         <InvoiceLedgerPanel invoices={invoices} />
+        <WeeklyPerformanceSummaryPanel />
         <PaydayManagementPanel />
         <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><BuyerLedger orders={orders} /><PrivateCodeConsole codes={codes} onToggle={(code) => codeToggle.mutate(code)} pending={codeToggle.isPending} /></div>
         <DemandIntelligence products={products} restocks={restocks} />
