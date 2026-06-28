@@ -1,0 +1,78 @@
+{
+  "name": "freight_mission",
+  "type": "object",
+  "properties": {
+    "mission_name": {
+      "type": "string"
+    },
+    "origin": {
+      "type": "string"
+    },
+    "destination": {
+      "type": "string"
+    },
+    "cargo_scu": {
+      "type": "number",
+      "default": 0
+    },
+    "reward_auec": {
+      "type": "number",
+      "default": 0
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "normal",
+        "high"
+      ],
+      "default": "normal"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planned",
+        "accepted",
+        "loaded",
+        "delivered",
+        "cancelled"
+      ],
+      "default": "planned"
+    },
+    "chain_position": {
+      "type": "number"
+    },
+    "chain_notes": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "mission_name",
+    "origin",
+    "destination"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@ import SoloOpsConsole from './SoloOpsConsole';
 import WarehouseLocationPanel from './WarehouseLocationPanel';
 import FreightStagingBoard from './FreightStagingBoard';
 import CargoLoadPlanner from './CargoLoadPlanner';
+import FreightMissionOptimizer from './FreightMissionOptimizer';
 
 const input = { borderColor: '#5C4424', background: '#0B0906', color: '#EDE5D6' };
 
@@ -22,5 +23,5 @@ export default function WarehouseCommandLayer({ orders = [] }) {
   const createCrate = useMutation({ mutationFn: (data) => base44.entities.cargo_crate.create(data), onSuccess: done });
   const createLoc = useMutation({ mutationFn: (data) => base44.entities.warehouse_location.create(data), onSuccess: done });
   const stage = useMutation({ mutationFn: ({ crate, next }) => base44.entities.cargo_crate.update(crate.id, { stage: next }), onSuccess: done });
-  return <div className="space-y-4"><SoloOpsConsole orders={orders} crates={crates} locations={locations} /><div className="grid xl:grid-cols-[0.9fr_1.1fr] gap-4"><WarehouseLocationPanel locations={locations} onCreate={(d)=>createLoc.mutate(d)} pending={createLoc.isPending} /><CrateCreator locations={locations} onCreate={(d)=>createCrate.mutate(d)} pending={createCrate.isPending} /></div><FreightStagingBoard crates={crates} onStage={(crate,next)=>stage.mutate({ crate, next })} /><CargoLoadPlanner crates={crates} /></div>;
+  return <div className="space-y-4"><SoloOpsConsole orders={orders} crates={crates} locations={locations} /><div className="grid xl:grid-cols-[0.9fr_1.1fr] gap-4"><WarehouseLocationPanel locations={locations} onCreate={(d)=>createLoc.mutate(d)} pending={createLoc.isPending} /><CrateCreator locations={locations} onCreate={(d)=>createCrate.mutate(d)} pending={createCrate.isPending} /></div><FreightStagingBoard crates={crates} onStage={(crate,next)=>stage.mutate({ crate, next })} /><FreightMissionOptimizer /><CargoLoadPlanner crates={crates} /></div>;
 }
