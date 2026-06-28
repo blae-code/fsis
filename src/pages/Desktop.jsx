@@ -108,8 +108,8 @@ function DesktopShell({ userRole }) {
 export default function Desktop() {
   const [booted, setBooted] = useState(() => localCache.hasBooted());
 
-  const { data: user, isLoading, refetch } = useQuery({ queryKey: ['user'], queryFn: () => base44.auth.me() });
-  const needsOnboarding = booted && user && !user.onboarded;
+  const { data: user, isLoading } = useQuery({ queryKey: ['user'], queryFn: () => base44.auth.me() });
+  const needsOnboarding = false;
 
   const handleBootComplete = useCallback(() => {
     localCache.markBooted();
@@ -140,7 +140,7 @@ export default function Desktop() {
       {booted && <DesktopShell userRole={user?.role} />}
       <AnimatePresence>
         {needsOnboarding && (
-          <OperatorOnboarding user={user} onComplete={refetch} />
+          <OperatorOnboarding user={user} onComplete={() => {}} />
         )}
       </AnimatePresence>
     </WindowProvider>
