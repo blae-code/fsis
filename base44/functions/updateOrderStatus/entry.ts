@@ -44,6 +44,19 @@ Deno.serve(async (req) => {
       internal_notes: [(order.internal_notes || '').trim(), note, restoreNotes.length ? `STOCK RESTORED: ${restoreNotes.join('; ')} ${restoreTag}` : status === 'cancelled' ? restoreTag : ''].filter(Boolean).join('\n'),
     });
 
+    if (['delivered', 'cancelled'].includes(status)) {
+      const invoiceRows = order.invoice_id
+        ? [await svc.invoice.get(order.invoice_id).catch(() => null)]
+        : await svc.invoice.filter({ order_tracking_code: order.tracking_code }).catch(() => []);
+      const invoice = invoiceRows.filter(Boolean)[0];
+      if (invoice) {
+        await svc.invoice.update(invoice.id, {
+          status: status === 'delivered' ? 'paid' : 'cancelled',
+          paid_at: status === 'delivered' ? new Date().toISOString() : invoice.paid_at || '',
+        }).catch(() => {});
+      }
+    }
+
     await svc.ops_log.create({
       action: 'order.status_changed',
       entity_type: 'order',

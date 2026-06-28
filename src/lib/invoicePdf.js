@@ -11,8 +11,8 @@ const PANEL = [24, 21, 17];
 
 /**
  * Generates and downloads a stylized FSIS invoice PDF for an order.
- * Accepts a normalized order: { tracking_code, handle, location, items, total,
- * discount_auec, discount_percent, discount_code, passphrase, placed_date }
+ * Accepts a normalized order: { invoice_number, tracking_code, handle, location,
+  * items, total, discount_auec, discount_percent, discount_code, passphrase, placed_date }
  */
 export function downloadInvoice(order) {
   const doc = new jsPDF();
@@ -61,16 +61,23 @@ export function downloadInvoice(order) {
   doc.text('INVOICE', W - M, 16, { align: 'right' });
   doc.setFontSize(8);
   doc.setTextColor(...CREAM);
-  doc.text(order.tracking_code || '', W - M, 22, { align: 'right' });
+  doc.text(order.invoice_number || order.tracking_code || '', W - M, 22, { align: 'right' });
+  if (order.invoice_number && order.tracking_code) {
+    doc.setFontSize(6.5);
+    doc.setTextColor(...MUTED);
+    doc.text(`TRACKING ${order.tracking_code}`, W - M, 27, { align: 'right' });
+  }
 
-  // Meta block
+  // Party + meta block
   let y = 50;
   doc.setFontSize(7);
   const meta = [
-    ['ISSUED TO', order.handle || '—'],
+    ['SELLER', FSIS.name],
+    ['BUYER / CONSIGNEE', order.handle || '—'],
+    ['INVOICE NO.', order.invoice_number || order.tracking_code || '—'],
+    ['TRACKING CODE', order.tracking_code || '—'],
     ['DELIVERY', order.location || 'TBD'],
     ['DATE ISSUED', new Date(order.placed_date || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })],
-    ['TRACKING CODE', order.tracking_code || '—'],
   ];
   meta.forEach(([label, value], i) => {
     const x = M + (i % 2) * ((W - 2 * M) / 2);
@@ -79,10 +86,10 @@ export function downloadInvoice(order) {
     doc.text(label, x, yy);
     doc.setTextColor(...CREAM);
     doc.setFontSize(9);
-    doc.text(String(value), x, yy + 5);
+    doc.text(String(value).slice(0, 42), x, yy + 5);
     doc.setFontSize(7);
   });
-  y += 30;
+  y += 42;
 
   // Line items table
   doc.setDrawColor(...COPPER);

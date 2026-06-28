@@ -14,6 +14,14 @@
       "type": "string",
       "description": "Profile handle snapshot at the time the order was placed"
     },
+    "invoice_id": {
+      "type": "string",
+      "description": "Linked invoice record generated for this transaction"
+    },
+    "invoice_number": {
+      "type": "string",
+      "description": "Branded FSIS invoice number issued for this order"
+    },
     "tracking_code": {
       "type": "string",
       "description": "Public tracking code given to the buyer, e.g. FSIS-3F9A2C"

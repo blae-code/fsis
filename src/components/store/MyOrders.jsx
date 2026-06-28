@@ -199,6 +199,7 @@ export default function MyOrders({ onReorder }) {
                 <div className="flex gap-1.5">
                   <button
                     onClick={() => downloadInvoice({
+                      invoice_number: o.invoice_number,
                       tracking_code: o.tracking_code,
                       handle: o.customer_handle,
                       location: o.delivery_location,

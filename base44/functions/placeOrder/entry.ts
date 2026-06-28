@@ -110,6 +110,41 @@ Deno.serve(async (req) => {
       throw error;
     }
 
+    const invoiceNumber = `FSIS-INV-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${tracking_code.replace('FSIS-', '')}`;
+    const invoice = await svc.invoice.create({
+      invoice_number: invoiceNumber,
+      transaction_type: 'order',
+      status: 'issued',
+      order_id: order.id,
+      order_tracking_code: tracking_code,
+      issued_at: new Date().toISOString(),
+      currency: 'aUEC',
+      seller: {
+        name: 'Fairshare Industrial Solutions',
+        handle: 'FSIS',
+        license: 'FSIS-IND-2956',
+        hq: 'Stanton System',
+      },
+      buyer: {
+        handle: customer_handle.trim(),
+        profile_id: customerProfile?.id || '',
+        profile_handle: customerProfile?.handle || '',
+        delivery_location: delivery_location.trim(),
+        contact: customerProfile?.contact_handle || '',
+      },
+      line_items: lines.map((line) => ({ ...line, line_total: line.unit_price * line.quantity })),
+      subtotal_auec: subtotal,
+      discount_code: applied ? applied.code : '',
+      discount_percent: applied ? applied.discount_percent : 0,
+      discount_auec,
+      total_auec: total,
+      payment_terms: 'Payment due in aUEC in the in-game trade window after handoff verification.',
+      handoff_passphrase,
+      notes: customer_notes || '',
+    });
+
+    await svc.order.update(order.id, { invoice_id: invoice.id, invoice_number: invoiceNumber });
+
     if (applied) {
       await svc.discount_code.update(applied.id, { uses: (applied.uses || 0) + 1 });
     }
@@ -118,6 +153,8 @@ Deno.serve(async (req) => {
       ok: true,
       tracking_code,
       order_id: order.id,
+      invoice_id: invoice.id,
+      invoice_number: invoiceNumber,
       customer_profile_id: customerProfile?.id || '',
       total_auec: total,
       subtotal_auec: subtotal,

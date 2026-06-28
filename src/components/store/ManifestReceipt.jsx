@@ -27,6 +27,10 @@ export default function ManifestReceipt({ order }) {
 
       <div className="p-3 space-y-2 text-[10px]">
         <div className="flex justify-between">
+          <span style={{ color: '#8A7E6C' }}>INVOICE</span>
+          <span className="font-bold" style={{ color: '#E0A22E' }}>{order.invoice_number || order.tracking_code}</span>
+        </div>
+        <div className="flex justify-between">
           <span style={{ color: '#8A7E6C' }}>TRACKING</span>
           <span className="font-bold" style={{ color: '#E0A22E' }}>{order.tracking_code}</span>
         </div>

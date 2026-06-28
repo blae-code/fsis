@@ -35,6 +35,7 @@ import MaintenanceModePanel from '@/components/apps/management/proprietor/Mainte
 import OrderSlaPanel from '@/components/apps/management/proprietor/OrderSlaPanel';
 import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
 import CommandSection from '@/components/apps/management/proprietor/CommandSection';
+import InvoiceLedgerPanel from '@/components/apps/management/proprietor/InvoiceLedgerPanel';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -48,9 +49,10 @@ export default function ProprietorCommandCenter() {
   const { data: codes = [] } = useQuery({ queryKey: ['discount_codes_command'], queryFn: () => base44.entities.discount_code.list('-updated_date', 100) });
   const { data: logs = [] } = useQuery({ queryKey: ['ops_logs_command'], queryFn: () => base44.entities.ops_log.list('-created_date', 50) });
   const { data: ledger = [] } = useQuery({ queryKey: ['ledger_command'], queryFn: () => base44.entities.ledger_entry.list('-entry_date', 300) });
-  const refresh = () => { qc.invalidateQueries({ queryKey: ['all_orders'] }); qc.invalidateQueries({ queryKey: ['loot_command'] }); qc.invalidateQueries({ queryKey: ['products_admin'] }); qc.invalidateQueries({ queryKey: ['products'] }); qc.invalidateQueries({ queryKey: ['repair_command'] }); qc.invalidateQueries({ queryKey: ['discount_codes_command'] }); qc.invalidateQueries({ queryKey: ['ops_logs_command'] }); };
+  const { data: invoices = [] } = useQuery({ queryKey: ['invoice_command'], queryFn: () => base44.entities.invoice.list('-created_date', 100) });
+  const refresh = () => { qc.invalidateQueries({ queryKey: ['all_orders'] }); qc.invalidateQueries({ queryKey: ['loot_command'] }); qc.invalidateQueries({ queryKey: ['products_admin'] }); qc.invalidateQueries({ queryKey: ['products'] }); qc.invalidateQueries({ queryKey: ['repair_command'] }); qc.invalidateQueries({ queryKey: ['discount_codes_command'] }); qc.invalidateQueries({ queryKey: ['ops_logs_command'] }); qc.invalidateQueries({ queryKey: ['invoice_command'] }); };
   useEffect(() => {
-    const unsubs = [base44.entities.order.subscribe(refresh), base44.entities.loot_item.subscribe(refresh), base44.entities.product.subscribe(refresh)];
+    const unsubs = [base44.entities.order.subscribe(refresh), base44.entities.invoice.subscribe(refresh), base44.entities.loot_item.subscribe(refresh), base44.entities.product.subscribe(refresh)];
     return () => unsubs.forEach((u) => u?.());
   }, []);
   const status = useMutation({ mutationFn: ({ id, next }) => updateOrderStatus({ order_id: id, status: next }), onSuccess: refresh });
@@ -84,6 +86,7 @@ export default function ProprietorCommandCenter() {
 
       <CommandSection eyebrow="MARGIN & PAYOUTS" title="FINANCE, PAYDAY, AND MARKET WATCH" description="Review ledger exports, buyer value, payroll cycles, market health, and private codes after daily fulfillment is under control.">
         <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><MarginWatchPanel products={products} prices={prices} /><LedgerSyncPanel entries={ledger} /></div>
+        <InvoiceLedgerPanel invoices={invoices} />
         <PaydayManagementPanel />
         <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><BuyerLedger orders={orders} /><PrivateCodeConsole codes={codes} onToggle={(code) => codeToggle.mutate(code)} pending={codeToggle.isPending} /></div>
         <DemandIntelligence products={products} restocks={restocks} />

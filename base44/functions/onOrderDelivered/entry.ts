@@ -53,6 +53,15 @@ Deno.serve(async (req) => {
     // 2. Stock already reserved when the buyer transmitted the manifest.
     actions.push('stock reservation retained from checkout');
 
+    const invoiceRows = order.invoice_id
+      ? [await svc.invoice.get(order.invoice_id).catch(() => null)]
+      : await svc.invoice.filter({ order_tracking_code: order.tracking_code }).catch(() => []);
+    const invoice = invoiceRows.filter(Boolean)[0];
+    if (invoice && invoice.status !== 'paid') {
+      await svc.invoice.update(invoice.id, { status: 'paid', paid_at: new Date().toISOString() }).catch(() => {});
+      actions.push('marked invoice paid');
+    }
+
     // 3. If this order contained recovered loot, close the loot lifecycle.
     for (const line of order.items || []) {
       if (!line.product_id) continue;

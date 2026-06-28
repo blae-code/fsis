@@ -60,7 +60,8 @@ export default function OrderReceiptModal({ order, open, onClose }) {
           </div>
         </div>
 
-        <CopyRow label="TRACKING CODE" value={order.tracking_code} big />
+        {order.invoice_number && <CopyRow label="FSIS INVOICE NUMBER" value={order.invoice_number} big />}
+        <CopyRow label="TRACKING CODE" value={order.tracking_code} big={!order.invoice_number} />
         {order.passphrase && <CopyRow label="HANDOFF PASSPHRASE — SPOKEN AT DELIVERY" value={order.passphrase} Icon={PassphraseSigil} />}
 
         <div className="flex items-start gap-2 border p-2.5" style={{ borderColor: '#5C4424', background: 'rgba(212, 146, 11, 0.05)' }}>

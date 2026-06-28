@@ -69,6 +69,7 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
       queryClient.invalidateQueries({ queryKey: ['products'] });
       setPlaced({
         tracking_code: data.tracking_code,
+        invoice_number: data.invoice_number,
         handle,
         location,
         items: [...cart],

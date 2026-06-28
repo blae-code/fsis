@@ -1,0 +1,175 @@
+{
+  "name": "invoice",
+  "type": "object",
+  "properties": {
+    "invoice_number": {
+      "type": "string",
+      "description": "Branded FSIS invoice number, e.g. FSIS-INV-20260627-A1B2C3"
+    },
+    "transaction_type": {
+      "type": "string",
+      "enum": [
+        "order",
+        "ledger_entry",
+        "payout",
+        "repair",
+        "adjustment"
+      ],
+      "default": "order"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "issued",
+        "paid",
+        "cancelled",
+        "void"
+      ],
+      "default": "issued"
+    },
+    "order_id": {
+      "type": "string"
+    },
+    "order_tracking_code": {
+      "type": "string"
+    },
+    "ledger_entry_id": {
+      "type": "string"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "currency": {
+      "type": "string",
+      "default": "aUEC"
+    },
+    "seller": {
+      "type": "object",
+      "description": "FSIS/proprietor party snapshot",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "handle": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "hq": {
+          "type": "string"
+        }
+      }
+    },
+    "buyer": {
+      "type": "object",
+      "description": "Customer or counterparty snapshot at issue time",
+      "properties": {
+        "handle": {
+          "type": "string"
+        },
+        "profile_id": {
+          "type": "string"
+        },
+        "profile_handle": {
+          "type": "string"
+        },
+        "delivery_location": {
+          "type": "string"
+        },
+        "contact": {
+          "type": "string"
+        }
+      }
+    },
+    "line_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string"
+          },
+          "product_name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "unit_price": {
+            "type": "number"
+          },
+          "line_total": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "subtotal_auec": {
+      "type": "number"
+    },
+    "discount_code": {
+      "type": "string"
+    },
+    "discount_percent": {
+      "type": "number"
+    },
+    "discount_auec": {
+      "type": "number"
+    },
+    "total_auec": {
+      "type": "number"
+    },
+    "payment_terms": {
+      "type": "string",
+      "description": "Payment expectation, e.g. payment due in-game at verified handoff"
+    },
+    "handoff_passphrase": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "invoice_number",
+    "transaction_type",
+    "seller",
+    "buyer",
+    "line_items",
+    "total_auec"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
