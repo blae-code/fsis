@@ -7,7 +7,7 @@ import { storeCache } from '@/lib/localCache';
 const fieldStyle = { borderColor: '#5C4424', background: 'linear-gradient(180deg, #14100B, #0B0906)', color: '#EDE5D6', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.06)' };
 
 export default function BuyerProfilePanel({ profile, onProfileSaved }) {
-  const [open, setOpen] = useState(!profile?.profile_key);
+  const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     handle: profile?.handle || '',
     display_name: profile?.display_name || '',

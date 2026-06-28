@@ -156,6 +156,7 @@ Deno.serve(async (req) => {
       invoice_id: invoice.id,
       invoice_number: invoiceNumber,
       customer_profile_id: customerProfile?.id || '',
+      customer_profile_handle: customerProfile?.handle || '',
       total_auec: total,
       subtotal_auec: subtotal,
       discount_auec,

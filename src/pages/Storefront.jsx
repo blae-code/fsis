@@ -263,7 +263,7 @@ export default function Storefront() {
 
           {/* Compact hero */}
           <div
-            className="shrink-0 p-[6px] hidden sm:block relative"
+            className="shrink-0 p-[6px] hidden 2xl:block relative"
             style={{
               background: 'linear-gradient(135deg, #E0A22E 0%, #8A8F45 24%, #C8893B 48%, #8A6430 74%, #3A2F20 100%)',
               boxShadow: '0 24px 70px rgba(0,0,0,0.46), 0 0 34px rgba(224,162,46,0.10)',
@@ -317,17 +317,6 @@ export default function Storefront() {
           <div className="flex-1 min-h-0 lg:overflow-y-auto pr-1">
             {tab === 'catalog' && (
               <div className="space-y-4">
-                <StoreGuidedFinder onChoose={(action) => {
-                  if (action === 'quote' || action === 'orders') {
-                    setTab(action);
-                    return;
-                  }
-                  setTab('catalog');
-                  setCategory(action);
-                  setSearch('');
-                }} />
-                <HowItWorksStrip />
-                <RedscarTrustStrip />
                 <CatalogQuickFilters active={quickFilter} onChange={setQuickFilter} products={storefrontProducts} marketBestByCode={marketBestByCode} />
                 <ProductCompareTray products={compareProducts} onClear={() => setCompareIds([])} onView={setDetailProduct} />
                 <motion.div
@@ -376,6 +365,17 @@ export default function Storefront() {
                     ))
                   )}
                 </motion.div>
+                <StoreGuidedFinder onChoose={(action) => {
+                  if (action === 'quote' || action === 'orders') {
+                    setTab(action);
+                    return;
+                  }
+                  setTab('catalog');
+                  setCategory(action);
+                  setSearch('');
+                }} />
+                <HowItWorksStrip />
+                <RedscarTrustStrip />
                 <RecentDeliveries />
               </div>
             )}

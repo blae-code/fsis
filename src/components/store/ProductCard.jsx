@@ -112,6 +112,13 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
                   {compareSelected ? 'COMPARE ✓' : 'COMPARE'}
                 </button>
               )}
+              <button
+                onClick={(e) => { e.stopPropagation(); inStock ? onAdd(product) : setShowRestockModal(true); }}
+                className="px-2.5 py-1.5 border text-[8px] font-mono font-bold tracking-[0.14em] hover:brightness-125 transition-all"
+                style={{ borderColor: inStock ? '#E0A22E' : '#5C302A', color: inStock ? '#0C0A07' : '#D08A6A', background: inStock ? 'linear-gradient(135deg, #E0A22E, #C8893B)' : '#140B08' }}
+              >
+                {inStock ? 'ADD' : 'RESERVE'}
+              </button>
               <span
                 className="inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
                 style={{
