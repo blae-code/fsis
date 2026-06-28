@@ -1,0 +1,66 @@
+{
+  "name": "warehouse_location",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Short location code, e.g. ORI-BAY-A or C2-HOLD"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable warehouse, bay, rack, or ship hold name"
+    },
+    "location_type": {
+      "type": "string",
+      "enum": [
+        "warehouse",
+        "zone",
+        "rack",
+        "bay",
+        "ship_hold",
+        "staging_area"
+      ],
+      "default": "bay"
+    },
+    "parent_code": {
+      "type": "string",
+      "description": "Optional parent location code for hierarchy"
+    },
+    "capacity_scu": {
+      "type": "number",
+      "default": 0
+    },
+    "current_scu": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "maintenance",
+        "offline"
+      ],
+      "default": "active"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "code",
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+import React, { useState } from 'react';
+import { SOLO_SHIPS, riskColor } from '@/lib/warehouseUtils';
+import CargoBayPreview3D from './CargoBayPreview3D';
+
+export default function CargoLoadPlanner({ crates = [] }) {
+  const [ship, setShip] = useState(SOLO_SHIPS[2]);
+  const [selected, setSelected] = useState([]);
+  const load = crates.filter((c) => selected.includes(c.id));
+  const used = load.reduce((s, c) => s + (Number(c.scu_used) || 0), 0);
+  const pct = Math.min(100, Math.round((used / ship.scu) * 100));
+  return <div className="border p-4 font-mono space-y-3" style={{ borderColor: '#3A2F20', background: '#0A0806' }}><div className="flex justify-between gap-3"><div><p className="text-[10px] tracking-[0.2em]" style={{ color: '#8A8F45' }}>SCU LOAD PLANNER</p><h3 className="text-sm font-bold" style={{ color: '#F2EADC' }}>Solo freight fit check</h3></div><select value={ship.name} onChange={(e)=>setShip(SOLO_SHIPS.find((s)=>s.name===e.target.value))} className="h-8 bg-transparent border px-2 text-xs" style={{ borderColor: '#5C4424', color: '#D8CFC0' }}>{SOLO_SHIPS.map((s)=><option key={s.name}>{s.name}</option>)}</select></div><div className="h-3 border" style={{ borderColor: '#5C4424' }}><div className="h-full" style={{ width: `${pct}%`, background: used > ship.scu ? '#C0502D' : '#E0A22E' }} /></div><div className="text-[10px] flex justify-between" style={{ color: '#A89C8A' }}><span>{used} / {ship.scu} SCU</span><span>{used > ship.scu ? 'OVER CAPACITY' : `${ship.scu - used} SCU FREE`}</span></div><div className="grid md:grid-cols-2 gap-2 max-h-32 overflow-auto">{crates.map((c)=><label key={c.id} className="border p-2 text-[10px] flex gap-2" style={{ borderColor: selected.includes(c.id) ? '#E0A22E' : '#2A2118', color: '#C8BDAA' }}><input type="checkbox" checked={selected.includes(c.id)} onChange={(e)=>setSelected(e.target.checked ? [...selected,c.id] : selected.filter((id)=>id!==c.id))}/><span className="flex-1">{c.crate_code} • {c.scu_used || 0} SCU</span><span style={{ color: riskColor(c.risk_level) }}>{(c.risk_level || 'medium').toUpperCase()}</span></label>)}</div><CargoBayPreview3D crates={load.length ? load : crates.slice(0, 6)} capacity={ship.scu} /></div>;
+}

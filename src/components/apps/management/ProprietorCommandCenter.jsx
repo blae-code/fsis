@@ -36,6 +36,7 @@ import OrderSlaPanel from '@/components/apps/management/proprietor/OrderSlaPanel
 import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
 import CommandSection from '@/components/apps/management/proprietor/CommandSection';
 import InvoiceLedgerPanel from '@/components/apps/management/proprietor/InvoiceLedgerPanel';
+import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -77,6 +78,10 @@ export default function ProprietorCommandCenter() {
       <CommandSection eyebrow="NEXT ACTIONS" title="HANDOFFS & SLA CONTROL" description="Manage buyer coordination, stuck orders, route clustering, and storefront availability without leaving the top workflow.">
         <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><OrderSlaPanel orders={orders} /><HandoffSchedulerConsole orders={orders} onConfirm={(o) => handoff.mutate(o)} pending={handoff.isPending} /></div>
         <div className="grid xl:grid-cols-[0.8fr_1.2fr] gap-4"><MaintenanceModePanel /><RouteClusterPanel orders={orders} /></div>
+      </CommandSection>
+
+      <CommandSection eyebrow="SOLO FREIGHT" title="WAREHOUSE & CARGO COMMAND" description="Track bays, crates, staging state, SCU fit, route risk, and a Three.js cargo bay preview for solo freight runs.">
+        <WarehouseCommandLayer orders={orders} />
       </CommandSection>
 
       <CommandSection eyebrow="INVENTORY PIPELINE" title="LOOT APPRAISAL & STOCK RECONCILIATION" description="Price recovered items, publish listings, refill low stock, and watch restock demand.">

@@ -1,0 +1,111 @@
+{
+  "name": "cargo_crate",
+  "type": "object",
+  "properties": {
+    "crate_code": {
+      "type": "string",
+      "description": "Physical crate or container identifier, e.g. FSIS-A17"
+    },
+    "label": {
+      "type": "string"
+    },
+    "location_code": {
+      "type": "string",
+      "description": "Current warehouse_location code"
+    },
+    "destination": {
+      "type": "string"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "intake",
+        "inspected",
+        "priced",
+        "listed",
+        "reserved",
+        "picked",
+        "packed",
+        "loaded",
+        "delivered",
+        "closed"
+      ],
+      "default": "intake"
+    },
+    "scu_used": {
+      "type": "number",
+      "default": 0
+    },
+    "cargo_value_auec": {
+      "type": "number",
+      "default": 0
+    },
+    "reserved_for_order": {
+      "type": "string"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium"
+    },
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item_ref_type": {
+            "type": "string",
+            "enum": [
+              "product",
+              "cargo_lot",
+              "loot_item",
+              "manual"
+            ],
+            "default": "manual"
+          },
+          "item_ref_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "value_auec": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "last_audited_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "crate_code"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
