@@ -70,7 +70,7 @@ export default function ProprietorCommandCenter() {
       <CommandKpiStrip orders={orders} products={products} loot={loot} />
       <ProprietorProgressRail orders={orders} loot={loot} products={products} restocks={restocks} />
 
-      <CommandSection eyebrow="DAILY WORK" title="PRIMARY OPERATIONS" description="Start here for the two most frequent loops: intake recovered loot, then fulfill active buyer orders.">
+      <CommandSection eyebrow="DAILY WORK" title="PRIMARY OPERATIONS" description="Start here for the two most frequent loops: smart stock intake, then fulfill active buyer orders.">
         <div className="grid xl:grid-cols-[1fr_1.1fr] gap-4"><RapidLootIntakePanel /><FulfillmentQueue orders={orders} onStatus={(id, next) => status.mutate({ id, next })} pending={status.isPending} /></div>
         <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><CommandInboxPanel orders={orders} products={products} loot={loot} messages={messages} restocks={restocks} prices={prices} /><ProprietorAlerts orders={orders} loot={loot} messages={messages} products={products} prices={prices} /></div>
       </CommandSection>
