@@ -33,7 +33,7 @@ export default function MobileCartBar({ cart, setCart, user, buyerProfile, prefe
   }, [count]);
 
   return (
-    <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t" style={{ borderColor: '#8A6430', background: '#14110D' }}>
+    <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t safe-bottom-pad" style={{ borderColor: '#8A6430', background: '#14110D' }}>
       {/* Add-to-cart pulse ring */}
       <AnimatePresence>
         {pulse && (
@@ -50,7 +50,7 @@ export default function MobileCartBar({ cart, setCart, user, buyerProfile, prefe
 
       <Sheet>
         <SheetTrigger asChild>
-          <button className="w-full flex items-center justify-between px-4 py-3 font-mono">
+          <button className="w-full min-h-[52px] flex items-center justify-between px-4 py-2 font-mono">
             <span className="flex items-center gap-2 text-[11px] font-bold tracking-[0.15em]" style={{ color: '#D8CFC0' }}>
               <motion.span animate={pulse ? { scale: [1, 1.35, 1] } : {}} transition={{ duration: 0.4 }}>
                 <ManifestGlyph className="w-4 h-4" style={{ color: '#6FA08F' }} />
@@ -87,7 +87,7 @@ export default function MobileCartBar({ cart, setCart, user, buyerProfile, prefe
             </span>
           </button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="p-3 border-t max-h-[85vh] overflow-y-auto" style={{ background: '#0C0B0A', borderColor: '#8A6430' }}>
+        <SheetContent side="bottom" className="p-3 border-t max-h-[calc(100dvh-2rem)] overflow-y-auto" style={{ background: '#0C0B0A', borderColor: '#8A6430' }}>
           <OrderPanel cart={cart} setCart={setCart} user={user} buyerProfile={buyerProfile} preferredLocation={preferredLocation} storeStatus={storeStatus} />
         </SheetContent>
       </Sheet>

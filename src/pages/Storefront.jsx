@@ -218,14 +218,14 @@ export default function Storefront() {
       {/* Header */}
       <header className="shrink-0 border-b z-10 relative overflow-hidden" style={{ borderColor: '#5C4424', background: 'linear-gradient(90deg, rgba(8, 6, 4, 0.98), rgba(20, 15, 9, 0.96), rgba(28, 18, 10, 0.94), rgba(8, 6, 4, 0.98))', boxShadow: '0 14px 34px rgba(0,0,0,0.38), inset 0 -1px 0 rgba(224,162,46,0.14)' }}>
         <div className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #E0A22E, #8A8F45, transparent)' }} />
-        <div className="max-w-[1720px] mx-auto px-4 2xl:px-8 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="max-w-[1880px] mx-auto px-3 sm:px-4 2xl:px-8 py-2 sm:py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="p-1.5" style={{ background: 'linear-gradient(160deg, #8A6430, #4A3722)', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}>
               <FsisLogo size={24} />
             </div>
             <div>
-              <h1 className="font-mono text-sm font-bold tracking-[0.18em]" style={{ color: '#EDE5D6' }}>FAIRSHARE INDUSTRIAL SOLUTIONS</h1>
-              <p className="text-[10px] font-mono" style={{ color: '#8A8F45' }}>{FSIS.divisionCodes.join(' • ')} — "{FSIS.motto}"</p>
+              <h1 className="font-mono text-xs sm:text-sm font-bold tracking-[0.12em] sm:tracking-[0.18em] truncate" style={{ color: '#EDE5D6' }}>FAIRSHARE INDUSTRIAL SOLUTIONS</h1>
+              <p className="hidden sm:block text-[10px] font-mono truncate" style={{ color: '#8A8F45' }}>{FSIS.divisionCodes.join(' • ')} — "{FSIS.motto}"</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -257,7 +257,7 @@ export default function Storefront() {
       <StoreMaintenanceBanner status={storeStatus} />
 
       {/* Main deck — fills viewport, no page scroll */}
-      <main className="flex-1 min-h-0 max-w-[1720px] mx-auto w-full px-4 2xl:px-8 pt-5 pb-20 lg:pb-5 grid grid-cols-1 lg:grid-cols-[1fr_390px] 2xl:grid-cols-[1fr_420px] gap-6 overflow-y-auto lg:overflow-hidden">
+      <main className="flex-1 min-h-0 max-w-[1880px] mx-auto w-full px-3 sm:px-4 2xl:px-8 pt-4 sm:pt-5 pb-24 lg:pb-5 grid grid-cols-1 lg:grid-cols-[1fr_390px] 2xl:grid-cols-[1fr_440px] gap-4 sm:gap-6 overflow-y-auto lg:overflow-hidden">
         <div className="flex flex-col min-h-0 gap-4">
           <ProprietorEntryway user={user} />
 

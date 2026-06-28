@@ -55,7 +55,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         onClick={() => onView?.(product)}
         whileHover={{ rotateX: 2.5, rotateY: -2.5, y: -4 }}
         transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-        className="relative flex flex-col gap-3 p-4 border h-[472px] cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
+        className="relative flex flex-col gap-3 p-3 sm:p-4 border h-[448px] sm:h-[472px] cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
         style={{
           borderColor: inCart ? '#E0A22E' : `${accent}77`,
           boxShadow: inCart ? '0 20px 46px rgba(0,0,0,0.42), 0 0 24px rgba(224, 162, 46, 0.22), inset 0 0 22px rgba(224, 162, 46, 0.08)' : `0 16px 38px rgba(0,0,0,0.34), inset 0 0 28px ${accent}12`,
