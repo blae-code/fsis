@@ -46,8 +46,8 @@ export default function OpsFeed() {
 
   return (
     <div className="border-t overflow-hidden flex items-center" style={{ borderColor: '#2A2118', background: '#0A0908' }}>
-      <span className="flex items-center gap-1.5 px-3 py-1 font-mono text-[8px] tracking-[0.25em] shrink-0 border-r" style={{ color: '#B0793A', borderColor: '#2A2118' }}>
-        <Radio className="w-3 h-3" /> OPS FEED
+      <span className="flex items-center gap-1.5 px-2 sm:px-3 py-1 font-mono text-[8px] tracking-[0.16em] sm:tracking-[0.25em] shrink-0 border-r" style={{ color: '#B0793A', borderColor: '#2A2118' }}>
+        <Radio className="w-3 h-3" /> <span className="hidden sm:inline">OPS FEED</span><span className="sm:hidden">OPS</span>
       </span>
       <div className="flex-1 overflow-hidden">
         <motion.div

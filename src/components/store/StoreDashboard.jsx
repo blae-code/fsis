@@ -160,10 +160,10 @@ export default function StoreDashboard() {
   }
 
   return (
-    <div className="space-y-6 max-w-5xl pb-6">
+    <div className="space-y-4 sm:space-y-6 max-w-7xl pb-6">
 
       {/* header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <p className="font-mono text-[9px] tracking-[0.3em]" style={{ color: TEAL }}>// FSIS — OPERATIONS INTELLIGENCE</p>
           <h2 className="font-mono text-sm font-bold tracking-[0.18em]" style={{ color: BONE }}>INVENTORY & REVENUE DASHBOARD</h2>
@@ -186,7 +186,7 @@ export default function StoreDashboard() {
       {/* ── revenue area chart ───────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}
-        className="border p-4" style={{ background: PANEL, borderColor: BDR }}
+        className="border p-3 sm:p-4" style={{ background: PANEL, borderColor: BDR }}
       >
         <SectionHead>aUEC REVENUE vs EXPENSES — LAST 30 DAYS</SectionHead>
         {revenueData.every((d) => d.income === 0 && d.expense === 0) ? (
@@ -221,9 +221,9 @@ export default function StoreDashboard() {
       {/* ── inventory bar chart ──────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.36 }}
-        className="border p-4" style={{ background: PANEL, borderColor: BDR }}
+        className="border p-3 sm:p-4" style={{ background: PANEL, borderColor: BDR }}
       >
-        <div className="flex items-center justify-between mb-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-0">
           <SectionHead>SALVAGE INVENTORY — CURRENT STOCK (SCU)</SectionHead>
           <span className="font-mono text-[10px] mb-3" style={{ color: TEAL }}>{totalStock.toLocaleString()} SCU TOTAL</span>
         </div>
@@ -256,7 +256,7 @@ export default function StoreDashboard() {
       {/* ── order volume chart ───────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.44 }}
-        className="border p-4" style={{ background: PANEL, borderColor: BDR }}
+        className="border p-3 sm:p-4" style={{ background: PANEL, borderColor: BDR }}
       >
         <SectionHead>ORDER VOLUME — LAST 14 DAYS</SectionHead>
         <ResponsiveContainer width="100%" height={100}>

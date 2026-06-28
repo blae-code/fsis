@@ -39,10 +39,10 @@ export default function MarketTicker() {
   return (
     <div className="border-b overflow-hidden flex items-center" style={{ borderColor: '#2A2118', background: '#0F0D0B' }}>
       <span
-        className="flex items-center gap-1.5 text-[9px] tracking-[0.2em] shrink-0 px-4 py-1.5 font-mono z-10 border-r"
+        className="flex items-center gap-1.5 text-[9px] tracking-[0.14em] sm:tracking-[0.2em] shrink-0 px-2 sm:px-4 py-1.5 font-mono z-10 border-r"
         style={{ color: '#6FA08F', background: '#0F0D0B', borderColor: '#2A2118' }}
       >
-        <TrendingUp className="w-3 h-3" /> LIVE MARKET
+        <TrendingUp className="w-3 h-3" /> <span className="hidden sm:inline">LIVE MARKET</span><span className="sm:hidden">MARKET</span>
       </span>
       <div className="flex-1 overflow-hidden py-1.5">
         <motion.div

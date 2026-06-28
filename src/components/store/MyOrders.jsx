@@ -113,12 +113,12 @@ export default function MyOrders({ onReorder }) {
   };
 
   return (
-    <div className="space-y-4 max-w-4xl font-mono">
+    <div className="space-y-4 max-w-6xl font-mono">
       {messagingOrder && <OrderMessageThread order={messagingOrder} onClose={() => setMessagingOrder(null)} />}
       {handoffOrder && <HandoffScheduler order={handoffOrder} onClose={() => setHandoffOrder(null)} />}
-      <div className="border p-4 relative overflow-hidden" style={{ borderColor: '#5C4424', background: 'linear-gradient(135deg, #14110D, #0E0C09)', clipPath: 'polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)' }}>
+      <div className="border p-3 sm:p-4 relative overflow-hidden" style={{ borderColor: '#5C4424', background: 'linear-gradient(135deg, #14110D, #0E0C09)', clipPath: 'polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)' }}>
         <div className="absolute right-4 top-4 text-[52px] leading-none opacity-10" style={{ color: '#E0A22E' }}>FSIS</div>
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div>
             <p className="text-[9px] tracking-[0.28em]" style={{ color: '#8A8F45' }}>// BUYER ORDER OPERATIONS</p>
             <h2 className="text-lg font-bold tracking-[0.14em]" style={{ color: '#EDE5D6' }}>ACTIVE ORDER BOARD</h2>
@@ -140,9 +140,9 @@ export default function MyOrders({ onReorder }) {
       </div>
 
       <div className="border p-3 space-y-2" style={{ borderColor: '#2A2118', background: '#100E0B' }}>
-        <div className="flex gap-2">
-          <Input value={lookup} onChange={(e) => setLookup(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleLookup()} placeholder="Tracking code (FSIS-3F9A2C) or receipt passphrase (IRON-VULTURE-47)" className="h-8 text-xs font-mono flex-1" style={{ borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' }} />
-          <button onClick={handleLookup} disabled={looking || !lookup.trim()} className="h-8 px-4 font-mono text-[10px] font-bold inline-flex items-center gap-1.5 disabled:opacity-40 hover:brightness-110 transition-all" style={{ background: 'linear-gradient(180deg, #E0A22E, #A86D1E)', color: '#15100A' }}>{looking ? <Loader2 className="w-3 h-3 animate-spin" /> : <Search className="w-3 h-3" />} TRACK</button>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Input value={lookup} onChange={(e) => setLookup(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleLookup()} placeholder="Tracking code or receipt passphrase" className="h-10 sm:h-8 text-xs font-mono flex-1" style={{ borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' }} />
+          <button onClick={handleLookup} disabled={looking || !lookup.trim()} className="h-10 sm:h-8 px-4 font-mono text-[10px] font-bold inline-flex items-center justify-center gap-1.5 disabled:opacity-40 hover:brightness-110 transition-all" style={{ background: 'linear-gradient(180deg, #E0A22E, #A86D1E)', color: '#15100A' }}>{looking ? <Loader2 className="w-3 h-3 animate-spin" /> : <Search className="w-3 h-3" />} TRACK</button>
         </div>
         {lookupError && <p className="text-[10px]" style={{ color: '#C05050' }}>{lookupError}</p>}
         <p className="text-[9px] leading-relaxed" style={{ color: '#6B6155' }}>Tracking codes and passphrases work like private receipts. They are saved on this device only; do not share the passphrase before handoff.</p>
@@ -164,14 +164,14 @@ export default function MyOrders({ onReorder }) {
         allOrders.map((o) => (
           <div
             key={o.tracking_code}
-            className="border p-4 space-y-3 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-[#5C4424] hover:shadow-[0_4px_20px_rgba(0,0,0,0.45)]"
+            className="border p-3 sm:p-4 space-y-3 transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-[#5C4424] hover:shadow-[0_4px_20px_rgba(0,0,0,0.45)]"
             style={{
               borderColor: updatedCodes.includes(o.tracking_code) ? '#D4920B' : '#2A2118',
               background: '#121110',
               boxShadow: updatedCodes.includes(o.tracking_code) ? '0 0 20px rgba(212, 146, 11, 0.35)' : 'none',
             }}
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
               <div className="min-w-0">
                 <div className="text-sm font-mono font-bold tracking-wide" style={{ color: '#F0B43A' }}>{o.tracking_code}</div>
                 <div className="text-xs font-mono truncate mt-0.5" style={{ color: '#D8CFC0' }}>
@@ -192,11 +192,11 @@ export default function MyOrders({ onReorder }) {
                   <div className="text-[10px] font-mono mt-0.5" style={{ color: '#877D6D' }}>{STATUS_NOTE[o.status]}</div>
                 )}
               </div>
-              <div className="flex flex-col items-end gap-1.5 shrink-0">
+              <div className="flex flex-col items-start lg:items-end gap-1.5 shrink-0">
                 <div className="text-xs font-mono font-bold" style={{ color: '#E0A22E' }}>
                   {(o.total_auec || 0).toLocaleString()} aUEC
                 </div>
-                <div className="flex gap-1.5">
+                <div className="flex flex-wrap justify-start lg:justify-end gap-1.5">
                   <button
                     onClick={() => downloadInvoice({
                       invoice_number: o.invoice_number,

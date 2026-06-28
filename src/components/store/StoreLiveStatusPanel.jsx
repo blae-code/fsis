@@ -17,13 +17,13 @@ export default function StoreLiveStatusPanel({ products = [], marketPrices = [] 
 
   return (
     <div className="border-t p-3 font-mono" style={{ borderColor: '#2A2118', background: '#0E0C09' }}>
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
         <span className="text-[9px] tracking-[0.26em]" style={{ color: '#6FA08F' }}>// LIVE TERMINAL</span>
         <span className="flex items-center gap-1 text-[8px] tracking-[0.16em]" style={{ color: '#7BA05B' }}><span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#7BA05B' }} /> SERVICE ONLINE</span>
       </div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
         {metrics.map(({ label, value, Icon, color }) => (
-          <div key={label} className="border p-2" style={{ borderColor: '#3A2F20', background: '#0A0806' }}>
+          <div key={label} className="border p-1.5 sm:p-2 min-w-0" style={{ borderColor: '#3A2F20', background: '#0A0806' }}>
             <Icon className="w-3 h-3 mb-1" style={{ color }} />
             <div className="text-sm font-bold leading-none" style={{ color }}>{value}</div>
             <div className="text-[7px] tracking-[0.14em] mt-1" style={{ color: '#6B6155' }}>{label}</div>
