@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Navigate } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
 import BootSequence from '@/components/os/BootSequence';
-import OperatorOnboarding from '@/components/os/onboarding/OperatorOnboarding';
 import StatusBar from '@/components/os/StatusBar';
 import DesktopBackground from '@/components/os/DesktopBackground';
 import Dock from '@/components/os/Dock';
@@ -109,7 +108,6 @@ export default function Desktop() {
   const [booted, setBooted] = useState(() => localCache.hasBooted());
 
   const { data: user, isLoading } = useQuery({ queryKey: ['user'], queryFn: () => base44.auth.me() });
-  const needsOnboarding = false;
 
   const handleBootComplete = useCallback(() => {
     localCache.markBooted();
@@ -138,11 +136,6 @@ export default function Desktop() {
     <WindowProvider resolveContent={resolveContentById}>
       {!booted && <BootSequence onComplete={handleBootComplete} />}
       {booted && <DesktopShell userRole={user?.role} />}
-      <AnimatePresence>
-        {needsOnboarding && (
-          <OperatorOnboarding user={user} onComplete={() => {}} />
-        )}
-      </AnimatePresence>
     </WindowProvider>
   );
 }
