@@ -23,7 +23,7 @@ export default function AddToCartControl({ disabled, onAdd }) {
       disabled={disabled}
       onClick={fire}
       whileTap={{ scale: 0.92 }}
-      className="relative h-8 px-5 font-mono text-[11px] font-bold inline-flex items-center gap-1.5 disabled:opacity-40 disabled:pointer-events-none overflow-visible"
+      className="relative min-h-10 sm:h-8 px-4 sm:px-5 font-mono text-[11px] font-bold inline-flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:pointer-events-none overflow-visible"
       style={{
         background: state === 'loaded'
           ? 'linear-gradient(180deg, #6FA463, #3E6B38)'
@@ -52,7 +52,7 @@ export default function AddToCartControl({ disabled, onAdd }) {
         {state === 'loaded' ? (
           <motion.span
             key="loaded"
-            className="inline-flex items-center gap-1.5"
+            className="inline-flex items-center gap-1.5 whitespace-nowrap"
             initial={{ y: 8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -8, opacity: 0 }}
@@ -63,7 +63,7 @@ export default function AddToCartControl({ disabled, onAdd }) {
         ) : (
           <motion.span
             key="idle"
-            className="inline-flex items-center gap-1"
+            className="inline-flex items-center gap-1 whitespace-nowrap"
             initial={{ y: 8, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -8, opacity: 0 }}

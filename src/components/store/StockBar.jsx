@@ -51,7 +51,7 @@ export default function StockBar({ stock = 0, unit = 'SCU' }) {
           );
         })}
       </div>
-      <div className="font-mono text-[10px]" style={{ color: out ? '#C05050' : low ? '#E0A22E' : '#9C9080' }}>
+      <div className="font-mono text-[9px] sm:text-[10px] leading-snug" style={{ color: out ? '#C05050' : low ? '#E0A22E' : '#9C9080' }}>
         {out ? 'OUT OF STOCK' : low ? `LOW — ${stock} ${unit} LEFT` : `${stock} ${unit} in stock`}
       </div>
     </div>

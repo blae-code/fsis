@@ -29,7 +29,7 @@ export default function StoreTip({ label, desc, kbd, shortcut, side = 'top', chi
         <TooltipContent
           side={side}
           sideOffset={6}
-          className="font-mono border rounded-none px-3 py-2 max-w-[220px]"
+          className="font-mono border rounded-none px-3 py-2 max-w-[min(220px,calc(100vw-2rem))]"
           style={{
             background: 'linear-gradient(160deg, #1A150E, #100D0A)',
             borderColor: '#5C4A33',
@@ -38,7 +38,7 @@ export default function StoreTip({ label, desc, kbd, shortcut, side = 'top', chi
             boxShadow: '0 4px 18px rgba(0, 0, 0, 0.6), 0 0 10px rgba(212, 146, 11, 0.08)',
           }}
         >
-          <span className="flex items-center gap-2 text-[10px] font-bold tracking-[0.1em]" style={{ color: '#E0C27E' }}>
+          <span className="flex items-center gap-2 text-[10px] font-bold tracking-[0.1em] leading-snug" style={{ color: '#E0C27E' }}>
             {label}
             {kbd && <Kbd>{kbd}</Kbd>}
           </span>
