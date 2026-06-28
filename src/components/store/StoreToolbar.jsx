@@ -17,9 +17,9 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
   const hasFilters = Boolean(search) || category !== 'all' || quickFilter !== 'all' || sort !== 'featured';
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-3 font-mono flex-wrap p-2 border" style={{ borderColor: '#3A2F20', background: 'linear-gradient(180deg, rgba(20, 17, 13, 0.88), rgba(10, 8, 6, 0.88))', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.08)', clipPath: 'polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)' }}>
+    <div className="w-full flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 font-mono flex-wrap p-2 border" style={{ borderColor: '#3A2F20', background: 'linear-gradient(180deg, rgba(20, 17, 13, 0.88), rgba(10, 8, 6, 0.88))', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.08)', clipPath: 'polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)' }}>
       {/* Search */}
-      <div className="relative flex-1 min-w-[160px]">
+      <div className="relative w-full sm:flex-1 sm:min-w-[220px]">
         <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#8A7E6C' }} />
         <input
           id="store-search"
@@ -56,7 +56,7 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
 
       {/* Sort segmented switch */}
       <div
-        className="relative flex h-9 p-0.5 shrink-0"
+        className="relative flex w-full sm:w-auto h-10 sm:h-9 p-0.5 shrink-0 overflow-x-auto"
         style={{ background: '#0C0A07', border: '1px solid #1E2E28', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}
       >
         {SORTS.map(({ key, label }) => {
@@ -65,7 +65,7 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
             <button
               key={key}
               onClick={() => setSort(key)}
-              className="relative px-2.5 h-full text-[9px] tracking-[0.1em] font-bold transition-colors"
+              className="relative flex-1 sm:flex-none px-2.5 h-full text-[9px] tracking-[0.1em] font-bold transition-colors whitespace-nowrap"
               style={{ color: active ? '#F4ECDB' : '#4A6B5A', zIndex: 1 }}
             >
               {active && (
@@ -86,7 +86,7 @@ export default function StoreToolbar({ search, setSearch, category, setCategory,
         })}
       </div>
 
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 shrink-0">
         <span className="text-[9px]" style={{ color: hasFilters ? '#C8893B' : '#6B6155' }}>{count}{total != null ? `/${total}` : ''} WARES</span>
         {hasFilters && (
           <button

@@ -303,7 +303,7 @@ export default function Storefront() {
           </div>
 
           {/* Section tabs */}
-          <div className="shrink-0 flex flex-wrap items-center justify-between gap-3">
+          <div className="shrink-0 flex flex-col sm:flex-row flex-wrap sm:items-center sm:justify-between gap-3">
             <StoreTabs active={tab} onChange={setTab} />
             {tab === 'catalog' && (
               <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} sort={sort} setSort={setSort} quickFilter={quickFilter} count={filteredProducts.length} total={storefrontProducts.length} onReset={() => { setSearch(''); setCategory('all'); setQuickFilter('all'); setSort('featured'); }} />

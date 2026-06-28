@@ -21,7 +21,7 @@ const TABS = [
 export default function StoreTabs({ active, onChange }) {
   return (
     <div
-      className="relative flex gap-1 font-mono text-[10px] tracking-[0.15em] p-1 max-w-full overflow-x-auto"
+      className="relative flex w-full sm:w-auto gap-1 font-mono text-[9px] sm:text-[10px] tracking-[0.12em] sm:tracking-[0.15em] p-1 max-w-full overflow-x-auto"
       style={{ background: 'linear-gradient(180deg, #17120C, #0A0806)', border: '1px solid #5C4424', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.12), 0 12px 28px rgba(0,0,0,0.24)', clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
     >
       {TABS.map(({ id, label, icon: Icon, tip, key, accent, dark }) => {
@@ -33,7 +33,7 @@ export default function StoreTabs({ active, onChange }) {
             whileHover={!isActive ? { color: '#B8AC9A', y: -1 } : {}}
             whileTap={{ scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 380, damping: 24 }}
-            className="relative flex items-center gap-1.5 px-3 py-2 shrink-0"
+            className="relative flex flex-1 sm:flex-none items-center justify-center gap-1.5 px-2 sm:px-3 py-2 min-w-[92px] sm:min-w-0 shrink-0"
             style={{ color: isActive ? '#F4ECDB' : '#6F6557' }}
           >
             {isActive && (

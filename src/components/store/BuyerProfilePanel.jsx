@@ -33,12 +33,12 @@ export default function BuyerProfilePanel({ profile, onProfileSaved }) {
   return (
     <section className="border font-mono relative overflow-hidden" style={{ borderColor: profile?.profile_key ? '#8A8F45' : '#8A6430', background: 'linear-gradient(180deg, rgba(23, 18, 12, 0.92), rgba(10, 8, 6, 0.92))', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.10), 0 12px 30px rgba(0,0,0,0.24)', clipPath: 'polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)' }}>
       <span className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(224,162,46,0.62), transparent)' }} />
-      <button type="button" onClick={() => setOpen(!open)} className="w-full p-3 flex items-center justify-between gap-3 text-left">
-        <span className="flex items-center gap-2">
+      <button type="button" onClick={() => setOpen(!open)} className="w-full p-3 flex items-center justify-between gap-3 text-left min-h-[52px]">
+        <span className="flex items-center gap-2 min-w-0">
           <IdCard className="w-4 h-4" style={{ color: '#E0A22E' }} />
           <span>
             <span className="block text-[9px] tracking-[0.22em] font-bold" style={{ color: '#8A8F45' }}>OPTIONAL FSIS PROFILE</span>
-            <span className="block text-[10px]" style={{ color: '#A89C8A' }}>{profile?.profile_key ? `Linked as ${profile.handle}` : 'Create a local FSIS profile without a Base44 account'}</span>
+            <span className="block text-[10px] truncate" style={{ color: '#A89C8A' }}>{profile?.profile_key ? `Linked as ${profile.handle}` : 'Create a local FSIS profile without a Base44 account'}</span>
           </span>
         </span>
         {profile?.profile_key && <span className="flex items-center gap-1 text-[9px] font-bold" style={{ color: '#8A8F45' }}><BadgeCheck className="w-3.5 h-3.5" /> LINKED</span>}
