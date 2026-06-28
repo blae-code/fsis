@@ -95,7 +95,7 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
 
   return (
     <div
-      className="relative border p-4 space-y-4 sticky top-4"
+      className="relative border p-3 sm:p-4 space-y-4 lg:sticky lg:top-4"
       style={{
         borderColor: '#8A6430',
         background: 'linear-gradient(180deg, rgba(24, 18, 11, 0.98), rgba(10, 8, 6, 0.98))',
@@ -129,7 +129,7 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
                 animate={{ opacity: 1, x: 0, height: 'auto' }}
                 exit={{ opacity: 0, x: -16, height: 0 }}
                 transition={{ duration: 0.22, ease: 'easeOut' }}
-                className="flex items-center gap-2 text-xs font-mono overflow-hidden"
+                className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 text-xs font-mono overflow-hidden"
               >
                 <span className="flex-1 truncate" style={{ color: '#D8CFC0' }}>{item.code || item.product_name}</span>
                 <ManifestStepper
@@ -138,7 +138,7 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
                   max={item.stock == null ? Infinity : item.stock}
                   onChange={(qty) => setQty(item.product_id, qty)}
                 />
-                <span className="w-24 text-right" style={{ color: '#E0A22E' }}>{(roundPrice(item.unit_price) * item.quantity).toLocaleString()}</span>
+                <span className="w-20 sm:w-24 text-right text-[11px] sm:text-xs" style={{ color: '#E0A22E' }}>{(roundPrice(item.unit_price) * item.quantity).toLocaleString()}</span>
                 <button onClick={() => setCart(cart.filter((i) => i.product_id !== item.product_id))} className="hover:opacity-70" style={{ color: '#8A7E6C' }}>
                   <Trash2 className="w-3 h-3" />
                 </button>
@@ -163,12 +163,12 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
           <div className="space-y-3">
             <div className="space-y-1">
               <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>IN-GAME HANDLE</Label>
-              <Input value={handle} onChange={(e) => setHandle(e.target.value)} className="h-8 text-xs font-mono" style={fieldStyle} placeholder="Your RSI handle" />
+              <Input value={handle} onChange={(e) => setHandle(e.target.value)} className="h-10 sm:h-8 text-xs font-mono" style={fieldStyle} placeholder="Your RSI handle" />
             </div>
             <div className="space-y-1">
               <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>DELIVERY LOCATION</Label>
               <Select value={location} onValueChange={setLocation}>
-                <SelectTrigger className="h-8 text-xs font-mono" style={fieldStyle}>
+                <SelectTrigger className="h-10 sm:h-8 text-xs font-mono" style={fieldStyle}>
                   <SelectValue placeholder="Select destination" />
                 </SelectTrigger>
                 <SelectContent>
@@ -187,7 +187,7 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
             {hasService && (
               <div className="space-y-1">
                 <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>SERVICE WINDOW (YOUR PREFERRED TIME)</Label>
-                <Input type="datetime-local" value={svcWindow} onChange={(e) => setSvcWindow(e.target.value)} className="h-8 text-xs font-mono" style={fieldStyle} />
+                <Input type="datetime-local" value={svcWindow} onChange={(e) => setSvcWindow(e.target.value)} className="h-10 sm:h-8 text-xs font-mono" style={fieldStyle} />
               </div>
             )}
             <div className="space-y-1">
@@ -195,7 +195,7 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
               <Input
                 value={discountCode}
                 onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
-                className="h-8 text-xs font-mono"
+                className="h-10 sm:h-8 text-xs font-mono"
                 style={fieldStyle}
                 placeholder="Enter issued code"
               />
@@ -214,7 +214,7 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
 
           <div className="border p-3 font-mono space-y-2" style={{ borderColor: '#5C4424', background: 'rgba(92, 68, 36, 0.12)' }}>
             <div className="text-[9px] font-bold tracking-[0.18em]" style={{ color: '#E0A22E' }}>FINAL TRANSMISSION CHECK</div>
-            <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
+            <div className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-[10px]">
               <span style={{ color: '#8A7E6C' }}>MANIFEST VALUE</span><span className="text-right" style={{ color: '#D8CFC0' }}>{total.toLocaleString()} aUEC</span>
               {hasDiscountCode && <><span style={{ color: '#8A8F45' }}>PRIVATE CODE</span><span className="text-right" style={{ color: '#8A8F45' }}>VERIFY ON TRANSMIT</span></>}
               <span style={{ color: '#8A7E6C' }}>DESTINATION</span><span className="text-right" style={{ color: '#D8CFC0' }}>{location || 'UNSET'}</span>

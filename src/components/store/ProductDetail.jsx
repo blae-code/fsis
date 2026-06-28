@@ -53,11 +53,11 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
   return (
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className="max-w-2xl border p-0 gap-0 font-mono overflow-hidden"
+        className="w-[calc(100vw-1rem)] max-w-3xl max-h-[calc(100dvh-1rem)] border p-0 gap-0 font-mono overflow-y-auto"
         style={{ borderColor: '#8A6430', background: 'linear-gradient(180deg, #17120C, #090705)', boxShadow: '0 30px 90px rgba(0,0,0,0.62), inset 0 1px 0 rgba(224,162,46,0.14)' }}
       >
         {/* Header */}
-        <div className="flex items-start gap-3 p-5 border-b" style={{ borderColor: '#5C4424', background: 'radial-gradient(circle at 10% 0%, rgba(224,162,46,0.12), transparent 40%)' }}>
+        <div className="flex items-start gap-3 p-4 sm:p-5 border-b" style={{ borderColor: '#5C4424', background: 'radial-gradient(circle at 10% 0%, rgba(224,162,46,0.12), transparent 40%)' }}>
           <div className="w-14 h-14 flex items-center justify-center border shrink-0" style={{ borderColor: '#4A3B28', background: 'rgba(10, 9, 7, 0.6)' }}>
             <CommodityIcon code={product.code} size={40} />
           </div>
@@ -87,9 +87,9 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
           <GradeStamp category={product.category} className="ml-auto mr-5 mt-1 shrink-0 hidden sm:inline-block" />
         </div>
 
-        <div className="p-5 space-y-4">
+        <div className="p-4 sm:p-5 space-y-4">
           {/* Price + stock */}
-          <div className="flex items-end justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <span>
                 <span className="text-2xl font-bold" style={{ color: '#E0A22E' }}>{displayPrice.toLocaleString()}</span>
@@ -190,7 +190,7 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
           {!inStock && product.category !== 'service' && <RestockNotify product={product} />}
 
           {/* Qty + add */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
             <div className="flex items-center border" style={{ borderColor: '#3A2F20' }}>
               <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-8 h-9 flex items-center justify-center hover:brightness-125" style={{ color: '#C8A05B' }}>
                 <Minus className="w-3 h-3" />
@@ -203,7 +203,7 @@ export default function ProductDetail({ product, products = [], onClose, onAdd, 
             <button
               disabled={!inStock}
               onClick={() => { onAdd(product, qty); onClose(); }}
-              className="flex-1 h-9 rounded-full text-[11px] font-bold inline-flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:pointer-events-none hover:brightness-110 transition-all"
+              className="w-full sm:flex-1 min-h-10 sm:h-9 px-3 rounded-full text-[10px] sm:text-[11px] font-bold inline-flex items-center justify-center gap-1.5 text-center disabled:opacity-40 disabled:pointer-events-none hover:brightness-110 transition-all"
               style={{
                 background: 'linear-gradient(180deg, #E8B13A, #BD7E16)',
                 color: '#1A1206',

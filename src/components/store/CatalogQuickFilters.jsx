@@ -24,13 +24,13 @@ export function matchesQuickFilter(product, filter, marketBestByCode = {}) {
 
 export default function CatalogQuickFilters({ active, onChange, products = [], marketBestByCode = {} }) {
   return (
-    <div className="flex items-center gap-2 overflow-x-auto font-mono pb-1">
+    <div className="flex items-center gap-2 overflow-x-auto font-mono pb-1 -mx-1 px-1 sm:mx-0 sm:px-0">
       <span className="text-[8px] tracking-[0.2em] shrink-0" style={{ color: '#8A8F45' }}>DIAG FILTERS</span>
       {FILTERS.map((filter) => {
         const isActive = active === filter.key;
         const count = products.filter((p) => matchesQuickFilter(p, filter.key, marketBestByCode)).length;
         return (
-          <button key={filter.key} type="button" onClick={() => onChange(filter.key)} className="shrink-0 border px-2.5 py-1 text-[8px] font-bold tracking-[0.12em] hover:brightness-125" style={{ borderColor: isActive ? filter.accent : '#2A2118', color: isActive ? filter.accent : '#8A7E6C', background: isActive ? `${filter.accent}18` : '#0C0A07' }}>
+          <button key={filter.key} type="button" onClick={() => onChange(filter.key)} className="shrink-0 border px-3 sm:px-2.5 py-1.5 sm:py-1 text-[8px] font-bold tracking-[0.12em] hover:brightness-125" style={{ borderColor: isActive ? filter.accent : '#2A2118', color: isActive ? filter.accent : '#8A7E6C', background: isActive ? `${filter.accent}18` : '#0C0A07' }}>
             {filter.label} <span style={{ color: '#5F5548' }}>{count}</span>
           </button>
         );

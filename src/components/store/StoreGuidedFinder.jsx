@@ -19,7 +19,7 @@ export default function StoreGuidedFinder({ onChoose }) {
         </div>
         <p className="text-[9px] max-w-md" style={{ color: '#7A6E60' }}>Choose a path and FSIS will focus the storefront for that task.</p>
       </div>
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2">
         {OPTIONS.map(({ key, icon: Icon, label, sub, action }) => (
           <motion.button
             key={key}
@@ -27,7 +27,7 @@ export default function StoreGuidedFinder({ onChoose }) {
             onClick={() => onChoose(action)}
             whileHover={{ y: -2, borderColor: '#8A6430' }}
             whileTap={{ scale: 0.98 }}
-            className="text-left border p-2.5 transition-colors"
+            className="text-left border p-3 sm:p-2.5 min-h-[62px] transition-colors"
             style={{ borderColor: '#3A2F20', background: '#0C0A07', clipPath: 'polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)' }}
           >
             <div className="flex items-center gap-2 mb-1">
