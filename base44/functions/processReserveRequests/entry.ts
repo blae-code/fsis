@@ -31,14 +31,18 @@ Deno.serve(async (req) => {
     for (const request of requests) {
       if (remaining <= 0) break;
       const desired = Math.max(1, Number(request.desired_quantity || 1));
-      const reserved = Math.min(desired, remaining);
-      remaining -= reserved;
+      const alreadyReserved = Math.max(0, Number(request.reserved_quantity || 0));
+      const stillNeeded = Math.max(0, desired - alreadyReserved);
+      if (stillNeeded <= 0) continue;
+      const reservedNow = Math.min(stillNeeded, remaining);
+      const nextReserved = alreadyReserved + reservedNow;
+      remaining -= reservedNow;
       updates.push({
         id: request.id,
-        reserve_status: 'reserved',
-        reserved_quantity: reserved,
+        reserve_status: nextReserved >= desired ? 'reserved' : 'open',
+        reserved_quantity: nextReserved,
         reserved_at: now,
-        notes: `Automatically reserved ${reserved} ${product.unit || 'unit'} from newly found stock.`
+        notes: `Automatically reserved ${reservedNow} ${product.unit || 'unit'} from newly found stock.`
       });
     }
 

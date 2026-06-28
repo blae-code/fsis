@@ -32,6 +32,8 @@ import StorefrontAtmosphere from '@/components/store/StorefrontAtmosphere';
 import ProprietorEntryway from '@/components/store/ProprietorEntryway';
 import BuyerProfilePanel from '@/components/store/BuyerProfilePanel';
 import BuyerProgressRail from '@/components/store/BuyerProgressRail';
+import AdminRestockControls from '@/components/store/AdminRestockControls';
+import RestockInbox from '@/components/apps/management/RestockInbox';
 import CatalogQuickFilters, { matchesQuickFilter } from '@/components/store/CatalogQuickFilters';
 import RecentDeliveries from '@/components/store/RecentDeliveries';
 import { useToast } from '@/components/ui/use-toast';
@@ -317,6 +319,7 @@ export default function Storefront() {
           <div className="flex-1 min-h-0 lg:overflow-y-auto pr-1">
             {tab === 'catalog' && (
               <div className="space-y-4">
+                {user?.role === 'admin' && <AdminRestockControls products={storefrontProducts} />}
                 <CatalogQuickFilters active={quickFilter} onChange={setQuickFilter} products={storefrontProducts} marketBestByCode={marketBestByCode} />
                 <ProductCompareTray products={compareProducts} onClear={() => setCompareIds([])} onView={setDetailProduct} />
                 <motion.div
@@ -380,7 +383,12 @@ export default function Storefront() {
               </div>
             )}
             {tab === 'quote' && <QuoteBuilder products={storefrontProducts} onLoad={(p, qty, loc) => { addToCart(p, qty); if (loc) setPreferredLocation(loc); setTab('catalog'); }} />}
-            {tab === 'orders' && <MyOrders onReorder={reorder} />}
+            {tab === 'orders' && (
+              <div className="space-y-4">
+                {user?.role === 'admin' && <RestockInbox />}
+                <MyOrders onReorder={reorder} />
+              </div>
+            )}
             {tab === 'faq' && <StoreFaq onNavigate={setTab} />}
             {/* ARCHIVED: jobs, dashboard, report tabs sequestered for future operator development */}
             {tab === 'about' && (

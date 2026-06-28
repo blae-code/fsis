@@ -46,7 +46,11 @@ const AuthenticatedApp = () => {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/" element={<Storefront />} />
       <Route path="/ops" element={<Desktop />} />
+      <Route path="/Desktop" element={<Desktop />} />
+      <Route path="/desktop" element={<Desktop />} />
       <Route path="/loot" element={<LootTracker />} />
+      <Route path="/LootTracker" element={<LootTracker />} />
+      <Route path="/loot-tracker" element={<LootTracker />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
