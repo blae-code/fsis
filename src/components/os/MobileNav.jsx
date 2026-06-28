@@ -21,7 +21,7 @@ export default function MobileNav() {
 
   return (
     <motion.div
-      className="md:hidden shrink-0 flex items-center justify-around px-2 py-2 border-t"
+      className="md:hidden shrink-0 flex items-center justify-start gap-2 px-3 pt-2 safe-bottom-pad border-t overflow-x-auto"
       style={{
         background: 'rgba(14,11,8,0.97)',
         borderColor: '#2A2118',
@@ -37,11 +37,11 @@ export default function MobileNav() {
           <button
             key={app.id}
             onClick={() => handleTap(app)}
-            className="flex flex-col items-center gap-0.5 px-2 py-1 rounded transition-all"
-            style={{ minWidth: 44 }}
+            className="flex-none flex flex-col items-center gap-1 px-2 py-1 rounded transition-all touch-manipulation"
+            style={{ minWidth: 58, minHeight: 60 }}
           >
             <div
-              className="w-9 h-9 flex items-center justify-center rounded-lg text-base"
+              className="w-11 h-11 flex items-center justify-center rounded-xl text-base"
               style={{
                 background: isOpen
                   ? `linear-gradient(135deg, ${app.color || 'hsl(38,72%,52%)'}, #3A2A16)`
@@ -52,7 +52,7 @@ export default function MobileNav() {
               <span style={{ fontSize: 16 }}>{app.icon ? '⬡' : '◈'}</span>
             </div>
             <span
-              className="text-[7px] tracking-[0.08em] truncate max-w-[44px]"
+              className="text-[8px] tracking-[0.08em] truncate max-w-[56px]"
               style={{ color: isOpen ? '#E0A22E' : '#5A4E40' }}
             >
               {app.name?.toUpperCase().slice(0, 6)}

@@ -10,7 +10,7 @@ export default function Taskbar() {
 
   return (
     <motion.div
-      className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[150] flex items-center gap-1 px-3 py-1.5 rounded-full"
+      className="hidden md:flex absolute bottom-4 left-1/2 -translate-x-1/2 z-[150] items-center gap-1 px-3 py-1.5 rounded-full"
       style={{
         background: 'hsl(30, 10%, 7%, 0.85)',
         border: '1px solid hsl(33, 18%, 18%, 0.4)',

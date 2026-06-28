@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { X, Minus, Maximize2 } from 'lucide-react';
+import { X, Minus, GripHorizontal } from 'lucide-react';
 import { useWindows } from '@/lib/windowContext.jsx';
 
 export default function AppWindow({ window: win }) {
@@ -11,6 +11,23 @@ export default function AppWindow({ window: win }) {
   const [isResizing, setIsResizing] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
   const resizeStart = useRef({ x: 0, y: 0, w: 0, h: 0 });
+  const [viewport, setViewport] = useState({ width: window.innerWidth, height: window.innerHeight });
+
+  useEffect(() => {
+    const onResize = () => setViewport({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const isPhone = viewport.width < 640;
+  const minWidth = isPhone ? 280 : 400;
+  const minHeight = isPhone ? 240 : 300;
+  const maxWidth = isPhone ? viewport.width - 16 : viewport.width - 24;
+  const maxHeight = isPhone ? viewport.height - 112 : viewport.height - 64;
+  const displayWidth = Math.min(Math.max(win.width, minWidth), maxWidth);
+  const displayHeight = Math.min(Math.max(win.height, minHeight), maxHeight);
+  const displayX = Math.max(8, Math.min(win.x, viewport.width - displayWidth - 8));
+  const displayY = Math.max(isPhone ? 48 : 40, Math.min(win.y, viewport.height - displayHeight - (isPhone ? 72 : 12)));
 
   // Dragging
   const onDragStart = useCallback((e) => {
@@ -25,13 +42,16 @@ export default function AppWindow({ window: win }) {
 
   const onDragMove = useCallback((e) => {
     if (!isDragging) return;
+    if (e.cancelable) e.preventDefault();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const nextX = clientX - dragOffset.current.x;
+    const nextY = clientY - dragOffset.current.y;
     updateWindow(win.appId, {
-      x: clientX - dragOffset.current.x,
-      y: Math.max(40, clientY - dragOffset.current.y), // Keep below status bar
+      x: Math.max(8, Math.min(nextX, viewport.width - displayWidth - 8)),
+      y: Math.max(isPhone ? 48 : 40, Math.min(nextY, viewport.height - displayHeight - (isPhone ? 72 : 12))),
     });
-  }, [isDragging, win.appId, updateWindow]);
+  }, [isDragging, win.appId, updateWindow, viewport.width, viewport.height, displayWidth, displayHeight, isPhone]);
 
   const onDragEnd = useCallback(() => setIsDragging(false), []);
 
@@ -48,15 +68,16 @@ export default function AppWindow({ window: win }) {
 
   const onResizeMove = useCallback((e) => {
     if (!isResizing) return;
+    if (e.cancelable) e.preventDefault();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     const dx = clientX - resizeStart.current.x;
     const dy = clientY - resizeStart.current.y;
     updateWindow(win.appId, {
-      width: Math.max(400, resizeStart.current.w + dx),
-      height: Math.max(300, resizeStart.current.h + dy),
+      width: Math.min(maxWidth, Math.max(minWidth, resizeStart.current.w + dx)),
+      height: Math.min(maxHeight, Math.max(minHeight, resizeStart.current.h + dy)),
     });
-  }, [isResizing, win.appId, updateWindow]);
+  }, [isResizing, win.appId, updateWindow, minWidth, minHeight, maxWidth, maxHeight]);
 
   const onResizeEnd = useCallback(() => setIsResizing(false), []);
 
@@ -64,7 +85,7 @@ export default function AppWindow({ window: win }) {
     if (isDragging) {
       window.addEventListener('mousemove', onDragMove);
       window.addEventListener('mouseup', onDragEnd);
-      window.addEventListener('touchmove', onDragMove);
+      window.addEventListener('touchmove', onDragMove, { passive: false });
       window.addEventListener('touchend', onDragEnd);
     }
     return () => {
@@ -79,7 +100,7 @@ export default function AppWindow({ window: win }) {
     if (isResizing) {
       window.addEventListener('mousemove', onResizeMove);
       window.addEventListener('mouseup', onResizeEnd);
-      window.addEventListener('touchmove', onResizeMove);
+      window.addEventListener('touchmove', onResizeMove, { passive: false });
       window.addEventListener('touchend', onResizeEnd);
     }
     return () => {
@@ -97,10 +118,11 @@ export default function AppWindow({ window: win }) {
       ref={windowRef}
       className="fixed select-none"
       style={{
-        left: win.x,
-        top: win.y,
-        width: win.width,
-        height: win.height,
+        left: displayX,
+        top: displayY,
+        width: displayWidth,
+        height: displayHeight,
+        touchAction: isDragging || isResizing ? 'none' : 'auto',
         zIndex: win.zIndex,
       }}
       initial={{ opacity: 0, scale: 0.92 }}
@@ -120,7 +142,7 @@ export default function AppWindow({ window: win }) {
         {/* Window header - draggable */}
         <div
           ref={dragRef}
-          className="flex items-center justify-between px-4 h-10 shrink-0 cursor-move"
+          className="flex items-center justify-between gap-2 px-3 sm:px-4 h-12 sm:h-10 shrink-0 cursor-move touch-none"
           style={{
             background: 'linear-gradient(to right, hsl(30, 12%, 12%), hsl(30, 10%, 10%))',
             borderBottom: '1px solid hsl(33, 18%, 17%, 0.5)',
@@ -128,24 +150,27 @@ export default function AppWindow({ window: win }) {
           onMouseDown={onDragStart}
           onTouchStart={onDragStart}
         >
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-primary/50" />
-            <span className="font-mono text-[11px] tracking-wider text-foreground/70">
+          <div className="flex items-center gap-2 min-w-0">
+            <GripHorizontal className="w-4 h-4 sm:w-3 sm:h-3 text-primary/50 shrink-0" />
+            <div className="w-1.5 h-1.5 rounded-full bg-primary/50 shrink-0" />
+            <span className="font-mono text-[12px] sm:text-[11px] tracking-wider text-foreground/70 truncate">
               {win.title}
             </span>
           </div>
           <div className="window-controls flex items-center gap-1">
             <button
+              aria-label="Minimize window"
               onClick={(e) => { e.stopPropagation(); minimizeWindow(win.appId); }}
-              className="w-6 h-6 flex items-center justify-center rounded hover:bg-muted transition-colors"
+              className="w-11 h-11 sm:w-6 sm:h-6 flex items-center justify-center rounded hover:bg-muted active:bg-muted transition-colors touch-manipulation"
             >
-              <Minus className="w-3 h-3 text-muted-foreground" />
+              <Minus className="w-5 h-5 sm:w-3 sm:h-3 text-muted-foreground" />
             </button>
             <button
+              aria-label="Close window"
               onClick={(e) => { e.stopPropagation(); closeWindow(win.appId); }}
-              className="w-6 h-6 flex items-center justify-center rounded hover:bg-destructive/20 transition-colors"
+              className="w-11 h-11 sm:w-6 sm:h-6 flex items-center justify-center rounded hover:bg-destructive/20 active:bg-destructive/20 transition-colors touch-manipulation"
             >
-              <X className="w-3 h-3 text-muted-foreground hover:text-destructive" />
+              <X className="w-5 h-5 sm:w-3 sm:h-3 text-muted-foreground hover:text-destructive" />
             </button>
           </div>
         </div>
@@ -162,12 +187,14 @@ export default function AppWindow({ window: win }) {
 
         {/* Resize handle */}
         <div
-          className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
+          aria-label="Resize window"
+          className="absolute bottom-0 right-0 w-14 h-14 sm:w-6 sm:h-6 cursor-se-resize touch-none flex items-end justify-end p-2 sm:p-1"
           onMouseDown={onResizeStart}
           onTouchStart={onResizeStart}
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" className="text-muted-foreground/30">
-            <path d="M14 14L8 14L14 8Z" fill="currentColor" />
+          <svg width="28" height="28" viewBox="0 0 28 28" className="text-primary/45 sm:text-muted-foreground/30">
+            <path d="M25 25L8 25L25 8Z" fill="currentColor" />
+            <path d="M24 17L17 24M24 10L10 24" stroke="rgba(8,6,4,0.75)" strokeWidth="2" />
           </svg>
         </div>
       </div>

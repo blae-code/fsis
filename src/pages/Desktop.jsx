@@ -69,7 +69,9 @@ function DesktopShell({ userRole }) {
       {/* Desktop area */}
       <div className="flex-1 relative flex flex-col items-center justify-center">
         {/* App Dock - centered */}
-        <Dock userRole={userRole} />
+        <div className="hidden md:block">
+          <Dock userRole={userRole} />
+        </div>
 
         {/* Floating windows */}
         <AnimatePresence>
