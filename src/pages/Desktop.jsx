@@ -12,7 +12,7 @@ import AppWindow from '@/components/os/AppWindow';
 import Taskbar from '@/components/os/Taskbar';
 import InstallPrompt from '@/components/os/InstallPrompt';
 import { WindowProvider, useWindows } from '@/lib/windowContext.jsx';
-import { resolveContentById } from '@/lib/resolveAppContent.jsx';
+import { resolveAppContent, resolveContentById } from '@/lib/resolveAppContent.jsx';
 import { localCache } from '@/lib/localCache';
 import CommandPalette from '@/components/os/CommandPalette';
 import MobileNav from '@/components/os/MobileNav';
@@ -42,10 +42,20 @@ function AccessDenied() {
 }
 
 function DesktopShell({ userRole }) {
-  const { windows } = useWindows();
+  const { windows, openWindow } = useWindows();
   const [cmdOpen, setCmdOpen] = React.useState(false);
+  const openedInitialWindow = React.useRef(false);
 
   // Cmd+K / Ctrl+K opens command palette
+  React.useEffect(() => {
+    if (userRole === 'admin' && !openedInitialWindow.current) {
+      openedInitialWindow.current = true;
+      const app = { id: 'management', name: 'Management', icon: 'Settings', status: 'active' };
+      const { title, content } = resolveAppContent(app);
+      openWindow('management', title, content);
+    }
+  }, [userRole, openWindow]);
+
   React.useEffect(() => {
     const handler = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {

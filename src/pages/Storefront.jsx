@@ -93,10 +93,17 @@ export default function Storefront() {
     queryFn: () => base44.entities.product.filter({ available: true }, 'sort_order'),
   });
 
-  const { data: user } = useQuery({
+  const { data: user, isLoading: userLoading } = useQuery({
     queryKey: ['user'],
     queryFn: () => base44.auth.me(),
   });
+
+  useEffect(() => {
+    if (user?.role === 'admin' && showOnboarding) {
+      storeCache.markOnboarded();
+      setShowOnboarding(false);
+    }
+  }, [user, showOnboarding]);
 
   const { data: storeStatusRows = [] } = useQuery({
     queryKey: ['store_status_public'],
@@ -206,7 +213,7 @@ export default function Storefront() {
   return (
     <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#080604', backgroundImage: 'radial-gradient(circle at 12% 8%, rgba(224, 162, 46, 0.16), transparent 23%), radial-gradient(circle at 82% 18%, rgba(138, 100, 48, 0.16), transparent 25%), radial-gradient(circle at 70% 90%, rgba(92, 68, 36, 0.18), transparent 30%), linear-gradient(135deg, rgba(8, 6, 4, 0.96), rgba(18, 13, 8, 0.98) 42%, rgba(10, 8, 6, 0.96))' }}>
       <AnimatePresence>
-        {showOnboarding && (
+        {showOnboarding && !userLoading && user?.role !== 'admin' && (
           <StoreOnboarding
             onComplete={() => {
               storeCache.markOnboarded();
