@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, Maximize, ShoppingCart, ChevronRight, ChevronLeft, CheckCircle2, MonitorDown, Keyboard } from 'lucide-react';
+import { Bot, Database, Download, LayoutDashboard, Maximize, ShoppingCart, ChevronRight, ChevronLeft, CheckCircle2, MonitorDown, Keyboard, ShieldCheck } from 'lucide-react';
 import FsisLogo from '@/components/brand/FsisLogo';
 import SerialStrip from '@/components/brand/SerialStrip';
 import ScanlineOverlay from '@/components/onboarding/ScanlineOverlay';
@@ -19,7 +19,7 @@ const stepWrap = {
   transition: { duration: 0.3 },
 };
 
-/** First-visit patron onboarding: welcome → install to desktop → fullscreen → enter store. */
+/** First-visit patron onboarding: welcome → orientation → trust briefing → install → fullscreen → enter store. */
 export default function StoreOnboarding({ onComplete }) {
   const [step, setStep] = useState(0);
   const [deferred, setDeferred] = useState(null);
@@ -45,7 +45,7 @@ export default function StoreOnboarding({ onComplete }) {
     setDeferred(null);
   };
 
-  const steps = ['WELCOME', 'INSTALL', 'FULLSCREEN'];
+  const steps = ['WELCOME', 'ORIENTATION', 'TRUST', 'INSTALL', 'FULLSCREEN'];
   const isLast = step === steps.length - 1;
 
   const finish = () => {
@@ -82,14 +82,14 @@ export default function StoreOnboarding({ onComplete }) {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.5 }}
-        className="relative w-full max-w-lg p-[3px]"
+        className="relative w-full max-w-xl p-[3px]"
         style={{
           background: 'linear-gradient(135deg, #8A6430 0%, #4A3722 35%, #B0793A 65%, #5C4424 100%)',
           clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)',
         }}
       >
         <div
-          className="relative p-8 font-mono"
+          className="relative p-6 sm:p-8 font-mono max-h-[88vh] overflow-y-auto"
           style={{
             background: 'linear-gradient(135deg, #14110D 0%, #0E0C0A 100%)',
             clipPath: 'polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px)',
@@ -142,6 +142,53 @@ export default function StoreOnboarding({ onComplete }) {
             )}
 
             {step === 1 && (
+              <motion.div key="orientation" {...stepWrap} className="space-y-4">
+                <h2 className="text-xl font-bold leading-tight" style={{ color: '#E5DDD0' }}>
+                  Read the <span style={{ color: '#C8893B' }}>terminal map.</span>
+                </h2>
+                <p className="text-xs leading-relaxed" style={{ color: '#B8AC9A' }}>
+                  FSIS has two sides: the public storefront for buyers and the proprietor command layer for fulfillment, inventory, freight, and ledger work.
+                </p>
+                <div className="grid sm:grid-cols-2 gap-2">
+                  {[
+                    [ShoppingCart, 'Storefront', 'Browse stock, build a manifest, schedule handoff, and track orders.'],
+                    [LayoutDashboard, 'Command Center', 'Admin-only operations for intake, warehouse, freight, payouts, and QA.'],
+                    [Keyboard, 'Fast Controls', 'Use / for search and number keys to jump between storefront sections.'],
+                    [MonitorDown, 'Live Terminal', 'Status strips, market ticker, and order rail keep the active workflow visible.'],
+                  ].map(([Icon, title, text]) => (
+                    <div key={title} className="border p-3" style={{ borderColor: '#3A2F20', background: '#0E0C09' }}>
+                      <div className="flex items-center gap-2 text-[10px] font-bold" style={{ color: '#E0A22E' }}><Icon className="w-3.5 h-3.5" />{title}</div>
+                      <p className="text-[9px] leading-relaxed mt-1" style={{ color: '#9C9080' }}>{text}</p>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {step === 2 && (
+              <motion.div key="trust" {...stepWrap} className="space-y-4">
+                <h2 className="text-xl font-bold leading-tight" style={{ color: '#E5DDD0' }}>
+                  Data, privacy, and <span style={{ color: '#C8893B' }}>AI use.</span>
+                </h2>
+                <p className="text-xs leading-relaxed" style={{ color: '#B8AC9A' }}>
+                  The buyer path is intentionally low-friction: no public account is required, and handoff payment happens in-game.
+                </p>
+                <div className="space-y-2">
+                  {[
+                    [Database, 'Where data is stored', 'Orders, inventory, invoices, freight plans, and admin records are stored in the app database. This device also keeps a small local cache for your cart, pins, tracking codes, and onboarding status.'],
+                    [ShieldCheck, 'Privacy posture', 'Only the details needed to coordinate a purchase are requested: handle, delivery preference, order notes, and optional contact/handoff details. Admin-only operations stay behind the proprietor role.'],
+                    [Bot, 'AI-assisted tools', 'AI may be used for optional workflows like parsing intake notes, screenshots, manifests, salvage scans, ledger images, and operational summaries. AI output is reviewed before it becomes operational data.'],
+                  ].map(([Icon, title, text]) => (
+                    <div key={title} className="flex gap-3 border p-3" style={{ borderColor: '#3A2F20', background: '#0E0C09' }}>
+                      <Icon className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#C8A05B' }} />
+                      <div><div className="text-[10px] font-bold" style={{ color: '#E0A22E' }}>{title}</div><p className="text-[9px] leading-relaxed mt-1" style={{ color: '#9C9080' }}>{text}</p></div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {step === 3 && (
               <motion.div key="install" {...stepWrap} className="space-y-4">
                 <h2 className="text-xl font-bold leading-tight" style={{ color: '#E5DDD0' }}>
                   Install to your <span style={{ color: '#C8893B' }}>desktop.</span>
@@ -177,7 +224,7 @@ export default function StoreOnboarding({ onComplete }) {
               </motion.div>
             )}
 
-            {step === 2 && (
+            {step === 4 && (
               <motion.div key="fullscreen" {...stepWrap} className="space-y-4">
                 <h2 className="text-xl font-bold leading-tight" style={{ color: '#E5DDD0' }}>
                   Go <span style={{ color: '#C8893B' }}>fullscreen.</span>
