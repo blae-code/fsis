@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Trash2, Loader2, ArrowRight, Wrench, TrendingUp, TrendingDown,
   Shield, Package, Sword, Zap, Box, Clock, AlertTriangle, ChevronDown,
-  ChevronUp, BarChart2, List, Edit2, Check, X
+  ChevronUp, BarChart2, List, Edit2, Check, X, PieChart
 } from 'lucide-react';
+import LootSummaryDashboard from '@/components/loot/LootSummaryDashboard';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { differenceInDays } from 'date-fns';
@@ -391,7 +392,7 @@ export default function LootTracker() {
         <div className="flex items-center gap-2">
           {/* View toggle */}
           <div className="flex border" style={{ borderColor: '#2A2118' }}>
-            {[['list', List], ['pipeline', BarChart2]].map(([v, Icon]) => (
+            {[['list', List], ['pipeline', BarChart2], ['summary', PieChart]].map(([v, Icon]) => (
               <button key={v} onClick={() => setView(v)}
                 className="px-2.5 py-1.5 text-[9px] flex items-center gap-1 transition-colors"
                 style={{ background: view === v ? '#2A1E0C' : 'transparent', color: view === v ? AMBER : DIM }}>
@@ -477,6 +478,8 @@ export default function LootTracker() {
       <div className="flex-1 overflow-auto px-4 pb-4 pt-1">
         {isLoading ? (
           <div className="flex justify-center py-16"><Loader2 className="w-5 h-5 animate-spin" style={{ color: AMBER }} /></div>
+        ) : view === 'summary' ? (
+          <LootSummaryDashboard lootItems={items} />
         ) : view === 'pipeline' ? (
           /* Pipeline / Kanban view */
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mt-3 h-full">
