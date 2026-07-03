@@ -5,6 +5,7 @@ import HullMaterialPredictor from '@/components/apps/management/ops/HullMaterial
 import HaulStrategyMapper from '@/components/apps/management/ops/HaulStrategyMapper';
 import MicroExpenseLogger from '@/components/apps/management/ops/MicroExpenseLogger';
 import LootRapidSort from '@/components/apps/management/ops/LootRapidSort';
+import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
 
 const AMBER = '#E0A22E';
 const TEAL  = '#5F9A8C';
@@ -69,7 +70,12 @@ export default function OpsCommandDeck() {
         {activeTool === 'hull'      && <HullMaterialPredictor />}
         {activeTool === 'haul'      && <HaulStrategyMapper />}
         {activeTool === 'expense'   && <MicroExpenseLogger />}
-        {activeTool === 'loot'      && <LootRapidSort />}
+        {activeTool === 'loot'      && (
+          <div className="p-3 space-y-3">
+            <RapidLootIntakePanel />
+            <LootRapidSort />
+          </div>
+        )}
       </div>
     </div>
   );
