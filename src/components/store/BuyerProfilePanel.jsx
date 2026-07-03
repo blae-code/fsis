@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { BadgeCheck, IdCard, Save } from 'lucide-react';
+import { BadgeCheck, ChevronDown, Copy, IdCard, Save } from 'lucide-react';
 import { upsertFsisProfile } from '@/functions/upsertFsisProfile';
 import { storeCache } from '@/lib/localCache';
 
@@ -33,7 +33,7 @@ export default function BuyerProfilePanel({ profile, onProfileSaved }) {
   return (
     <section className="border font-mono relative overflow-hidden" style={{ borderColor: profile?.profile_key ? '#8A8F45' : '#8A6430', background: 'linear-gradient(180deg, rgba(23, 18, 12, 0.92), rgba(10, 8, 6, 0.92))', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.10), 0 12px 30px rgba(0,0,0,0.24)', clipPath: 'polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)' }}>
       <span className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(224,162,46,0.62), transparent)' }} />
-      <button type="button" onClick={() => setOpen(!open)} className="w-full p-3 flex items-center justify-between gap-3 text-left min-h-[52px]">
+      <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="w-full p-3 flex items-center justify-between gap-3 text-left min-h-[52px]">
         <span className="flex items-center gap-2 min-w-0">
           <IdCard className="w-4 h-4" style={{ color: '#E0A22E' }} />
           <span>
@@ -41,11 +41,25 @@ export default function BuyerProfilePanel({ profile, onProfileSaved }) {
             <span className="block text-[10px] truncate" style={{ color: '#A89C8A' }}>{profile?.profile_key ? `Linked as ${profile.handle}` : 'Create a local FSIS profile without a Base44 account'}</span>
           </span>
         </span>
-        {profile?.profile_key && <span className="flex items-center gap-1 text-[9px] font-bold" style={{ color: '#8A8F45' }}><BadgeCheck className="w-3.5 h-3.5" /> LINKED</span>}
+        <span className="flex items-center gap-2 shrink-0">
+          {profile?.profile_key && <span className="flex items-center gap-1 text-[9px] font-bold" style={{ color: '#8A8F45' }}><BadgeCheck className="w-3.5 h-3.5" /> LINKED</span>}
+          <ChevronDown className="w-3.5 h-3.5 transition-transform" style={{ color: '#8A7E6C', transform: open ? 'rotate(180deg)' : 'none' }} />
+        </span>
       </button>
 
       {open && (
         <div className="border-t p-3 grid md:grid-cols-[1fr_1fr_0.8fr_1fr_auto] gap-2" style={{ borderColor: '#3A2F20' }}>
+          {profile?.profile_key && (
+            <div className="md:col-span-5 border px-2.5 py-2 flex items-center justify-between gap-2" style={{ borderColor: '#3A2F20', background: '#0C0A07' }}>
+              <span className="min-w-0">
+                <span className="block text-[8px] tracking-[0.18em] font-bold" style={{ color: '#8A8F45' }}>YOUR PROFILE KEY — attached to orders automatically from this device</span>
+                <span className="block text-[10px] truncate" style={{ color: '#E0A22E' }}>{profile.profile_key}</span>
+              </span>
+              <button type="button" onClick={() => navigator.clipboard?.writeText(profile.profile_key)} className="shrink-0 border px-2 py-1 text-[8px] font-bold tracking-[0.14em] flex items-center gap-1" style={{ borderColor: '#5C4424', color: '#C8A05B' }}>
+                <Copy className="w-3 h-3" /> COPY
+              </button>
+            </div>
+          )}
           <input value={form.handle} onChange={(e) => patch('handle', e.target.value)} placeholder="RSI handle" className="h-9 px-3 text-[10px] border outline-none" style={fieldStyle} />
           <input value={form.display_name} onChange={(e) => patch('display_name', e.target.value)} placeholder="Display name" className="h-9 px-3 text-[10px] border outline-none" style={fieldStyle} />
           <select value={form.contact_method} onChange={(e) => patch('contact_method', e.target.value)} className="h-9 px-3 text-[10px] border outline-none" style={fieldStyle}>

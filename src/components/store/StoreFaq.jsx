@@ -7,6 +7,7 @@ const FAQ_SECTIONS = [
     ['How do I use the storefront?', 'Browse the catalog, add wares to your manifest, choose a delivery location, enter your in-game handle, then hold the transmit control to place the order. No account is required.'],
     ['What should I do first?', 'Use Buyer Nav on the catalog: Buy Materials for salvage commodities, Browse Loot for recovered gear and components, Build Bulk Quote for larger salvage loads, or Track Order if you already have a code.'],
     ['Do I need an account?', 'No. Your tracking code and private passphrase identify the order. If you are logged in, the order is also linked to your profile automatically.'],
+    ['What is the optional FSIS profile?', 'The OPTIONAL FSIS PROFILE panel (above these tabs) lets you save your handle, contact route, and preferred location on this device. Once saved, your profile key is attached to every order automatically — you never type the key anywhere. Expand the panel to view or copy your profile key.'],
   ]},
   { id: 'ordering', title: 'ORDERING', items: [
     ['How do I add items?', 'Open Catalog, find a ware, then use the crate/add control on the product card. Adjust quantities in the Order Manifest panel.'],
