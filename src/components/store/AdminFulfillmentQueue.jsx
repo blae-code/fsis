@@ -41,5 +41,7 @@ export default function AdminFulfillmentQueue() {
   if (isLoading) {
     return <div className="border p-4 flex justify-center" style={{ borderColor: '#2A2118', background: '#100E0B' }}><Loader2 className="w-4 h-4 animate-spin" style={{ color: '#E0A22E' }} /></div>;
   }
-  return <FulfillmentQueue orders={orders} pending={statusMutation.isPending} error={statusMutation.error} onStatus={(orderId, status, trackingCode) => statusMutation.mutate({ orderId, status, trackingCode })} />;
+  const done = statusMutation.data?.data?.order;
+  const lastSuccess = done ? `ORDER ${done.tracking_code || done.id} → ${(done.status || '').replace('_', ' ').toUpperCase()}${done.status === 'delivered' ? ' — INVOICE MARKED PAID' : ''}` : null;
+  return <FulfillmentQueue orders={orders} pending={statusMutation.isPending} error={statusMutation.error} lastSuccess={lastSuccess} onStatus={(orderId, status, trackingCode) => statusMutation.mutate({ orderId, status, trackingCode })} />;
 }

@@ -89,7 +89,7 @@ export default function ProprietorCommandCenter() {
       <ProprietorProgressRail orders={orders} loot={loot} products={products} restocks={restocks} />
 
       <CommandSection eyebrow="DAILY WORK" title="PRIMARY OPERATIONS" description="Start here for the two most frequent loops: smart stock intake, then fulfill active buyer orders.">
-        <div className="grid xl:grid-cols-[1fr_1.1fr] gap-4"><RapidLootIntakePanel /><FulfillmentQueue orders={orders} onStatus={(id, next, trackingCode) => status.mutate({ id, next, trackingCode })} pending={status.isPending} error={status.error} /></div>
+        <div className="grid xl:grid-cols-[1fr_1.1fr] gap-4"><RapidLootIntakePanel /><FulfillmentQueue orders={orders} onStatus={(id, next, trackingCode) => status.mutate({ id, next, trackingCode })} pending={status.isPending} error={status.error} lastSuccess={status.data?.data?.order ? `ORDER ${status.data.data.order.tracking_code || status.data.data.order.id} → ${(status.data.data.order.status || '').replace('_', ' ').toUpperCase()}${status.data.data.order.status === 'delivered' ? ' — INVOICE MARKED PAID' : ''}` : null} /></div>
         <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><CommandInboxPanel orders={orders} products={products} loot={loot} messages={messages} restocks={restocks} prices={prices} /><ProprietorAlerts orders={orders} loot={loot} messages={messages} products={products} prices={prices} /></div>
       </CommandSection>
 

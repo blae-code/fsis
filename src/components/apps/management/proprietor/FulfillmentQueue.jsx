@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { shortItems, money } from '@/components/apps/management/proprietor/proprietorUtils';
 
 const NEXT = { new: 'confirmed', confirmed: 'in_fulfillment', in_fulfillment: 'delivered' };
 const LABEL = { new: 'CONFIRM ORDER', confirmed: 'PULL INVENTORY', in_fulfillment: 'VERIFY & DELIVER' };
 
-export default function FulfillmentQueue({ orders, onStatus, pending, error }) {
+export default function FulfillmentQueue({ orders, onStatus, pending, error, lastSuccess }) {
+  const [clickedId, setClickedId] = useState(null);
+  const act = (id, status, tracking) => { setClickedId(id); onStatus(id, status, tracking); };
   const queue = orders.filter((o) => !['delivered', 'cancelled'].includes(o.status)).slice(0, 8);
   return (
     <section className="border p-3 space-y-2" style={{ borderColor: '#2A2118', background: '#100E0B' }}>
@@ -12,6 +14,11 @@ export default function FulfillmentQueue({ orders, onStatus, pending, error }) {
         <div className="text-[9px] tracking-[0.22em]" style={{ color: '#C8893B' }}>FULFILLMENT QUEUE</div>
         <div className="text-[8px] tracking-[0.16em]" style={{ color: '#7A6E60' }}>PASSPHRASE CHECK REQUIRED AT DELIVERY</div>
       </div>
+      {lastSuccess && !pending && !error && (
+        <p className="border px-2 py-1.5 text-[9px] font-bold tracking-[0.1em]" style={{ borderColor: '#4A5230', color: '#A8B06A', background: '#0D1007' }}>
+          {lastSuccess}
+        </p>
+      )}
       {error && (
         <p className="border px-2 py-1.5 text-[9px] font-bold tracking-[0.1em]" style={{ borderColor: '#8A3A2E', color: '#D08A6A', background: '#1A0D08' }}>
           STATUS UPDATE FAILED: {error?.response?.data?.error || error?.message || 'Unknown error'} — queue refreshed, try again.
@@ -26,8 +33,8 @@ export default function FulfillmentQueue({ orders, onStatus, pending, error }) {
             <span className="border px-2 py-1 text-right" style={{ borderColor: '#5C4424', color: '#EDE5D6', background: '#120D08' }}>HANDOFF PHRASE: {o.handoff_passphrase || 'NOT ISSUED'}</span>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <button disabled={pending} onClick={() => onStatus(o.id, 'cancelled', o.tracking_code)} className="min-h-9 border px-3 py-2 text-[8px] font-bold disabled:opacity-40" style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}>CANCEL ORDER</button>
-            {NEXT[o.status || 'new'] && <button disabled={pending} onClick={() => onStatus(o.id, NEXT[o.status || 'new'], o.tracking_code)} className="min-h-9 border px-3 py-2 text-[8px] font-bold disabled:opacity-40" style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#120D08' }}>{LABEL[o.status || 'new']}</button>}
+            <button disabled={pending} onClick={() => act(o.id, 'cancelled', o.tracking_code)} className="min-h-9 border px-3 py-2 text-[8px] font-bold disabled:opacity-40" style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}>CANCEL ORDER</button>
+            {NEXT[o.status || 'new'] && <button disabled={pending} onClick={() => act(o.id, NEXT[o.status || 'new'], o.tracking_code)} className="min-h-9 border px-3 py-2 text-[8px] font-bold disabled:opacity-40" style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#120D08' }}>{pending && clickedId === o.id ? 'UPDATING…' : LABEL[o.status || 'new']}</button>}
           </div>
         </div>
       ))}
