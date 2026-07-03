@@ -25,12 +25,12 @@ export default function ActiveOrderBanner({ onViewOrders }) {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ y: 40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 40, opacity: 0 }}
+        initial={{ y: 40, opacity: 0, x: '-50%' }}
+        animate={{ y: 0, opacity: 1, x: '-50%' }}
+        exit={{ y: 40, opacity: 0, x: '-50%' }}
         transition={{ type: 'spring', stiffness: 300, damping: 28 }}
         className="fixed bottom-20 sm:bottom-16 left-1/2 z-[300] font-mono"
-        style={{ transform: 'translateX(-50%)', width: 'min(480px, 92vw)' }}
+        style={{ width: 'min(480px, 92vw)' }}
       >
         <div
           className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5"

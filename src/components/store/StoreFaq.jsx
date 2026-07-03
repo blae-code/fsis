@@ -88,7 +88,7 @@ export default function StoreFaq({ onNavigate }) {
                       <span className="text-[10px] font-bold" style={{ color: isOpen ? '#E0A22E' : '#D8CFC0' }}>{question}</span>
                       <motion.span animate={{ rotate: isOpen ? 180 : 0 }}><ChevronDown className="w-3.5 h-3.5" style={{ color: '#6B6155' }} /></motion.span>
                     </button>
-                    <AnimatePresence initial={false}>{isOpen && <motion.p initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden px-3 pb-3 text-[10px] leading-relaxed" style={{ color: '#9C9080' }}>{answer}</motion.p>}</AnimatePresence>
+                    <AnimatePresence initial={false}>{isOpen && <motion.p key={`${key}-answer`} initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden px-3 pb-3 text-[10px] leading-relaxed" style={{ color: '#9C9080' }}>{answer}</motion.p>}</AnimatePresence>
                   </div>
                 );
               })}
