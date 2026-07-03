@@ -57,7 +57,17 @@ export default function ProprietorCommandCenter() {
     const unsubs = [base44.entities.order.subscribe(refresh), base44.entities.invoice.subscribe(refresh), base44.entities.loot_item.subscribe(refresh), base44.entities.product.subscribe(refresh)];
     return () => unsubs.forEach((u) => u?.());
   }, []);
-  const status = useMutation({ mutationFn: ({ id, next, trackingCode }) => updateOrderStatus({ order_id: id, status: next, tracking_code: trackingCode }), onSuccess: refresh, onError: refresh });
+  const status = useMutation({
+    mutationFn: ({ id, next, trackingCode }) => updateOrderStatus({ order_id: id, status: next, tracking_code: trackingCode }),
+    onSuccess: (res) => {
+      // Write the server-returned order straight into the cache so the queue
+      // updates instantly even if a list refetch races with stale reads.
+      const updated = res?.data?.order;
+      if (updated?.id) qc.setQueryData(['all_orders'], (old = []) => old.map((o) => (o.id === updated.id ? updated : o)));
+      qc.invalidateQueries({ queryKey: ['loot_command'] }); qc.invalidateQueries({ queryKey: ['products_admin'] }); qc.invalidateQueries({ queryKey: ['products'] }); qc.invalidateQueries({ queryKey: ['invoice_command'] }); qc.invalidateQueries({ queryKey: ['ops_logs_command'] });
+    },
+    onError: refresh,
+  });
   const price = useMutation({ mutationFn: ({ id, value }) => base44.entities.loot_item.update(id, { est_sell_auec: value }), onSuccess: refresh });
   const stock = useMutation({ mutationFn: ({ id, value }) => base44.entities.product.update(id, { stock: value }), onSuccess: refresh });
   const handoff = useMutation({ mutationFn: (o) => base44.entities.order.update(o.id, { handoff_status: 'confirmed', handoff_confirmed_time: o.handoff_proposed_time || '', handoff_confirmed_location: o.handoff_location || o.delivery_location || '', handoff_proprietor_note: 'Confirmed by proprietor command center.' }), onSuccess: refresh });

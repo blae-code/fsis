@@ -14,8 +14,15 @@ export default function AdminFulfillmentQueue() {
   });
   const statusMutation = useMutation({
     mutationFn: ({ orderId, status, trackingCode }) => updateOrderStatus({ order_id: orderId, status, tracking_code: trackingCode }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['storefront_fulfillment_orders'] });
+    onSuccess: (res) => {
+      // Apply the server-returned order directly so the queue reflects the new
+      // state immediately, even if a list refetch would return stale data.
+      const updated = res?.data?.order;
+      if (updated?.id) {
+        qc.setQueryData(['storefront_fulfillment_orders'], (old = []) => old.map((o) => (o.id === updated.id ? updated : o)));
+      } else {
+        qc.invalidateQueries({ queryKey: ['storefront_fulfillment_orders'] });
+      }
       qc.invalidateQueries({ queryKey: ['tracked_orders'] });
       qc.invalidateQueries({ queryKey: ['my_account_orders'] });
     },
