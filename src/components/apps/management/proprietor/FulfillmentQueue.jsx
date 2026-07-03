@@ -4,7 +4,7 @@ import { shortItems, money } from '@/components/apps/management/proprietor/propr
 const NEXT = { new: 'confirmed', confirmed: 'in_fulfillment', in_fulfillment: 'delivered' };
 const LABEL = { new: 'CONFIRM ORDER', confirmed: 'PULL INVENTORY', in_fulfillment: 'VERIFY & DELIVER' };
 
-export default function FulfillmentQueue({ orders, onStatus, pending }) {
+export default function FulfillmentQueue({ orders, onStatus, pending, error }) {
   const queue = orders.filter((o) => !['delivered', 'cancelled'].includes(o.status)).slice(0, 8);
   return (
     <section className="border p-3 space-y-2" style={{ borderColor: '#2A2118', background: '#100E0B' }}>
@@ -12,6 +12,11 @@ export default function FulfillmentQueue({ orders, onStatus, pending }) {
         <div className="text-[9px] tracking-[0.22em]" style={{ color: '#C8893B' }}>FULFILLMENT QUEUE</div>
         <div className="text-[8px] tracking-[0.16em]" style={{ color: '#7A6E60' }}>PASSPHRASE CHECK REQUIRED AT DELIVERY</div>
       </div>
+      {error && (
+        <p className="border px-2 py-1.5 text-[9px] font-bold tracking-[0.1em]" style={{ borderColor: '#8A3A2E', color: '#D08A6A', background: '#1A0D08' }}>
+          STATUS UPDATE FAILED: {error?.response?.data?.error || error?.message || 'Unknown error'} — queue refreshed, try again.
+        </p>
+      )}
       {queue.length === 0 ? <p className="text-[10px]" style={{ color: '#7A6E60' }}>No active orders need proprietor action.</p> : queue.map((o) => (
         <div key={o.id} className="border p-3 space-y-2" style={{ borderColor: '#3A2F20', background: '#0C0A07' }}>
           <div className="flex justify-between gap-2"><span className="text-[11px] font-bold" style={{ color: '#EDE5D6' }}>{o.customer_handle}</span><span className="text-[10px]" style={{ color: '#E0A22E' }}>{money(o.total_auec)}</span></div>
