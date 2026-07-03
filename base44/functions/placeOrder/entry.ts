@@ -26,7 +26,10 @@ Deno.serve(async (req) => {
 
     const lines = [];
     for (const item of items) {
-      const product = products.find((p) => p.id === item.product_id);
+      // Match by id first; fall back to product name so carts with stale ids
+      // (e.g. after a catalog reseed) still resolve to the live listing.
+      const product = products.find((p) => p.id === item.product_id)
+        || (item.product_name ? products.find((p) => p.product_name === item.product_name) : null);
       if (!product) {
         return Response.json({ error: `${item.product_name || 'An item'} is no longer available` }, { status: 400 });
       }
