@@ -22,21 +22,14 @@ function normalizeCode(row, commodity) {
   return FSIS_CODE_BY_NAME[name] || String(row?.commodity_code || commodity?.code || '').trim().toUpperCase();
 }
 
-async function clearEntity(entity) {
-  for (let i = 0; i < 20; i++) {
-    const batch = await entity.list(null, 500);
-    if (!batch.length) return;
-    for (const record of batch) {
-      await entity.delete(record.id);
-    }
-  }
-}
-
-async function bulkReplace(entity, records, deleteExisting = true) {
-  if (deleteExisting) await clearEntity(entity);
+// Write the fresh sync first, then bulk-remove all rows from prior syncs.
+// This avoids the slow row-by-row delete that used to time out mid-run and
+// leave the market cache empty or partial.
+async function bulkReplace(entity, records, syncedAt) {
   for (let i = 0; i < records.length; i += 250) {
     await entity.bulkCreate(records.slice(i, i + 250));
   }
+  await entity.deleteMany({ synced_at: { $ne: syncedAt } });
 }
 
 Deno.serve(async (req) => {
@@ -221,9 +214,9 @@ Deno.serve(async (req) => {
       });
     }
 
-    await bulkReplace(svc.commodity_price, priceRecords);
-    await bulkReplace(svc.terminal, terminalRecords);
-    await bulkReplace(svc.route, routeRecords);
+    await bulkReplace(svc.commodity_price, priceRecords, now);
+    await bulkReplace(svc.terminal, terminalRecords, now);
+    await bulkReplace(svc.route, routeRecords, now);
 
     const productCodes = new Set(products.map((p) => String(p.code || '').toUpperCase()).filter(Boolean));
     const snapshotCodes = new Set([...SALVAGE_CODES, ...productCodes]);
