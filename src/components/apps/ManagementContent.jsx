@@ -18,6 +18,8 @@ import MarketPriceComparator from '@/components/apps/management/MarketPriceCompa
 import RestockInbox from '@/components/apps/management/RestockInbox';
 import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
+import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
+import { Link } from 'react-router-dom';
 
 const AMBER  = '#E0A22E';
 const DIM    = '#7A6E60';
@@ -33,6 +35,7 @@ const TABS = [
   { id: 'discounts', label: 'DISCOUNTS',  glyph: '◆' },
   { id: 'orders',    label: 'ORDERS',     glyph: '▸' },
   { id: 'intake',    label: 'LOOT INTAKE', glyph: '⬚' },
+  { id: 'warehouse', label: 'WAREHOUSE',  glyph: '▦' },
   { id: 'salvage',   label: 'SALVAGE',    glyph: '◈' },
   { id: 'inventory', label: 'INVENTORY',  glyph: '▦' },
   { id: 'auditlog',  label: 'AUDIT LOG',  glyph: '⬚' },
@@ -104,6 +107,14 @@ export default function ManagementContent() {
             </button>
           );
         })}
+        <Link
+          to="/loot"
+          className="flex items-center gap-1.5 px-4 py-2.5 text-[9px] tracking-[0.15em] whitespace-nowrap shrink-0"
+          style={{ color: DIM }}
+        >
+          <span style={{ color: DIMMER }}>⬡</span>
+          LOOT TRACKER ↗
+        </Link>
       </div>
 
       {/* Content */}
@@ -116,6 +127,7 @@ export default function ManagementContent() {
         {activeTab === 'orders'    && <OrdersContent />}
         {/* ARCHIVED: jobs and crew tabs sequestered for future operator development */}
         {activeTab === 'intake'    && <div className="p-4"><RapidLootIntakePanel /></div>}
+        {activeTab === 'warehouse' && <div className="p-4"><WarehouseCommandLayer /></div>}
         {activeTab === 'salvage'   && <div className="p-4"><SalvageCommodityDashboard /></div>}
         {activeTab === 'inventory' && <div className="p-4"><InventoryManager /></div>}
         {activeTab === 'auditlog'  && <OpsAuditLog />}
