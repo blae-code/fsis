@@ -6,6 +6,7 @@ import HaulStrategyMapper from '@/components/apps/management/ops/HaulStrategyMap
 import MicroExpenseLogger from '@/components/apps/management/ops/MicroExpenseLogger';
 import LootRapidSort from '@/components/apps/management/ops/LootRapidSort';
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
+import MarketWatchBar from '@/components/apps/management/ops/MarketWatchBar';
 
 const AMBER = '#E0A22E';
 const TEAL  = '#5F9A8C';
@@ -37,6 +38,8 @@ export default function OpsCommandDeck() {
           <span className="text-[8px]" style={{ color: DIM }}>IN-OP</span>
         </div>
       </div>
+
+      <MarketWatchBar />
 
       {/* Tool selector rail */}
       <div className="shrink-0 border-b flex" style={{ borderColor: '#2A2118' }}>
