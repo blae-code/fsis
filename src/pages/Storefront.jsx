@@ -89,9 +89,10 @@ export default function Storefront() {
     return () => window.removeEventListener('keydown', onKey);
   }, [showOnboarding, detailProduct]);
 
-  const { data: products = [] } = useQuery({
+  const { data: products = [], isLoading: productsLoading, isError: productsError, refetch: refetchProducts } = useQuery({
     queryKey: ['products'],
     queryFn: () => base44.entities.product.filter({ available: true }, 'sort_order'),
+    retry: 3,
   });
 
   // Reconcile cached carts against the live catalog: fix stale product ids
@@ -355,7 +356,27 @@ export default function Storefront() {
                   initial="hidden"
                   animate="show"
                 >
-                  {sortedProducts.length === 0 ? (
+                  {productsLoading ? (
+                    <div className="col-span-full flex flex-col items-center gap-3 py-16">
+                      <div className="w-6 h-6 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(224,162,46,0.2)', borderTopColor: '#E0A22E' }} />
+                      <p className="text-center text-xs font-mono" style={{ color: '#8A7E6C' }}>Loading catalog…</p>
+                    </div>
+                  ) : productsError ? (
+                    <div className="col-span-full flex flex-col items-center gap-3 py-10">
+                      <DerelictHull width={180} />
+                      <p className="text-center text-xs font-mono" style={{ color: '#D08A6A' }}>
+                        Catalog uplink failed — the inventory couldn't be loaded.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => refetchProducts()}
+                        className="border px-3 py-2 text-[9px] font-mono font-bold tracking-[0.14em] hover:brightness-125"
+                        style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#0C0A07' }}
+                      >
+                        RETRY UPLINK
+                      </button>
+                    </div>
+                  ) : sortedProducts.length === 0 ? (
                     <div className="col-span-full flex flex-col items-center gap-3 py-10">
                       <DerelictHull width={180} />
                       <p className="text-center text-xs font-mono" style={{ color: '#8A7E6C' }}>
