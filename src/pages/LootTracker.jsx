@@ -392,11 +392,11 @@ export default function LootTracker() {
         <div className="flex items-center gap-2">
           {/* View toggle */}
           <div className="flex border" style={{ borderColor: '#2A2118' }}>
-            {[['list', List], ['pipeline', BarChart2], ['summary', PieChart]].map(([v, Icon]) => (
+            {[['list', List, 'LIST'], ['pipeline', BarChart2, 'PIPELINE'], ['summary', PieChart, 'SUMMARY']].map(([v, Icon, label]) => (
               <button key={v} onClick={() => setView(v)}
-                className="px-2.5 py-1.5 text-[9px] flex items-center gap-1 transition-colors"
+                className="px-2.5 py-1.5 text-[9px] tracking-[0.12em] flex items-center gap-1 transition-colors"
                 style={{ background: view === v ? '#2A1E0C' : 'transparent', color: view === v ? AMBER : DIM }}>
-                <Icon className="w-3 h-3" />
+                <Icon className="w-3 h-3" /> {label}
               </button>
             ))}
           </div>
