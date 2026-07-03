@@ -7,6 +7,7 @@ import CommandKpiStrip from '@/components/apps/management/proprietor/CommandKpiS
 import FulfillmentQueue from '@/components/apps/management/proprietor/FulfillmentQueue';
 import LootAppraisalDesk from '@/components/apps/management/proprietor/LootAppraisalDesk';
 import BuyerLedger from '@/components/apps/management/proprietor/BuyerLedger';
+import ClientHistoryPanel from '@/components/apps/management/proprietor/ClientHistoryPanel';
 import DemandIntelligence from '@/components/apps/management/proprietor/DemandIntelligence';
 import ProprietorAlerts from '@/components/apps/management/proprietor/ProprietorAlerts';
 import HandoffSchedulerConsole from '@/components/apps/management/proprietor/HandoffSchedulerConsole';
@@ -112,6 +113,7 @@ export default function ProprietorCommandCenter() {
         <InvoiceLedgerPanel invoices={invoices} />
         <WeeklyPerformanceSummaryPanel />
         <PaydayManagementPanel />
+        <ClientHistoryPanel orders={orders} products={products} />
         <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><BuyerLedger orders={orders} /><PrivateCodeConsole codes={codes} onToggle={(code) => codeToggle.mutate(code)} pending={codeToggle.isPending} /></div>
         <DemandIntelligence products={products} restocks={restocks} />
       </CommandSection>
