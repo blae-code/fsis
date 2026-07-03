@@ -124,7 +124,7 @@ export default function LootSummaryDashboard({ lootItems = [] }) {
             <div className="text-[10px] py-10 text-center" style={{ color: DIMMER }}>NO SALES RECORDED YET</div>
           ) : (
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={summary.topSellers} layout="vertical" margin={{ left: 8, right: 56 }}>
+              <BarChart data={summary.topSellers} layout="vertical" margin={{ left: 8, right: 76 }}>
                 <XAxis type="number" tick={{ fill: DIM, fontSize: 9, fontFamily: 'JetBrains Mono' }} tickFormatter={fmt} axisLine={{ stroke: DIMMER }} tickLine={false} />
                 <YAxis type="category" dataKey="name" width={90} tick={{ fill: '#D8CFC0', fontSize: 9, fontFamily: 'JetBrains Mono' }} axisLine={{ stroke: DIMMER }} tickLine={false} />
                 <Tooltip content={<ChartTip suffix=" ¤" />} cursor={{ fill: 'rgba(224,162,46,0.06)' }} />
@@ -132,7 +132,7 @@ export default function LootSummaryDashboard({ lootItems = [] }) {
                   {summary.topSellers.map((_, i) => (
                     <Cell key={i} fill={i === 0 ? AMBER : i === 1 ? '#C8893B' : '#8A6430'} />
                   ))}
-                  <LabelList dataKey="revenue" position="right" formatter={(v) => `${Number(v).toLocaleString()} ¤`} style={{ fill: '#D8CFC0', fontSize: 9, fontFamily: 'JetBrains Mono' }} />
+                  <LabelList dataKey="revenue" position="right" formatter={(v) => `${Number(v).toLocaleString()} ¤`} style={{ fill: '#F2EADC', fontSize: 12, fontWeight: 700, fontFamily: 'JetBrains Mono' }} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -140,9 +140,9 @@ export default function LootSummaryDashboard({ lootItems = [] }) {
           {summary.topSellers.length > 0 && (
             <div className="mt-2 space-y-0.5">
               {summary.topSellers.map((s, i) => (
-                <div key={s.name} className="flex justify-between text-[10px]" style={{ color: '#D8CFC0' }}>
+                <div key={s.name} className="flex justify-between text-xs" style={{ color: '#D8CFC0' }}>
                   <span><span style={{ color: DIM }}>{i + 1}.</span> {s.name} <span style={{ color: DIM }}>×{s.qty}</span></span>
-                  <span style={{ color: AMBER }}>{Number(s.revenue).toLocaleString()} ¤</span>
+                  <span className="font-bold" style={{ color: AMBER }}>{Number(s.revenue).toLocaleString()} ¤</span>
                 </div>
               ))}
             </div>
