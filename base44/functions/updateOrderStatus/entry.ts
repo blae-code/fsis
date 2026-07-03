@@ -9,18 +9,19 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (user.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
 
-    const { order_id, status } = await req.json();
-    if (!order_id || !STATUSES.includes(status)) {
+    const { order_id, status, tracking_code } = await req.json();
+    if ((!order_id && !tracking_code) || !STATUSES.includes(status)) {
       return Response.json({ error: 'Valid order_id and status required' }, { status: 400 });
     }
 
     const svc = base44.asServiceRole.entities;
-    let order;
-    try {
-      order = await svc.order.get(order_id);
-    } catch (_) {
-      return Response.json({ error: 'Order not found' }, { status: 404 });
+    let order = null;
+    if (order_id) order = await svc.order.get(order_id).catch(() => null);
+    if (!order && tracking_code) {
+      const rows = await svc.order.filter({ tracking_code }).catch(() => []);
+      order = rows[0] || null;
     }
+    if (!order) return Response.json({ error: 'Order not found' }, { status: 404 });
 
     if (order.status === status) {
       return Response.json({ ok: true, unchanged: true, order });

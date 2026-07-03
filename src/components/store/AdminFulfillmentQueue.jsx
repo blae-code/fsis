@@ -13,7 +13,7 @@ export default function AdminFulfillmentQueue() {
     refetchInterval: 30000,
   });
   const statusMutation = useMutation({
-    mutationFn: ({ orderId, status }) => updateOrderStatus({ order_id: orderId, status }),
+    mutationFn: ({ orderId, status, trackingCode }) => updateOrderStatus({ order_id: orderId, status, tracking_code: trackingCode }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['storefront_fulfillment_orders'] });
       qc.invalidateQueries({ queryKey: ['tracked_orders'] });
@@ -24,5 +24,5 @@ export default function AdminFulfillmentQueue() {
   if (isLoading) {
     return <div className="border p-4 flex justify-center" style={{ borderColor: '#2A2118', background: '#100E0B' }}><Loader2 className="w-4 h-4 animate-spin" style={{ color: '#E0A22E' }} /></div>;
   }
-  return <FulfillmentQueue orders={orders} pending={statusMutation.isPending} error={statusMutation.error} onStatus={(orderId, status) => statusMutation.mutate({ orderId, status })} />;
+  return <FulfillmentQueue orders={orders} pending={statusMutation.isPending} error={statusMutation.error} onStatus={(orderId, status, trackingCode) => statusMutation.mutate({ orderId, status, trackingCode })} />;
 }

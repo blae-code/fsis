@@ -22,11 +22,31 @@ Deno.serve(async (req) => {
       { product_name: `${TAG}Make offer component`, code: 'QA-OFFER', category: 'ship_component', item_type: 'shield', size_class: 'S2', condition_grade: 'refurb', condition_pct: 88, description: 'QA offer-only product.', price_auec: 25500, unit: 'each', stock: 1, available: true, make_offer_only: true, sort_order: 9004 },
     ]);
 
-    await svc.order.bulkCreate([
+    const orders = await svc.order.bulkCreate([
       { customer_handle: `${TAG}Buyer_New`, tracking_code: 'QA-FSIS-NEW', handoff_passphrase: 'QA-IRON-01', items: [{ product_id: products?.[0]?.id || '', product_name: `${TAG}RMC high stock`, code: 'RMC', quantity: 2, unit: 'SCU', unit_price: 12000 }], total_auec: 24000, delivery_location: 'Port Tressler', status: 'new', customer_notes: 'QA buyer order.' },
       { customer_handle: `${TAG}Buyer_Handoff`, tracking_code: 'QA-FSIS-HANDOFF', handoff_passphrase: 'QA-VULTURE-02', items: [{ product_id: products?.[1]?.id || '', product_name: `${TAG}CMR low stock`, code: 'CMR', quantity: 1, unit: 'SCU', unit_price: 8600 }], total_auec: 8600, delivery_location: 'Everus Harbor', status: 'confirmed', handoff_status: 'requested', handoff_proposed_time: 'Friday 2100 PT', handoff_location: 'Everus Harbor ASOP' },
       { customer_handle: `${TAG}Buyer_Delivered`, tracking_code: 'QA-FSIS-DONE', handoff_passphrase: 'QA-SEAL-03', items: [{ product_id: products?.[2]?.id || '', product_name: `${TAG}Out of stock gear`, code: 'QA-GEAR', quantity: 1, unit: 'each', unit_price: 4300 }], total_auec: 4300, delivery_location: 'Area18', status: 'delivered', handoff_status: 'completed' },
     ]);
+
+    const handoffOrder = (orders || []).find((o) => o.tracking_code === 'QA-FSIS-HANDOFF');
+    if (handoffOrder) {
+      const invoice = await svc.invoice.create({
+        invoice_number: 'QA-FSIS-INV-HANDOFF',
+        transaction_type: 'order',
+        status: 'issued',
+        order_id: handoffOrder.id,
+        order_tracking_code: 'QA-FSIS-HANDOFF',
+        issued_at: new Date().toISOString(),
+        seller: { name: 'FSIS', handle: 'FSIS' },
+        buyer: { handle: `${TAG}Buyer_Handoff`, delivery_location: 'Everus Harbor' },
+        line_items: [{ product_name: `${TAG}CMR low stock`, code: 'CMR', quantity: 1, unit: 'SCU', unit_price: 8600, line_total: 8600 }],
+        subtotal_auec: 8600,
+        total_auec: 8600,
+        handoff_passphrase: 'QA-VULTURE-02',
+        notes: `${TAG}QA invoice for handoff order`,
+      });
+      await svc.order.update(handoffOrder.id, { invoice_id: invoice.id, invoice_number: invoice.invoice_number });
+    }
 
     await svc.loot_item.bulkCreate([
       { item_name: `${TAG}Raw Shield Generator`, item_type: 'ship_component', condition_pct: 41, condition_grade: 'worn', size_class: 'S2', quantity: 1, status: 'raw', est_sell_auec: 9000, source_op: 'QA intake run' },

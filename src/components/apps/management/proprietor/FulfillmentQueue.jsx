@@ -26,8 +26,8 @@ export default function FulfillmentQueue({ orders, onStatus, pending, error }) {
             <span className="border px-2 py-1 text-right" style={{ borderColor: '#5C4424', color: '#EDE5D6', background: '#120D08' }}>HANDOFF PHRASE: {o.handoff_passphrase || 'NOT ISSUED'}</span>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <button disabled={pending} onClick={() => onStatus(o.id, 'cancelled')} className="min-h-9 border px-3 py-2 text-[8px] font-bold disabled:opacity-40" style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}>CANCEL ORDER</button>
-            {NEXT[o.status || 'new'] && <button disabled={pending} onClick={() => onStatus(o.id, NEXT[o.status || 'new'])} className="min-h-9 border px-3 py-2 text-[8px] font-bold disabled:opacity-40" style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#120D08' }}>{LABEL[o.status || 'new']}</button>}
+            <button disabled={pending} onClick={() => onStatus(o.id, 'cancelled', o.tracking_code)} className="min-h-9 border px-3 py-2 text-[8px] font-bold disabled:opacity-40" style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}>CANCEL ORDER</button>
+            {NEXT[o.status || 'new'] && <button disabled={pending} onClick={() => onStatus(o.id, NEXT[o.status || 'new'], o.tracking_code)} className="min-h-9 border px-3 py-2 text-[8px] font-bold disabled:opacity-40" style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#120D08' }}>{LABEL[o.status || 'new']}</button>}
           </div>
         </div>
       ))}

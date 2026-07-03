@@ -57,7 +57,7 @@ export default function ProprietorCommandCenter() {
     const unsubs = [base44.entities.order.subscribe(refresh), base44.entities.invoice.subscribe(refresh), base44.entities.loot_item.subscribe(refresh), base44.entities.product.subscribe(refresh)];
     return () => unsubs.forEach((u) => u?.());
   }, []);
-  const status = useMutation({ mutationFn: ({ id, next }) => updateOrderStatus({ order_id: id, status: next }), onSuccess: refresh, onError: refresh });
+  const status = useMutation({ mutationFn: ({ id, next, trackingCode }) => updateOrderStatus({ order_id: id, status: next, tracking_code: trackingCode }), onSuccess: refresh, onError: refresh });
   const price = useMutation({ mutationFn: ({ id, value }) => base44.entities.loot_item.update(id, { est_sell_auec: value }), onSuccess: refresh });
   const stock = useMutation({ mutationFn: ({ id, value }) => base44.entities.product.update(id, { stock: value }), onSuccess: refresh });
   const handoff = useMutation({ mutationFn: (o) => base44.entities.order.update(o.id, { handoff_status: 'confirmed', handoff_confirmed_time: o.handoff_proposed_time || '', handoff_confirmed_location: o.handoff_location || o.delivery_location || '', handoff_proprietor_note: 'Confirmed by proprietor command center.' }), onSuccess: refresh });
@@ -72,7 +72,7 @@ export default function ProprietorCommandCenter() {
       <ProprietorProgressRail orders={orders} loot={loot} products={products} restocks={restocks} />
 
       <CommandSection eyebrow="DAILY WORK" title="PRIMARY OPERATIONS" description="Start here for the two most frequent loops: smart stock intake, then fulfill active buyer orders.">
-        <div className="grid xl:grid-cols-[1fr_1.1fr] gap-4"><RapidLootIntakePanel /><FulfillmentQueue orders={orders} onStatus={(id, next) => status.mutate({ id, next })} pending={status.isPending} error={status.error} /></div>
+        <div className="grid xl:grid-cols-[1fr_1.1fr] gap-4"><RapidLootIntakePanel /><FulfillmentQueue orders={orders} onStatus={(id, next, trackingCode) => status.mutate({ id, next, trackingCode })} pending={status.isPending} error={status.error} /></div>
         <div className="grid xl:grid-cols-[1fr_1fr] gap-4"><CommandInboxPanel orders={orders} products={products} loot={loot} messages={messages} restocks={restocks} prices={prices} /><ProprietorAlerts orders={orders} loot={loot} messages={messages} products={products} prices={prices} /></div>
       </CommandSection>
 

@@ -28,6 +28,7 @@ Deno.serve(async (req) => {
       ledger: (e) => String(e.description || '').startsWith(TAG),
       discounts: (d) => String(d.code || '') === CODE || String(d.label || '').startsWith(TAG),
       restocks: (r) => String(r.product_name || '').startsWith(TAG) || String(r.handle || '').startsWith(TAG),
+      invoices: (i) => String(i.invoice_number || '').startsWith(TRACKING) || String(i.order_tracking_code || '').startsWith(TRACKING),
     };
     if (payload.dry_run) return Response.json({ status: 'success', dry_run: true, targets: Object.keys(checks) });
     const summary = {
@@ -37,6 +38,7 @@ Deno.serve(async (req) => {
       ledger: await removeMatching(svc.ledger_entry, checks.ledger),
       discounts: await removeMatching(svc.discount_code, checks.discounts),
       restocks: await removeMatching(svc.restock_notify, checks.restocks),
+      invoices: await removeMatching(svc.invoice, checks.invoices),
     };
     return Response.json({ status: 'success', summary });
   } catch (error) {
