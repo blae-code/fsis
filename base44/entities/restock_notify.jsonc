@@ -4,7 +4,7 @@
   "properties": {
     "product_id": {
       "type": "string",
-      "description": "Product they want restocked or reserved"
+      "description": "Product they want restocked"
     },
     "product_name": {
       "type": "string",
@@ -16,7 +16,12 @@
     },
     "contact": {
       "type": "string",
-      "description": "Contact method: Discord, Spectrum, email, etc."
+      "description": "Contact method: Discord, Spectrum, etc."
+    },
+    "notified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether FSIS has notified them"
     },
     "request_type": {
       "type": "string",
@@ -25,43 +30,34 @@
         "reserve"
       ],
       "default": "notify",
-      "description": "notify = contact on restock; reserve = hold the next found stock for this buyer"
-    },
-    "desired_quantity": {
-      "type": "number",
-      "default": 1,
-      "description": "Quantity the buyer wants reserved when stock is found"
+      "description": "Notify = alert only; reserve = queue for automatic stock allocation on restock"
     },
     "reserve_status": {
       "type": "string",
       "enum": [
         "open",
-        "reserved",
-        "notified",
-        "completed",
-        "cancelled"
+        "reserved"
       ],
       "default": "open",
-      "description": "Reserve lifecycle state for reserve requests"
+      "description": "Open = awaiting stock; reserved = fully allocated"
+    },
+    "desired_quantity": {
+      "type": "number",
+      "default": 1,
+      "description": "Units the buyer wants reserved"
     },
     "reserved_quantity": {
       "type": "number",
       "default": 0,
-      "description": "Quantity actually reserved from newly found stock"
+      "description": "Units allocated so far from restocks"
     },
     "reserved_at": {
       "type": "string",
       "format": "date-time",
-      "description": "When FSIS automatically placed stock on reserve for this buyer"
-    },
-    "notified": {
-      "type": "boolean",
-      "default": false,
-      "description": "Whether FSIS has notified them"
+      "description": "When stock was last allocated to this request"
     },
     "notes": {
-      "type": "string",
-      "description": "Internal reserve or restock notes"
+      "type": "string"
     }
   },
   "required": [

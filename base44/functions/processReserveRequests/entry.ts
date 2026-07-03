@@ -18,11 +18,23 @@ Deno.serve(async (req) => {
       return Response.json({ success: true, skipped: 'No new stock available' });
     }
 
-    const requests = await base44.asServiceRole.entities.restock_notify.filter({
+    const svc = base44.asServiceRole.entities;
+    const byId = await svc.restock_notify.filter({
       product_id: product.id,
       request_type: 'reserve',
       reserve_status: 'open'
     }, 'created_date', 100);
+    const byName = product.product_name
+      ? await svc.restock_notify.filter({
+          product_name: product.product_name,
+          request_type: 'reserve',
+          reserve_status: 'open'
+        }, 'created_date', 100).catch(() => [])
+      : [];
+    const seen = new Set();
+    const requests = [...byId, ...byName]
+      .filter((r) => (seen.has(r.id) ? false : (seen.add(r.id), true)))
+      .sort((a, b) => new Date(a.created_date).getTime() - new Date(b.created_date).getTime());
 
     let remaining = currentStock;
     const updates = [];

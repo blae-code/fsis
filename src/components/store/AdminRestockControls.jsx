@@ -11,13 +11,18 @@ export default function AdminRestockControls({ products = [] }) {
   const { data: requests = [] } = useQuery({
     queryKey: ['restock_notify_admin_controls'],
     queryFn: () => base44.entities.restock_notify.list('-created_date', 200),
+    refetchInterval: 30000,
   });
-  const demandByProduct = useMemo(() => requests.reduce((map, r) => {
-    if (r.request_type === 'reserve' && (r.reserve_status || 'open') === 'open') {
-      map[r.product_id] = (map[r.product_id] || 0) + Math.max(1, Number(r.desired_quantity || 1));
+  const demandByProduct = useMemo(() => {
+    const openReserves = requests.filter((r) => r.request_type === 'reserve' && (r.reserve_status || 'open') === 'open');
+    const map = {};
+    for (const p of products) {
+      map[p.id] = openReserves
+        .filter((r) => r.product_id === p.id || (r.product_name && r.product_name === p.product_name))
+        .reduce((sum, r) => sum + Math.max(1, Number(r.desired_quantity || 1)), 0);
     }
     return map;
-  }, {}), [requests]);
+  }, [requests, products]);
   const restock = useMutation({
     mutationFn: ({ product, stock }) => base44.entities.product.update(product.id, { stock }),
     onSuccess: () => {

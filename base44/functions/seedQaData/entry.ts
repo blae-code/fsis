@@ -61,7 +61,11 @@ Deno.serve(async (req) => {
       { entry_type: 'expense', category: 'repairs', amount_auec: 3500, description: `${TAG}QA repair expense`, counterparty: 'Repair terminal', entry_date: nowDate(), source: 'manual' },
     ]);
     await svc.discount_code.create({ code: 'QA-LAUNCH-10', label: `${TAG}launch discount`, discount_percent: 10, active: true, uses: 0 });
-    await svc.restock_notify.create({ product_id: products?.[2]?.id || '', product_name: `${TAG}Out of stock gear`, handle: `${TAG}Buyer_Waiting`, contact: 'Spectrum DM', notified: false });
+    await svc.restock_notify.bulkCreate([
+      { product_id: products?.[2]?.id || '', product_name: `${TAG}Out of stock gear`, handle: `${TAG}Buyer_Waiting`, contact: 'Spectrum DM', notified: false, request_type: 'notify' },
+      { product_id: products?.[2]?.id || '', product_name: `${TAG}Out of stock gear`, handle: `${TAG}Reserver_A`, contact: 'Spectrum DM', notified: false, request_type: 'reserve', reserve_status: 'open', desired_quantity: 5, reserved_quantity: 0 },
+      { product_id: products?.[2]?.id || '', product_name: `${TAG}Out of stock gear`, handle: `${TAG}Reserver_B`, contact: 'Spectrum DM', notified: false, request_type: 'reserve', reserve_status: 'open', desired_quantity: 2, reserved_quantity: 0 },
+    ]);
     return Response.json({ status: 'success', summary });
   } catch (error) {
     return Response.json({ status: 'error', error: error.message }, { status: 500 });
