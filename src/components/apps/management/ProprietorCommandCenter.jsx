@@ -41,7 +41,14 @@ import WeeklyPerformanceSummaryPanel from '@/components/apps/management/propriet
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
-  const { data: orders = [] } = useQuery({ queryKey: ['all_orders'], queryFn: () => base44.entities.order.list('-created_date', 100) });
+  const { data: orders = [] } = useQuery({ queryKey: ['all_orders'], queryFn: async () => {
+    const fresh = await base44.entities.order.list('-created_date', 100);
+    // Keep the newer cached version of any order so stale list reads never
+    // revert a status transition already confirmed by the server.
+    const prev = qc.getQueryData(['all_orders']) || [];
+    const prevMap = new Map(prev.map((o) => [o.id, o]));
+    return fresh.map((o) => { const p = prevMap.get(o.id); return p && new Date(p.updated_date) > new Date(o.updated_date) ? p : o; });
+  } });
   const { data: products = [] } = useQuery({ queryKey: ['products_admin'], queryFn: () => base44.entities.product.list('-updated_date', 300) });
   const { data: loot = [] } = useQuery({ queryKey: ['loot_command'], queryFn: () => base44.entities.loot_item.list('-created_date', 300) });
   const { data: restocks = [] } = useQuery({ queryKey: ['restock_command'], queryFn: () => base44.entities.restock_notify.list('-created_date', 100) });

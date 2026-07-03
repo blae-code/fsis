@@ -9,7 +9,17 @@ export default function AdminFulfillmentQueue() {
   const qc = useQueryClient();
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ['storefront_fulfillment_orders'],
-    queryFn: () => base44.entities.order.list('-created_date', 50),
+    queryFn: async () => {
+      const fresh = await base44.entities.order.list('-created_date', 50);
+      // List reads can lag behind status updates — never let a stale refetch
+      // revert an order we already hold a newer version of in the cache.
+      const prev = qc.getQueryData(['storefront_fulfillment_orders']) || [];
+      const prevMap = new Map(prev.map((o) => [o.id, o]));
+      return fresh.map((o) => {
+        const p = prevMap.get(o.id);
+        return p && new Date(p.updated_date) > new Date(o.updated_date) ? p : o;
+      });
+    },
     refetchInterval: 30000,
   });
   const statusMutation = useMutation({
