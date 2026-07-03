@@ -137,6 +137,16 @@ export default function LootSummaryDashboard({ lootItems = [] }) {
               </BarChart>
             </ResponsiveContainer>
           )}
+          {summary.topSellers.length > 0 && (
+            <div className="mt-2 space-y-0.5">
+              {summary.topSellers.map((s, i) => (
+                <div key={s.name} className="flex justify-between text-[10px]" style={{ color: '#D8CFC0' }}>
+                  <span><span style={{ color: DIM }}>{i + 1}.</span> {s.name} <span style={{ color: DIM }}>×{s.qty}</span></span>
+                  <span style={{ color: AMBER }}>{Number(s.revenue).toLocaleString()} ¤</span>
+                </div>
+              ))}
+            </div>
+          )}
           <p className="text-[8px] mt-1" style={{ color: DIMMER }}>Revenue from confirmed, in-fulfillment & delivered orders</p>
         </div>
 
