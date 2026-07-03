@@ -69,6 +69,25 @@ export default function Storefront() {
     storeCache.setCart(cart);
   }, [cart]);
 
+  // Reconcile cached carts against the live catalog: fix stale product ids
+  // (matched by name after a reseed) and drop items that no longer exist,
+  // so checkout never fails on "no longer available" for in-stock wares.
+  useEffect(() => {
+    if (!products.length || !cart.length) return;
+    let changed = false;
+    const next = cart.map((item) => {
+      const live = products.find((p) => p.id === item.product_id)
+        || products.find((p) => p.product_name === item.product_name);
+      if (!live) { changed = true; return null; }
+      if (live.id !== item.product_id) {
+        changed = true;
+        return { ...item, product_id: live.id, unit_price: roundPrice(live.price_auec), stock: live.category === 'service' ? null : (live.stock || 0) };
+      }
+      return item;
+    }).filter(Boolean);
+    if (changed) setCart(next);
+  }, [products]);
+
   // Global shortcuts: "/" focuses search, 1–5 switch sections
   useEffect(() => {
     // ARCHIVED: keys 6+ sequestered for future operator development
