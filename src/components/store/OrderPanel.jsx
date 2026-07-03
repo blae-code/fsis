@@ -164,6 +164,11 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
             <div className="space-y-1">
               <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>IN-GAME HANDLE</Label>
               <Input value={handle} onChange={(e) => setHandle(e.target.value)} className="h-10 sm:h-8 text-xs font-mono" style={fieldStyle} placeholder="Your RSI handle" />
+              {(buyerProfile?.profile_key || savedProfile?.profile_key) && (
+                <p className="text-[9px] font-mono tracking-[0.1em]" style={{ color: '#8A8F45' }}>
+                  ◈ FSIS PROFILE LINKED — this order will attach to your profile automatically
+                </p>
+              )}
             </div>
             <div className="space-y-1">
               <Label className="text-[10px] font-mono" style={{ color: '#8A7E6C' }}>DELIVERY LOCATION</Label>
