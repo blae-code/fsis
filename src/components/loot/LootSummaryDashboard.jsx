@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
 import { Loader2 } from 'lucide-react';
 
 const AMBER = '#E0A22E';
@@ -124,7 +124,7 @@ export default function LootSummaryDashboard({ lootItems = [] }) {
             <div className="text-[10px] py-10 text-center" style={{ color: DIMMER }}>NO SALES RECORDED YET</div>
           ) : (
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={summary.topSellers} layout="vertical" margin={{ left: 8, right: 12 }}>
+              <BarChart data={summary.topSellers} layout="vertical" margin={{ left: 8, right: 56 }}>
                 <XAxis type="number" tick={{ fill: DIM, fontSize: 9, fontFamily: 'JetBrains Mono' }} tickFormatter={fmt} axisLine={{ stroke: DIMMER }} tickLine={false} />
                 <YAxis type="category" dataKey="name" width={90} tick={{ fill: '#D8CFC0', fontSize: 9, fontFamily: 'JetBrains Mono' }} axisLine={{ stroke: DIMMER }} tickLine={false} />
                 <Tooltip content={<ChartTip suffix=" ¤" />} cursor={{ fill: 'rgba(224,162,46,0.06)' }} />
@@ -132,6 +132,7 @@ export default function LootSummaryDashboard({ lootItems = [] }) {
                   {summary.topSellers.map((_, i) => (
                     <Cell key={i} fill={i === 0 ? AMBER : i === 1 ? '#C8893B' : '#8A6430'} />
                   ))}
+                  <LabelList dataKey="revenue" position="right" formatter={(v) => `${Number(v).toLocaleString()} ¤`} style={{ fill: '#D8CFC0', fontSize: 9, fontFamily: 'JetBrains Mono' }} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
