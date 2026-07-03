@@ -17,6 +17,7 @@ import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
 import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
 import RestockInbox from '@/components/apps/management/RestockInbox';
 import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
+import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
 
 const AMBER  = '#E0A22E';
 const DIM    = '#7A6E60';
@@ -31,6 +32,7 @@ const TABS = [
   { id: 'store',     label: 'STORE',      glyph: '⬡' },
   { id: 'discounts', label: 'DISCOUNTS',  glyph: '◆' },
   { id: 'orders',    label: 'ORDERS',     glyph: '▸' },
+  { id: 'intake',    label: 'LOOT INTAKE', glyph: '⬚' },
   { id: 'salvage',   label: 'SALVAGE',    glyph: '◈' },
   { id: 'inventory', label: 'INVENTORY',  glyph: '▦' },
   { id: 'auditlog',  label: 'AUDIT LOG',  glyph: '⬚' },
@@ -113,6 +115,7 @@ export default function ManagementContent() {
         {activeTab === 'discounts' && <div className="p-4"><DiscountManager /></div>}
         {activeTab === 'orders'    && <OrdersContent />}
         {/* ARCHIVED: jobs and crew tabs sequestered for future operator development */}
+        {activeTab === 'intake'    && <div className="p-4"><RapidLootIntakePanel /></div>}
         {activeTab === 'salvage'   && <div className="p-4"><SalvageCommodityDashboard /></div>}
         {activeTab === 'inventory' && <div className="p-4"><InventoryManager /></div>}
         {activeTab === 'auditlog'  && <OpsAuditLog />}
