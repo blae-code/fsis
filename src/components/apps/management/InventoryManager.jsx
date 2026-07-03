@@ -4,7 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Loader2, Check, PackageSearch, CheckCircle, Wrench, Skull, Layers } from 'lucide-react';
+import { Loader2, Check, PackageSearch, CheckCircle, Wrench, Skull, Layers, ChevronDown } from 'lucide-react';
+import ProductReservePanel from '@/components/apps/management/ProductReservePanel';
 
 const AMBER  = '#E0A22E';
 const GREEN  = '#4EBF7A';
@@ -68,12 +69,15 @@ function StockBar({ stock, color }) {
 function StockRow({ product }) {
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [value, setValue] = useState(String(product.stock ?? 0));
 
   const update = useMutation({
     mutationFn: (stock) => base44.entities.product.update(product.id, { stock }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['inv_products'] });
+      // Restocks trigger automatic reserve allocation — refresh after it runs
+      setTimeout(() => queryClient.invalidateQueries({ queryKey: ['product_reserves', product.id] }), 2500);
       setEditing(false);
     },
   });
@@ -89,7 +93,8 @@ function StockRow({ product }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25 }}
     >
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-3 mb-2 cursor-pointer" onClick={() => setExpanded((v) => !v)} title="Click to view reserve requests">
+        <ChevronDown className="w-3 h-3 shrink-0 transition-transform" style={{ color: '#6A5A40', transform: expanded ? 'rotate(180deg)' : 'none' }} />
         {/* Commodity identity */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -112,7 +117,7 @@ function StockRow({ product }) {
         </div>
 
         {/* Stock number / edit */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
           {editing ? (
             <>
               <Input
@@ -159,6 +164,8 @@ function StockRow({ product }) {
           {product.available ? '● LISTED' : '○ HIDDEN'}
         </span>
       </div>
+
+      {expanded && <ProductReservePanel product={product} />}
     </motion.div>
   );
 }
@@ -366,7 +373,7 @@ export default function InventoryManager() {
         )}
 
         <p className="text-[9px] text-center pb-2" style={{ color: '#3A2A14' }}>
-          Click any stock number to edit in-line · Bars reference 500 SCU max
+          Click a row to view its reserve requests · Click any stock number to edit in-line · Bars reference 500 SCU max
         </p>
       </div>
     </div>
