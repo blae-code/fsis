@@ -480,6 +480,11 @@ export default function Storefront() {
         <button onClick={() => setShowOnboarding(true)} className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#8A8F45' }}>
           SETUP GUIDE
         </button>
+        {!userLoading && !user && (
+          <Link to="/login" className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#6B6155' }}>
+            PROPRIETOR ACCESS
+          </Link>
+        )}
       </footer>
     </div>
   );
