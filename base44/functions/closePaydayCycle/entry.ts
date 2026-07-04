@@ -14,10 +14,7 @@ Deno.serve(async (req) => {
     const payload = await req.json().catch(() => ({}));
     const force = payload.force === true;
 
-    if (force && user?.role !== 'admin') {
-      return Response.json({ error: 'Forbidden: Only management can force-close a cycle' }, { status: 403 });
-    }
-    if (user && user.role !== 'admin') {
+    if (user?.role !== 'admin') {
       return Response.json({ error: 'Forbidden: Management access required' }, { status: 403 });
     }
 

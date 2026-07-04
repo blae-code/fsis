@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
 
     // Manual invocations must be admin; scheduled automation runs unauthenticated.
     const user = await base44.auth.me().catch(() => null);
-    if (user && user.role !== 'admin') {
+    if (user?.role !== 'admin') {
       return Response.json({ error: 'Forbidden: Management access required' }, { status: 403 });
     }
 
