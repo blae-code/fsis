@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { storeCache } from '@/lib/localCache';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { MonitorCog } from 'lucide-react';
+import { KeyRound, MonitorCog } from 'lucide-react';
 import ProductCard from '@/components/store/ProductCard';
 import OrderPanel from '@/components/store/OrderPanel';
 import MyOrders from '@/components/store/MyOrders';
@@ -266,6 +266,16 @@ export default function Storefront() {
                 PROPRIETOR
               </div>
             )}
+            {!userLoading && user?.role !== 'admin' && (
+              <Link
+                to="/login"
+                className="flex items-center gap-1.5 font-mono text-[9px] font-bold tracking-[0.15em] px-2.5 py-1.5 border hover:brightness-125 transition-all"
+                style={{ borderColor: '#5C4424', color: '#C8A05B', background: '#100A04' }}
+              >
+                <KeyRound className="w-3 h-3" />
+                PROPRIETOR LOGIN
+              </Link>
+            )}
             {/* ARCHIVED: OPERATOR TERMINAL button — sequestered; proprietor accesses via icon below */}
             {user?.role === 'admin' && (
               <Link
@@ -480,7 +490,7 @@ export default function Storefront() {
         <button onClick={() => setShowOnboarding(true)} className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#8A8F45' }}>
           SETUP GUIDE
         </button>
-        {!userLoading && !user && (
+        {!userLoading && user?.role !== 'admin' && (
           <Link to="/login" className="text-[9px] font-mono underline hover:opacity-80" style={{ color: '#6B6155' }}>
             PROPRIETOR ACCESS
           </Link>
