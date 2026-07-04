@@ -293,7 +293,7 @@ export default function Storefront() {
 
           {/* Compact hero */}
           <div
-            className="shrink-0 p-[6px] hidden 2xl:block relative"
+            className="shrink-0 p-[6px] hidden lg:block relative"
             style={{
               background: 'linear-gradient(135deg, #E0A22E 0%, #8A8F45 24%, #C8893B 48%, #8A6430 74%, #3A2F20 100%)',
               boxShadow: '0 24px 70px rgba(0,0,0,0.46), 0 0 34px rgba(224,162,46,0.10)',
@@ -351,7 +351,7 @@ export default function Storefront() {
                 <CatalogQuickFilters active={quickFilter} onChange={setQuickFilter} products={storefrontProducts} marketBestByCode={marketBestByCode} />
                 <ProductCompareTray products={compareProducts} onClear={() => setCompareIds([])} onView={setDetailProduct} />
                 <motion.div
-                  className="grid grid-cols-1 min-[520px]:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 min-[1800px]:grid-cols-5 gap-3 sm:gap-4 auto-rows-fr"
+                  className="grid grid-cols-1 min-[520px]:grid-cols-2 min-[1150px]:grid-cols-3 min-[1500px]:grid-cols-4 min-[1800px]:grid-cols-5 gap-3 sm:gap-4 auto-rows-fr"
                   variants={{ show: { transition: { staggerChildren: 0.05 } } }}
                   initial="hidden"
                   animate="show"
