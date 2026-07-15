@@ -30,6 +30,7 @@ import ProcessingQueue from '@/components/apps/loot/ProcessingQueue';
 import CargoLotTracker from '@/components/apps/salvage/CargoLotTracker';
 import HaulRouteOverview from '@/components/apps/salvage/HaulRouteOverview';
 import ArkanisLogImport from '@/components/apps/salvage/ArkanisLogImport';
+import SessionSummary from '@/components/apps/salvage/SessionSummary';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -200,6 +201,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
           >
             MARKET
+          </TabsTrigger>
+          <TabsTrigger
+            value="summary"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            SUMMARY
           </TabsTrigger>
           <TabsTrigger
             value="stock"
@@ -604,6 +611,9 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
         </TabsContent>
         <TabsContent value="arkanis" className="flex-1 overflow-auto m-0">
           <ArkanisLogImport />
+        </TabsContent>
+        <TabsContent value="summary" className="flex-1 overflow-auto m-0">
+          <SessionSummary bestPrices={bestPrices} />
         </TabsContent>
       </Tabs>
 
