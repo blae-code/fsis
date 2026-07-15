@@ -32,6 +32,7 @@ import HaulRouteOverview from '@/components/apps/salvage/HaulRouteOverview';
 import ArkanisLogImport from '@/components/apps/salvage/ArkanisLogImport';
 import SessionSummary from '@/components/apps/salvage/SessionSummary';
 import SalvageTrends from '@/components/apps/salvage/SalvageTrends';
+import CrewOpsPanel from '@/components/apps/salvage/CrewOpsPanel';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -214,6 +215,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
           >
             TRENDS
+          </TabsTrigger>
+          <TabsTrigger
+            value="crew"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            CREW
           </TabsTrigger>
           <TabsTrigger
             value="stock"
@@ -624,6 +631,9 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
         </TabsContent>
         <TabsContent value="trends" className="flex-1 overflow-auto m-0">
           <SalvageTrends bestPrices={bestPrices} />
+        </TabsContent>
+        <TabsContent value="crew" className="flex-1 overflow-auto m-0">
+          <CrewOpsPanel />
         </TabsContent>
       </Tabs>
 

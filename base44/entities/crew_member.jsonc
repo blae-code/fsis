@@ -14,6 +14,10 @@
       "type": "string",
       "description": "Operational role, e.g. Proprietor, Pilot, Scraper, Security, Hauler"
     },
+    "current_mission": {
+      "type": "string",
+      "description": "The salvage mission or op this member is currently assigned to, e.g. 'Aaron Halo sweep'"
+    },
     "employment_type": {
       "type": "string",
       "enum": [
