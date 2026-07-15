@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, X, Package, AlertTriangle, DollarSign, FileSignature, Crosshair } from 'lucide-react';
+import { Bell, X, Package, AlertTriangle, DollarSign, FileSignature, Crosshair, GitBranch } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -8,8 +8,21 @@ const AMBER = '#E0A22E';
 const TEAL  = '#6FA08F';
 const RED   = '#C05050';
 
-function buildNotifications(orders = [], stockAlerts = [], priceAlerts = [], workOrders = [], contracts = [], salvageSessions = []) {
+function buildNotifications(orders = [], stockAlerts = [], priceAlerts = [], workOrders = [], contracts = [], salvageSessions = [], patchAlert = null) {
   const notes = [];
+
+  // New game patch detected — price list refresh required (highest priority)
+  if (patchAlert) {
+    notes.push({
+      id: `patch_${patchAlert.live}`,
+      type: 'patch',
+      icon: GitBranch,
+      color: RED,
+      title: `Patch ${patchAlert.live} detected — price list refresh required`,
+      sub: `Market cache still on ${patchAlert.cached} · resync UEX + re-anchor prices`,
+      ts: new Date().toISOString(),
+    });
+  }
 
   // New orders
   const newOrders = orders.filter(o => o.status === 'new');
@@ -99,8 +112,14 @@ export default function NotificationBell() {
   const { data: priceAlerts = [] }     = useQuery({ queryKey: ['notif_palerts'],   queryFn: () => base44.entities.price_alert.list('-updated_date', 10),                     refetchInterval: 120000 });
   const { data: contracts = [] }       = useQuery({ queryKey: ['notif_contracts'], queryFn: () => base44.entities.contract.filter({ status: 'open' }, '-created_date', 5),   refetchInterval: 60000 });
   const { data: salvageSessions = [] } = useQuery({ queryKey: ['notif_salvage'],   queryFn: () => base44.entities.salvage_session.list('-created_date', 5),                  refetchInterval: 60000 });
+  const { data: patchSetting = [] }    = useQuery({ queryKey: ['notif_patch'],     queryFn: () => base44.entities.app_setting.filter({ key: 'live_patch_version' }),         refetchInterval: 300000 });
+  const { data: latestCache = [] }     = useQuery({ queryKey: ['notif_patch_cache'], queryFn: () => base44.entities.commodity_price.list('-synced_at', 1),                   refetchInterval: 300000 });
 
-  const all = buildNotifications(orders, [], priceAlerts, workOrders, contracts, salvageSessions);
+  const livePatch = patchSetting[0]?.value;
+  const cachedPatch = latestCache[0]?.patch_version;
+  const patchAlert = livePatch && cachedPatch && livePatch !== cachedPatch ? { live: livePatch, cached: cachedPatch } : null;
+
+  const all = buildNotifications(orders, [], priceAlerts, workOrders, contracts, salvageSessions, patchAlert);
   const active = all.filter(n => !dismissed.includes(n.id));
   const count = active.length;
 
