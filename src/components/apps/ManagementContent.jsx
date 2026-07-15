@@ -19,6 +19,7 @@ import RestockInbox from '@/components/apps/management/RestockInbox';
 import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
 import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
+import QuickLogModal from '@/components/apps/management/QuickLogModal';
 import { Link } from 'react-router-dom';
 
 const AMBER  = '#E0A22E';
@@ -74,6 +75,7 @@ export default function ManagementContent() {
 
   return (
     <div className="h-full flex flex-col font-mono" style={{ background: 'hsl(30, 8%, 9%)' }}>
+      <QuickLogModal />
       {/* Header */}
       <div className="shrink-0 px-3 py-2 border-b flex items-center gap-2" style={{ borderColor: '#2A2118', background: '#0A0806' }}>
         <span style={{ color: AMBER }}>◈</span>
