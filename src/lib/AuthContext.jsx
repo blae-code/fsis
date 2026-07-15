@@ -104,12 +104,16 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(false);
       setAuthChecked(true);
       
-      // If user auth fails, it might be an expired token
+      // If user auth fails, the stored token is stale/expired. This app is a
+      // public storefront, so don't force a login redirect loop — quietly
+      // clear the dead token and continue anonymously. The proprietor can
+      // re-authenticate once via the header button and the fresh session
+      // persists in local storage.
       if (error.status === 401 || error.status === 403) {
-        setAuthError({
-          type: 'auth_required',
-          message: 'Authentication required'
-        });
+        try {
+          window.localStorage.removeItem('base44_access_token');
+          window.localStorage.removeItem('token');
+        } catch { /* storage unavailable */ }
       }
     }
   };
