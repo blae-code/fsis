@@ -9,7 +9,7 @@ const TEAL = '#5F9A8C';
 const DIM = '#5A4A34';
 
 // Session value: stored estimate first, else computed from live UEX best-sell prices
-function sessionValue(s, bestPrices) {
+export function sessionValue(s, bestPrices) {
   if (s.estimated_value > 0) return s.estimated_value;
   return (
     (s.rmc_scu || 0) * (bestPrices.RMC?.price_sell || 0) +
