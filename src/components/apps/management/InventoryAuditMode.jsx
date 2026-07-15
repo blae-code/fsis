@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Loader2, ClipboardCheck, RotateCcw, Check } from 'lucide-react';
+import { Loader2, ClipboardCheck, RotateCcw, Check, FileSpreadsheet } from 'lucide-react';
+import { exportInventoryAuditToSheets } from '@/functions/exportInventoryAuditToSheets';
 
 const AMBER = '#E0A22E';
 const GREEN = '#4EBF7A';
@@ -47,6 +48,28 @@ export default function InventoryAuditMode({ products }) {
     },
   });
 
+  const exportSheet = useMutation({
+    mutationFn: async () => {
+      const payload = rows.map((p) => {
+        const recorded = Number(p.stock || 0);
+        const hasCount = entered(p);
+        const counted = hasCount ? Math.max(0, Number(counts[p.id]) || 0) : null;
+        return {
+          name: p.product_name,
+          code: p.code || '',
+          category: (p.category || '').replace(/_/g, ' '),
+          unit: p.unit || 'SCU',
+          recorded,
+          counted,
+          variance: hasCount ? counted - recorded : null,
+          status: hasCount ? (counted === recorded ? 'OK' : 'VARIANCE') : 'PENDING',
+        };
+      });
+      const res = await exportInventoryAuditToSheets({ rows: payload });
+      return res.data;
+    },
+  });
+
   const setCount = (id, value) => {
     setApplied(null);
     setCounts((c) => ({ ...c, [id]: value }));
@@ -75,6 +98,15 @@ export default function InventoryAuditMode({ products }) {
             <RotateCcw className="w-3 h-3" /> RESET
           </button>
           <button
+            onClick={() => exportSheet.mutate()}
+            disabled={exportSheet.isPending || rows.length === 0}
+            className="border px-2.5 py-1.5 text-[9px] font-bold tracking-[0.14em] flex items-center gap-1.5 disabled:opacity-30"
+            style={{ borderColor: '#5C442460', color: AMBER, background: '#E0A22E10' }}
+          >
+            {exportSheet.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <FileSpreadsheet className="w-3 h-3" />}
+            EXPORT TO SHEETS
+          </button>
+          <button
             onClick={() => apply.mutate()}
             disabled={apply.isPending || changes.length === 0}
             className="border px-3 py-1.5 text-[9px] font-bold tracking-[0.14em] flex items-center gap-1.5 disabled:opacity-30"
@@ -85,6 +117,20 @@ export default function InventoryAuditMode({ products }) {
           </button>
         </div>
       </div>
+
+      {exportSheet.isSuccess && (
+        <div className="border rounded p-2.5 text-[9px] flex items-center justify-between gap-2" style={{ borderColor: `${GREEN}40`, background: `${GREEN}0A`, color: GREEN }}>
+          <span>✓ Exported {exportSheet.data?.rows_exported} row{exportSheet.data?.rows_exported !== 1 ? 's' : ''} to Google Sheets.</span>
+          <a href={exportSheet.data?.spreadsheet_url} target="_blank" rel="noreferrer" className="border px-2 py-1 font-bold tracking-[0.12em] hover:brightness-125" style={{ borderColor: `${GREEN}60`, color: GREEN }}>
+            OPEN SHEET
+          </a>
+        </div>
+      )}
+      {exportSheet.isError && (
+        <div className="border rounded p-2.5 text-[9px]" style={{ borderColor: `${RED}40`, color: RED }}>
+          Sheets export failed — {exportSheet.error?.response?.data?.error || exportSheet.error?.message || 'try again'}.
+        </div>
+      )}
 
       {applied && (
         <div className="border rounded p-2.5 text-[9px]" style={{ borderColor: `${GREEN}40`, background: `${GREEN}0A`, color: GREEN }}>
