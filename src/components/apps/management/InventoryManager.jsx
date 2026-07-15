@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { Loader2, Check, PackageSearch, CheckCircle, Wrench, Skull, Layers, ChevronDown, ClipboardCheck } from 'lucide-react';
 import ProductReservePanel from '@/components/apps/management/ProductReservePanel';
 import InventoryAuditMode from '@/components/apps/management/InventoryAuditMode';
+import InventorySheetSync from '@/components/apps/management/InventorySheetSync';
 
 const AMBER  = '#E0A22E';
 const GREEN  = '#4EBF7A';
@@ -318,6 +319,7 @@ export default function InventoryManager() {
           >
             <ClipboardCheck className="w-3 h-3" /> {auditMode ? 'EXIT AUDIT' : 'AUDIT MODE'}
           </button>
+          <InventorySheetSync />
           <button
             onClick={() => setFilter('all')}
             className="shrink-0 px-3 py-1 rounded-sm text-[9px] tracking-[0.15em] transition-colors"
