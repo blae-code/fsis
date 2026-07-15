@@ -39,6 +39,7 @@ import CommandSection from '@/components/apps/management/proprietor/CommandSecti
 import InvoiceLedgerPanel from '@/components/apps/management/proprietor/InvoiceLedgerPanel';
 import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
 import WeeklyPerformanceSummaryPanel from '@/components/apps/management/proprietor/WeeklyPerformanceSummaryPanel';
+import PatchTransitionPanel from '@/components/apps/management/proprietor/PatchTransitionPanel';
 
 export default function ProprietorCommandCenter() {
   const qc = useQueryClient();
@@ -88,6 +89,10 @@ export default function ProprietorCommandCenter() {
       <ProprietorCommandHero orders={orders} products={products} loot={loot} ledger={ledger} prices={prices} />
       <CommandKpiStrip orders={orders} products={products} loot={loot} />
       <ProprietorProgressRail orders={orders} loot={loot} products={products} restocks={restocks} />
+
+      <CommandSection eyebrow="PATCH 4.9 — THIS WEEK" title="GO-LIVE TRANSITION" description="Anticipated Alpha 4.9 changes compiled from official sources and PTU testing, plus the pause → resync → reprice → audit → resume runbook.">
+        <PatchTransitionPanel />
+      </CommandSection>
 
       <CommandSection eyebrow="DAILY WORK" title="PRIMARY OPERATIONS" description="Start here for the two most frequent loops: smart stock intake, then fulfill active buyer orders.">
         <div className="grid xl:grid-cols-[1fr_1.1fr] gap-4"><RapidLootIntakePanel /><FulfillmentQueue orders={orders} onStatus={(id, next, trackingCode) => status.mutate({ id, next, trackingCode })} pending={status.isPending} error={status.error} lastSuccess={status.data?.data?.order ? `ORDER ${status.data.data.order.tracking_code || status.data.data.order.id} → ${(status.data.data.order.status || '').replace('_', ' ').toUpperCase()}${status.data.data.order.status === 'delivered' ? ' — INVOICE MARKED PAID' : ''}` : null} /></div>
