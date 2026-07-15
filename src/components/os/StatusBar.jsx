@@ -8,6 +8,7 @@ import FsisLogo from '@/components/brand/FsisLogo';
 import { FSIS } from '@/lib/fsisLore';
 import NotificationBell from '@/components/os/NotificationBell';
 import UexStalenessIndicator from '@/components/os/UexStalenessIndicator';
+import VersionUpdatesIndicator from '@/components/os/VersionUpdatesIndicator';
 
 export default function StatusBar() {
   const [time, setTime] = useState(new Date());
@@ -115,6 +116,10 @@ export default function StatusBar() {
         <div className="h-4 w-px bg-border/40" />
 
         <UexStalenessIndicator />
+
+        <div className="h-4 w-px bg-border/40" />
+
+        <VersionUpdatesIndicator />
 
         <div className="h-4 w-px bg-border/40" />
 
