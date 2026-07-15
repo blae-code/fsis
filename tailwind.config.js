@@ -4,6 +4,10 @@ module.exports = {
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
+  		screens: {
+  			// 1080p-class landscape monitors: wide but vertically constrained
+  			hd: { raw: '(min-width: 1400px) and (max-height: 1120px)' }
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

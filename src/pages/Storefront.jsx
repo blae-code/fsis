@@ -248,7 +248,7 @@ export default function Storefront() {
       {/* Header */}
       <header className="shrink-0 border-b z-10 relative overflow-hidden" style={{ borderColor: '#5C4424', background: 'linear-gradient(90deg, rgba(8, 6, 4, 0.98), rgba(20, 15, 9, 0.96), rgba(28, 18, 10, 0.94), rgba(8, 6, 4, 0.98))', boxShadow: '0 14px 34px rgba(0,0,0,0.38), inset 0 -1px 0 rgba(224,162,46,0.14)' }}>
         <div className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #E0A22E, #8A8F45, transparent)' }} />
-        <div className="max-w-[1880px] mx-auto px-3 sm:px-4 2xl:px-8 py-2 sm:py-3 flex items-center justify-between gap-3">
+        <div className="max-w-[1880px] mx-auto px-3 sm:px-4 2xl:px-8 py-2 sm:py-3 hd:py-2 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <div className="p-1.5" style={{ background: 'linear-gradient(160deg, #8A6430, #4A3722)', clipPath: 'polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px)' }}>
               <FsisLogo size={24} />
@@ -297,8 +297,8 @@ export default function Storefront() {
       <StoreMaintenanceBanner status={storeStatus} />
 
       {/* Main deck — fills viewport, no page scroll */}
-      <main className="flex-1 min-h-0 max-w-[1880px] mx-auto w-full px-3 sm:px-4 2xl:px-8 pt-4 sm:pt-5 pb-28 lg:pb-8 grid grid-cols-1 lg:grid-cols-[1fr_390px] 2xl:grid-cols-[1fr_440px] gap-4 sm:gap-6 overflow-y-auto">
-        <div className="flex flex-col gap-4 min-h-full">
+      <main className="flex-1 min-h-0 max-w-[1880px] mx-auto w-full px-3 sm:px-4 2xl:px-8 pt-4 sm:pt-5 hd:pt-3 pb-28 lg:pb-8 hd:pb-5 grid grid-cols-1 lg:grid-cols-[1fr_390px] min-[2000px]:grid-cols-[1fr_440px] gap-4 sm:gap-6 hd:gap-4 overflow-y-auto">
+        <div className="flex flex-col gap-4 hd:gap-3 min-h-full">
           <ProprietorEntryway user={user} />
 
           {/* Compact hero */}
@@ -315,7 +315,7 @@ export default function Storefront() {
               style={{ clipPath: 'polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px)' }}
             >
               <div
-                className="relative p-6 md:p-7"
+                className="relative p-6 md:p-7 hd:p-4"
                 style={{
                   backgroundImage: `radial-gradient(circle at 16% 14%, rgba(224, 162, 46, 0.16), transparent 26%), linear-gradient(95deg, rgba(10, 8, 6, 0.96) 26%, rgba(20, 13, 7, 0.72) 60%, rgba(13, 11, 9, 0.38) 100%), url(${HERO_BG})`,
                   backgroundSize: 'cover',
@@ -327,11 +327,11 @@ export default function Storefront() {
                   <HexCrate size={150} />
                 </div>
                 <p className="font-mono text-[10px] tracking-[0.3em] mb-2 inline-flex px-2 py-1 border" style={{ color: '#E0A22E', borderColor: '#8A6430', background: 'rgba(8,6,4,0.55)' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
-                <h2 className="font-mono text-3xl 2xl:text-5xl font-bold leading-tight tracking-tight" style={{ textShadow: '0 0 26px rgba(224,162,46,0.18)' }}>
+                <h2 className="font-mono text-3xl 2xl:text-5xl hd:text-2xl font-bold leading-tight tracking-tight" style={{ textShadow: '0 0 26px rgba(224,162,46,0.18)' }}>
                   <span style={{ color: '#F2EADC' }}>Honest salvage.</span>{' '}
                   <span style={{ color: '#E0A22E' }}>Fair prices.</span>
                 </h2>
-                <p className="text-xs 2xl:text-sm mt-3 max-w-md font-mono leading-relaxed" style={{ color: '#A89C8A' }}>
+                <p className="text-xs 2xl:text-sm hd:text-xs mt-3 hd:mt-2 max-w-md font-mono leading-relaxed" style={{ color: '#A89C8A' }}>
                   Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
                 </p>
               </div>
@@ -361,7 +361,7 @@ export default function Storefront() {
                 <CatalogQuickFilters active={quickFilter} onChange={setQuickFilter} products={storefrontProducts} marketBestByCode={marketBestByCode} />
                 <ProductCompareTray products={compareProducts} onClear={() => setCompareIds([])} onView={setDetailProduct} />
                 <motion.div
-                  className="grid grid-cols-1 min-[520px]:grid-cols-2 min-[1150px]:grid-cols-3 min-[1500px]:grid-cols-4 min-[1800px]:grid-cols-5 gap-3 sm:gap-4 auto-rows-fr"
+                  className="grid grid-cols-1 min-[520px]:grid-cols-2 min-[1150px]:grid-cols-3 min-[1500px]:grid-cols-4 min-[2000px]:grid-cols-5 gap-3 sm:gap-4 auto-rows-fr"
                   variants={{ show: { transition: { staggerChildren: 0.05 } } }}
                   initial="hidden"
                   animate="show"
