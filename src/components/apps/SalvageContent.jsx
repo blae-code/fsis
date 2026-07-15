@@ -29,6 +29,7 @@ import ProfitDashboard from '@/components/apps/salvage/ProfitDashboard';
 import ProcessingQueue from '@/components/apps/loot/ProcessingQueue';
 import CargoLotTracker from '@/components/apps/salvage/CargoLotTracker';
 import HaulRouteOverview from '@/components/apps/salvage/HaulRouteOverview';
+import ArkanisLogImport from '@/components/apps/salvage/ArkanisLogImport';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -314,6 +315,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
           >
             PROC QUEUE
           </TabsTrigger>
+          <TabsTrigger
+            value="arkanis"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            ARKANIS
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="market" className="flex-1 overflow-auto m-0">
@@ -594,6 +601,9 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
         </TabsContent>
         <TabsContent value="procqueue" className="flex-1 overflow-auto m-0">
           <ProcessingQueue />
+        </TabsContent>
+        <TabsContent value="arkanis" className="flex-1 overflow-auto m-0">
+          <ArkanisLogImport />
         </TabsContent>
       </Tabs>
 
