@@ -4,10 +4,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Loader2, Check, PackageSearch, CheckCircle, Wrench, Skull, Layers, ChevronDown, ClipboardCheck } from 'lucide-react';
+import { Loader2, Check, PackageSearch, CheckCircle, Wrench, Skull, Layers, ChevronDown, ClipboardCheck, FileJson } from 'lucide-react';
 import ProductReservePanel from '@/components/apps/management/ProductReservePanel';
 import InventoryAuditMode from '@/components/apps/management/InventoryAuditMode';
 import InventorySheetSync from '@/components/apps/management/InventorySheetSync';
+import ArkanisImportPanel from '@/components/apps/management/arkanis/ArkanisImportPanel';
 
 const AMBER  = '#E0A22E';
 const GREEN  = '#4EBF7A';
@@ -222,6 +223,7 @@ export default function InventoryManager() {
   const [diagFilter, setDiag]   = useState('all');
   const [search, setSearch]     = useState('');
   const [auditMode, setAuditMode] = useState(false);
+  const [arkanisMode, setArkanisMode] = useState(false);
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['inv_products'],
@@ -312,7 +314,15 @@ export default function InventoryManager() {
         {/* Category filter rail */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
           <button
-            onClick={() => setAuditMode((v) => !v)}
+            onClick={() => { setArkanisMode((v) => !v); setAuditMode(false); }}
+            className="shrink-0 px-3 py-1 rounded-sm text-[9px] font-bold tracking-[0.15em] transition-colors flex items-center gap-1.5"
+            style={{ background: arkanisMode ? '#E0A22E18' : 'transparent', color: arkanisMode ? AMBER : '#6A5A40', border: `1px solid ${arkanisMode ? AMBER + '60' : '#2A2018'}` }}
+            title="Upload an Arkanis overlay export and reconcile it against the catalog"
+          >
+            <FileJson className="w-3 h-3" /> {arkanisMode ? 'EXIT IMPORT' : 'ARKANIS IMPORT'}
+          </button>
+          <button
+            onClick={() => { setAuditMode((v) => !v); setArkanisMode(false); }}
             className="shrink-0 px-3 py-1 rounded-sm text-[9px] font-bold tracking-[0.15em] transition-colors flex items-center gap-1.5"
             style={{ background: auditMode ? '#4EBF7A18' : 'transparent', color: auditMode ? GREEN : '#6A5A40', border: `1px solid ${auditMode ? GREEN + '60' : '#2A2018'}` }}
             title="Count physical stock and sync storefront records"
@@ -368,8 +378,10 @@ export default function InventoryManager() {
           </div>
         )}
 
-        {/* Stock rows / audit count sheet */}
-        {auditMode && !isLoading ? (
+        {/* Stock rows / audit count sheet / Arkanis import */}
+        {arkanisMode ? (
+          <ArkanisImportPanel />
+        ) : auditMode && !isLoading ? (
           <InventoryAuditMode products={visible} />
         ) : isLoading ? (
           <div className="flex items-center justify-center py-12">
