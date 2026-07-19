@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis,
-  CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { motion } from 'framer-motion';
 

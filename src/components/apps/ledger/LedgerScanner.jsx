@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { analyzeLedgerImage } from '@/functions/analyzeLedgerImage';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CATEGORIES } from '@/components/apps/ledger/LedgerEntryForm';
-import { ScanLine, Upload, Loader2, Check, X, Wallet } from 'lucide-react';
+import { ScanLine, Upload, Loader2, Check, Wallet } from 'lucide-react';
 
 const today = () => new Date().toISOString().slice(0, 10);
 

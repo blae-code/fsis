@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ChevronUp } from 'lucide-react';

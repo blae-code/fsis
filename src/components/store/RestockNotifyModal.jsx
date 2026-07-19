@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, X, Check, Loader2, PackageCheck } from 'lucide-react';
+import { X, Check, Loader2, PackageCheck } from 'lucide-react';
 
 const fieldStyle = { borderColor: '#3A2F20', background: '#0E0C09', color: '#D8CFC0' };
 

@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, Minus, ShoppingBag, Boxes, Users, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
-import { differenceInDays, subDays, format } from 'date-fns';
+import { TrendingUp, TrendingDown, Minus, ShoppingBag, Boxes, Users, AlertTriangle, Clock } from 'lucide-react';
+import { differenceInDays, subDays } from 'date-fns';
 import CommodityTrendChart from '@/components/apps/station/CommodityTrendChart';
 
 // ─── Theme ────────────────────────────────────────────────────────────────────

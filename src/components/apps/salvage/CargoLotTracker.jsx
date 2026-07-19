@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckSquare, Square, ChevronDown, MapPin, ArrowRight, Trash2, Loader2, Plus } from 'lucide-react';
+import { CheckSquare, Square, MapPin, ArrowRight, Trash2, Loader2, Plus } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Loader2, Shield } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { format } from 'date-fns';
 import { EmptyLog } from '@/components/brand/EmptyStateScene';
 import { SkeletonTable } from '@/components/ui/SkeletonCard';

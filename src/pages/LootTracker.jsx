@@ -3,9 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Plus, Trash2, Loader2, ArrowRight, Wrench, TrendingUp, TrendingDown,
-  Shield, Package, Sword, Zap, Box, Clock, AlertTriangle, ChevronDown,
-  ChevronUp, BarChart2, List, Edit2, Check, X, PieChart
+  Plus, Trash2, Loader2, ArrowRight, Wrench,
+  Shield, Package, Sword, Zap, Box, BarChart2, List, Edit2, Check, X, PieChart
 } from 'lucide-react';
 import LootSummaryDashboard from '@/components/loot/LootSummaryDashboard';
 import { Input } from '@/components/ui/input';

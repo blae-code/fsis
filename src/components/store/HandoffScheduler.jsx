@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { updateHandoff } from '@/functions/updateHandoff';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarClock, X, Send, Loader2, Check, MapPin, Radio } from 'lucide-react';

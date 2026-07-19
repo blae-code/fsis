@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Loader2, Check, PackageSearch, CheckCircle, Wrench, Skull, Layers, ChevronDown, ClipboardCheck, FileJson } from 'lucide-react';
 import ProductReservePanel from '@/components/apps/management/ProductReservePanel';

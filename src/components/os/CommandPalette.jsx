@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useWindows } from '@/lib/windowContext.jsx';
 import { resolveAppContent } from '@/lib/resolveAppContent.jsx';
 import { base44 } from '@/api/base44Client';

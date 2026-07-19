@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { openPaydayCycle } from '@/functions/openPaydayCycle';
 import { closePaydayCycle } from '@/functions/closePaydayCycle';
 import { Input } from '@/components/ui/input';
-import { CalendarCheck, Timer, FileCheck2, Loader2, CheckCircle2, Clock, Coins, AlertTriangle } from 'lucide-react';
+import { CalendarCheck, Timer, FileCheck2, Loader2, CheckCircle2, Coins, AlertTriangle } from 'lucide-react';
 import { formatDistanceToNow, format, differenceInHours } from 'date-fns';
 
 const AMBER  = '#E0A22E';

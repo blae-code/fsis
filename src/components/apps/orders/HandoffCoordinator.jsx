@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarClock, Check, X, Loader2, MapPin, Radio, Send } from 'lucide-react';
+import { CalendarClock, Check, X, Loader2, MapPin, Send } from 'lucide-react';
 
 const AMBER = '#E0A22E';
 const field = { borderColor: '#3A2F20', background: '#0C0A08', color: '#D8CFC0' };

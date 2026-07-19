@@ -5,7 +5,7 @@ import { trackOrder } from '@/functions/trackOrder';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { PackageCheck, Search, Loader2, RotateCcw, FileDown, MessageSquare, CalendarClock } from 'lucide-react';
+import { Search, Loader2, RotateCcw, FileDown, MessageSquare, CalendarClock } from 'lucide-react';
 import OrderMessageThread from '@/components/store/OrderMessageThread';
 import HandoffScheduler from '@/components/store/HandoffScheduler';
 import PassphraseSigil from '@/components/brand/glyphs/PassphraseSigil';

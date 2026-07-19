@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Clock, AlertTriangle, Loader2, ArrowRight } from 'lucide-react';
 
-import { differenceInDays, format } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 
 const AMBER  = '#E0A22E';
 const TEAL   = '#6FA08F';

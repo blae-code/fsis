@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { ClipboardList, MapPin } from 'lucide-react';
 import OrderPriceAdjust from '@/components/apps/orders/OrderPriceAdjust';
-import HandoffCoordinator, { HandoffStatusBadge } from '@/components/apps/orders/HandoffCoordinator';
+import HandoffCoordinator from '@/components/apps/orders/HandoffCoordinator';
 
 const STATUSES = ['new', 'confirmed', 'in_fulfillment', 'delivered', 'cancelled'];
 

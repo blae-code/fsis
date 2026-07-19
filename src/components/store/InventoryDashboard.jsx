@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip,
-  ResponsiveContainer, CartesianGrid, ReferenceLine,
+  ResponsiveContainer, CartesianGrid,
 } from 'recharts';
 
 /* ── palette ─────────────────────────────────────────────── */

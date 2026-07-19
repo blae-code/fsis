@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SalvageCrest, FabricatedCrest, ServiceCrest } from '@/components/brand/glyphs/CategoryCrests';
+import { SalvageCrest, FabricatedCrest } from '@/components/brand/glyphs/CategoryCrests';
 
 /* ── palette ─────────────────────────────────────── */
 const AMBER  = '#E0A22E';

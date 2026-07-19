@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { contractorPayday } from '@/functions/contractorPayday';
 import { submitPaydayElection } from '@/functions/submitPaydayElection';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Coins, Timer, Loader2, Shield, Anchor, Briefcase, MonitorDot, CheckCircle2, Clock, ArrowRight } from 'lucide-react';
+import { Coins, Loader2, Shield, Anchor, Briefcase, MonitorDot, CheckCircle2, Clock, ArrowRight } from 'lucide-react';
 import { formatDistanceToNow, differenceInHours } from 'date-fns';
 import { CycleReport } from '@/components/apps/fairshare/PaydayCycleDeck';
 import SalvageOpsView from '@/components/apps/station/SalvageOpsView';
