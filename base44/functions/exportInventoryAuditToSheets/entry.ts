@@ -43,6 +43,9 @@ Deno.serve(async (req) => {
     if (!rows.length) {
       return Response.json({ error: 'No audit rows to export' }, { status: 400 });
     }
+    if (rows.length > 10000) {
+      return Response.json({ error: 'Too many audit rows to export (10000 max)' }, { status: 400 });
+    }
 
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googlesheets');
 

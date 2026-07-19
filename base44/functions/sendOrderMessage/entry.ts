@@ -17,6 +17,9 @@ Deno.serve(async (req) => {
     if (!cleanHandle || !cleanMessage) {
       return Response.json({ error: 'Handle and message required' }, { status: 400 });
     }
+    if (cleanHandle.length > 64 || cleanMessage.length > 4000) {
+      return Response.json({ error: 'Handle or message is too long' }, { status: 400 });
+    }
 
     const svc = base44.asServiceRole.entities;
     const orders = trackingCode

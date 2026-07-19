@@ -13,8 +13,14 @@ Deno.serve(async (req) => {
     if (!code) {
       return Response.json({ error: 'Tracking code required' }, { status: 400 });
     }
+    if (code.length > 64) {
+      return Response.json({ error: 'Invalid tracking code' }, { status: 400 });
+    }
     if (!handoff_proposed_time?.trim()) {
       return Response.json({ error: 'Availability window is required' }, { status: 400 });
+    }
+    if (String(handoff_proposed_time).length > 500 || String(handoff_location || '').length > 500 || String(handoff_contact || '').length > 200) {
+      return Response.json({ error: 'Handoff details are too long' }, { status: 400 });
     }
 
     const svc = base44.asServiceRole.entities;

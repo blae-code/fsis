@@ -112,6 +112,7 @@ Deno.serve(async (req) => {
         text = await res.text();
       }
       if (!text.trim()) return Response.json({ error: 'The file is empty' }, { status: 400 });
+      if (text.length > 5_000_000) return Response.json({ error: 'File is too large (5 MB max)' }, { status: 400 });
 
       // Parse JSON first, fall back to CSV
       let rawItems = null;
@@ -156,6 +157,7 @@ Deno.serve(async (req) => {
     if (mode === 'commit') {
       const rows = Array.isArray(payload.rows) ? payload.rows : [];
       if (!rows.length) return Response.json({ error: 'No rows to commit' }, { status: 400 });
+      if (rows.length > 5000) return Response.json({ error: 'Too many rows in one commit (5000 max)' }, { status: 400 });
 
       const updates = [];
       const creates = [];

@@ -138,6 +138,7 @@ Deno.serve(async (req) => {
         text = await res.text();
       }
       if (!text.trim()) return Response.json({ error: 'The file is empty' }, { status: 400 });
+      if (text.length > 5_000_000) return Response.json({ error: 'File is too large (5 MB max)' }, { status: 400 });
 
       let entries = null;
       try {
@@ -156,6 +157,9 @@ Deno.serve(async (req) => {
       }
       if (!entries || !entries.length) {
         return Response.json({ error: 'No log entries found in the file. Expected a JSON log or a CSV with a header row.' }, { status: 400 });
+      }
+      if (entries.length > 5000) {
+        return Response.json({ error: 'Too many log entries in one import (5000 max)' }, { status: 400 });
       }
 
       const grouped = buildSessions(entries);

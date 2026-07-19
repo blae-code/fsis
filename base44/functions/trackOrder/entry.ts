@@ -11,6 +11,9 @@ Deno.serve(async (req) => {
     if (!code) {
       return Response.json({ error: 'Tracking code required' }, { status: 400 });
     }
+    if (code.length > 64) {
+      return Response.json({ error: 'Invalid tracking code' }, { status: 400 });
+    }
 
     let matches = await base44.asServiceRole.entities.order.filter({ tracking_code: code });
     if (matches.length === 0) {
