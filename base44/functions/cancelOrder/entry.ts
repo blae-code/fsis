@@ -22,21 +22,27 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Order is already being processed and can no longer be cancelled — contact FSIS.' }, { status: 400 });
     }
 
-    const restoreTag = `[stock-restored:${order.id}]`;
-    const restoreNotes = [];
-    if (!(order.internal_notes || '').includes(restoreTag)) {
-      for (const item of order.items || []) {
-        if (!item.product_id || !item.quantity) continue;
-        const product = await svc.product.get(item.product_id).catch(() => null);
-        if (!product || product.category === 'service') continue;
-        const nextStock = (product.stock || 0) + item.quantity;
-        await svc.product.update(product.id, { stock: nextStock });
-        restoreNotes.push(`${product.product_name}: ${product.stock || 0} → ${nextStock}`);
-      }
+    // Atomic claim: conditionally flip 'new' -> 'cancelled' server-side. Only the
+    // invocation that wins the claim (updated === 1) proceeds to restore stock, so
+    // a double-clicked / retried / concurrent cancel cannot double-restore stock.
+    const claim = await svc.order.updateMany({ id: order.id, status: 'new' }, { $set: { status: 'cancelled' } });
+    if (!claim || claim.updated === 0) {
+      return Response.json({ error: 'Order is already being processed and can no longer be cancelled — contact FSIS.' }, { status: 400 });
     }
 
+    const restoreTag = `[stock-restored:${order.id}]`;
+    const restoreNotes = [];
+    for (const item of order.items || []) {
+      if (!item.product_id || !item.quantity) continue;
+      const product = await svc.product.get(item.product_id).catch(() => null);
+      if (!product || product.category === 'service') continue;
+      const nextStock = (product.stock || 0) + item.quantity;
+      await svc.product.update(product.id, { stock: nextStock });
+      restoreNotes.push(`${product.product_name}: ${product.stock || 0} → ${nextStock}`);
+    }
+
+    // Status is already 'cancelled' from the claim above — just append the audit notes.
     await svc.order.update(order.id, {
-      status: 'cancelled',
       internal_notes: [(order.internal_notes || '').trim(), `BUYER CANCELLED while order was new (${new Date().toISOString()})`, restoreNotes.length ? `STOCK RESTORED: ${restoreNotes.join('; ')} ${restoreTag}` : restoreTag].filter(Boolean).join('\n'),
     });
     await svc.ops_log.create({

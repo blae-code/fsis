@@ -27,6 +27,17 @@ Deno.serve(async (req) => {
       const targeted = force && (!payload.cycle_id || payload.cycle_id === cycle.id);
       if (!due && !targeted) continue;
 
+      // Atomic claim: conditionally flip this cycle 'open' -> 'published' server-side
+      // BEFORE computing any payout. Only the invocation that wins (updated === 1)
+      // proceeds, so a concurrent hourly-bot run + management force-close cannot both
+      // pay out the same cycle (double-pay). The final report/totals are filled in by
+      // the update() below once payouts are computed.
+      const claim = await base44.asServiceRole.entities.payday_cycle.updateMany(
+        { id: cycle.id, status: 'open' },
+        { $set: { status: 'published', published_at: now.toISOString() } }
+      );
+      if (!claim || claim.updated === 0) continue;
+
       const pool = cycle.pool_auec || 0;
       const totalShares = cycle.total_shares || 0;
       const shareValue = totalShares > 0 ? pool / totalShares : 0;
