@@ -32,23 +32,11 @@ Deno.serve(async (req) => {
       return Response.json({ skipped: true, reason: 'Work order already exists for this session' });
     }
 
-    // 1. Ledger income entry
-    if (gross > 0) {
-      await svc.ledger_entry.create({
-        entry_type: 'income',
-        category: 'salvage_sale',
-        amount_auec: gross,
-        description: `Salvage sale — ${session.session_name} (${session.ship || 'unknown ship'})`,
-        counterparty: session.location || '',
-        entry_date: today,
-        notes: 'Auto-logged by FSIS.bot settlement agent.',
-      });
-      actions.push(`logged ${gross.toLocaleString()} aUEC income`);
-    }
-
-    // 2. Draft FairShare work order with the active crew roster
+    // 1. Draft the FairShare work order FIRST. It is the idempotency anchor —
+    //    the guard above keys on work_order.session_id, so a concurrent or retried
+    //    invocation trips that guard here before the income can be double-logged.
     const roster = await svc.crew_member.filter({ active: true });
-    await svc.work_order.create({
+    const workOrder = await svc.work_order.create({
       order_name: `${session.session_name} — settlement`,
       session_id: session.id,
       session_name: session.session_name,
@@ -58,6 +46,26 @@ Deno.serve(async (req) => {
       notes: 'Auto-drafted by FSIS.bot when the session was marked sold. Adjust crew and expenses before settling.',
     });
     actions.push(`drafted work order for ${roster.length} crew`);
+
+    // 2. Ledger income entry. If it fails, roll back the work order so a retry
+    //    re-runs both writes cleanly instead of skipping (which would drop income).
+    if (gross > 0) {
+      try {
+        await svc.ledger_entry.create({
+          entry_type: 'income',
+          category: 'salvage_sale',
+          amount_auec: gross,
+          description: `Salvage sale — ${session.session_name} (${session.ship || 'unknown ship'})`,
+          counterparty: session.location || '',
+          entry_date: today,
+          notes: 'Auto-logged by FSIS.bot settlement agent.',
+        });
+        actions.push(`logged ${gross.toLocaleString()} aUEC income`);
+      } catch (err) {
+        await svc.work_order.delete(workOrder.id).catch(() => {});
+        throw err;
+      }
+    }
 
     console.log(`Session ${session.id} sold: ${actions.join('; ')}`);
     return Response.json({ applied: true, actions });

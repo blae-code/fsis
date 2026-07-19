@@ -119,7 +119,9 @@ Deno.serve(async (req) => {
     }
 
     const invoiceNumber = `FSIS-INV-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${tracking_code.replace('FSIS-', '')}`;
-    const invoice = await svc.invoice.create({
+    let invoice;
+    try {
+      invoice = await svc.invoice.create({
       invoice_number: invoiceNumber,
       transaction_type: 'order',
       status: 'issued',
@@ -151,7 +153,19 @@ Deno.serve(async (req) => {
       notes: customer_notes || '',
     });
 
-    await svc.order.update(order.id, { invoice_id: invoice.id, invoice_number: invoiceNumber });
+      await svc.order.update(order.id, { invoice_id: invoice.id, invoice_number: invoiceNumber });
+    } catch (error) {
+      // Invoice / order-finalization failed after stock was reserved and the order
+      // row was created — roll back both (mirroring the reservation rollback above)
+      // so checkout fails cleanly instead of leaving an invoice-less order with
+      // stock permanently subtracted.
+      for (const reserved of reservedProducts) {
+        const current = await svc.product.get(reserved.id).catch(() => null);
+        if (current) await svc.product.update(reserved.id, { stock: (current.stock || 0) + reserved.quantity }).catch(() => {});
+      }
+      await svc.order.delete(order.id).catch(() => {});
+      throw error;
+    }
 
     if (applied) {
       await svc.discount_code.update(applied.id, { uses: (applied.uses || 0) + 1 });
