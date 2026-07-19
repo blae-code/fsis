@@ -17,6 +17,11 @@ Deno.serve(async (req) => {
     if (!delivery_location?.trim()) {
       return Response.json({ error: 'Delivery location is required' }, { status: 400 });
     }
+    // Guard: bound a public (guest) request so a single call can't trigger runaway
+    // catalog scans / stock writes. Generous caps — far above any legitimate order.
+    if (items.length > 100) {
+      return Response.json({ error: 'Too many items in a single order' }, { status: 400 });
+    }
 
     const svc = base44.asServiceRole.entities;
     const products = await svc.product.filter({ available: true });
@@ -33,7 +38,7 @@ Deno.serve(async (req) => {
       if (!product) {
         return Response.json({ error: `${item.product_name || 'An item'} is no longer available` }, { status: 400 });
       }
-      const quantity = Math.max(1, Math.floor(Number(item.quantity) || 1));
+      const quantity = Math.min(100000, Math.max(1, Math.floor(Number(item.quantity) || 1)));
       if (product.category !== 'service' && (product.stock || 0) < quantity) {
         return Response.json({ error: `${product.product_name}: only ${product.stock || 0} ${product.unit || 'SCU'} in stock` }, { status: 400 });
       }

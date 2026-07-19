@@ -30,6 +30,15 @@ Deno.serve(async (req) => {
       return Response.json({ skipped: true, reason: 'Payroll already booked' });
     }
 
+    // Guard: reject malformed financials (negative / non-numeric / NaN shares or
+    // amounts) before booking payroll — otherwise they inflate or NaN the payout.
+    const badAmount = (n) => !Number.isFinite(Number(n)) || Number(n) < 0;
+    if (badAmount(wo.gross_auec ?? 0)
+      || (wo.expenses || []).some((e) => badAmount(e?.amount_auec ?? 0))
+      || (wo.crew_shares || []).some((c) => badAmount(c?.shares ?? 0))) {
+      return Response.json({ error: 'Work order has invalid (negative or non-numeric) amounts' }, { status: 400 });
+    }
+
     const gross = wo.gross_auec || 0;
     const expenses = (wo.expenses || []).reduce((t, e) => t + (e.amount_auec || 0), 0);
     const net = Math.max(0, gross - expenses);

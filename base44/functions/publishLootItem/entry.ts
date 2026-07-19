@@ -38,7 +38,11 @@ Deno.serve(async (req) => {
     const price = roundPrice(payload.price_auec ?? item.est_sell_auec);
     if (price <= 0) return Response.json({ error: 'Set a sale estimate before listing this item' }, { status: 400 });
 
-    const quantity = Math.max(1, Number(payload.quantity ?? item.quantity ?? 1));
+    const rawQuantity = Number(payload.quantity ?? item.quantity ?? 1);
+    if (!Number.isFinite(rawQuantity) || rawQuantity < 1) {
+      return Response.json({ error: 'quantity must be a positive number' }, { status: 400 });
+    }
+    const quantity = Math.floor(rawQuantity);
     const productData = {
       product_name: payload.product_name || item.item_name,
       code: payload.code || item.size_class || undefined,

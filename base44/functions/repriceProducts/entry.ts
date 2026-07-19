@@ -19,6 +19,12 @@ Deno.serve(async (req) => {
         try { payload = await req.json(); } catch { /* empty body ok */ }
         const marginPercent = typeof payload.margin_percent === 'number' ? payload.margin_percent : DEFAULT_MARGIN_PERCENT;
 
+        // Guard: a non-finite / out-of-range margin (typeof NaN === 'number') would
+        // otherwise rewrite every product price to 0, negative, or an overflow value.
+        if (!Number.isFinite(marginPercent) || marginPercent < 0 || marginPercent > 100) {
+            return Response.json({ error: 'margin_percent must be a finite number between 0 and 100' }, { status: 400 });
+        }
+
         const [products, prices] = await Promise.all([
             base44.asServiceRole.entities.product.list(null, 200),
             base44.asServiceRole.entities.commodity_price.list(null, 500),
