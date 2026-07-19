@@ -14,6 +14,9 @@ Deno.serve(async (req) => {
     if (!image_url) {
       return Response.json({ error: 'image_url is required' }, { status: 400 });
     }
+    // Normalize to the salvage_scan enum so a bad/oversized value isn't persisted.
+    const ALLOWED_SCAN_TYPES = ['terminal', 'contract', 'ship-hud', 'signature', 'manifest', 'other'];
+    const scanType = ALLOWED_SCAN_TYPES.includes(scan_type) ? scan_type : 'other';
 
     const prompts = {
       terminal: 'This is a screenshot of a Star Citizen commodity trade terminal. Extract every commodity row you can read: the commodity name, its short code (RMC, CMR, CMS, etc.), the sell price per unit in aUEC, and the terminal/location name if visible. Focus on salvage outputs (RMC = Recycled Material Composite, CMR = Construction Materials Reclaimed, CMS = Construction Materials Salvaged).',
@@ -24,7 +27,7 @@ Deno.serve(async (req) => {
       other: 'This is a Star Citizen game screen related to salvage. Read and extract any useful numbers, commodity codes, prices, quantities, and locations you can identify.',
     };
 
-    const instruction = prompts[scan_type] || prompts.other;
+    const instruction = prompts[scanType] || prompts.other;
 
     const result = await base44.integrations.Core.InvokeLLM({
       prompt: `You are an OCR and data-extraction engine for Star Citizen salvage operators. ${instruction}\n\nReturn a concise human-readable summary, a confidence rating, and structured detected commodities. If you cannot read a value, omit it rather than guessing.`,
@@ -58,7 +61,7 @@ Deno.serve(async (req) => {
     let savedId = null;
     try {
       const saved = await base44.entities.salvage_scan.create({
-        scan_type,
+        scan_type: scanType,
         image_url,
         summary: result.summary,
         confidence: result.confidence,

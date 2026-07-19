@@ -11,8 +11,12 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json().catch(() => ({}));
-    const cargo = body.cargo || {}; // { RMC: scu, CMR: scu, CMS: scu }
-    const homeSystem = body.home_system || user.home_system || null;
+    const cargo = (body.cargo && typeof body.cargo === 'object' && !Array.isArray(body.cargo)) ? body.cargo : {}; // { RMC: scu, CMR: scu, CMS: scu }
+    if (Object.keys(cargo).length > 20) {
+      return Response.json({ error: 'Too many cargo entries' }, { status: 400 });
+    }
+    const rawHome = body.home_system || user.home_system || null;
+    const homeSystem = rawHome != null ? String(rawHome).slice(0, 60) : null;
 
     const salvageCodes = ['RMC', 'CMR', 'CMS'];
     const prices = await base44.entities.commodity_price.filter({

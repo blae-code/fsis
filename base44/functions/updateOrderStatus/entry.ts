@@ -13,6 +13,9 @@ Deno.serve(async (req) => {
     if ((!order_id && !tracking_code) || !STATUSES.includes(status)) {
       return Response.json({ error: 'Valid order_id and status required' }, { status: 400 });
     }
+    if ((order_id && typeof order_id !== 'string') || (tracking_code && typeof tracking_code !== 'string')) {
+      return Response.json({ error: 'order_id and tracking_code must be strings' }, { status: 400 });
+    }
 
     const svc = base44.asServiceRole.entities;
     let order = null;

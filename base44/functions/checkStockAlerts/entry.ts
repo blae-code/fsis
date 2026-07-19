@@ -19,8 +19,15 @@ Deno.serve(async (req) => {
     if (!product) {
       return Response.json({ status: 'skipped', reason: 'no product data' });
     }
+    if (typeof entityId !== 'string' || !entityId) {
+      // Without a concrete product id the alert filter below would match too broadly.
+      return Response.json({ status: 'skipped', reason: 'no entity id' });
+    }
 
-    const stock = product.stock ?? 0;
+    const stock = Number(product.stock ?? 0);
+    if (!Number.isFinite(stock)) {
+      return Response.json({ status: 'skipped', reason: 'invalid stock value' });
+    }
 
     const alerts = await base44.asServiceRole.entities.stock_alert.filter({
       product_id: entityId,

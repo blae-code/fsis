@@ -10,8 +10,11 @@ Deno.serve(async (req) => {
     }
 
     const { item_name } = await req.json();
-    if (!item_name) {
+    if (typeof item_name !== 'string' || !item_name.trim()) {
       return Response.json({ error: 'item_name is required' }, { status: 400 });
+    }
+    if (item_name.length > 200) {
+      return Response.json({ error: 'item_name is too long' }, { status: 400 });
     }
 
     const result = await base44.integrations.Core.InvokeLLM({
