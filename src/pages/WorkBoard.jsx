@@ -17,6 +17,7 @@ import NoticeCentre from '@/components/work/NoticeCentre';
 import OpenWorkCard from '@/components/work/OpenWorkCard';
 import BoardSection from '@/components/work/BoardSection';
 import BoardEmpty from '@/components/work/BoardEmpty';
+import OperationCalendar from '@/components/work/OperationCalendar';
 import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 
 /** The labour board: work open to any comrade, and the tasks each holds in hand. */
@@ -146,6 +147,7 @@ export default function WorkBoard() {
         </BoardSection>
 
         <BoardSection eyebrow="MUSTERS CALLED" accent="#C8A05B" count={upcoming.length}>
+          <OperationCalendar operations={operations} />
           {upcoming.length === 0 ? (
             <BoardEmpty>No musters called. Nobody is owed your time until you offer it.</BoardEmpty>
           ) : (
