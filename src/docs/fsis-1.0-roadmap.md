@@ -33,8 +33,9 @@ value, the collective owns the means of production, plain solidarity language, n
   ✅ Storefront "WORK WITH US" tab: labour advert + terms, account prompt for guests, contractor request
   form (`standing_request` + `requestStanding`), pending/declined status shown back to the applicant, and a
   council review queue in the STANDING tab that admits straight to contractor standing.
-  ⬜ Remaining: Patron guest-order claiming (link past tracking codes to a new account), onboarding branched
-  into Patron / Contractor / Operator paths.
+  ✅ Patron guest-order claiming: `claimOrder` binds device-tracked tracking codes to an account
+  (`order.claimed_by_user_id`, read/update RLS extended), surfaced on the ACTIVE ORDERS tab.
+  ⬜ Remaining: onboarding branched into Patron / Contractor / Operator paths.
 - **Phase 5 — Governance & launch**
   Council invite/role management hardening, access audit surfacing, end-to-end readiness pass across all
   four standings.

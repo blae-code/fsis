@@ -15,6 +15,7 @@ import { downloadInvoice } from '@/lib/invoicePdf';
 import OrderTimeline from '@/components/store/OrderTimeline';
 import CancelOrder from '@/components/store/CancelOrder';
 import CargoLotEta from '@/components/store/CargoLotEta';
+import ClaimOrdersPanel from '@/components/store/ClaimOrdersPanel';
 import { etaFor } from '@/lib/storeLocations';
 
 // Per-status fulfillment expectation shown to buyers
@@ -58,9 +59,20 @@ export default function MyOrders({ onReorder }) {
       const authed = await base44.auth.isAuthenticated();
       if (!authed) return [];
       const user = await base44.auth.me();
-      return base44.entities.order.filter({ created_by_id: user.id }, '-created_date', 50);
+      const [own, claimed] = await Promise.all([
+        base44.entities.order.filter({ created_by_id: user.id }, '-created_date', 50),
+        base44.entities.order.filter({ claimed_by_user_id: user.id }, '-created_date', 50),
+      ]);
+      const map = new Map([...own, ...claimed].map((o) => [o.id, o]));
+      return [...map.values()];
     },
     refetchInterval: 30 * 1000,
+  });
+
+  // Who is signed in — decides whether guest orders can be bound to an account
+  const { data: account } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => (await base44.auth.isAuthenticated()) ? base44.auth.me() : null,
   });
 
   // Merge account orders with device-tracked codes (dedupe by tracking code)
@@ -147,6 +159,8 @@ export default function MyOrders({ onReorder }) {
         {lookupError && <p className="text-[10px]" style={{ color: '#C05050' }}>{lookupError}</p>}
         <p className="text-[9px] leading-relaxed" style={{ color: '#6B6155' }}>Tracking codes and passphrases work like private receipts. They are saved on this device only; do not share the passphrase before handoff.</p>
       </div>
+
+      <ClaimOrdersPanel user={account} orders={allOrders} />
 
       {/* Tracked orders */}
       {allOrders.length === 0 && !isLoading ? (
