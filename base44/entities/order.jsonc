@@ -14,6 +14,18 @@
       "type": "string",
       "description": "Profile handle snapshot at the time the order was placed"
     },
+    "claimed_by_user_id": {
+      "type": "string",
+      "description": "Patron account that claimed this guest order with its tracking code, so it follows them across devices"
+    },
+    "claimed_by_email": {
+      "type": "string",
+      "description": "Email of the account that claimed the order"
+    },
+    "claimed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
     "invoice_id": {
       "type": "string",
       "description": "Linked invoice record generated for this transaction"
@@ -144,6 +156,9 @@
           "created_by_id": "{{user.id}}"
         },
         {
+          "data.claimed_by_user_id": "{{user.id}}"
+        },
+        {
           "user_condition": {
             "role": "admin"
           }
@@ -154,6 +169,13 @@
       "$or": [
         {
           "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.claimed_by_user_id": {
+            "$in": [
+              "{{user.id}}"
+            ]
+          }
         },
         {
           "user_condition": {
