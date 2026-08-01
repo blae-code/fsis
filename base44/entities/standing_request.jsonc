@@ -1,0 +1,94 @@
+{
+  "name": "standing_request",
+  "type": "object",
+  "properties": {
+    "applicant_user_id": {
+      "type": "string",
+      "description": "Base44 user id of the comrade asking to take up work"
+    },
+    "applicant_email": {
+      "type": "string"
+    },
+    "handle": {
+      "type": "string",
+      "description": "In-game handle the comrade works under"
+    },
+    "requested_role": {
+      "type": "string",
+      "enum": [
+        "contractor"
+      ],
+      "default": "contractor",
+      "description": "Only contractor standing may be asked for \u2014 owner seats are extended by the proprietor alone"
+    },
+    "skills": {
+      "type": "string",
+      "description": "What labour they can offer, e.g. 'scraping, hauling, escort'"
+    },
+    "availability": {
+      "type": "string",
+      "description": "When they can stand a muster, in their own words"
+    },
+    "timezone": {
+      "type": "string",
+      "description": "Where in the day they live, so musters can be called fairly"
+    },
+    "note": {
+      "type": "string",
+      "description": "Anything else the comrade wants the council to know"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "declined",
+        "withdrawn"
+      ],
+      "default": "pending"
+    },
+    "reviewed_by_email": {
+      "type": "string"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "review_notes": {
+      "type": "string",
+      "description": "The council's answer, visible to the applicant"
+    }
+  },
+  "required": [
+    "handle"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

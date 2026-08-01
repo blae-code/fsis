@@ -23,6 +23,7 @@ import StoreOnboarding from '@/components/store/StoreOnboarding';
 import MobileCartBar from '@/components/store/MobileCartBar';
 import ActiveOrderBanner from '@/components/store/ActiveOrderBanner';
 import StoreFaq from '@/components/store/StoreFaq';
+import JoinTheCollective from '@/components/store/JoinTheCollective';
 import ProductCompareTray from '@/components/store/ProductCompareTray';
 import StorefrontAtmosphere from '@/components/store/StorefrontAtmosphere';
 import ProprietorEntryway from '@/components/store/ProprietorEntryway';
@@ -406,6 +407,7 @@ export default function Storefront() {
               </div>
             )}
             {tab === 'faq' && <StoreFaq onNavigate={setTab} />}
+            {tab === 'join' && <JoinTheCollective user={user} userLoading={userLoading} />}
             {/* ARCHIVED: jobs, dashboard, report tabs sequestered for future operator development */}
             {tab === 'about' && (
               <>

@@ -7,6 +7,7 @@ import { fsisRole, isProprietor, ROLE_META } from '@/lib/roles';
 import OwnerInviteForm from '@/components/apps/management/access/OwnerInviteForm';
 import MemberStandingRow from '@/components/apps/management/access/MemberStandingRow';
 import AccessGrantLog from '@/components/apps/management/access/AccessGrantLog';
+import StandingRequestQueue from '@/components/apps/management/access/StandingRequestQueue';
 
 const ORDER = ['proprietor', 'owner', 'contractor', 'patron'];
 
@@ -69,6 +70,8 @@ export default function AccessConsole() {
           </button>
         ))}
       </div>
+
+      <StandingRequestQueue />
 
       {isProprietor(actor) && <OwnerInviteForm />}
       {!isProprietor(actor) && (

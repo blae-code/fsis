@@ -29,9 +29,12 @@ value, the collective owns the means of production, plain solidarity language, n
   in cycle settlement)
   Contractor job board (open tasks + scheduled operations with RSVP + detail), claim + proof submission,
   "my tasks" with time remaining, work-history dashboard. Enforce contractor exclusion from share payday.
-- **Phase 4 — Public front doors**
-  Jobs advert on the storefront, Contractor registration creating a pending account, Patron sign-up with
-  guest-order claiming, onboarding branched into Patron / Contractor / Operator paths.
+- **Phase 4 — Public front doors** (in progress)
+  ✅ Storefront "WORK WITH US" tab: labour advert + terms, account prompt for guests, contractor request
+  form (`standing_request` + `requestStanding`), pending/declined status shown back to the applicant, and a
+  council review queue in the STANDING tab that admits straight to contractor standing.
+  ⬜ Remaining: Patron guest-order claiming (link past tracking codes to a new account), onboarding branched
+  into Patron / Contractor / Operator paths.
 - **Phase 5 — Governance & launch**
   Council invite/role management hardening, access audit surfacing, end-to-end readiness pass across all
   four standings.
