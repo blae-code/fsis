@@ -330,7 +330,7 @@ export default function Storefront() {
                 {user?.role === 'admin' && <AdminRestockControls products={storefrontProducts} />}
                 <ProductCompareTray products={compareProducts} onClear={() => setCompareIds([])} onView={setDetailProduct} />
                 <motion.div
-                  className="grid grid-cols-1 min-[520px]:grid-cols-2 min-[1150px]:grid-cols-3 min-[1500px]:grid-cols-4 min-[2000px]:grid-cols-5 gap-3 sm:gap-4 auto-rows-fr"
+                  className="grid grid-cols-2 min-[760px]:grid-cols-3 min-[1000px]:grid-cols-4 min-[1500px]:grid-cols-5 min-[1800px]:grid-cols-6 gap-2 sm:gap-2.5 auto-rows-fr"
                   variants={{ show: { transition: { staggerChildren: 0.05 } } }}
                   initial="hidden"
                   animate="show"
