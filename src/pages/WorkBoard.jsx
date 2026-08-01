@@ -15,6 +15,8 @@ import WorkHistoryPanel from '@/components/work/WorkHistoryPanel';
 import StandingPanel from '@/components/work/StandingPanel';
 import NoticeCentre from '@/components/work/NoticeCentre';
 import OpenWorkCard from '@/components/work/OpenWorkCard';
+import BoardSection from '@/components/work/BoardSection';
+import BoardEmpty from '@/components/work/BoardEmpty';
 import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 
 /** The labour board: work open to any comrade, and the tasks each holds in hand. */
@@ -86,12 +88,19 @@ export default function WorkBoard() {
 
   return (
     <div className="os-viewport overflow-auto font-mono" style={{ background: '#080604' }}>
-      <div className="max-w-6xl mx-auto p-4 space-y-4">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-[10px] tracking-[0.24em]" style={{ color: '#E0A22E' }}>
+      <div className="max-w-6xl mx-auto p-4 space-y-5">
+        <div
+          className="sticky top-0 z-20 -mx-4 px-4 py-2.5 flex items-center justify-between gap-2 border-b backdrop-blur"
+          style={{ borderColor: '#221B12', background: 'rgba(8,6,4,0.92)' }}
+        >
+          <div className="flex items-center gap-2 text-[10px] font-bold tracking-[0.24em] xian-glow-subtle" style={{ color: '#E0A22E' }}>
             <Hammer className="w-4 h-4" /> THE LABOUR BOARD
           </div>
-          <Link to="/" className="text-[9px] tracking-[0.16em] inline-flex items-center gap-1" style={{ color: '#7A6E60' }}>
+          <Link
+            to="/"
+            className="h-7 px-2 border text-[8px] font-bold tracking-[0.16em] inline-flex items-center gap-1"
+            style={{ borderColor: '#2E2519', color: '#8A7E6C', background: '#0C0A07' }}
+          >
             <ArrowLeft className="w-3 h-3" /> STOREFRONT
           </Link>
         </div>
@@ -110,15 +119,14 @@ export default function WorkBoard() {
 
         <StandingPanel user={user} />
 
-        <section className="space-y-2">
-          <div className="flex items-center gap-2 text-[9px] tracking-[0.2em]" style={{ color: '#6FA0C8' }}>
-            WORK IN YOUR HANDS
-            <span className="text-[8px]" style={{ color: '#8A8F45' }}>· {fmtAuec(earned)} CREDITED TO YOU</span>
-          </div>
+        <BoardSection
+          eyebrow="WORK IN YOUR HANDS"
+          accent="#6FA0C8"
+          count={mine.length}
+          note={`${fmtAuec(earned)} credited to you so far.`}
+        >
           {mine.length === 0 ? (
-            <p className="text-[9px] py-4 text-center border" style={{ color: '#6B6155', borderColor: '#2E2519' }}>
-              You hold no tasks. Take one up from the board below.
-            </p>
+            <BoardEmpty>You hold no tasks. Take one up from the board below.</BoardEmpty>
           ) : (
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
               {mine.map((t) => (
@@ -135,14 +143,11 @@ export default function WorkBoard() {
               ))}
             </div>
           )}
-        </section>
+        </BoardSection>
 
-        <section className="space-y-2">
-          <div className="text-[9px] tracking-[0.2em]" style={{ color: '#6FA0C8' }}>MUSTERS CALLED — {upcoming.length}</div>
+        <BoardSection eyebrow="MUSTERS CALLED" accent="#C8A05B" count={upcoming.length}>
           {upcoming.length === 0 ? (
-            <p className="text-[9px] py-4 text-center border" style={{ color: '#6B6155', borderColor: '#2E2519' }}>
-              No musters called. Nobody is owed your time until you offer it.
-            </p>
+            <BoardEmpty>No musters called. Nobody is owed your time until you offer it.</BoardEmpty>
           ) : (
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
               {upcoming.map((op) => (
@@ -150,19 +155,13 @@ export default function WorkBoard() {
               ))}
             </div>
           )}
-        </section>
+        </BoardSection>
 
         <WorkHistoryPanel tasks={mine} operations={operations} userId={user?.id} />
 
-        <section className="space-y-2">
-          <div className="text-[9px] tracking-[0.2em]" style={{ color: '#E0A22E' }}>OPEN ON THE BOARD — {open.length}</div>
-          {board?.note && (
-            <p className="text-[8px] leading-relaxed" style={{ color: '#8A7E6C' }}>{board.note}</p>
-          )}
+        <BoardSection eyebrow="OPEN ON THE BOARD" accent="#E0A22E" count={open.length} note={board?.note}>
           {open.length === 0 ? (
-            <p className="text-[9px] py-4 text-center border" style={{ color: '#6B6155', borderColor: '#2E2519' }}>
-              No work posted right now. Check back — the yard rarely stays quiet.
-            </p>
+            <BoardEmpty>No work posted right now. Check back — the yard rarely stays quiet.</BoardEmpty>
           ) : (
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
               {open.map((t) => (
@@ -170,7 +169,7 @@ export default function WorkBoard() {
               ))}
             </div>
           )}
-        </section>
+        </BoardSection>
       </div>
     </div>
   );
