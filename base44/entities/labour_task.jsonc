@@ -52,6 +52,27 @@
       "default": 0,
       "description": "Full agreed payment for this task in aUEC, settled directly and never folded into the share pool"
     },
+    "blocked_by": {
+      "type": "array",
+      "description": "Work that must be done before this can begin — 'haul after strip'. A prerequisite counts as met once it is credited, or once it is cancelled, because work that will now never happen must not block the yard forever",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of that task when the link was made, so a comrade can be told which work they are waiting on without a second lookup"
+          }
+        }
+      }
+    },
+    "is_blocked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether prerequisites are still outstanding. Kept for the board to read; it is display only, and readiness is checked against the real prerequisites again at the moment work is claimed, so a stale flag can never let blocked work be taken up"
+    },
     "hands_needed": {
       "type": "number",
       "default": 1,

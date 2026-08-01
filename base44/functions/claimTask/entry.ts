@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole } from '../../shared/roles.js';
 import {
   activeHands, crewFields, handFor, handsNeeded, holdsTask, isFullyCrewed, statusForCrew,
+  prerequisiteIds, unmetPrerequisites,
 } from '../../shared/tasks.js';
 
 /**
@@ -45,6 +46,21 @@ export default async function (req: Request): Promise<Response> {
     }
     if (isFullyCrewed(task)) {
       return Response.json({ error: 'This work has all the hands it asked for.' }, { status: 409 });
+    }
+
+    // Work that waits on other work. Checked against the real prerequisites rather than the stored
+    // flag, so a flag left stale by a direct edit can never let blocked work be taken up. The
+    // comrade is told WHICH work they are waiting on, not merely that they are waiting.
+    const prereqIds = prerequisiteIds(task);
+    if (prereqIds.length > 0) {
+      const prereqs = await base44.asServiceRole.entities.labour_task.filter({ id: { $in: prereqIds } });
+      const outstanding = unmetPrerequisites(task, prereqs);
+      if (outstanding.length > 0) {
+        return Response.json({
+          error: `This work waits on: ${outstanding.map((t) => t.title || t.id).join('; ')}. It opens once that is credited.`,
+          waiting_on: outstanding.map((t) => ({ task_id: t.id, title: t.title, status: t.status })),
+        }, { status: 409 });
+      }
     }
 
     // Tasks written before crews existed carry only the single-hand fields; fold that lead hand

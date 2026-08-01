@@ -150,6 +150,68 @@ export function splitCredit(totalAuec, hands) {
 }
 
 /**
+ * Work that cannot begin until other work is done.
+ *
+ * "Haul after strip" is an ordinary thing to want and there was no way to say it, so the council
+ * said it in the brief and hoped. A prerequisite is MET when the work it names has been credited —
+ * or cancelled, because work that will now never happen must not block the yard forever. Every
+ * chain needs a way out; a task that can never become ready is a task nobody can do.
+ */
+export function prerequisiteIds(task) {
+  return (task?.blocked_by || [])
+    .map((link) => (typeof link === 'string' ? link : link?.task_id))
+    .filter(Boolean);
+}
+
+/** A prerequisite has been settled one way or the other. */
+export function isPrerequisiteMet(prereq) {
+  return !!prereq && ['credited', 'cancelled'].includes(prereq.status);
+}
+
+/**
+ * The prerequisites still standing in the way, named so a comrade can be told WHICH work they are
+ * waiting on rather than merely that they are waiting.
+ *
+ * A prerequisite we cannot find is treated as met: a task whose blocker was deleted must not hang
+ * forever on a record that no longer exists.
+ *
+ * @returns {any[]}
+ */
+export function unmetPrerequisites(task, prereqTasks) {
+  const byId = new Map((prereqTasks || []).filter(Boolean).map((t) => [t.id, t]));
+  return prerequisiteIds(task)
+    .map((id) => byId.get(id))
+    .filter((prereq) => prereq && !isPrerequisiteMet(prereq));
+}
+
+/** Whether the work may begin. */
+export function isReady(task, prereqTasks) {
+  return unmetPrerequisites(task, prereqTasks).length === 0;
+}
+
+/**
+ * Would making `task` wait on `proposedIds` create a circle?
+ *
+ * Two tasks each waiting on the other can never begin, and neither can anything behind them. The
+ * walk follows the chain outward from what is proposed; if it arrives back at the task itself, the
+ * arrangement is impossible and is refused rather than written.
+ */
+export function wouldCycle(taskId, proposedIds, allTasks) {
+  const byId = new Map((allTasks || []).filter(Boolean).map((t) => [t.id, t]));
+  const seen = new Set();
+  const queue = [...(proposedIds || [])];
+
+  while (queue.length > 0) {
+    const id = queue.shift();
+    if (!id || seen.has(id)) continue;
+    if (id === taskId) return true;
+    seen.add(id);
+    queue.push(...prerequisiteIds(byId.get(id)));
+  }
+  return false;
+}
+
+/**
  * What the board should say about a task given who is on it.
  *
  * A part-crewed task stays on the board — the whole point is that others can still join. It reads

@@ -177,7 +177,14 @@ value, the collective owns the means of production, plain solidarity language, n
     each gave their labour to it and standing is a record of labour given, not a pot to divide.
     The old single-hand fields are kept as a mirror of the lead hand, so nothing that reads a task
     the old way breaks.
-  - **Sequencing** — no way to say "haul after strip"; tasks need a blocked/ready state.
+  - **Sequencing** ✅ built 2026-08-01 — `blocked_by` on the task and `setTaskDependencies` to write it,
+    refusing an arrangement that cannot work: no task waiting on itself, on work that does not exist,
+    or in a circle with other work. A prerequisite counts as met once credited **or cancelled**,
+    because work that will now never happen must not block the yard forever, and a prerequisite that
+    has been deleted is treated the same way — every chain needs a way out. `claimTask` re-checks
+    against the real prerequisites rather than the stored flag, so a stale flag can never let blocked
+    work be taken up, and it names which work is being waited on rather than only that there is a wait.
+    Crediting work opens whatever was waiting on it, in one batch.
   - **Templates, recurrence and bulk posting** — the council retypes the same brief every week, one at
     a time.
   - **A thread on every task** — proof is one-shot. Workers must be able to ask before claiming and answer

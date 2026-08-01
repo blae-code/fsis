@@ -2,7 +2,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { creditAward, recomputeStanding } from '../../shared/reputation.js';
 import { notifyMany } from '../../shared/notices.js';
-import { activeHands, crewFields, splitCredit, withHandUpdated } from '../../shared/tasks.js';
+import {
+  activeHands, crewFields, splitCredit, withHandUpdated, unmetPrerequisites, prerequisiteIds,
+} from '../../shared/tasks.js';
 import { roundAuec } from '../../shared/money.js';
 
 /**
@@ -99,6 +101,29 @@ export default async function (req: Request): Promise<Response> {
       }
     }
 
+    // Work finished here may be what other work was waiting for. Anything now clear is opened in
+    // one batch, so the board reflects the yard rather than the last time somebody looked.
+    let unblocked = 0;
+    if (decision === 'credit') {
+      const waiting = await base44.asServiceRole.entities.labour_task.filter({ is_blocked: true }, '-created_date', 200);
+      const dependents = waiting.filter((t) => prerequisiteIds(t).includes(taskId));
+
+      if (dependents.length > 0) {
+        const prereqIds = [...new Set(dependents.flatMap((t) => prerequisiteIds(t)))];
+        const prereqs = await base44.asServiceRole.entities.labour_task.filter({ id: { $in: prereqIds } });
+        // The task we just credited is not yet 'credited' in that read, so count it as settled.
+        const settled = prereqs.map((p) => (p.id === taskId ? { ...p, status: 'credited' } : p));
+
+        const nowReady = dependents.filter((t) => unmetPrerequisites(t, settled).length === 0);
+        if (nowReady.length > 0) {
+          await base44.asServiceRole.entities.labour_task.bulkUpdate(
+            nowReady.map((t) => ({ id: t.id, is_blocked: false })),
+          );
+          unblocked = nowReady.length;
+        }
+      }
+    }
+
     await base44.asServiceRole.entities.ops_log.create({
       action: decision === 'credit' ? 'labour_task.credited' : 'labour_task.returned',
       entity_type: 'labour_task',
@@ -144,7 +169,7 @@ export default async function (req: Request): Promise<Response> {
       };
     }));
 
-    return Response.json({ ok: true, task: updated, hands: hands.length, split: perHand });
+    return Response.json({ ok: true, task: updated, hands: hands.length, split: perHand, unblocked });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
