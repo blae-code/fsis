@@ -128,7 +128,13 @@ value, the collective owns the means of production, plain solidarity language, n
     until standing is earned.
   - **Rounding & currency** — one rounding rule shared with storefront pricing so commission, bid and
     payout figures can never disagree by a credit.
-- **Phase 4.7 — Work orders, hardened** (audited 2026-08-01, not yet built)
+- **Phase 4.7 — Work orders, hardened** (audited 2026-08-01, partly built)
+  Built: handing work back (`releaseTask`, Phase 4.5); a daily `expireStaleClaims` sweep returning work
+  claimed but unfiled 7 days past its due date to the board, with the lapse written into the task and
+  `ops_log`; and a council load view (`LabourLoadPanel`) showing who carries what, who is overdue, what is
+  owed to each hand, and which filed work has waited 3+ days unpaid.
+  Still open below: many hands on one task, sequencing, templates/recurrence/bulk posting, a thread on
+  every task, labour traced to value, hours, credit guidance, notice to the worker, and skills matching.
   The labour board works, but a task's life has holes in it. Each of these is a path a worker or the
   council can walk into today with no way out:
   - **Handing work back** — a worker may only go silent. Needs an explicit release with a reason, which is
