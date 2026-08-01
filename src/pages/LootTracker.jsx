@@ -313,7 +313,8 @@ function PipelineColumn({ status, items, onAdvance, onDelete, onUpdate }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function LootTracker() {
   const queryClient = useQueryClient();
-  const [view, setView] = useState('list'); // 'list' | 'pipeline'
+  const urlView = new URLSearchParams(window.location.search).get('view');
+  const [view, setView] = useState(['list', 'pipeline', 'summary'].includes(urlView) ? urlView : 'list'); // 'list' | 'pipeline' | 'summary'
   const [formOpen, setFormOpen] = useState(false);
   const [filterType, setFilterType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');

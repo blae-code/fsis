@@ -117,6 +117,14 @@ export default function ManagementContent() {
           <span style={{ color: DIMMER }}>⬡</span>
           LOOT TRACKER ↗
         </Link>
+        <Link
+          to="/loot?view=summary"
+          className="flex items-center gap-1.5 px-4 py-2.5 text-[9px] tracking-[0.15em] whitespace-nowrap shrink-0"
+          style={{ color: DIM }}
+        >
+          <span style={{ color: DIMMER }}>◔</span>
+          LOOT SUMMARY ↗
+        </Link>
       </div>
 
       {/* Content */}
