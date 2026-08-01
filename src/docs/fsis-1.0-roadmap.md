@@ -175,9 +175,14 @@ value, the collective owns the means of production, plain solidarity language, n
     after being sent back, the way order messages already work.
   - **Labour traced to value** — link a task to the order, cargo lot or operation it serves, so the true
     labour cost of a lot can be stated rather than guessed.
-  - **Hours** — `time_log` is unwired at the task end only: nothing writes it, and the task carries no
-    hours. It is not idle at the other end — it is the sole source of shares, so whatever writes it
-    feeds the pay pool directly. Estimated against actual hours belongs on the task.
+  - **Hours** ✅ built 2026-08-01 — `estimated_hours` on the posting so a comrade can judge the offer
+    against their own time before taking it up, and `actual_hours` filed by the worker with their
+    proof, as their own account of their own labour rather than a figure measured over them.
+    **Deliberately NOT wired to `time_log`**, and the reason matters: `time_log` is the sole source
+    of shares, while task labour is settled in full and directly at the agreed credit and is never
+    drawn from the share pool. Writing a time log on task credit would pay the same work twice and
+    would put contractors into share-based payday, against a stated hard rule. The thing that should
+    write `time_log` is 4.8's attendance clock — which is what "time present" below is for.
   - **Credit guidance** — suggest a fair sum from category and hours so pay does not drift by mood.
   - **Notice to the worker** ✅ built 2026-08-01 — a `notice` addressed to one comrade and readable
     by them alone, a shared emitter in `shared/notices.js`, and `listNotices` / `markNoticesRead`.

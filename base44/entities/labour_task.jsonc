@@ -72,6 +72,14 @@
       "format": "date",
       "description": "Date the work is expected by"
     },
+    "estimated_hours": {
+      "type": "number",
+      "description": "Hours the council reckons the work will take when posting it. Stated openly so a comrade can judge the offer against their own time before taking it up, rather than discovering the cost afterwards"
+    },
+    "actual_hours": {
+      "type": "number",
+      "description": "Hours the work actually took, filed by the comrade who did it. Their account of their own labour, not a figure measured over them — the estimate is what drifts, and this is what corrects it"
+    },
     "location": {
       "type": "string",
       "description": "Where the work happens, e.g. 'Aaron Halo' or 'Port Tressler'"
