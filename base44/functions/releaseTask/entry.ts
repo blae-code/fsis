@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole } from '../../shared/roles.js';
 import { abandonmentCost, MARK_LIFETIME_DAYS, APPEAL_WINDOW_DAYS, recomputeStanding } from '../../shared/reputation.js';
 import { notify } from '../../shared/notices.js';
+import { crewFields, holdsTask, statusForCrew, withHandUpdated } from '../../shared/tasks.js';
 
 /**
  * A comrade hands back work in hand. Nobody is chained to a task they cannot finish — but
@@ -24,10 +25,15 @@ export default async function (req: Request): Promise<Response> {
 
     const task = await base44.asServiceRole.entities.labour_task.get(taskId);
     if (!task) return Response.json({ error: 'Task not found.' }, { status: 404 });
-    if (task.assigned_user_id !== user.id) {
+
+    // A hand may be on the crew, or may be an older task's sole holder. Either way it must be
+    // their own work they are handing back, and nobody else's.
+    const onCrew = holdsTask(task, user.id);
+    const isLegacyHolder = !onCrew && (task.crew || []).length === 0 && task.assigned_user_id === user.id;
+    if (!onCrew && !isLegacyHolder) {
       return Response.json({ error: 'That work is not in your hands.' }, { status: 403 });
     }
-    if (!['claimed', 'returned'].includes(task.status)) {
+    if (!['claimed', 'returned', 'posted'].includes(task.status)) {
       return Response.json({ error: 'Only work still in hand can be handed back.' }, { status: 409 });
     }
 
@@ -36,12 +42,18 @@ export default async function (req: Request): Promise<Response> {
     const appealDueBy = new Date(now.getTime() + APPEAL_WINDOW_DAYS * 86400000);
     const markExpiresAt = new Date(now.getTime() + MARK_LIFETIME_DAYS * 86400000);
 
+    // Only this comrade steps off. Where the work called for several hands, the rest keep theirs
+    // and the place they left opens on the board again. The entry is marked released rather than
+    // deleted — the record of who held what is not rewritten.
+    const nextCrew = onCrew
+      ? withHandUpdated(task, user.id, { released_at: now.toISOString() })
+      : [];
+    const fields = crewFields(nextCrew);
+    const nextStatus = statusForCrew({ ...task, crew: fields.crew }, task.status === 'returned' ? 'claimed' : task.status);
+
     await base44.asServiceRole.entities.labour_task.update(taskId, {
-      status: 'posted',
-      assigned_user_id: null,
-      assigned_email: null,
-      assigned_handle: null,
-      claimed_at: null,
+      ...fields,
+      status: nextStatus,
       notes: [task.notes, `Handed back ${now.toISOString().slice(0, 10)} by ${user.handle || user.email}: ${reason}`]
         .filter(Boolean).join('\n'),
     });
@@ -85,7 +97,9 @@ export default async function (req: Request): Promise<Response> {
       kind: 'work_released',
       title: `You handed back: ${task.title}`,
       body: [
-        `The work has returned to the board and is open to any hand. Nobody is chained to a task they cannot finish.`,
+        fields.crew_count > 0
+          ? `Your place has returned to the board and is open to any hand; the ${fields.crew_count} comrade${fields.crew_count === 1 ? '' : 's'} still on this work keep theirs. Nobody is chained to a task they cannot finish.`
+          : 'The work has returned to the board and is open to any hand. Nobody is chained to a task they cannot finish.',
         `A mark of ${delta} standing has been recorded. It is weighted by the harm actually done — how close the deadline stood, how urgent the work was, and what had been agreed for it — not by the fact of walking away. Your standing now stands at ${total}.`,
         `Your stated cause, as the council will read it: ${reason}`,
         `If the assessment is wrong, you may answer it once, by ${appealDueBy.toISOString().slice(0, 10)}. An Owner or above must respond, and their reasoning will be shown back to you.`,

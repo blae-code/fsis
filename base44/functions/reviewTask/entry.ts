@@ -1,7 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { creditAward, recomputeStanding } from '../../shared/reputation.js';
-import { notify } from '../../shared/notices.js';
+import { notifyMany } from '../../shared/notices.js';
+import { activeHands, crewFields, splitCredit, withHandUpdated } from '../../shared/tasks.js';
+import { roundAuec } from '../../shared/money.js';
 
 /**
  * Council review of filed work. Credit settles the agreed sum in full and directly —
@@ -35,9 +37,35 @@ export default async function (req: Request): Promise<Response> {
     }
 
     const now = new Date().toISOString();
-    const credited = Math.max(0, Number(body?.credited_auec ?? task.agreed_credit_auec ?? 0));
+    const credited = roundAuec(Math.max(0, Number(body?.credited_auec ?? task.agreed_credit_auec ?? 0)));
+
+    // Every hand that held this work. Older tasks carry a single holder and no crew; they are read
+    // as a crew of one so there is only one settlement path to reason about.
+    const hands: any[] = activeHands(task).length > 0
+      ? activeHands(task)
+      : (task.assigned_user_id
+        ? [{
+          user_id: task.assigned_user_id,
+          handle: task.assigned_handle || '',
+          email: task.assigned_email || '',
+          claimed_at: task.claimed_at || '',
+        }]
+        : []);
+
+    // Divided equally, with the remainder handed out a credit at a time rather than rounded away,
+    // so what the crew receives adds up to exactly what was agreed.
+    const perHand = decision === 'credit' ? splitCredit(credited, hands) : {};
+
+    let nextCrew = task.crew || [];
+    if (decision === 'credit') {
+      for (const hand of hands) {
+        nextCrew = withHandUpdated({ crew: nextCrew }, hand.user_id, { credited_auec: perHand[hand.user_id] || 0 });
+      }
+    }
+    const fields = nextCrew.length > 0 ? crewFields(nextCrew) : {};
 
     const updated = await base44.asServiceRole.entities.labour_task.update(taskId, {
+      ...fields,
       status: decision === 'credit' ? 'credited' : 'returned',
       credited_auec: decision === 'credit' ? credited : 0,
       reviewed_by_email: user.email,
@@ -45,26 +73,30 @@ export default async function (req: Request): Promise<Response> {
       review_notes: reviewNotes,
     });
 
-    // Labour given is recorded in the worker's standing the moment it is credited.
-    let standingAwarded = 0;
-    if (decision === 'credit' && task.assigned_user_id) {
-      const delta = creditAward(task);
-      standingAwarded = delta;
-      await base44.asServiceRole.entities.standing_event.create({
-        member_user_id: task.assigned_user_id,
-        member_email: task.assigned_email,
-        member_handle: task.assigned_handle,
+    // Labour given is recorded in the standing of every hand that gave it, the moment it is
+    // credited. Each hand earns the full award — standing is a record of labour given, and three
+    // comrades who stripped a hull each gave their labour to it. It is not a pot to be divided.
+    const standingAwarded = decision === 'credit' ? creditAward(task) : 0;
+    if (decision === 'credit' && hands.length > 0) {
+      await base44.asServiceRole.entities.standing_event.bulkCreate(hands.map((hand) => ({
+        member_user_id: hand.user_id,
+        member_email: hand.email,
+        member_handle: hand.handle,
         kind: 'work_credited',
-        delta,
-        effective_delta: delta,
-        reason: `Work credited in full: ${task.title}`,
+        delta: standingAwarded,
+        effective_delta: standingAwarded,
+        reason: hands.length > 1
+          ? `Work credited in full: ${task.title} (one of ${hands.length} hands on the work)`
+          : `Work credited in full: ${task.title}`,
         source_type: 'labour_task',
         source_id: taskId,
         source_name: task.title,
         actor_email: user.email,
         actor_role: fsisRole(user),
-      });
-      await recomputeStanding(base44, task.assigned_user_id);
+      })));
+      for (const hand of hands) {
+        await recomputeStanding(base44, hand.user_id);
+      }
     }
 
     await base44.asServiceRole.entities.ops_log.create({
@@ -78,19 +110,24 @@ export default async function (req: Request): Promise<Response> {
       notes: reviewNotes || `Reviewed by ${fsisRole(user)}.`,
     });
 
-    // The comrade whose labour this was is told, in their own terms, what the council decided.
-    // Nobody should learn the answer to filed work by refreshing a page.
-    if (task.assigned_user_id) {
-      await notify(base44, {
-        recipient_user_id: task.assigned_user_id,
-        recipient_handle: task.assigned_handle,
+    // Every comrade whose labour this was is told, in their own terms, what the council decided —
+    // and told their OWN figure, not the crew's total. Nobody should learn the answer to filed
+    // work by refreshing a page, and nobody should have to work out their share from a lump sum.
+    await notifyMany(base44, hands.map((hand) => {
+      const theirs = perHand[hand.user_id] || 0;
+      return {
+        recipient_user_id: hand.user_id,
+        recipient_handle: hand.handle,
         kind: decision === 'credit' ? 'work_credited' : 'work_returned',
         title: decision === 'credit'
           ? `Your labour was credited: ${task.title}`
           : `Work sent back for more: ${task.title}`,
         body: decision === 'credit'
           ? [
-            `${credited.toLocaleString()} aUEC settled in full and directly — this is yours, and it is never drawn from the share pool.`,
+            `${theirs.toLocaleString()} aUEC settled in full and directly — this is yours, and it is never drawn from the share pool.`,
+            hands.length > 1
+              ? `${credited.toLocaleString()} aUEC was agreed for this work and divided equally among the ${hands.length} hands who held it. Any odd credit goes to the earliest to take it up rather than being rounded away.`
+              : '',
             standingAwarded ? `${standingAwarded} standing recorded to your name for labour given.` : '',
             reviewNotes,
           ].filter(Boolean).join('\n\n')
@@ -104,10 +141,10 @@ export default async function (req: Request): Promise<Response> {
         source_name: task.title,
         actor_email: user.email,
         actor_role: fsisRole(user),
-      });
-    }
+      };
+    }));
 
-    return Response.json({ ok: true, task: updated });
+    return Response.json({ ok: true, task: updated, hands: hands.length, split: perHand });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

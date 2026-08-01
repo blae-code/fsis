@@ -166,8 +166,17 @@ value, the collective owns the means of production, plain solidarity language, n
     also the hook Phase 4.5's abandonment penalty depends on.
   - **Claim expiry** — a claimed task past its due date sits forever. Stale claims must age visibly and
     return to the board.
-  - **Many hands on one task** — `assigned_user_id` is singular; work needing three scrapers cannot be
-    posted as one task.
+  - **Many hands on one task** ✅ built 2026-08-01 — `hands_needed` and a `crew` on the task, so work
+    wanting three scrapers is one brief with three places rather than three copies nobody can tell
+    apart. A part-crewed task stays on the board so others can join, and reads as claimed only once
+    it has the hands it asked for. Claiming is atomic against a `crew_count` token, so two comrades
+    reaching for the last place cannot both get it. Every hand files their own proof and the task
+    waits for all of them before the council sees it. Credit divides equally with the remainder
+    handed to the earliest claimant rather than rounded away, so the crew is paid exactly what was
+    agreed; standing is awarded in full to each hand, because three comrades who stripped a hull
+    each gave their labour to it and standing is a record of labour given, not a pot to divide.
+    The old single-hand fields are kept as a mirror of the lead hand, so nothing that reads a task
+    the old way breaks.
   - **Sequencing** — no way to say "haul after strip"; tasks need a blocked/ready state.
   - **Templates, recurrence and bulk posting** — the council retypes the same brief every week, one at
     a time.

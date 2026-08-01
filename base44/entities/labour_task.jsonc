@@ -52,9 +52,70 @@
       "default": 0,
       "description": "Full agreed payment for this task in aUEC, settled directly and never folded into the share pool"
     },
+    "hands_needed": {
+      "type": "number",
+      "default": 1,
+      "description": "How many pairs of hands the work calls for. Work needing three scrapers is one task with three places, not three copies of the same brief"
+    },
+    "crew": {
+      "type": "array",
+      "description": "The comrades holding this work. Nobody is assigned — every hand here put themselves here, and may take themselves off",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "claimed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "released_at": {
+            "type": "string",
+            "description": "Set when a hand steps off. The entry is kept rather than deleted — the record of who held what is not rewritten"
+          },
+          "submitted_at": {
+            "type": "string",
+            "description": "When this hand filed their own account of the work"
+          },
+          "proof_notes": {
+            "type": "string",
+            "description": "This hand's own account of what they did"
+          },
+          "proof_file_url": {
+            "type": "string"
+          },
+          "actual_hours": {
+            "type": "number"
+          },
+          "credited_auec": {
+            "type": "number",
+            "description": "What this hand was actually settled, once the council credits the work"
+          }
+        }
+      }
+    },
+    "crew_user_ids": {
+      "type": "array",
+      "description": "Accounts presently on the crew. Kept alongside `crew` because row-level security cannot reach inside an array of objects — this is what lets every hand read and update their own task, not only the lead",
+      "items": {
+        "type": "string"
+      }
+    },
+    "crew_count": {
+      "type": "number",
+      "default": 0,
+      "description": "How many hands are presently on. Also the compare-and-swap token: a claim states the count it believed and lands only if that is still true, so two comrades taking the last place at the same moment cannot both get it"
+    },
     "assigned_user_id": {
       "type": "string",
-      "description": "Base44 user id of the comrade who holds this task"
+      "description": "The lead hand — first to take the work up and still holding it. Mirrors crew[0] so anything that reads a task the old single-hand way still reads something true"
     },
     "assigned_handle": {
       "type": "string",
@@ -156,6 +217,9 @@
           "data.assigned_user_id": "{{user.id}}"
         },
         {
+          "data.crew_user_ids": "{{user.id}}"
+        },
+        {
           "data.status": "posted"
         }
       ]
@@ -178,6 +242,9 @@
               "{{user.id}}"
             ]
           }
+        },
+        {
+          "data.crew_user_ids": "{{user.id}}"
         }
       ]
     },
