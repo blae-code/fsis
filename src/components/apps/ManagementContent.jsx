@@ -22,6 +22,8 @@ import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidL
 import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
 import QuickLogModal from '@/components/apps/management/QuickLogModal';
 import LootSummaryTab from '@/components/loot/LootSummaryTab';
+import AccessConsole from '@/components/apps/management/access/AccessConsole';
+import { hasCouncilAccess, fsisRole, ROLE_META } from '@/lib/roles';
 import { Link } from 'react-router-dom';
 
 const AMBER  = '#E0A22E';
@@ -47,6 +49,7 @@ const TABS = [
   { id: 'market',    label: 'MARKET',     glyph: '◇' },
   { id: 'inbox',     label: 'INBOX',      glyph: '▣' },
   { id: 'restock',   label: 'RESTOCK',    glyph: '▲' },
+  { id: 'access',    label: 'STANDING',   glyph: '✶' },
 ];
 
 export default function ManagementContent() {
@@ -65,13 +68,16 @@ export default function ManagementContent() {
     );
   }
 
-  if (user?.role !== 'admin') {
+  if (!hasCouncilAccess(user)) {
     return (
       <div className="h-full flex items-center justify-center font-mono" style={{ background: '#0A0806' }}>
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-2 px-6">
           <ShieldAlert className="w-8 h-8 mx-auto" style={{ color: '#C05050' }} />
-          <div className="text-xs tracking-[0.25em]" style={{ color: '#C05050' }}>MANAGEMENT CLEARANCE REQUIRED</div>
-          <p className="text-[9px]" style={{ color: DIM }}>This console is restricted to FSIS management personnel.</p>
+          <div className="text-xs tracking-[0.25em]" style={{ color: '#C05050' }}>COUNCIL STANDING REQUIRED</div>
+          <p className="text-[9px] max-w-md mx-auto leading-relaxed" style={{ color: DIM }}>
+            These tools belong to the comrades who hold the yard in common. Owner standing is extended by the
+            proprietor — it is never applied for.
+          </p>
         </div>
       </div>
     );
@@ -83,9 +89,10 @@ export default function ManagementContent() {
       {/* Header */}
       <div className="shrink-0 px-3 py-2 border-b flex items-center gap-2" style={{ borderColor: '#2A2118', background: '#0A0806' }}>
         <span style={{ color: AMBER }}>◈</span>
-        <span className="text-[9px] tracking-[0.25em]" style={{ color: '#7A6050' }}>MANAGEMENT CONSOLE</span>
-        <span className="text-[8px] ml-auto" style={{ color: DIMMER }}>
-          {user?.full_name || user?.email}
+        <span className="text-[9px] tracking-[0.25em]" style={{ color: '#7A6050' }}>COUNCIL CONSOLE — HELD IN COMMON</span>
+        <span className="text-[8px] ml-auto flex items-center gap-2">
+          <span style={{ color: ROLE_META[fsisRole(user)].color }}>{ROLE_META[fsisRole(user)].label}</span>
+          <span style={{ color: DIMMER }}>{user?.full_name || user?.email}</span>
         </span>
       </div>
 
@@ -150,6 +157,7 @@ export default function ManagementContent() {
         {activeTab === 'market'    && <div className="p-4"><MarketPriceComparator /></div>}
         {activeTab === 'inbox'    && <div className="p-4"><RestockInbox /></div>}
         {activeTab === 'restock'  && <div className="p-4"><AdminRestockControls /></div>}
+        {activeTab === 'access'   && <AccessConsole />}
       </div>
     </div>
   );

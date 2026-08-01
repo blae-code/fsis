@@ -10,6 +10,40 @@
         "management"
       ],
       "description": "Duty role determining which Station dashboard view the user sees"
+    },
+    "fsis_role": {
+      "type": "string",
+      "enum": [
+        "proprietor",
+        "owner",
+        "contractor",
+        "patron"
+      ],
+      "default": "patron",
+      "description": "FSIS class standing: proprietor (first among equals), owner (co-op member, invitation only), contractor (ad-hoc labour, no shares), patron (buyer)"
+    },
+    "handle": {
+      "type": "string",
+      "description": "In-game RSI handle / callsign used across work orders and the ledger"
+    },
+    "membership_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "pending",
+        "suspended"
+      ],
+      "default": "active",
+      "description": "Standing within FSIS \u2014 pending applies to contractors awaiting review"
+    },
+    "role_granted_by": {
+      "type": "string",
+      "description": "Email of the proprietor or owner who granted the current standing"
+    },
+    "role_granted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current standing was granted"
     }
   }
 }

@@ -2,9 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, KeyRound, MonitorCog, ShieldCheck } from 'lucide-react';
+import { hasCouncilAccess, fsisRole, ROLE_META } from '@/lib/roles';
 
 export default function ProprietorEntryway({ user }) {
-  if (user?.role !== 'admin') return null;
+  if (!hasCouncilAccess(user)) return null;
+  const meta = ROLE_META[fsisRole(user)];
 
   return (
     <motion.section
@@ -23,17 +25,18 @@ export default function ProprietorEntryway({ user }) {
               <KeyRound className="w-5 h-5" style={{ color: '#E0A22E' }} />
             </div>
             <div>
-              <p className="text-[9px] tracking-[0.28em] font-bold" style={{ color: '#8A8F45' }}>PROPRIETOR ACCESSWAY // SECURE</p>
-              <h2 className="mt-1 text-lg md:text-xl font-bold tracking-[0.08em]" style={{ color: '#F2EADC' }}>Enter the Command Deck</h2>
+              <p className="text-[9px] tracking-[0.28em] font-bold" style={{ color: '#8A8F45' }}>COUNCIL ACCESSWAY // SECURE</p>
+              <h2 className="mt-1 text-lg md:text-xl font-bold tracking-[0.08em]" style={{ color: '#F2EADC' }}>Enter the Council Deck</h2>
               <p className="mt-1 max-w-2xl text-[11px] leading-relaxed" style={{ color: '#A89C8A' }}>
-                Switch from buyer-facing storefront to internal FSIS operations: intake, fulfillment, payday, market sync, QA, and diagnostics.
+                Leave the trade counter for the works the collective runs itself: intake, fulfillment, the pay day
+                pool, market watch, and the standing of every comrade on the books.
               </p>
             </div>
           </div>
 
           <div className="relative flex flex-col sm:flex-row md:flex-col xl:flex-row gap-2 md:items-end">
             <div className="flex gap-2 text-[8px] tracking-[0.15em]">
-              <span className="border px-2 py-1 flex items-center gap-1" style={{ borderColor: '#3A2F20', color: '#C8893B', background: '#0C0A07' }}><ShieldCheck className="w-3 h-3" /> ADMIN</span>
+              <span className="border px-2 py-1 flex items-center gap-1" style={{ borderColor: '#3A2F20', color: meta.color, background: '#0C0A07' }}><ShieldCheck className="w-3 h-3" /> {meta.label}</span>
               <span className="border px-2 py-1 flex items-center gap-1" style={{ borderColor: '#3A2F20', color: '#8A8F45', background: '#0C0A07' }}><MonitorCog className="w-3 h-3" /> LIVE OPS</span>
             </div>
             <Link
@@ -41,7 +44,7 @@ export default function ProprietorEntryway({ user }) {
               className="group h-10 px-4 border flex items-center justify-center gap-2 text-[10px] font-bold tracking-[0.16em] transition-all hover:brightness-125"
               style={{ borderColor: '#E0A22E', color: '#0C0A07', background: 'linear-gradient(135deg, #E0A22E, #C8893B)', clipPath: 'polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)' }}
             >
-              OPEN COMMAND <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+              OPEN COUNCIL DECK <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
         </div>

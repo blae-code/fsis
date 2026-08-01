@@ -1,0 +1,73 @@
+{
+  "name": "access_grant",
+  "type": "object",
+  "properties": {
+    "target_user_id": {
+      "type": "string",
+      "description": "User whose standing changed"
+    },
+    "target_email": {
+      "type": "string"
+    },
+    "target_handle": {
+      "type": "string"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "invited",
+        "granted",
+        "revoked",
+        "suspended",
+        "reinstated"
+      ],
+      "default": "granted",
+      "description": "What was done to the member's standing"
+    },
+    "previous_role": {
+      "type": "string",
+      "description": "FSIS standing before the change"
+    },
+    "new_role": {
+      "type": "string",
+      "description": "FSIS standing after the change"
+    },
+    "granted_by_email": {
+      "type": "string",
+      "description": "Who authorised the change"
+    },
+    "granted_by_role": {
+      "type": "string",
+      "description": "Standing of the authorising member at the time"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Reason recorded for the collective record"
+    }
+  },
+  "required": [
+    "action"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
