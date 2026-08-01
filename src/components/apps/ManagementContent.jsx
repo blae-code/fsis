@@ -90,7 +90,7 @@ export default function ManagementContent() {
       </div>
 
       {/* Tab rail */}
-      <div className="shrink-0 border-b flex overflow-x-auto" style={{ borderColor: '#2A2118' }}>
+      <div className="shrink-0 border-b flex flex-wrap" style={{ borderColor: '#2A2118' }}>
         {TABS.map((t) => {
           const active = activeTab === t.id;
           return (
