@@ -74,6 +74,23 @@
     "applied_changes": {
       "type": "string",
       "description": "Human-readable summary of what the agent changed"
+    },
+    "operation_session_id": {
+      "type": "string",
+      "description": "The run this scan was taken on, so finds belong to the run that made them"
+    },
+    "cluster_name": {
+      "type": "string",
+      "description": "The wreck field this scan belongs to, e.g. 'Halo cluster 3' — so a field can be marked, worked and finished rather than rediscovered every time"
+    },
+    "worked_by_handle": {
+      "type": "string",
+      "description": "Who is presently working this field, so two hands do not fly to the same wreck"
+    },
+    "stripped": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this find has been worked out. A field nobody marked finished is a field somebody flies back to for nothing"
     }
   },
   "required": [

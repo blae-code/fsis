@@ -21,7 +21,7 @@
     "condition_pct": {
       "type": "number",
       "default": 100,
-      "description": "Item condition percentage 0\u2013100"
+      "description": "Item condition percentage 0–100"
     },
     "condition_grade": {
       "type": "string",
@@ -109,6 +109,10 @@
     },
     "notes": {
       "type": "string"
+    },
+    "operation_session_id": {
+      "type": "string",
+      "description": "The run this came off. Without it there is no per-run yield and no honest answer to 'was that worth flying'"
     }
   },
   "required": [

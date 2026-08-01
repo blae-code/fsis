@@ -50,6 +50,10 @@
     },
     "notes": {
       "type": "string"
+    },
+    "operation_session_id": {
+      "type": "string",
+      "description": "The run this came off. Without it there is no per-run yield and no honest answer to 'was that worth flying'"
     }
   },
   "required": [

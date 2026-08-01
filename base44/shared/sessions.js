@@ -109,6 +109,20 @@ export function totalCosts(costs) {
 }
 
 /**
+ * What the run cost in hulls and cargo.
+ *
+ * Kept apart from the running costs and never deducted from the split. A comrade who lost a hull
+ * has already borne it; taking it out of the crew's share a second time would charge the collective's
+ * bad luck to the people who were there for it.
+ */
+export function totalLosses(losses) {
+  return (losses || []).reduce((total, loss) => {
+    const amount = Number(loss?.estimated_auec);
+    return total + (Number.isFinite(amount) && amount > 0 ? amount : 0);
+  }, 0);
+}
+
+/**
  * Who answered the muster and did not stand it.
  *
  * Named rather than scored. A no-show is a fact for the council to weigh with whatever the comrade

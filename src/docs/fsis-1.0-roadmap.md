@@ -271,18 +271,26 @@ value, the collective owns the means of production, plain solidarity language, n
     the rate `time_log` has always documented, one per twenty, so a run settles into the same pool by
     the same arithmetic as every other hour the collective counts. **This is the writer `time_log` never
     had**, and the reason Phase 4.7's hours were deliberately kept out of it.
-  - **Yield capture** — scans, lots and loot won during a run attach to the run. Without this there is no
-    per-op profit and no honest answer to "was that worth flying".
+  - **Yield capture** ✅ built 2026-08-01 — `operation_session_id` on cargo lots, loot and scans, with
+    `attachToSession` to tie them on and `getSessionSummary` to read the run whole. The suggested gross
+    is a READING and not a decision: it adds up what was brought back and offers the figure, while the
+    council states what it actually sold for at closeout. Attaching is refused on a settled run, because
+    its yield is part of a settlement hands have already been paid against.
   - **Costs of the run** ✅ built 2026-08-01 — fuel, ammo, rearm, repair and insurance recorded on the
     session and deducted from the gross before anything is divided, stated openly so hands can see what
     was taken and why. A negative cost is never read as a refund.
   - **Closeout** — the session summary is regolith's best feature: yield, costs, per-hand payout, and a
     tick that each hand was actually paid. Today `completed` simply erases the run; there is no bridge
     from an operation to a payday cycle at all.
-  - **Clusters and finds** — `salvage_scan` is unlinked to operations. Mark a wreck field, who is working
-    it, whether it is stripped.
+  - **Clusters and finds** ✅ built 2026-08-01 — `cluster_name`, `worked_by_handle` and `stripped` on the
+    scan, reported by `getSessionSummary`, so a field is marked, worked once and finished rather than
+    rediscovered — and two hands do not fly to the same wreck.
   - **Processing timers** — refinery-style countdowns with notice on completion.
-  - **Loss log** — hull destroyed, cargo lost, claim timer running.
+  - **Loss log** ✅ built 2026-08-01 — `recordSessionLoss` writes hull, cargo and other losses with the
+    claim window, so nobody misses it. Losses are kept apart from the running costs and are **never
+    deducted from the split**: a comrade who lost a hull has already borne it, and taking it out of the
+    crew's share as well would charge the collective's bad luck to the people who were there for it.
+    Recorded so the collective can make them whole, never so it can be held against them.
   - **Role slots, not a headcount** — one pilot, two scrapers, with fill state, a waitlist, and no-show
     marking that feeds standing.
   - **Ad-hoc musters in one tap** — "I am going out now, who is on?" is the most-used flow that does not

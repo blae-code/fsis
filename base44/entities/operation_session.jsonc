@@ -110,6 +110,43 @@
         }
       }
     },
+    "losses": {
+      "type": "array",
+      "description": "What the run cost in hulls and cargo. Recorded because a run that lost a Reclaimer was not a good run however much RMC it brought home, and because a claim timer is a fact somebody needs to know about",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "hull",
+              "cargo",
+              "other"
+            ],
+            "default": "other"
+          },
+          "label": {
+            "type": "string",
+            "description": "What was lost, e.g. 'Reclaimer — destroyed by outlaws at Halo cluster 3'"
+          },
+          "handle": {
+            "type": "string",
+            "description": "The comrade who bore the loss. Recorded so the collective can make them whole, never so it can be held against them"
+          },
+          "estimated_auec": {
+            "type": "number"
+          },
+          "claim_until": {
+            "type": "string",
+            "description": "When the insurance claim expires, so nobody misses it"
+          },
+          "recorded_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
     "gross_auec": {
       "type": "number",
       "default": 0,
