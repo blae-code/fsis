@@ -23,6 +23,7 @@ import WarehouseCommandLayer from '@/components/apps/management/proprietor/Wareh
 import QuickLogModal from '@/components/apps/management/QuickLogModal';
 import LootSummaryTab from '@/components/loot/LootSummaryTab';
 import AccessConsole from '@/components/apps/management/access/AccessConsole';
+import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrderConsole';
 import { hasCouncilAccess, fsisRole, ROLE_META } from '@/lib/roles';
 import { Link } from 'react-router-dom';
 
@@ -50,6 +51,7 @@ const TABS = [
   { id: 'inbox',     label: 'INBOX',      glyph: '▣' },
   { id: 'restock',   label: 'RESTOCK',    glyph: '▲' },
   { id: 'access',    label: 'STANDING',   glyph: '✶' },
+  { id: 'tasks',     label: 'TASKS',      glyph: '⌗' },
 ];
 
 export default function ManagementContent() {
@@ -158,6 +160,7 @@ export default function ManagementContent() {
         {activeTab === 'inbox'    && <div className="p-4"><RestockInbox /></div>}
         {activeTab === 'restock'  && <div className="p-4"><AdminRestockControls /></div>}
         {activeTab === 'access'   && <AccessConsole />}
+        {activeTab === 'tasks'    && <TaskWorkOrderConsole />}
       </div>
     </div>
   );

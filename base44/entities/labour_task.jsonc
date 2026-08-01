@@ -1,0 +1,161 @@
+{
+  "name": "labour_task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short name of the task, e.g. 'Strip hull panels \u2014 Reclaimer bay 2'"
+    },
+    "brief": {
+      "type": "string",
+      "description": "What the work actually involves, written plainly for the comrade doing it"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "salvage",
+        "hauling",
+        "escort",
+        "repair",
+        "intake",
+        "delivery",
+        "admin",
+        "other"
+      ],
+      "default": "salvage",
+      "description": "Kind of labour this task calls for"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "routine",
+        "elevated",
+        "urgent"
+      ],
+      "default": "routine"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "posted",
+        "claimed",
+        "submitted",
+        "credited",
+        "returned",
+        "cancelled"
+      ],
+      "default": "posted",
+      "description": "posted = open to the board; claimed = taken up; submitted = proof filed; credited = paid in full; returned = sent back for more work"
+    },
+    "agreed_credit_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Full agreed payment for this task in aUEC, settled directly and never folded into the share pool"
+    },
+    "assigned_user_id": {
+      "type": "string",
+      "description": "Base44 user id of the comrade who holds this task"
+    },
+    "assigned_handle": {
+      "type": "string",
+      "description": "Handle of the comrade who holds this task"
+    },
+    "assigned_email": {
+      "type": "string"
+    },
+    "claimed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date the work is expected by"
+    },
+    "location": {
+      "type": "string",
+      "description": "Where the work happens, e.g. 'Aaron Halo' or 'Port Tressler'"
+    },
+    "proof_notes": {
+      "type": "string",
+      "description": "The worker's own account of what was done"
+    },
+    "proof_file_url": {
+      "type": "string",
+      "description": "Screenshot or manifest uploaded as proof of work"
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reviewed_by_email": {
+      "type": "string",
+      "description": "Council member who credited or returned the work"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "review_notes": {
+      "type": "string",
+      "description": "Council's reasoning, visible to the worker"
+    },
+    "credited_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Amount actually credited on settlement"
+    },
+    "posted_by_email": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.assigned_user_id": "{{user.id}}"
+        },
+        {
+          "data.status": "posted"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.assigned_user_id": {
+            "$in": [
+              "{{user.id}}"
+            ]
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
