@@ -1,0 +1,94 @@
+{
+  "name": "identity_link",
+  "type": "object",
+  "properties": {
+    "pair_key": {
+      "type": "string",
+      "description": "Stable key for the two accounts, so a pair is never flagged twice"
+    },
+    "flagged_user_id": {
+      "type": "string",
+      "description": "The account already carrying a mark or a dismissal"
+    },
+    "flagged_email": {
+      "type": "string"
+    },
+    "flagged_handle": {
+      "type": "string"
+    },
+    "other_user_id": {
+      "type": "string",
+      "description": "The account that appears to be the same comrade under another name"
+    },
+    "other_email": {
+      "type": "string"
+    },
+    "other_handle": {
+      "type": "string"
+    },
+    "signals": {
+      "type": "array",
+      "description": "Plainly stated grounds for the suspicion \u2014 the comrade is entitled to know them",
+      "items": {
+        "type": "string"
+      }
+    },
+    "score": {
+      "type": "number",
+      "default": 0,
+      "description": "Weight of the combined signals. Evidence for the council to weigh, never an automatic verdict"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "suspected",
+        "linked",
+        "cleared"
+      ],
+      "default": "suspected",
+      "description": "suspected = awaiting the council; linked = one comrade, standing carried across; cleared = two different comrades"
+    },
+    "ruling": {
+      "type": "string",
+      "description": "The council's reasoning, recorded in full"
+    },
+    "ruled_by_email": {
+      "type": "string"
+    },
+    "ruled_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_scanned_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "pair_key",
+    "flagged_user_id",
+    "other_user_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -50,8 +50,13 @@ value, the collective owns the means of production, plain solidarity language, n
   always standing, guests carrying none) and is stated to the buyer in the manifest; and a daily
   `lapseStandingMarks` sweep voids marks past their lifetime, writes a plain 'mark lapsed' entry and
   recomputes the totals.
-  Still open: patron trade standing, alt-account flagging, and muster-attendance awards (which wait on
-  Phase 4.8's live sessions).
+  Also built: alt-account flagging — `identity_link` records a suspected pair with its grounds stated in
+  full; `scanIdentityLinks` gathers grounds only for accounts already carrying a mark or a dismissal
+  (shared handles across the record, applications and orders; shared address stems; shared contact handles),
+  never deciding anything; `ruleIdentityLink` lets the council rule one comrade — carrying the lock and an
+  equal mark across with the ordinary appeal route intact — or two comrades, which retires the pair for good.
+  Surfaced in the Access tab.
+  Still open: patron trade standing, and muster-attendance awards (which wait on Phase 4.8's live sessions).
   Reputation as a record of labour given and labour withheld, not a credit score:
   - Reputation earned on credited work orders and on musters actually stood, held on the member record
     with an immutable event log (source task/operation, delta, reason, actor).
