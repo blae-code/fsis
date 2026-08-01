@@ -186,7 +186,13 @@ value, the collective owns the means of production, plain solidarity language, n
     drawn from the share pool. Writing a time log on task credit would pay the same work twice and
     would put contractors into share-based payday, against a stated hard rule. The thing that should
     write `time_log` is 4.8's attendance clock — which is what "time present" below is for.
-  - **Credit guidance** — suggest a fair sum from category and hours so pay does not drift by mood.
+  - **Credit guidance** ✅ built 2026-08-01 — `shared/labour.js` + `suggestTaskCredit` read back what
+    the collective has actually paid for this kind of labour: the middle of comparable credited work,
+    by the hour where the hands filed their hours and by the whole job where they did not, said to be
+    the weaker reading when it is. A wage table written into the code would be the same drift with
+    better manners, so it reads the record instead. It suggests and never sets, it shows its working
+    so a comrade can audit the offer, and below three comparable jobs it offers **nothing** rather
+    than inventing a figure — a made-up number carries the same authority on the page as an earned one.
   - **Notice to the worker** ✅ built 2026-08-01 — a `notice` addressed to one comrade and readable
     by them alone, a shared emitter in `shared/notices.js`, and `listNotices` / `markNoticesRead`.
     Two rules hold in the substrate: notice is always addressed to a person and never broadcast,
