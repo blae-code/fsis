@@ -21,6 +21,7 @@ import PaydayManagementPanel from '@/components/apps/management/PaydayManagement
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
 import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
 import QuickLogModal from '@/components/apps/management/QuickLogModal';
+import LootSummaryTab from '@/components/loot/LootSummaryTab';
 import { Link } from 'react-router-dom';
 
 const AMBER  = '#E0A22E';
@@ -40,6 +41,7 @@ const TABS = [
   { id: 'warehouse', label: 'WAREHOUSE',  glyph: '▦' },
   { id: 'salvage',   label: 'SALVAGE',    glyph: '◈' },
   { id: 'inventory', label: 'INVENTORY',  glyph: '▦' },
+  { id: 'lootsummary', label: 'LOOT SUMMARY', glyph: '◔' },
   { id: 'auditlog',  label: 'AUDIT LOG',  glyph: '⬚' },
   { id: 'ops',       label: 'OPS DECK',   glyph: '◉' },
   { id: 'market',    label: 'MARKET',     glyph: '◇' },
@@ -142,6 +144,7 @@ export default function ManagementContent() {
         {activeTab === 'warehouse' && <div className="p-4"><WarehouseCommandLayer /></div>}
         {activeTab === 'salvage'   && <div className="p-4"><SalvageCommodityDashboard /></div>}
         {activeTab === 'inventory' && <div className="p-4"><InventoryManager /></div>}
+        {activeTab === 'lootsummary' && <LootSummaryTab />}
         {activeTab === 'auditlog'  && <OpsAuditLog />}
         {activeTab === 'ops'       && <OpsCommandDeck />}
         {activeTab === 'market'    && <div className="p-4"><MarketPriceComparator /></div>}
