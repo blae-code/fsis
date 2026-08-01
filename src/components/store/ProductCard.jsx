@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Pin } from 'lucide-react';
+import { ShoppingCart, Pin, GitCompare } from 'lucide-react';
 import RestockNotifyModal from '@/components/store/RestockNotifyModal';
 import { SalvageCrest, FabricatedCrest, ServiceCrest } from '@/components/brand/glyphs/CategoryCrests';
 import HazardCorner from '@/components/brand/glyphs/HazardCorner';
@@ -8,7 +8,6 @@ import AddToCartControl from '@/components/store/AddToCartControl';
 import CardRadialMenu from '@/components/store/CardRadialMenu';
 import StoreTip from '@/components/store/StoreTip';
 import CommodityIcon from '@/components/brand/CommodityIcon';
-import SerialStrip from '@/components/brand/SerialStrip';
 import MarketBadge from '@/components/store/MarketBadge';
 import StockBar from '@/components/store/StockBar';
 import { roundPrice } from '@/lib/pricing';
@@ -29,6 +28,7 @@ const CATEGORY_META = {
 const CONDITION_COLOR = { new: '#7BA05B', refurb: '#8A8F45', used: '#C8893B', worn: '#C05050' };
 const REDSCAR_DISCOUNT_PERCENT = 10;
 
+/** Compact catalog plate — dense readout, single primary CTA, no wasted vertical space. */
 export default function ProductCard({ product, onAdd, onView, marketBest, inCartQty = 0, pinned = false, onTogglePin, onRestockNotify, compareSelected = false, onToggleCompare }) {
   const meta = CATEGORY_META[product.category] || CATEGORY_META.salvage_commodity;
   const accent = meta.accent || '#8A8F45';
@@ -39,191 +39,126 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
   const displayPrice = roundPrice(product.price_auec || 0);
   const redscarPrice = Math.max(0, roundPrice(displayPrice * (100 - REDSCAR_DISCOUNT_PERCENT) / 100));
   const isBestValue = marketBest && redscarPrice < marketBest;
-  const availabilityLabel = product.category === 'service' ? 'SCHEDULING REQUIRED' : !inStock ? 'RESERVE QUEUE' : (product.stock || 0) < 50 ? 'LIMITED STOCK' : 'READY NOW';
+  const availabilityLabel = product.category === 'service' ? 'ON REQUEST' : !inStock ? 'RESERVE QUEUE' : (product.stock || 0) < 50 ? 'LIMITED' : 'READY NOW';
   const availabilityColor = product.category === 'service' ? '#C8893B' : !inStock ? '#C05050' : (product.stock || 0) < 50 ? '#E0A22E' : '#8A8F45';
   const [showRestockModal, setShowRestockModal] = useState(false);
+  const cond = CONDITION_COLOR[product.condition_grade] || '#7A6E60';
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col group/card h-full"
-      style={{ perspective: 900 }}
-    >
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col group/card h-full">
       <motion.div
         data-radial-host
         onClick={() => onView?.(product)}
-        whileHover={{ rotateX: 2.5, rotateY: -2.5, y: -4 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-        className="relative flex flex-col gap-3 p-3 sm:p-4 border h-[448px] sm:h-[472px] cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
+        whileHover={{ y: -3 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+        className="relative flex flex-col gap-1.5 p-2.5 border flex-1 cursor-pointer hover:brightness-110 transition-[filter] overflow-hidden"
         style={{
-          borderColor: inCart ? '#E0A22E' : `${accent}77`,
-          boxShadow: inCart ? '0 20px 46px rgba(0,0,0,0.42), 0 0 24px rgba(224, 162, 46, 0.22), inset 0 0 22px rgba(224, 162, 46, 0.08)' : `0 16px 38px rgba(0,0,0,0.34), inset 0 0 28px ${accent}12`,
-          transformStyle: 'preserve-3d',
-          clipPath: 'polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)',
-          backgroundImage: `linear-gradient(180deg, rgba(255, 224, 154, 0.07), transparent 18%), radial-gradient(circle at 88% 12%, ${accent}2E, transparent 30%), linear-gradient(rgba(10, 8, 6, 0.52), rgba(10, 8, 6, 0.84)), url(${PLATE_TEXTURE})`,
+          borderColor: inCart ? '#E0A22E' : `${accent}66`,
+          boxShadow: inCart ? '0 10px 26px rgba(0,0,0,0.4), 0 0 16px rgba(224, 162, 46, 0.18)' : '0 8px 22px rgba(0,0,0,0.3)',
+          clipPath: 'polygon(11px 0, 100% 0, 100% calc(100% - 11px), calc(100% - 11px) 100%, 0 100%, 0 11px)',
+          backgroundImage: `linear-gradient(180deg, rgba(255, 224, 154, 0.05), transparent 16%), radial-gradient(circle at 90% 8%, ${accent}26, transparent 28%), linear-gradient(rgba(10, 8, 6, 0.62), rgba(10, 8, 6, 0.88)), url(${PLATE_TEXTURE})`,
           backgroundSize: 'cover',
         }}
       >
-        {!inStock && <HazardCorner size={34} />}
-        {/* Radial context menu — right-click / long-press */}
-        <CardRadialMenu
-          product={product}
-          pinned={pinned}
-          inStock={inStock}
-          onAdd={onAdd}
-          onView={onView}
-          onTogglePin={onTogglePin}
-          onRestockNotify={onRestockNotify}
-        />
-        {/* Sheen sweep on hover */}
+        {!inStock && <HazardCorner size={24} />}
+        <CardRadialMenu product={product} pinned={pinned} inStock={inStock} onAdd={onAdd} onView={onView} onTogglePin={onTogglePin} onRestockNotify={onRestockNotify} />
         <span
           className="absolute inset-y-0 w-1/3 pointer-events-none -left-1/2 group-hover/card:left-[120%] transition-[left] duration-700 ease-out"
-          style={{ background: 'linear-gradient(105deg, transparent, rgba(232, 177, 58, 0.10), transparent)' }}
+          style={{ background: 'linear-gradient(105deg, transparent, rgba(232, 177, 58, 0.09), transparent)' }}
         />
-        <div className="flex items-start justify-between">
-          <div
-            className="w-12 h-12 flex items-center justify-center border"
-            style={{ borderColor: `${accent}55`, background: `linear-gradient(145deg, rgba(10, 9, 7, 0.72), ${darkAccent}44)` }}
-          >
-            {product.category === 'salvage_commodity' || !FallbackIcon ? (
-              <CommodityIcon code={product.code} size={34} />
-            ) : (
-              <FallbackIcon className="w-5 h-5" style={{ color: accent }} />
-            )}
+
+        {/* Identity row */}
+        <div className="flex items-start gap-2">
+          <div className="w-8 h-8 shrink-0 flex items-center justify-center border" style={{ borderColor: `${accent}55`, background: `linear-gradient(145deg, rgba(10, 9, 7, 0.72), ${darkAccent}44)` }}>
+            {product.category === 'salvage_commodity' || !FallbackIcon ? <CommodityIcon code={product.code} size={22} /> : <FallbackIcon className="w-4 h-4" style={{ color: accent }} />}
           </div>
-          <div className="flex flex-col items-end gap-1.5">
-            <div className="flex items-center gap-1.5">
-              <StoreTip label={pinned ? 'UNPIN' : 'PIN TO TOP'} desc="Pinned wares stay at the top of the catalog on this device.">
-                <button
-                  onClick={(e) => { e.stopPropagation(); onTogglePin?.(product.id); }}
-                  className="p-1 border hover:brightness-125 transition-all"
-                  style={{ borderColor: pinned ? '#C8893B' : '#2E2519', background: 'rgba(10, 9, 7, 0.6)' }}
-                >
-                  <Pin className="w-3 h-3" style={{ color: pinned ? '#F0B43A' : '#6B6155', fill: pinned ? '#F0B43A' : 'none' }} />
-                </button>
-              </StoreTip>
-              {onToggleCompare && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); onToggleCompare(product.id); }}
-                  className="px-2 py-1 border text-[8px] font-mono font-bold tracking-[0.12em] hover:brightness-125 transition-all"
-                  style={{ borderColor: compareSelected ? '#8A8F45' : '#2E2519', color: compareSelected ? '#9ED0BD' : '#6B6155', background: compareSelected ? 'rgba(111, 160, 143, 0.12)' : 'rgba(10, 9, 7, 0.6)' }}
-                >
-                  {compareSelected ? 'COMPARE ✓' : 'COMPARE'}
-                </button>
-              )}
+          <div className="min-w-0 flex-1">
+            <h3 className="font-mono text-[12px] font-bold leading-tight truncate" style={{ color: '#EDE5D6' }}>
+              {product.product_name}
+              {product.code && <span className="ml-1.5 text-[10px]" style={{ color: accent }}>[{product.code}]</span>}
+            </h3>
+            <div className="flex items-center gap-1 mt-0.5 font-mono text-[7px] tracking-[0.14em]" style={{ color: '#6B6155' }}>
+              <span style={{ color: accent }}>{meta.label}</span>
+              <span>·</span>
+              <span>{lotNumber(product.id)}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 shrink-0">
+            {onToggleCompare && (
               <button
-                onClick={(e) => { e.stopPropagation(); inStock ? onAdd(product) : setShowRestockModal(true); }}
-                className="px-2.5 py-1.5 border text-[8px] font-mono font-bold tracking-[0.14em] hover:brightness-125 transition-all"
-                style={{ borderColor: inStock ? '#E0A22E' : '#5C302A', color: inStock ? '#0C0A07' : '#D08A6A', background: inStock ? 'linear-gradient(135deg, #E0A22E, #C8893B)' : '#140B08' }}
+                onClick={(e) => { e.stopPropagation(); onToggleCompare(product.id); }}
+                title="Compare"
+                className="p-1 border hover:brightness-125 transition-all"
+                style={{ borderColor: compareSelected ? '#8A8F45' : '#2E2519', background: 'rgba(10, 9, 7, 0.6)' }}
               >
-                {inStock ? 'ADD' : 'RESERVE'}
+                <GitCompare className="w-2.5 h-2.5" style={{ color: compareSelected ? '#9ED0BD' : '#6B6155' }} />
               </button>
-              <span
-                className="inline-flex items-center gap-1 px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.15em]"
-                style={{
-                  background: `linear-gradient(180deg, ${accent}, ${darkAccent})`,
-                  color: meta.text || '#0D1411',
-                  clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)',
-                }}
+            )}
+            <StoreTip label={pinned ? 'UNPIN' : 'PIN TO TOP'} desc="Pinned wares stay at the top of the catalog on this device.">
+              <button
+                onClick={(e) => { e.stopPropagation(); onTogglePin?.(product.id); }}
+                className="p-1 border hover:brightness-125 transition-all"
+                style={{ borderColor: pinned ? '#C8893B' : '#2E2519', background: 'rgba(10, 9, 7, 0.6)' }}
               >
-                {meta.crest && <meta.crest className="w-2.5 h-2.5" />}
-                {meta.label}
-              </span>
-            </div>
-            {product.condition_grade && (
-              <span className="inline-flex items-center px-2 py-0.5 text-[8px] font-mono font-bold"
-                style={{ color: CONDITION_COLOR[product.condition_grade] || '#7A6E60', border: `1px solid ${(CONDITION_COLOR[product.condition_grade] || '#7A6E60')}55`, background: `${(CONDITION_COLOR[product.condition_grade] || '#7A6E60')}18`, clipPath: 'polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%)' }}>
-                {product.condition_grade.toUpperCase()}{product.condition_pct != null ? ` ${product.condition_pct}%` : ''}
-              </span>
-            )}
-            {product.size_class && product.size_class !== 'N/A' && (
-              <span className="text-[8px] font-mono font-bold px-1.5 py-0.5" style={{ color: '#8A8F45', border: '1px solid #8A8F4544', background: '#8A8F4514' }}>
-                {product.size_class}
-              </span>
-            )}
-            {inCart && (
-              <motion.span
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="inline-flex items-center gap-1 px-2 py-0.5 text-[8px] font-mono font-bold tracking-[0.15em] border"
-                style={{ borderColor: '#C8893B', color: '#E0A22E', background: 'rgba(212, 146, 11, 0.1)' }}
-              >
-                <ShoppingCart className="w-2.5 h-2.5" /> IN MANIFEST ×{inCartQty}
-              </motion.span>
-            )}
+                <Pin className="w-2.5 h-2.5" style={{ color: pinned ? '#F0B43A' : '#6B6155', fill: pinned ? '#F0B43A' : 'none' }} />
+              </button>
+            </StoreTip>
           </div>
         </div>
 
-        <div>
-          <h3 className="font-mono text-[15px] font-bold leading-snug" style={{ color: '#EDE5D6', minHeight: '2.65rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-            {product.product_name}
-            {product.code && <span className="ml-2 text-xs" style={{ color: accent }}>[{product.code}]</span>}
-          </h3>
-          <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#877D6D', minHeight: '2.65rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', visibility: product.description ? 'visible' : 'hidden' }}>{product.description || ' '}</p>
-          <div className="flex flex-wrap gap-1.5 mt-2 min-h-[24px]">
-            <span className="text-[8px] font-mono font-bold tracking-[0.13em] px-2 py-0.5 border" style={{ borderColor: `${availabilityColor}55`, color: availabilityColor, background: `${availabilityColor}14` }}>{availabilityLabel}</span>
-            {isBestValue && <span className="text-[8px] font-mono font-bold tracking-[0.13em] px-2 py-0.5 border" style={{ borderColor: '#8A8F4566', color: '#9ED0BD', background: 'rgba(111,160,143,0.12)' }}>BEST REDSCAR VALUE</span>}
-          </div>
+        {/* Status chips */}
+        <div className="flex flex-wrap items-center gap-1 font-mono text-[7px] font-bold tracking-[0.12em]">
+          <span className="px-1.5 py-0.5 border" style={{ borderColor: `${availabilityColor}55`, color: availabilityColor, background: `${availabilityColor}14` }}>{availabilityLabel}</span>
+          {product.condition_grade && (
+            <span className="px-1.5 py-0.5 border" style={{ borderColor: `${cond}55`, color: cond, background: `${cond}18` }}>
+              {product.condition_grade.toUpperCase()}{product.condition_pct != null ? ` ${product.condition_pct}%` : ''}
+            </span>
+          )}
+          {product.size_class && product.size_class !== 'N/A' && (
+            <span className="px-1.5 py-0.5 border" style={{ borderColor: '#8A8F4544', color: '#8A8F45', background: '#8A8F4514' }}>{product.size_class}</span>
+          )}
+          {isBestValue && <span className="px-1.5 py-0.5 border" style={{ borderColor: '#8A8F4566', color: '#9ED0BD', background: 'rgba(111,160,143,0.12)' }}>BEST VALUE</span>}
+          {inCart && (
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 border" style={{ borderColor: '#C8893B', color: '#E0A22E', background: 'rgba(212, 146, 11, 0.1)' }}>
+              <ShoppingCart className="w-2 h-2" /> ×{inCartQty}
+            </span>
+          )}
         </div>
 
-        <div className="mt-auto space-y-2">
-          <SerialStrip seed={product.id} label="FSIS CERTIFIED" />
-          <div className="font-mono space-y-1.5">
-            <div className="flex items-start gap-2 flex-wrap min-h-[78px]">
-              <div>
-                <div className="text-[8px] font-bold tracking-[0.16em]" style={{ color: '#6B6155' }}>STANDARD PRICE</div>
-                <span className="text-2xl font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{displayPrice.toLocaleString()}</span>
-                <span className="text-[10px] ml-1.5" style={{ color: '#6B6155' }}>aUEC/{product.unit || 'SCU'}</span>
+        {product.description && (
+          <p className="text-[10px] leading-snug truncate" style={{ color: '#877D6D' }}>{product.description}</p>
+        )}
+
+        {/* Readout + CTA */}
+        <div className="mt-auto space-y-1.5 font-mono">
+          <div className="flex items-end justify-between gap-2">
+            <div className="leading-none">
+              <span className="text-lg font-bold tracking-tight" style={{ color: '#F0B43A' }}>{displayPrice.toLocaleString()}</span>
+              <span className="text-[8px] ml-1" style={{ color: '#6B6155' }}>aUEC/{product.unit || 'SCU'}</span>
+              <div className="text-[8px] mt-0.5" style={{ color: '#E8C56A' }}>
+                REDSCAR <span className="font-bold" style={{ color: '#F2D98A' }}>{redscarPrice.toLocaleString()}</span>
               </div>
-              <div className="px-2.5 py-1 border" style={{ borderColor: '#A35A2A66', background: 'rgba(163, 90, 42, 0.12)', clipPath: 'polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%)' }}>
-                <div className="text-[8px] font-bold tracking-[0.16em]" style={{ color: '#E8C56A' }}>REDSCAR MEMBER</div>
-                <span className="text-lg font-bold tracking-tight" style={{ color: '#F2D98A' }}>{redscarPrice.toLocaleString()}</span>
-                <span className="text-[9px] ml-1" style={{ color: '#E8C56A' }}>aUEC/{product.unit || 'SCU'}</span>
-              </div>
-              <MarketBadge price={displayPrice} marketBest={marketBest} />
             </div>
-            {product.category === 'service' ? (
-              <div className="text-[10px]" style={{ color: '#9C9080' }}>On request</div>
-            ) : (
-              <StockBar stock={product.stock || 0} unit={product.unit || 'SCU'} />
-            )}
+            <MarketBadge price={displayPrice} marketBest={marketBest} />
           </div>
-          <div className="flex items-center justify-between">
-            <StoreTip label="LOT SERIAL" desc="FSIS reclamation lot number — quoted on your delivery manifest.">
-              <span className="font-mono text-[9px] px-2 py-1 border" style={{ borderColor: '#2E2519', color: '#6B6155' }}>
-                {lotNumber(product.id)}
+          {product.category !== 'service' && <StockBar stock={product.stock || 0} unit={product.unit || 'SCU'} />}
+          {inStock ? (
+            <StoreTip label="LOAD CRATE" desc="Add one unit to your order manifest. Adjust quantity in the manifest panel.">
+              <span onClick={(e) => e.stopPropagation()} className="block">
+                <AddToCartControl disabled={false} onAdd={() => onAdd(product)} />
               </span>
             </StoreTip>
-            {inStock ? (
-              <StoreTip label="LOAD CRATE" desc="Add one unit to your order manifest. Adjust quantity in the manifest panel.">
-                <span onClick={(e) => e.stopPropagation()}>
-                  <AddToCartControl disabled={false} onAdd={() => onAdd(product)} />
-                </span>
-              </StoreTip>
-            ) : (
-              <StoreTip label="RESERVE NEXT FOUND" desc="Request a reserve and FSIS will hold the next found stock before it returns to public inventory.">
-                <span onClick={(e) => { e.stopPropagation(); setShowRestockModal(true); }}>
-                  <AddToCartControl disabled={true} onAdd={() => {}} notifyMode />
-                </span>
-              </StoreTip>
-            )}
-          </div>
+          ) : (
+            <StoreTip label="RESERVE NEXT FOUND" desc="Request a reserve and FSIS will hold the next found stock before it returns to public inventory.">
+              <span onClick={(e) => { e.stopPropagation(); setShowRestockModal(true); }} className="block">
+                <AddToCartControl disabled={true} onAdd={() => {}} notifyMode />
+              </span>
+            </StoreTip>
+          )}
         </div>
       </motion.div>
 
       {showRestockModal && <RestockNotifyModal product={product} onClose={() => setShowRestockModal(false)} />}
-      {/* Category tab */}
-      <div
-        className="mx-auto px-7 py-0.5 text-[9px] font-mono tracking-[0.25em]"
-        style={{
-          background: `linear-gradient(180deg, ${darkAccent}, #161311)`,
-          color: accent,
-          clipPath: 'polygon(0 0, 100% 0, calc(100% - 10px) 100%, 10px 100%)',
-        }}
-      >
-        {meta.label}
-      </div>
     </motion.div>
   );
 }
