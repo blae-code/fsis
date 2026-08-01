@@ -226,7 +226,15 @@ value, the collective owns the means of production, plain solidarity language, n
     stating plainly that no standing was taken). Still owed: a worker notice centre to read them
     in, which is the frontend's half.
   - **Council load view** — who holds what, who is carrying too much, what is ageing unreviewed.
-  - **Skills are collected and ignored** — match posted work against declared skills from standing requests.
+  - **Skills are collected and ignored** ✅ built 2026-08-01 — `shared/skills.js` reads the trades a
+    comrade named in their own words on their application (a Vulture means salvage whether or not the
+    word appears), carries them onto the record when the council admits them, and `listOpenWork`
+    returns the board with likely work nearer the top and a stated reason for each match.
+    **Matching surfaces work; it never restricts it.** Every open task comes back, ordering is all
+    that changes, and work outside a comrade's declared trades stays entirely claimable — a comrade
+    who has never scraped a hull and wants to learn is not told the board is not for them. A
+    convenience that quietly became a gate would be worse than the inconvenience it fixed. Skills are
+    self-declared and never an assessment made over anyone.
 
 - **Phase 4.8 — Operations command & live sessions** (audited 2026-08-01, not yet built)
   Council-only. Today an operation is a notice board with a status flag; the run itself is untracked, so

@@ -2,6 +2,22 @@
   "name": "User",
   "type": "object",
   "properties": {
+    "skills": {
+      "type": "array",
+      "description": "Trades this comrade named on their own application, carried onto the record when they were admitted. Used to put likely work nearer the top of the labour board and for nothing else — it never restricts what may be claimed, and it is their own account of their trade rather than an assessment made over them",
+      "items": {
+        "type": "string",
+        "enum": [
+          "salvage",
+          "hauling",
+          "escort",
+          "repair",
+          "intake",
+          "delivery",
+          "admin"
+        ]
+      }
+    },
     "ops_role": {
       "type": "string",
       "enum": [

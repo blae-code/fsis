@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole, canGrant, platformRoleFor, FSIS_ROLES, PROPRIETOR_EMAIL } from '../../shared/roles.js';
+import { parseSkills } from '../../shared/skills.js';
 
 /**
  * Council-level standing changes. The proprietor may set any standing; owners may only
@@ -47,6 +48,18 @@ export default async function (req: Request): Promise<Response> {
       patch.role = platformRoleFor(newRole);
     }
     if (membershipStatus) patch.membership_status = membershipStatus;
+
+    // A comrade admitted to the outfit wrote down what they do when they applied. Carry it onto
+    // their record so the board can put likely work in front of them, rather than leaving their
+    // own account of their trade filed where nobody looks. Their words, read once — never an
+    // assessment made over them, and never a restriction on what they may claim.
+    if (newRole === 'contractor' && !(Array.isArray(target.skills) && target.skills.length > 0)) {
+      const requests = await base44.asServiceRole.entities.standing_request.filter(
+        { applicant_user_id: targetId }, '-created_date', 1,
+      );
+      const declared = parseSkills(requests[0]?.skills || '');
+      if (declared.length > 0) patch.skills = declared;
+    }
 
     await base44.asServiceRole.entities.User.update(targetId, patch);
 
