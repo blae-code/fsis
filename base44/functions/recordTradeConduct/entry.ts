@@ -1,8 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { isCouncil } from '../../shared/roles.js';
+import { isCouncil, fsisRole } from '../../shared/roles.js';
 import {
   TRADE_AWARD, TRADE_COST, TRADE_MARK_LIFETIME_DAYS, recomputeTradeStanding,
 } from '../../shared/trade.js';
+import { notify } from '../../shared/notices.js';
 
 /**
  * The council records what happened at a handoff: the buyer turned up, or a hand was left waiting.
@@ -65,6 +66,37 @@ export default async function (req: Request): Promise<Response> {
     });
 
     const { total, locked } = await recomputeTradeStanding(base44, patronId);
+
+    // The buyer is told what was recorded about them and why. A mark on trade conduct carries the
+    // same obligations as one on labour: a stated reason, and a date it stops counting.
+    const lapsesOn = delta < 0
+      ? new Date(now.getTime() + TRADE_MARK_LIFETIME_DAYS * 86400000).toISOString().slice(0, 10)
+      : '';
+    await notify(base44, {
+      recipient_user_id: patronId,
+      recipient_handle: patron.handle || order.customer_handle || patron.email,
+      kind: 'trade_marked',
+      title: delta >= 0
+        ? `Trade recorded in your favour — order ${order.tracking_code || orderId}`
+        : `A mark was recorded on your trade record — order ${order.tracking_code || orderId}`,
+      body: [
+        delta >= 0
+          ? `${delta} recorded to your trade standing. You turn up when you say you will, and the yard counts it.`
+          : `${delta} recorded against your trade standing. A hand flew out to meet you, and that time was taken from them.`,
+        `The council's stated reason: ${reason}`,
+        `Your trade standing now stands at ${total}.`,
+        locked
+          ? 'Your account is locked for trade while this stands. The surcharge lifts as marks lapse or the council forgives them.'
+          : '',
+        lapsesOn ? `This mark lapses on ${lapsesOn}.` : '',
+        'This is your trade record only. It is kept wholly apart from labour standing and never touches it.',
+      ].filter(Boolean).join('\n\n'),
+      source_type: 'order',
+      source_id: orderId,
+      source_name: order.tracking_code || orderId,
+      actor_email: user.email,
+      actor_role: fsisRole(user),
+    });
 
     await svc.ops_log.create({
       action: `trade_standing.${kind}`,

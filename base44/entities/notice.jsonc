@@ -20,6 +20,8 @@
         "claim_lapsed",
         "standing_marked",
         "standing_lapsed",
+        "trade_marked",
+        "trade_standing_lapsed",
         "appeal_answered",
         "muster_called",
         "muster_reminder",

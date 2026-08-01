@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { MARK_LIFETIME_DAYS, APPEAL_WINDOW_DAYS, MAX_SURCHARGE_PERCENT, recomputeStanding } from '../../shared/reputation.js';
+import { notify } from '../../shared/notices.js';
 
 /**
  * The council sets standing by hand: an award, a mark, an amnesty, a dismissal or a
@@ -85,6 +86,62 @@ export default async function (req: Request): Promise<Response> {
     }
 
     const total = await recomputeStanding(base44, memberId);
+
+    // A hand-set change to a comrade's standing is told to that comrade. Where it goes against
+    // them it carries the reason, the route to answer it and the date it lapses; where it goes
+    // in their favour it says so plainly rather than leaving them to notice a number move.
+    const appealBy = new Date(now.getTime() + APPEAL_WINDOW_DAYS * 86400000).toISOString().slice(0, 10);
+    const lapsesOn = new Date(now.getTime() + MARK_LIFETIME_DAYS * 86400000).toISOString().slice(0, 10);
+    const answerRoute = `If this is wrong, you may answer it once, by ${appealBy}. An Owner or above must respond, and their reasoning will be shown back to you.`;
+
+    const told = {
+      amnesty: {
+        title: 'The council has forgiven your marks',
+        lines: [
+          'Every mark standing against you for work handed back has been set aside and no longer counts.',
+          `The council's stated reason: ${reason}`,
+          'The events remain readable in your record — nothing has been erased. They simply stop counting against you.',
+        ],
+      },
+      dismiss: {
+        title: 'You have been released from the yard',
+        lines: [
+          `Contractor privileges are locked: you may not claim work or answer musters, and a ${MAX_SURCHARGE_PERCENT}% surcharge — not a discount — stands on your account at the storefront until an Owner reinstates you.`,
+          `The council's stated reason: ${reason}`,
+          answerRoute,
+          `This mark lapses on ${lapsesOn} regardless of whether you answer it.`,
+        ],
+      },
+      reinstate: {
+        title: 'You have been reinstated',
+        lines: [
+          'The lock is lifted. You may claim work and answer musters again, and the surcharge on your account has gone.',
+          `The council's stated reason: ${reason}`,
+        ],
+      },
+      adjust: {
+        title: 'The council adjusted your standing by hand',
+        lines: [
+          `An adjustment of ${Number(body?.delta) || 0} has been recorded against your standing.`,
+          `The council's stated reason: ${reason}`,
+          answerRoute,
+          Number(body?.delta) < 0 ? `This mark lapses on ${lapsesOn}.` : '',
+        ],
+      },
+    }[action as 'amnesty' | 'dismiss' | 'reinstate' | 'adjust'];
+
+    await notify(base44, {
+      recipient_user_id: memberId,
+      recipient_handle: identity.member_handle,
+      kind: action === 'dismiss' || action === 'adjust' ? 'standing_marked' : 'standing_lapsed',
+      title: told.title,
+      body: [...told.lines.filter(Boolean), `Your standing now stands at ${total}.`].join('\n\n'),
+      source_type: 'User',
+      source_id: memberId,
+      source_name: identity.member_handle,
+      actor_email: user.email,
+      actor_role: fsisRole(user),
+    });
 
     await base44.asServiceRole.entities.ops_log.create({
       action: `standing.${action}`,

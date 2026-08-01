@@ -27,6 +27,10 @@ export const NOTICE_KINDS = [
   'claim_lapsed',
   'standing_marked',
   'standing_lapsed',
+  // The buyer's ledger is a wholly separate record and is named separately here too, so a notice
+  // about trade conduct can never be mistaken for one about labour standing.
+  'trade_marked',
+  'trade_standing_lapsed',
   'appeal_answered',
   'muster_called',
   'muster_reminder',

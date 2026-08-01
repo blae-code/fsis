@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { recomputeStanding } from '../../shared/reputation.js';
+import { notify } from '../../shared/notices.js';
 
 /**
  * An Owner or the Proprietor rules on an appeal. The mark may be upheld, reduced, increased
@@ -58,6 +59,33 @@ export default async function (req: Request): Promise<Response> {
       before: { effective_delta: event.effective_delta },
       after: { effective_delta: effective, standing_total: total },
       notes: `${ruling} (ruled by ${fsisRole(user)})`,
+    });
+
+    // An appeal answered in the record but not to the comrade is an appeal unanswered. Silence
+    // from the council must never work as a denial by default.
+    const outcomeStated = {
+      upheld: 'The mark stands as first assessed.',
+      reduced: `The mark has been reduced — it now counts ${effective} rather than ${original}.`,
+      increased: `The mark has been increased — it now counts ${effective} rather than ${original}.`,
+      neutralised: 'The mark has been set aside in full and no longer counts against you.',
+    }[outcome];
+
+    await notify(base44, {
+      recipient_user_id: event.member_user_id,
+      recipient_handle: event.member_handle,
+      kind: 'appeal_answered',
+      title: `The council answered your appeal: ${event.source_name || event.kind}`,
+      body: [
+        outcomeStated,
+        `Their reasoning, in full: ${ruling}`,
+        `Your standing now stands at ${total}.`,
+        'The original assessment has not been erased — the record is append-only, and what changed is only what it counts for.',
+      ].join('\n\n'),
+      source_type: 'standing_event',
+      source_id: eventId,
+      source_name: event.source_name || event.kind,
+      actor_email: user.email,
+      actor_role: fsisRole(user),
     });
 
     return Response.json({ ok: true, standing_event: updated, reputation: total });

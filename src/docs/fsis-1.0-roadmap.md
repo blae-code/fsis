@@ -87,6 +87,10 @@ value, the collective owns the means of production, plain solidarity language, n
     plainly on the labour board. No hidden score.
   - **Appeals discipline** — one appeal per event, a filing window, a stated review deadline, and the
     ruling shown back with reasoning. Silence from the council must not be a de facto denial.
+    ✅ closed 2026-08-01 — the ruling, the marks a comrade carries, the amnesty, the dismissal, the
+    reinstatement and the lapse are now each put in front of the comrade they concern via `notice`,
+    carrying the reason, the date by which it may be answered and the date it stops counting. The
+    obligations existed on the record before this; nothing had ever shown them to the person.
   - **Direct edits are governed** — any hand-set reputation change is an audited event with actor and
     reason; the event log is append-only and never rewritten.
   - **Alt accounts** — a dismissed worker returning under a fresh account defeats the whole system.
