@@ -4,7 +4,11 @@
   "properties": {
     "handle": {
       "type": "string",
-      "description": "Crew member handle the time belongs to"
+      "description": "Crew member callsign the time belongs to — kept for display and for older records"
+    },
+    "member_user_id": {
+      "type": "string",
+      "description": "Account whose labour this is. Where set it settles ownership of the shares outright; older logs carry only the callsign and are read by that instead"
     },
     "work_date": {
       "type": "string",

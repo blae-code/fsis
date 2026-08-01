@@ -1,4 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { PROPRIETOR_EMAIL } from '../../shared/roles.js';
+import { contractorIndex, isContractorLine, logsBelongingTo, normaliseHandle, sameHandle, sharesInLogs } from '../../shared/members.js';
+import { roundAuec, roundShares } from '../../shared/money.js';
 
 // Closes pay day cycles whose 72-hour window has elapsed (hourly FSIS.bot check),
 // or immediately when management force-closes. Publishes the final transparency
@@ -42,41 +45,64 @@ Deno.serve(async (req) => {
       const totalShares = cycle.total_shares || 0;
       const shareValue = totalShares > 0 ? pool / totalShares : 0;
 
-      // Elections made during the window
+      // Elections made during the window, read back against the comrade who filed them — by
+      // account where the election carries one, and only otherwise by callsign. A comrade whose
+      // name changed mid-window must still have their own decision honoured.
       const elections = await base44.asServiceRole.entities.payday_election.filter({ cycle_id: cycle.id });
-      const decisionByHandle = {};
-      for (const e of elections) decisionByHandle[e.handle] = e.decision;
+      const decisionFor = (line: any) => {
+        const filed = elections.find((e) =>
+          e.member_user_id && line.user_id
+            ? e.member_user_id === line.user_id
+            : sameHandle(e.handle, line.handle),
+        );
+        return filed?.decision || '';
+      };
 
       const report = [];
       let totalPaid = 0;
       let deferredShares = 0;
 
       // Contractors never draw from the share pool — their labour is settled in full at the
-      // point of work, so a contractor handle in an older snapshot is skipped here.
+      // point of work, so a contractor in an older snapshot is skipped here. Matched by account
+      // where the snapshot carries one, and only otherwise by callsign.
       const contractorUsers = await base44.asServiceRole.entities.User.filter({ fsis_role: 'contractor' });
-      const contractorHandles = new Set(
-        contractorUsers.map((u) => (u.handle || '').toLowerCase()).filter(Boolean),
-      );
+      const contractors = contractorIndex(contractorUsers);
+
+      // The proprietor's cash-in is an owner draw and is labelled as one on the ledger. Read from
+      // the record rather than from a name held in code, with the founding callsign kept as a
+      // fallback so older snapshots still read correctly.
+      const proprietorUsers = [
+        ...(await base44.asServiceRole.entities.User.filter({ fsis_role: 'proprietor' })),
+        ...(await base44.asServiceRole.entities.User.filter({ email: PROPRIETOR_EMAIL })),
+      ];
+      const proprietorIds = new Set(proprietorUsers.map((u) => u.id).filter(Boolean));
+      const proprietorHandles = new Set(proprietorUsers.map((u) => normaliseHandle(u.handle)).filter(Boolean));
+
+      // Every confirmed log at the moment of close, read once rather than queried per hand —
+      // a query inside the loop is how this timed out before. Cash-in still takes ALL confirmed
+      // labour including anything earned mid-window, which is the pro-labour reading.
+      const confirmedLogs = await base44.asServiceRole.entities.time_log.filter({ status: 'confirmed' }, '-created_date', 1000);
 
       for (const snap of cycle.shares_by_handle || []) {
-        if (contractorHandles.has((snap.handle || '').toLowerCase())) {
-          report.push({ handle: snap.handle, shares: 0, decision: 'contractor_paid_directly', payout_auec: 0 });
+        if (isContractorLine(contractors, snap)) {
+          report.push({ handle: snap.handle, user_id: snap.user_id || '', shares: 0, decision: 'contractor_paid_directly', payout_auec: 0 });
           continue;
         }
-        const decision = decisionByHandle[snap.handle] || 'defer';
+        const decision = decisionFor(snap) || 'defer';
         if (decision === 'cash_in' && shareValue > 0) {
-          // Cash out ALL currently confirmed logs (incl. any earned mid-window — pro-labor)
-          const logs = await base44.asServiceRole.entities.time_log.filter({ handle: snap.handle, status: 'confirmed' });
-          const actualShares = logs.reduce((t, l) => t + (l.shares || 0), 0);
-          const payout = Math.round(actualShares * shareValue);
+          const logs = logsBelongingTo(confirmedLogs, { userId: snap.user_id, handle: snap.handle });
+          const actualShares = sharesInLogs(logs);
+          const payout = roundAuec(actualShares * shareValue);
 
-          const isOwner = snap.handle.toLowerCase() === 'blae';
+          const isOwner = snap.user_id
+            ? proprietorIds.has(snap.user_id)
+            : proprietorHandles.has(normaliseHandle(snap.handle)) || normaliseHandle(snap.handle) === 'blae';
           await base44.asServiceRole.entities.ledger_entry.create({
             entry_type: 'expense',
             category: 'crew_pay',
             amount_auec: payout,
             counterparty: isOwner ? `${snap.handle} (owner draw — personal)` : snap.handle,
-            description: `Pay day ${cycle.payday_date} — ${Math.round(actualShares * 100) / 100} shares @ ${Math.round(shareValue).toLocaleString()} aUEC/share (cycle ${cycle.id})`,
+            description: `Pay day ${cycle.payday_date} — ${roundShares(actualShares)} shares @ ${roundAuec(shareValue).toLocaleString()} aUEC/share (cycle ${cycle.id})`,
             entry_date: now.toISOString().slice(0, 10),
             source: 'automation',
           });
@@ -84,17 +110,18 @@ Deno.serve(async (req) => {
             await base44.asServiceRole.entities.time_log.update(l.id, {
               status: 'cashed',
               payday_date: cycle.payday_date,
-              payout_auec: Math.round((l.shares || 0) * shareValue),
+              payout_auec: roundAuec((l.shares || 0) * shareValue),
             });
           }
           totalPaid += payout;
-          report.push({ handle: snap.handle, shares: Math.round(actualShares * 100) / 100, decision: 'cash_in', payout_auec: payout });
+          report.push({ handle: snap.handle, user_id: snap.user_id || '', shares: roundShares(actualShares), decision: 'cash_in', payout_auec: payout });
         } else {
           deferredShares += snap.shares || 0;
           report.push({
             handle: snap.handle,
+            user_id: snap.user_id || '',
             shares: snap.shares || 0,
-            decision: decisionByHandle[snap.handle] === 'defer' ? 'defer' : 'no_response_defer',
+            decision: decisionFor(snap) === 'defer' ? 'defer' : 'no_response_defer',
             payout_auec: 0,
           });
         }
@@ -103,10 +130,10 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.payday_cycle.update(cycle.id, {
         status: 'published',
         published_at: now.toISOString(),
-        share_value_auec: Math.round(shareValue * 100) / 100,
+        share_value_auec: roundShares(shareValue),
         report,
-        total_paid_auec: totalPaid,
-        deferred_shares: Math.round(deferredShares * 100) / 100,
+        total_paid_auec: roundAuec(totalPaid),
+        deferred_shares: roundShares(deferredShares),
         force_closed: targeted && !due,
       });
 

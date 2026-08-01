@@ -1,4 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { groupLogsByMember } from '../../shared/members.js';
+import { roundAuec, roundShares, sumShares } from '../../shared/money.js';
 
 // Opens a Pay Day cycle with a 72-hour decision window.
 // Runs automatically every Friday morning (FSIS.bot), or manually by management.
@@ -23,13 +25,11 @@ Deno.serve(async (req) => {
       return Response.json({ skipped: true, reason: 'A pay day cycle is already open', cycle_id: openCycles[0].id });
     }
 
-    // Outstanding confirmed shares per handle
+    // Outstanding confirmed shares, gathered per comrade. Labour recorded against an account and
+    // older labour recorded only against a callsign are the same hand and are counted once.
     const logs = await base44.asServiceRole.entities.time_log.filter({ status: 'confirmed' }, '-created_date', 1000);
-    const byHandle = {};
-    for (const l of logs) {
-      byHandle[l.handle] = (byHandle[l.handle] || 0) + (l.shares || 0);
-    }
-    const totalShares = Object.values(byHandle).reduce((t, s) => t + s, 0);
+    const members = groupLogsByMember(logs);
+    const totalShares = sumShares(members.map((m) => m.shares));
     if (totalShares <= 0) {
       return Response.json({ skipped: true, reason: 'No outstanding shares — nothing to distribute' });
     }
@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
     let pool;
     let poolSource;
     if (payload.pool_auec > 0) {
-      pool = Math.round(payload.pool_auec);
+      pool = roundAuec(payload.pool_auec);
       poolSource = 'Declared by management';
     } else {
       const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
         if ((e.entry_date || e.created_date?.slice(0, 10) || '') < since) continue;
         net += e.entry_type === 'income' ? (e.amount_auec || 0) : -(e.amount_auec || 0);
       }
-      pool = Math.max(0, Math.round(net));
+      pool = Math.max(0, roundAuec(net));
       poolSource = 'Auto: trailing 7-day ledger net';
     }
 
@@ -65,11 +65,13 @@ Deno.serve(async (req) => {
       status: 'open',
       pool_auec: pool,
       pool_source: poolSource,
-      total_shares: Math.round(totalShares * 100) / 100,
-      share_value_auec: Math.round(shareValue * 100) / 100,
-      shares_by_handle: Object.entries(byHandle).map(([handle, shares]) => ({
-        handle,
-        shares: Math.round(shares * 100) / 100,
+      total_shares: roundShares(totalShares),
+      share_value_auec: roundShares(shareValue),
+      // The callsign is carried for display; the account is what the cycle settles against.
+      shares_by_handle: members.map((member) => ({
+        handle: member.handle,
+        user_id: member.user_id,
+        shares: roundShares(member.shares),
       })),
     });
 

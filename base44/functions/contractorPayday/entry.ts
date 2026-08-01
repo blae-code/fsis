@@ -1,8 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { findCrewMemberFor, fetchConfirmedLogsFor, sharesInLogs, sameHandle } from '../../shared/members.js';
 
-// Contractor-facing pay day status. Scoped strictly to the logged-in user via
-// their callsign matching the crew roster — returns their shares, the open cycle,
-// their election, and the latest published transparency report.
+// Contractor-facing pay day status. Scoped strictly to the logged-in user via their
+// account's roster place — returns their shares, the open cycle, their election, and
+// the latest published transparency report.
 
 Deno.serve(async (req) => {
   try {
@@ -13,7 +14,7 @@ Deno.serve(async (req) => {
     }
 
     const crew = await base44.asServiceRole.entities.crew_member.filter({ active: true });
-    const me = (user.handle && crew.find((m) => (m.handle || '').toLowerCase() === user.handle.toLowerCase())) || null;
+    const me = findCrewMemberFor(crew, user);
 
     const openCycles = await base44.asServiceRole.entities.payday_cycle.filter({ status: 'open' });
     const published = await base44.asServiceRole.entities.payday_cycle.filter({ status: 'published' }, '-published_at', 1);
@@ -22,11 +23,11 @@ Deno.serve(async (req) => {
     let myShares = 0;
     let myElection = null;
     if (me) {
-      const logs = await base44.asServiceRole.entities.time_log.filter({ handle: me.handle, status: 'confirmed' });
-      myShares = Math.round(logs.reduce((t, l) => t + (l.shares || 0), 0) * 100) / 100;
+      const logs = await fetchConfirmedLogsFor(base44, { userId: user.id, handle: me.handle });
+      myShares = sharesInLogs(logs);
       if (openCycle) {
-        const elections = await base44.asServiceRole.entities.payday_election.filter({ cycle_id: openCycle.id, handle: me.handle });
-        myElection = elections[0] || null;
+        const elections = await base44.asServiceRole.entities.payday_election.filter({ cycle_id: openCycle.id });
+        myElection = elections.find((e) => (e.member_user_id ? e.member_user_id === user.id : sameHandle(e.handle, me.handle))) || null;
       }
     }
 

@@ -58,6 +58,10 @@
           "handle": {
             "type": "string"
           },
+          "user_id": {
+            "type": "string",
+            "description": "Account the shares belong to, so a comrade who changes callsign mid-cycle is still paid. Empty on snapshots taken before pay was keyed to the account"
+          },
           "shares": {
             "type": "number"
           }
@@ -72,6 +76,10 @@
         "properties": {
           "handle": {
             "type": "string"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "Account this line settled for. Empty on reports published before pay was keyed to the account"
           },
           "shares": {
             "type": "number"

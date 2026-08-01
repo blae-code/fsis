@@ -1,8 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { findCrewMemberFor, fetchConfirmedLogsFor, sharesInLogs, sameHandle } from '../../shared/members.js';
 
 // Records a contractor's pay day election (cash in or defer) for the open cycle.
-// Identity is enforced server-side: the logged-in user's operator callsign must
-// match their crew roster record — nobody can elect on someone else's behalf.
+// Identity is enforced server-side against the ACCOUNT, not the callsign: a roster place
+// already claimed by an account cannot be reached by holding a matching name, so nobody
+// can elect on someone else's behalf.
 
 Deno.serve(async (req) => {
   try {
@@ -26,7 +28,7 @@ Deno.serve(async (req) => {
     }
 
     const crew = await base44.asServiceRole.entities.crew_member.filter({ active: true });
-    const me = (user.handle && crew.find((m) => (m.handle || '').toLowerCase() === user.handle.toLowerCase())) || null;
+    const me = findCrewMemberFor(crew, user);
     if (!me) {
       return Response.json({ error: 'Your callsign is not on the crew roster. Ask management to add your callsign, and make sure it matches your FSIS operator callsign.' }, { status: 403 });
     }
@@ -40,19 +42,23 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'The decision window has closed — this cycle is being finalized' }, { status: 400 });
     }
 
-    const logs = await base44.asServiceRole.entities.time_log.filter({ handle: me.handle, status: 'confirmed' });
-    const shares = Math.round(logs.reduce((t, l) => t + (l.shares || 0), 0) * 100) / 100;
+    const logs = await fetchConfirmedLogsFor(base44, { userId: user.id, handle: me.handle });
+    const shares = sharesInLogs(logs);
 
-    const existing = await base44.asServiceRole.entities.payday_election.filter({ cycle_id: cycle.id, handle: me.handle });
+    // One election per comrade per cycle — matched by account, falling back to the callsign for
+    // an election filed before pay was keyed to the account, so nobody ends up with two.
+    const filed = await base44.asServiceRole.entities.payday_election.filter({ cycle_id: cycle.id });
+    const existing = filed.find((e) => (e.member_user_id ? e.member_user_id === user.id : sameHandle(e.handle, me.handle))) || null;
     const data = {
       cycle_id: cycle.id,
       handle: me.handle,
+      member_user_id: user.id,
       decision,
       shares_at_election: shares,
       decided_at: new Date().toISOString(),
     };
-    if (existing.length > 0) {
-      await base44.asServiceRole.entities.payday_election.update(existing[0].id, data);
+    if (existing) {
+      await base44.asServiceRole.entities.payday_election.update(existing.id, data);
     } else {
       await base44.asServiceRole.entities.payday_election.create(data);
     }

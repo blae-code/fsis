@@ -56,6 +56,10 @@
           "handle": {
             "type": "string"
           },
+          "user_id": {
+            "type": "string",
+            "description": "Account the hand belongs to, so the payout follows the comrade rather than the callsign. Empty on orders written before pay was keyed to the account"
+          },
           "shares": {
             "type": "number"
           }

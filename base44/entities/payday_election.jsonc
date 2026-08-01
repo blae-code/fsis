@@ -8,7 +8,11 @@
     },
     "handle": {
       "type": "string",
-      "description": "Crew member handle making the election"
+      "description": "Crew member callsign making the election — kept for display and for older records"
+    },
+    "member_user_id": {
+      "type": "string",
+      "description": "Account that made the election. An election is a decision about one comrade's own labour, so it is recorded against the account rather than a name anyone might come to hold"
     },
     "email": {
       "type": "string",

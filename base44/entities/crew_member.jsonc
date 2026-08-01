@@ -4,7 +4,11 @@
   "properties": {
     "handle": {
       "type": "string",
-      "description": "In-game callsign of the FSIS member \u2014 also links their app operator profile by callsign match for pay day elections"
+      "description": "In-game callsign of the FSIS member \u2014 what we call them by. Kept for display and for older records; the account link below is what settles who is who"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "Account this roster place belongs to. Once set it is authoritative: a matching callsign no longer opens the place, so nobody draws another comrade's shares by coming to hold their old name. Unset on older records, which still resolve by callsign"
     },
     "display_name": {
       "type": "string",

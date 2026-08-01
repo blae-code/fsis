@@ -167,7 +167,9 @@ value, the collective owns the means of production, plain solidarity language, n
     after being sent back, the way order messages already work.
   - **Labour traced to value** — link a task to the order, cargo lot or operation it serves, so the true
     labour cost of a lot can be stated rather than guessed.
-  - **Hours** — `time_log` exists and is unwired. Estimated against actual hours belongs on the task.
+  - **Hours** — `time_log` is unwired at the task end only: nothing writes it, and the task carries no
+    hours. It is not idle at the other end — it is the sole source of shares, so whatever writes it
+    feeds the pay pool directly. Estimated against actual hours belongs on the task.
   - **Credit guidance** — suggest a fair sum from category and hours so pay does not drift by mood.
   - **Notice to the worker** — claim, return and credit events must reach them.
   - **Council load view** — who holds what, who is carrying too much, what is ageing unreviewed.
@@ -177,6 +179,16 @@ value, the collective owns the means of production, plain solidarity language, n
   Council-only. Today an operation is a notice board with a status flag; the run itself is untracked, so
   nothing an operation produces can pay anybody. Taking regolith.rocks as the reference, the centre of
   gravity is the **live session**, not the calendar:
+  - **Whose labour is whose** ✅ settled 2026-08-01 — groundwork, because "only fact may pay people"
+    needs the fact to name a person. Pay was keyed to a callsign typed into a field: match the string,
+    draw the share. A callsign can be changed, by the comrade or by the council on a ruling, and the
+    labour already given does not change with it — so a rename cut a hand off from their own shares,
+    and the guard on an election rested on a name rather than an account. The account is now the key
+    and the callsign is what we call them by (`shared/members.js`), with `user_id` / `member_user_id`
+    added to the roster place, the time log, the election, the cycle snapshot and the work order.
+    A roster place already claimed by an account can no longer be opened by holding a matching name.
+    Older records carrying only a callsign still resolve, and a comrade with labour under both is
+    gathered as one hand rather than appearing on the cycle twice.
   - **The live session** — start and stop a run, with a roster of who actually turned up. RSVP is intent;
     attendance is fact, and only fact may pay people.
   - **Time present** — hands join and leave over a long run. Attendance-weighted shares are impossible

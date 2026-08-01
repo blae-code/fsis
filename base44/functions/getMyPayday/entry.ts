@@ -1,7 +1,9 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { findCrewMemberFor, fetchConfirmedLogsFor, sharesInLogs, sameHandle } from '../../shared/members.js';
 
 // Returns the calling contractor's pay day status: linked crew member, outstanding
 // shares + time logs, the open cycle, their election, and the latest published report.
+// Identity is the account, not the callsign — a comrade who is renamed keeps their labour.
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -10,23 +12,24 @@ Deno.serve(async (req) => {
 
     const svc = base44.asServiceRole;
 
-    // Identity by callsign: the operator's FSIS callsign must match a roster handle.
+    // The roster place belonging to this account — by account link where it exists, and only
+    // otherwise by callsign. A place already claimed is never opened by a matching name.
     const crew = await svc.entities.crew_member.filter({ active: true });
-    const member = crew.find((m) => (m.handle || '').toLowerCase() === (user.handle || '').toLowerCase() && user.handle);
+    const member = findCrewMemberFor(crew, user);
     if (!member) {
       return Response.json({ linked: false });
     }
 
-    const logs = await svc.entities.time_log.filter({ status: 'confirmed', handle: member.handle }, '-work_date', 100);
-    const shares = Math.round(logs.reduce((t, l) => t + (l.shares || 0), 0) * 100) / 100;
+    const logs = await fetchConfirmedLogsFor(base44, { userId: user.id, handle: member.handle });
+    const shares = sharesInLogs(logs);
 
     const openCycles = await svc.entities.payday_cycle.filter({ status: 'open' });
     const cycle = openCycles[0] || null;
 
     let election = null;
     if (cycle) {
-      const els = await svc.entities.payday_election.filter({ cycle_id: cycle.id, handle: member.handle });
-      election = els[0] || null;
+      const els = await svc.entities.payday_election.filter({ cycle_id: cycle.id });
+      election = els.find((e) => (e.member_user_id ? e.member_user_id === user.id : sameHandle(e.handle, member.handle))) || null;
     }
 
     const published = await svc.entities.payday_cycle.filter({ status: 'published' }, '-payday_date', 1);
@@ -35,7 +38,9 @@ Deno.serve(async (req) => {
       linked: true,
       handle: member.handle,
       shares,
-      logs: logs.map((l) => ({
+      // The share total above counts every confirmed log; the record shown back is the most
+      // recent hundred, as it always was.
+      logs: logs.slice(0, 100).map((l) => ({
         work_date: l.work_date,
         minutes: l.minutes,
         shares: l.shares,
