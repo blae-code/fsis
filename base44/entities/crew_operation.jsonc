@@ -1,0 +1,155 @@
+{
+  "name": "crew_operation",
+  "type": "object",
+  "properties": {
+    "op_name": {
+      "type": "string",
+      "description": "Name of the scheduled operation, e.g. 'Aaron Halo sweep \u2014 Saturday'"
+    },
+    "brief": {
+      "type": "string",
+      "description": "What the operation involves and what comrades should bring"
+    },
+    "op_type": {
+      "type": "string",
+      "enum": [
+        "salvage",
+        "hauling",
+        "escort",
+        "mining",
+        "recovery",
+        "other"
+      ],
+      "default": "salvage"
+    },
+    "starts_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the muster begins"
+    },
+    "duration_hours": {
+      "type": "number",
+      "default": 2,
+      "description": "Expected length of the operation in hours"
+    },
+    "muster_location": {
+      "type": "string",
+      "description": "Where to gather, e.g. 'Port Tressler \u2014 Hangar 4'"
+    },
+    "ship": {
+      "type": "string",
+      "description": "Primary hull for the run"
+    },
+    "crew_needed": {
+      "type": "number",
+      "default": 2,
+      "description": "How many hands the operation calls for"
+    },
+    "roles_wanted": {
+      "type": "string",
+      "description": "Roles the op needs, e.g. 'pilot, scraper, security'"
+    },
+    "pay_basis": {
+      "type": "string",
+      "enum": [
+        "shares",
+        "flat_credit"
+      ],
+      "default": "shares",
+      "description": "shares = co-op members' pay day pool; flat_credit = a fixed sum paid directly, used for contractors"
+    },
+    "flat_credit_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Fixed sum per hand when the operation is paid directly rather than in shares"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "mustering",
+        "underway",
+        "completed",
+        "stood_down"
+      ],
+      "default": "scheduled"
+    },
+    "rsvps": {
+      "type": "array",
+      "description": "Comrades who have answered the muster",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "standing": {
+            "type": "string"
+          },
+          "response": {
+            "type": "string",
+            "enum": [
+              "in",
+              "maybe",
+              "out"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "responded_at": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "posted_by_email": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "op_name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.status": {
+            "$in": [
+              "scheduled",
+              "mustering",
+              "underway",
+              "completed"
+            ]
+          }
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

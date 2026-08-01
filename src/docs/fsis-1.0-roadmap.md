@@ -21,10 +21,12 @@ value, the collective owns the means of production, plain solidarity language, n
   Four standings on the user record, shared role logic, proprietor-only Owner invitation, council-level
   grant/revoke with a permanent access audit trail, Access console tab, management console gated on
   council standing.
-- **Phase 2 — Task work orders**
+- **Phase 2 — Task work orders** ✅ COMPLETE
   Assignable task object (spec, deadline, reward, claimant, proof, review state) kept separate from the
   share-settlement work order. Council authoring UI + review queue with approve/reject and credit on approval.
-- **Phase 3 — Contractor experience**
+- **Phase 3 — Contractor experience** ✅ COMPLETE (labour board at `/work`: open tasks, musters with RSVP,
+  work in hand with time remaining, record of labour; contractors barred from share elections and skipped
+  in cycle settlement)
   Contractor job board (open tasks + scheduled operations with RSVP + detail), claim + proof submission,
   "my tasks" with time remaining, work-history dashboard. Enforce contractor exclusion from share payday.
 - **Phase 4 — Public front doors**

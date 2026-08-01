@@ -17,6 +17,14 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Decision must be cash_in or defer' }, { status: 400 });
     }
 
+    // Contractors stand outside the co-op: their labour is paid in full per task or per
+    // operation, and is never diluted into — nor drawn from — the members' share pool.
+    if (user.fsis_role === 'contractor') {
+      return Response.json({
+        error: 'Contractors are paid in full for each task and operation, directly and outside the share pool. There is no election to make — see the labour board for what you are owed.',
+      }, { status: 403 });
+    }
+
     const crew = await base44.asServiceRole.entities.crew_member.filter({ active: true });
     const me = (user.handle && crew.find((m) => (m.handle || '').toLowerCase() === user.handle.toLowerCase())) || null;
     if (!me) {

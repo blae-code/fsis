@@ -5,6 +5,7 @@ import { ClipboardList, Loader2 } from 'lucide-react';
 import TaskPostForm from '@/components/apps/management/tasks/TaskPostForm';
 import TaskReviewQueue from '@/components/apps/management/tasks/TaskReviewQueue';
 import TaskCard from '@/components/apps/management/tasks/TaskCard';
+import OperationScheduleConsole from '@/components/apps/management/tasks/OperationScheduleConsole';
 import { TASK_STATUS_META, fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 
 const FILTERS = ['posted', 'claimed', 'submitted', 'credited', 'returned', 'cancelled'];
@@ -72,6 +73,11 @@ export default function TaskWorkOrderConsole() {
 
       <TaskPostForm actorEmail={actor?.email} />
       <TaskReviewQueue tasks={submitted} />
+
+      <div className="pt-2 border-t space-y-1" style={{ borderColor: '#2E2519' }}>
+        <div className="text-[9px] tracking-[0.2em]" style={{ color: '#6FA0C8' }}>SCHEDULED OPERATIONS — WHO STANDS WITH US</div>
+        <OperationScheduleConsole actorEmail={actor?.email} />
+      </div>
 
       <div className="flex flex-wrap gap-1">
         {['all', ...FILTERS].map((f) => (

@@ -51,7 +51,18 @@ Deno.serve(async (req) => {
       let totalPaid = 0;
       let deferredShares = 0;
 
+      // Contractors never draw from the share pool — their labour is settled in full at the
+      // point of work, so a contractor handle in an older snapshot is skipped here.
+      const contractorUsers = await base44.asServiceRole.entities.User.filter({ fsis_role: 'contractor' });
+      const contractorHandles = new Set(
+        contractorUsers.map((u) => (u.handle || '').toLowerCase()).filter(Boolean),
+      );
+
       for (const snap of cycle.shares_by_handle || []) {
+        if (contractorHandles.has((snap.handle || '').toLowerCase())) {
+          report.push({ handle: snap.handle, shares: 0, decision: 'contractor_paid_directly', payout_auec: 0 });
+          continue;
+        }
         const decision = decisionByHandle[snap.handle] || 'defer';
         if (decision === 'cash_in' && shareValue > 0) {
           // Cash out ALL currently confirmed logs (incl. any earned mid-window — pro-labor)

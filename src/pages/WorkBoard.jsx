@@ -2,10 +2,13 @@ import React, { useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { claimTask } from '@/functions/claimTask';
 import { submitTaskProof } from '@/functions/submitTaskProof';
+import { rsvpOperation } from '@/functions/rsvpOperation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Hammer, Loader2, ArrowLeft } from 'lucide-react';
 import WorkerTaskCard from '@/components/work/WorkerTaskCard';
+import OperationRsvpCard from '@/components/work/OperationRsvpCard';
+import WorkHistoryPanel from '@/components/work/WorkHistoryPanel';
 import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 
 /** The labour board: work open to any comrade, and the tasks each holds in hand. */
@@ -18,12 +21,22 @@ export default function WorkBoard() {
     refetchInterval: 30000,
   });
 
+  const { data: operations = [] } = useQuery({
+    queryKey: ['work_board_operations'],
+    queryFn: () => base44.entities.crew_operation.list('-starts_at', 100),
+    refetchInterval: 30000,
+  });
+
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ['work_board_tasks'] });
     qc.invalidateQueries({ queryKey: ['labour_tasks'] });
   };
   const claim = useMutation({ mutationFn: (task) => claimTask({ task_id: task.id }), onSuccess: invalidate });
   const submit = useMutation({ mutationFn: (payload) => submitTaskProof(payload), onSuccess: invalidate });
+  const rsvp = useMutation({
+    mutationFn: (payload) => rsvpOperation(payload),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['work_board_operations'] }),
+  });
 
   const mine = useMemo(() => tasks.filter((t) => user && t.assigned_user_id === user.id), [tasks, user]);
   const open = useMemo(() => tasks.filter((t) => t.status === 'posted'), [tasks]);
@@ -31,7 +44,11 @@ export default function WorkBoard() {
     () => mine.filter((t) => t.status === 'credited').reduce((s, t) => s + (Number(t.credited_auec) || 0), 0),
     [mine],
   );
-  const error = claim.error || submit.error;
+  const upcoming = useMemo(
+    () => operations.filter((o) => ['scheduled', 'mustering', 'underway'].includes(o.status)),
+    [operations],
+  );
+  const error = claim.error || submit.error || rsvp.error;
 
   if (loadingUser || isLoading) {
     return (
@@ -80,6 +97,23 @@ export default function WorkBoard() {
             </div>
           )}
         </section>
+
+        <section className="space-y-2">
+          <div className="text-[9px] tracking-[0.2em]" style={{ color: '#6FA0C8' }}>MUSTERS CALLED — {upcoming.length}</div>
+          {upcoming.length === 0 ? (
+            <p className="text-[9px] py-4 text-center border" style={{ color: '#6B6155', borderColor: '#2E2519' }}>
+              No musters called. Nobody is owed your time until you offer it.
+            </p>
+          ) : (
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
+              {upcoming.map((op) => (
+                <OperationRsvpCard key={op.id} op={op} userId={user?.id} pending={rsvp.isPending} onRsvp={(p) => rsvp.mutate(p)} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        <WorkHistoryPanel tasks={mine} operations={operations} userId={user?.id} />
 
         <section className="space-y-2">
           <div className="text-[9px] tracking-[0.2em]" style={{ color: '#E0A22E' }}>OPEN ON THE BOARD — {open.length}</div>
