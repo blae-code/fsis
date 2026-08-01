@@ -477,7 +477,7 @@ export default function Storefront() {
         <OpsFeed />
       </div>
 
-      <ActiveOrderBanner onViewOrders={() => setTab('orders')} />
+      <ActiveOrderBanner onViewOrders={(code) => { if (code) storeCache.addTrackingCode(code); setTab('orders'); }} />
       <MobileCartBar cart={cart} setCart={setCart} user={user} buyerProfile={buyerProfile} preferredLocation={preferredLocation} storeStatus={storeStatus} />
 
       <footer className="shrink-0 border-t py-1.5 px-4 flex flex-wrap items-center justify-center gap-x-4" style={{ borderColor: '#2A2118' }}>

@@ -76,7 +76,7 @@ export default function ActiveOrderBanner({ onViewOrders }) {
           </div>
 
           <button
-            onClick={onViewOrders}
+            onClick={() => onViewOrders?.(latest.tracking_code)}
             className="flex items-center gap-1 px-2.5 py-1 min-h-8 text-[9px] tracking-[0.1em] shrink-0 transition-all"
             style={{ border: `1px solid ${color}33`, color, background: `${color}0E` }}
             onMouseEnter={e => e.currentTarget.style.background = `${color}1A`}

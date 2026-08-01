@@ -75,7 +75,13 @@ export default function ProprietorCommandCenter() {
       if (updated?.id) qc.setQueryData(['all_orders'], (old = []) => old.map((o) => (o.id === updated.id ? updated : o)));
       qc.invalidateQueries({ queryKey: ['loot_command'] }); qc.invalidateQueries({ queryKey: ['products_admin'] }); qc.invalidateQueries({ queryKey: ['products'] }); qc.invalidateQueries({ queryKey: ['invoice_command'] }); qc.invalidateQueries({ queryKey: ['ops_logs_command'] });
     },
-    onError: refresh,
+    onError: (err, vars) => {
+      const msg = err?.response?.data?.error || err?.message || '';
+      if (msg.toLowerCase().includes('not found')) {
+        qc.setQueryData(['all_orders'], (old = []) => old.filter((o) => o.id !== vars.id));
+      }
+      refresh();
+    },
   });
   const price = useMutation({ mutationFn: ({ id, value }) => base44.entities.loot_item.update(id, { est_sell_auec: value }), onSuccess: refresh });
   const stock = useMutation({ mutationFn: ({ id, value }) => base44.entities.product.update(id, { stock: value }), onSuccess: refresh });

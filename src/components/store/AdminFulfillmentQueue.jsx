@@ -36,7 +36,15 @@ export default function AdminFulfillmentQueue() {
       qc.invalidateQueries({ queryKey: ['tracked_orders'] });
       qc.invalidateQueries({ queryKey: ['my_account_orders'] });
     },
-    onError: () => qc.invalidateQueries({ queryKey: ['storefront_fulfillment_orders'] }),
+    onError: (err, vars) => {
+      // The order no longer exists server-side — drop the stale row immediately
+      // so the queue stops offering an action that can never succeed.
+      const msg = err?.response?.data?.error || err?.message || '';
+      if (msg.toLowerCase().includes('not found')) {
+        qc.setQueryData(['storefront_fulfillment_orders'], (old = []) => old.filter((o) => o.id !== vars.orderId));
+      }
+      qc.invalidateQueries({ queryKey: ['storefront_fulfillment_orders'] });
+    },
   });
   if (isLoading) {
     return <div className="border p-4 flex justify-center" style={{ borderColor: '#2A2118', background: '#100E0B' }}><Loader2 className="w-4 h-4 animate-spin" style={{ color: '#E0A22E' }} /></div>;
