@@ -1,0 +1,220 @@
+{
+  "name": "operation_session",
+  "type": "object",
+  "properties": {
+    "operation_id": {
+      "type": "string",
+      "description": "The muster this run answers, where one was called. An ad-hoc run carries none — 'I am going out now, who is on?' is a run before it is ever a notice"
+    },
+    "session_name": {
+      "type": "string",
+      "description": "What this run is called, e.g. 'Aaron Halo sweep — Saturday'"
+    },
+    "op_type": {
+      "type": "string",
+      "enum": [
+        "salvage",
+        "hauling",
+        "escort",
+        "mining",
+        "recovery",
+        "other"
+      ],
+      "default": "salvage"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "underway",
+        "closed",
+        "abandoned"
+      ],
+      "default": "underway",
+      "description": "underway = the run is happening and hands may come and go; closed = settled and paid; abandoned = the run ended without a settlement, stated rather than erased"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ended_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "started_by_email": {
+      "type": "string"
+    },
+    "attendance": {
+      "type": "array",
+      "description": "Stints of presence — a hand arriving and leaving. Several per comrade where they came and went, because attendance-weighted shares are impossible without a clock. A record of presence only, never of how hard anyone worked",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "left_at": {
+            "type": "string"
+          },
+          "minutes": {
+            "type": "number",
+            "description": "Minutes in this stint, settled when the stint closes"
+          }
+        }
+      }
+    },
+    "attendance_user_ids": {
+      "type": "array",
+      "description": "Accounts that have stood any part of this run. Kept alongside `attendance` because row-level security cannot reach inside an array of objects — this is what lets a comrade read the run they were on, and their own payout line, without being on the council",
+      "items": {
+        "type": "string"
+      }
+    },
+    "costs": {
+      "type": "array",
+      "description": "What the run cost before anything is divided — fuel, ammo, rearm, repair, insurance. Deducted from the gross so hands share the net, and stated openly so they can see what was taken and why",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "fuel",
+              "ammo",
+              "rearm",
+              "repair",
+              "insurance",
+              "other"
+            ],
+            "default": "other"
+          },
+          "amount_auec": {
+            "type": "number"
+          },
+          "paid_by_handle": {
+            "type": "string",
+            "description": "The comrade who carried this cost out of their own pocket"
+          }
+        }
+      }
+    },
+    "gross_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "What the run made, before costs"
+    },
+    "costs_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Total deducted before the split, as settled at close"
+    },
+    "net_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "What was actually shared out"
+    },
+    "total_minutes": {
+      "type": "number",
+      "default": 0,
+      "description": "Every hand's time added together, as settled at close"
+    },
+    "payouts": {
+      "type": "array",
+      "description": "One line per hand at closeout: time stood, shares earned and what was settled. The session summary a comrade can check their own pay against",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "minutes": {
+            "type": "number"
+          },
+          "shares": {
+            "type": "number"
+          },
+          "time_log_id": {
+            "type": "string",
+            "description": "The time log written for this hand, so the share can be followed from the run to the pay day it settles on"
+          }
+        }
+      }
+    },
+    "no_shows": {
+      "type": "array",
+      "description": "Comrades who said they were in and did not stand the run. Recorded as a fact for the council to weigh alongside whatever the comrade has to say, never as an automatic mark — a system that penalises absence by arithmetic penalises illness and work and family without knowing it",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "closed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "closed_by_email": {
+      "type": "string"
+    },
+    "debrief": {
+      "type": "string",
+      "description": "What was learned, recorded plainly so the next run is better than this one"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "session_name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.attendance_user_ids": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

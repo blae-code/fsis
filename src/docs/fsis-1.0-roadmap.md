@@ -62,7 +62,8 @@ value, the collective owns the means of production, plain solidarity language, n
   carry no ledger at all; marks lapse after 90 days in the same daily sweep; the two ledgers are read apart
   and only their price effects are added, inside the existing caps (`placeOrder`); shown back to the buyer in
   full on the ACTIVE ORDERS tab and to the council in the Access tab.
-  Still open: muster-attendance awards (which wait on Phase 4.8's live sessions).
+  Muster-attendance awards ✅ CLOSED 2026-08-01 — `muster_stood` is awarded at session closeout to every
+  hand who actually stood the run, which was the last item this phase was waiting on.
   Reputation as a record of labour given and labour withheld, not a credit score:
   - Reputation earned on credited work orders and on musters actually stood, held on the member record
     with an immutable event log (source task/operation, delta, reason, actor).
@@ -253,13 +254,22 @@ value, the collective owns the means of production, plain solidarity language, n
     A roster place already claimed by an account can no longer be opened by holding a matching name.
     Older records carrying only a callsign still resolve, and a comrade with labour under both is
     gathered as one hand rather than appearing on the cycle twice.
-  - **The live session** — start and stop a run, with a roster of who actually turned up. RSVP is intent;
-    attendance is fact, and only fact may pay people.
-  - **Time present** — hands join and leave over a long run. Attendance-weighted shares are impossible
-    without a clock.
+  - **The live session** ✅ built 2026-08-01 — `operation_session` with `startOperationSession`,
+    `markSessionPresence` and `closeOperationSession`. A run may be started from a muster or from
+    nothing at all, since "I am going out now, who is on?" is a run before it is ever a notice.
+    Closing settles it: `completed` no longer erases the run.
+  - **Time present** ✅ built 2026-08-01 — presence is recorded as STINTS, so a hand who comes and goes
+    over a long run is counted for all of it and once only. A stint left open is counted to the end of
+    the run rather than dropped, and a clock left running overnight is capped rather than trusted —
+    otherwise a forgotten tab mints a fortnight of shares for a night's sleep. Minutes become shares at
+    the rate `time_log` has always documented, one per twenty, so a run settles into the same pool by
+    the same arithmetic as every other hour the collective counts. **This is the writer `time_log` never
+    had**, and the reason Phase 4.7's hours were deliberately kept out of it.
   - **Yield capture** — scans, lots and loot won during a run attach to the run. Without this there is no
     per-op profit and no honest answer to "was that worth flying".
-  - **Costs of the run** — fuel, ammo, rearm, repair, insurance, deducted before any split.
+  - **Costs of the run** ✅ built 2026-08-01 — fuel, ammo, rearm, repair and insurance recorded on the
+    session and deducted from the gross before anything is divided, stated openly so hands can see what
+    was taken and why. A negative cost is never read as a refund.
   - **Closeout** — the session summary is regolith's best feature: yield, costs, per-hand payout, and a
     tick that each hand was actually paid. Today `completed` simply erases the run; there is no bridge
     from an operation to a payday cycle at all.
