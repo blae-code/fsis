@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Clock, MapPin, Loader2, Upload } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { TASK_STATUS_META, PRIORITY_COLOR, fmtAuec, daysUntil } from '@/components/apps/management/tasks/taskMeta';
+import TaskMessageThread from '@/components/work/TaskMessageThread';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 
 /** A task as the worker sees it: take it up, then file your own account of the labour done. */
-export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, onRelease, pending }) {
+export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, onRelease, pending, actor }) {
   const [notes, setNotes] = useState('');
   const [fileUrl, setFileUrl] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -142,6 +143,8 @@ export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, onReleas
       {task.status === 'submitted' && mine && (
         <p className="text-[9px]" style={{ color: '#C8893B' }}>FILED — awaiting the council's review.</p>
       )}
+
+      <TaskMessageThread task={task} as="worker" actor={actor} />
     </div>
   );
 }

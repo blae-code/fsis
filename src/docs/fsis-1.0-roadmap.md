@@ -133,8 +133,10 @@ value, the collective owns the means of production, plain solidarity language, n
   claimed but unfiled 7 days past its due date to the board, with the lapse written into the task and
   `ops_log`; and a council load view (`LabourLoadPanel`) showing who carries what, who is overdue, what is
   owed to each hand, and which filed work has waited 3+ days unpaid.
-  Still open below: many hands on one task, sequencing, templates/recurrence/bulk posting, a thread on
-  every task, labour traced to value, hours, credit guidance, notice to the worker, and skills matching.
+  Also built: a thread on every task (`task_message`, `TaskMessageThread`) readable by the comrade party to
+  it and the council, so work can be asked about before it is taken up and answered for after it is sent back.
+  Still open below: many hands on one task, sequencing, templates/recurrence/bulk posting, labour traced to
+  value, hours, credit guidance, notice to the worker, and skills matching.
   The labour board works, but a task's life has holes in it. Each of these is a path a worker or the
   council can walk into today with no way out:
   - **Handing work back** — a worker may only go silent. Needs an explicit release with a reason, which is

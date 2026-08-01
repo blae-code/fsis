@@ -109,6 +109,7 @@ export default function WorkBoard() {
                   key={t.id}
                   task={t}
                   mine
+                  actor={user}
                   pending={submit.isPending || release.isPending}
                   onSubmit={(p) => submit.mutate(p)}
                   onRelease={(p) => release.mutate(p)}
@@ -145,7 +146,7 @@ export default function WorkBoard() {
           ) : (
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
               {open.map((t) => (
-                <WorkerTaskCard key={t.id} task={t} mine={false} pending={claim.isPending} onClaim={(task) => claim.mutate(task)} onSubmit={() => {}} />
+                <WorkerTaskCard key={t.id} task={t} mine={false} actor={user} pending={claim.isPending} onClaim={(task) => claim.mutate(task)} onSubmit={() => {}} />
               ))}
             </div>
           )}

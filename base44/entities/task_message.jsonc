@@ -1,0 +1,73 @@
+{
+  "name": "task_message",
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "The labour task this exchange concerns"
+    },
+    "task_title": {
+      "type": "string",
+      "description": "Title of the task at the time the message was sent"
+    },
+    "worker_user_id": {
+      "type": "string",
+      "description": "The comrade party to this exchange \u2014 set so both they and the council can always read it back"
+    },
+    "sender": {
+      "type": "string",
+      "enum": [
+        "worker",
+        "council"
+      ],
+      "default": "worker",
+      "description": "Who spoke"
+    },
+    "sender_handle": {
+      "type": "string"
+    },
+    "sender_email": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string",
+      "description": "What was said \u2014 questions before taking work up, answers after it is sent back"
+    }
+  },
+  "required": [
+    "task_id",
+    "message"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "created_by_id": "{{user.id}}"
+        },
+        {
+          "data.worker_user_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "user"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

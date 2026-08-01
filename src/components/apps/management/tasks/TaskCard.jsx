@@ -1,9 +1,10 @@
 import React from 'react';
 import { Clock, MapPin, User } from 'lucide-react';
 import { TASK_STATUS_META, PRIORITY_COLOR, fmtAuec, daysUntil } from '@/components/apps/management/tasks/taskMeta';
+import TaskMessageThread from '@/components/work/TaskMessageThread';
 
 /** One task as the council sees it, with withdraw/repost controls where they apply. */
-export default function TaskCard({ task, onCancel, onRepost, pending }) {
+export default function TaskCard({ task, onCancel, onRepost, pending, actor }) {
   const meta = TASK_STATUS_META[task.status] || TASK_STATUS_META.posted;
   const left = daysUntil(task.due_date);
   const overdue = left !== null && left < 0 && !['credited', 'cancelled'].includes(task.status);
@@ -45,6 +46,7 @@ export default function TaskCard({ task, onCancel, onRepost, pending }) {
           </button>
         )}
       </div>
+      <TaskMessageThread task={task} as="council" actor={actor} />
     </div>
   );
 }

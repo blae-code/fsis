@@ -108,6 +108,7 @@ export default function TaskWorkOrderConsole() {
             <TaskCard
               key={t.id}
               task={t}
+              actor={actor}
               pending={patch.isPending}
               onCancel={(task) => patch.mutate({ id: task.id, data: { status: 'cancelled' } })}
               onRepost={(task) => patch.mutate({ id: task.id, data: { status: 'posted', assigned_user_id: '', assigned_handle: '', assigned_email: '', proof_notes: '', proof_file_url: '' } })}
