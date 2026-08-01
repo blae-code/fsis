@@ -1,0 +1,107 @@
+{
+  "name": "notice",
+  "type": "object",
+  "properties": {
+    "recipient_user_id": {
+      "type": "string",
+      "description": "Account this notice is owed to. A notice is always addressed to a comrade, never broadcast to nobody"
+    },
+    "recipient_handle": {
+      "type": "string",
+      "description": "Callsign of the comrade, carried for display only"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "work_claimed",
+        "work_returned",
+        "work_credited",
+        "work_released",
+        "claim_lapsed",
+        "standing_marked",
+        "standing_lapsed",
+        "appeal_answered",
+        "muster_called",
+        "muster_reminder",
+        "muster_stood_down",
+        "payday_opened",
+        "payday_published",
+        "order_update",
+        "council_message"
+      ],
+      "default": "council_message",
+      "description": "What happened. Grouped by the thing that happened to the comrade, not by which function sent it"
+    },
+    "title": {
+      "type": "string",
+      "description": "One line, readable on its own: what happened and to what"
+    },
+    "body": {
+      "type": "string",
+      "description": "The plain account, in the comrade's own terms. Where a decision went against them this states the reason and, where one exists, the route to answer it"
+    },
+    "source_type": {
+      "type": "string",
+      "description": "Entity this notice concerns, e.g. labour_task, standing_event, crew_operation"
+    },
+    "source_id": {
+      "type": "string",
+      "description": "Id of that record, so the notice can be opened to the thing itself"
+    },
+    "source_name": {
+      "type": "string",
+      "description": "Name of that record at the time of writing, so the notice still reads plainly if the record is later renamed"
+    },
+    "actor_email": {
+      "type": "string",
+      "description": "Who did the thing being reported. A notice about a council decision names the council member who made it — decisions about a comrade's labour are not anonymous"
+    },
+    "actor_role": {
+      "type": "string",
+      "description": "The standing they acted in"
+    },
+    "read_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the comrade read it. Unset means unread; a notice is never marked read on their behalf by anyone else"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this notice stops being worth showing. Notice of a thing that has passed should not crowd out notice of a thing that has not"
+    }
+  },
+  "required": [
+    "recipient_user_id",
+    "title"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.recipient_user_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -126,7 +126,11 @@ value, the collective owns the means of production, plain solidarity language, n
   - **Intake honesty** — AI screenshot extraction is a draft, never an authority: seller confirms every
     field, the original image is retained as evidence, and suspicious grades can be held for appraisal.
   - **Notifications** — bid placed, outbid, reserve met, lot closing, lot won, commission due, offer
-    expiring. Reuse the existing in-app notification path; no external email promises.
+    expiring. Reuse the in-app notification path; no external email promises. Correction: there was
+    no such path to reuse — what existed was three bespoke outbound alerts (`checkPriceAlerts`,
+    `checkStockAlerts`, `notifyRestock`), each welded to its own alert record. The shared substrate
+    now exists (`notice`, `shared/notices.js`), built once for 4.6, 4.7 and 4.8 together; the hall's
+    events are added to its `kind` list when the hall is built.
   - **Buyback offers expire** — a stated validity window, the appraisal basis shown as an explicit
     fraction of live market, and a record of the market figure used at appraisal time.
   - **Settlement is off-platform** — payment happens in-game, so every close needs a confirmation step
@@ -171,7 +175,13 @@ value, the collective owns the means of production, plain solidarity language, n
     hours. It is not idle at the other end — it is the sole source of shares, so whatever writes it
     feeds the pay pool directly. Estimated against actual hours belongs on the task.
   - **Credit guidance** — suggest a fair sum from category and hours so pay does not drift by mood.
-  - **Notice to the worker** — claim, return and credit events must reach them.
+  - **Notice to the worker** — claim, return and credit events must reach them. The substrate is
+    built (2026-08-01): a `notice` addressed to one comrade and readable by them alone, a shared
+    emitter in `shared/notices.js`, and `listNotices` / `markNoticesRead`. Nothing produces notices
+    yet — wiring the labour events is the remaining half of this item. Two rules hold in the
+    substrate: notice is always addressed to a person and never broadcast, and a failure to give
+    notice can never undo the thing being reported, because labour credited must stay credited
+    even if we could not tell them.
   - **Council load view** — who holds what, who is carrying too much, what is ageing unreviewed.
   - **Skills are collected and ignored** — match posted work against declared skills from standing requests.
 
