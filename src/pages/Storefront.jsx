@@ -13,7 +13,7 @@ import StoreTabs from '@/components/store/StoreTabs';
 import MarketTicker from '@/components/store/MarketTicker';
 import ProductDetail from '@/components/store/ProductDetail';
 import FsisLogo from '@/components/brand/FsisLogo';
-import ExchangeBoard from '@/components/store/ExchangeBoard';
+
 import QuoteBuilder from '@/components/store/QuoteBuilder';
 import OpsFeed from '@/components/store/OpsFeed';
 // ARCHIVED: import JobsBoard from '@/components/store/JobsBoard'; (operator feature)
@@ -22,37 +22,33 @@ import OpsFeed from '@/components/store/OpsFeed';
 import StoreOnboarding from '@/components/store/StoreOnboarding';
 import MobileCartBar from '@/components/store/MobileCartBar';
 import ActiveOrderBanner from '@/components/store/ActiveOrderBanner';
-import HowItWorksStrip from '@/components/store/HowItWorksStrip';
-import StoreGuidedFinder from '@/components/store/StoreGuidedFinder';
 import StoreFaq from '@/components/store/StoreFaq';
-import StoreLiveStatusPanel from '@/components/store/StoreLiveStatusPanel';
-import RedscarTrustStrip from '@/components/store/RedscarTrustStrip';
 import ProductCompareTray from '@/components/store/ProductCompareTray';
 import StorefrontAtmosphere from '@/components/store/StorefrontAtmosphere';
 import ProprietorEntryway from '@/components/store/ProprietorEntryway';
-import BuyerProfilePanel from '@/components/store/BuyerProfilePanel';
 import BuyerProgressRail from '@/components/store/BuyerProgressRail';
 import AdminRestockControls from '@/components/store/AdminRestockControls';
 import RestockInbox from '@/components/apps/management/RestockInbox';
 import AdminFulfillmentQueue from '@/components/store/AdminFulfillmentQueue';
-import CatalogQuickFilters, { matchesQuickFilter } from '@/components/store/CatalogQuickFilters';
-import RecentDeliveries from '@/components/store/RecentDeliveries';
+import { matchesQuickFilter } from '@/components/store/CatalogQuickFilters';
+import StoreHeroStrip from '@/components/store/StoreHeroStrip';
+import StoreIntelDrawer from '@/components/store/StoreIntelDrawer';
+import CatalogSideRail from '@/components/store/CatalogSideRail';
 import { useToast } from '@/components/ui/use-toast';
 import { DerelictHull } from '@/components/brand/glyphs/EmptyStates';
 import { motion, AnimatePresence } from 'framer-motion';
 import SystemStatus from '@/components/store/SystemStatus';
 import StoreMaintenanceBanner from '@/components/store/StoreMaintenanceBanner';
-import HexCrate from '@/components/three/HexCrate';
 import { FSIS } from '@/lib/fsisLore';
 import { roundPrice } from '@/lib/pricing';
 
-const HERO_BG = 'https://media.base44.com/images/public/6a1e4ac9c80b7ea6253dc435/44c3176b4_generated_image.png';
 const STOREFRONT_CATEGORIES = ['salvage_commodity', 'fps_gear', 'weapon', 'ship_component', 'vehicle_component'];
 
 export default function Storefront() {
   const [cart, setCart] = useState(() => storeCache.getCart());
   const [buyerProfile, setBuyerProfile] = useState(() => storeCache.getProfile());
   const [search, setSearch] = useState('');
+  const [intelOpen, setIntelOpen] = useState(false);
   const [category, setCategory] = useState('all');
   const [quickFilter, setQuickFilter] = useState('all');
   const [tab, setTab] = useState('catalog');
@@ -296,54 +292,14 @@ export default function Storefront() {
       </div>
       <StoreMaintenanceBanner status={storeStatus} />
 
-      {/* Main deck — fills viewport, no page scroll */}
-      <main className="flex-1 min-h-0 max-w-[1880px] mx-auto w-full px-3 sm:px-4 2xl:px-8 pt-4 sm:pt-5 hd:pt-3 pb-28 lg:pb-8 hd:pb-5 grid grid-cols-1 lg:grid-cols-[1fr_390px] min-[2000px]:grid-cols-[1fr_440px] gap-4 sm:gap-6 hd:gap-4 overflow-y-auto">
-        <div className="flex flex-col gap-4 hd:gap-3 min-h-full">
+      {/* Main deck — fixed console: fills viewport, only inner panes scroll */}
+      <main className="flex-1 min-h-0 max-w-[1880px] mx-auto w-full px-3 sm:px-4 2xl:px-8 pt-3 pb-28 lg:pb-4 grid grid-cols-1 lg:grid-cols-[1fr_390px] min-[2000px]:grid-cols-[1fr_440px] gap-3 sm:gap-4 overflow-hidden">
+        <div className="flex flex-col gap-2.5 min-h-0">
           <ProprietorEntryway user={user} />
-
-          {/* Compact hero */}
-          <div
-            className="shrink-0 p-[6px] hidden lg:block relative"
-            style={{
-              background: 'linear-gradient(135deg, #E0A22E 0%, #8A8F45 24%, #C8893B 48%, #8A6430 74%, #3A2F20 100%)',
-              boxShadow: '0 24px 70px rgba(0,0,0,0.46), 0 0 34px rgba(224,162,46,0.10)',
-              clipPath: 'polygon(28px 0, 100% 0, 100% calc(100% - 28px), calc(100% - 28px) 100%, 0 100%, 0 28px)',
-            }}
-          >
-            <div
-              className="grid grid-cols-1 md:grid-cols-[1.6fr_1fr]"
-              style={{ clipPath: 'polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px)' }}
-            >
-              <div
-                className="relative p-6 md:p-7 hd:p-4"
-                style={{
-                  backgroundImage: `radial-gradient(circle at 16% 14%, rgba(224, 162, 46, 0.16), transparent 26%), linear-gradient(95deg, rgba(10, 8, 6, 0.96) 26%, rgba(20, 13, 7, 0.72) 60%, rgba(13, 11, 9, 0.38) 100%), url(${HERO_BG})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center right',
-                }}
-              >
-                {/* Floating 3D hex crate */}
-                <div className="absolute top-1/2 -translate-y-1/2 right-2 hidden xl:block pointer-events-none opacity-80">
-                  <HexCrate size={150} />
-                </div>
-                <p className="font-mono text-[10px] tracking-[0.3em] mb-2 inline-flex px-2 py-1 border" style={{ color: '#E0A22E', borderColor: '#8A6430', background: 'rgba(8,6,4,0.55)' }}>// EST. {FSIS.founded} — STANTON SYSTEM</p>
-                <h2 className="font-mono text-3xl 2xl:text-5xl hd:text-2xl font-bold leading-tight tracking-tight" style={{ textShadow: '0 0 26px rgba(224,162,46,0.18)' }}>
-                  <span style={{ color: '#F2EADC' }}>Honest salvage.</span>{' '}
-                  <span style={{ color: '#E0A22E' }}>Fair prices.</span>
-                </h2>
-                <p className="text-xs 2xl:text-sm hd:text-xs mt-3 hd:mt-2 max-w-md font-mono leading-relaxed" style={{ color: '#A89C8A' }}>
-                  Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
-                </p>
-              </div>
-              <div className="flex flex-col">
-                <ExchangeBoard />
-                <StoreLiveStatusPanel products={storefrontProducts} marketPrices={marketPrices} />
-              </div>
-            </div>
-          </div>
+          <StoreHeroStrip onOpenIntel={() => setIntelOpen(true)} />
 
           {/* Section tabs */}
-          <div className="shrink-0 flex flex-col sm:flex-row flex-wrap sm:items-center sm:justify-between gap-3">
+          <div className="shrink-0 flex flex-col sm:flex-row flex-wrap sm:items-center sm:justify-between gap-2">
             <StoreTabs active={tab} onChange={setTab} />
             {tab === 'catalog' && (
               <StoreToolbar search={search} setSearch={setSearch} category={category} setCategory={setCategory} sort={sort} setSort={setSort} quickFilter={quickFilter} count={filteredProducts.length} total={storefrontProducts.length} onReset={() => { setSearch(''); setCategory('all'); setQuickFilter('all'); setSort('featured'); }} />
@@ -351,14 +307,27 @@ export default function Storefront() {
           </div>
 
           <BuyerProgressRail activeTab={tab} cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)} />
-          <BuyerProfilePanel profile={buyerProfile} onProfileSaved={setBuyerProfile} />
 
-          {/* Active section — scrolls internally only if it overflows */}
-          <div className="flex-1 min-h-[360px] pr-1">
+          {/* Active pane — sized to the remaining viewport, scrolls internally only */}
+          <div className="flex-1 min-h-0 grid grid-cols-1 min-[1400px]:grid-cols-[228px_1fr] gap-3">
             {tab === 'catalog' && (
-              <div className="space-y-4">
+              <CatalogSideRail
+                quickFilter={quickFilter}
+                onQuickFilter={setQuickFilter}
+                products={storefrontProducts}
+                marketBestByCode={marketBestByCode}
+                onChoose={(action) => {
+                  if (action === 'quote' || action === 'orders') { setTab(action); return; }
+                  setTab('catalog');
+                  setCategory(action);
+                  setSearch('');
+                }}
+              />
+            )}
+            <div className={`min-h-0 overflow-y-auto pr-1 ${tab === 'catalog' ? '' : 'min-[1400px]:col-span-2'}`}>
+            {tab === 'catalog' && (
+              <div className="space-y-3">
                 {user?.role === 'admin' && <AdminRestockControls products={storefrontProducts} />}
-                <CatalogQuickFilters active={quickFilter} onChange={setQuickFilter} products={storefrontProducts} marketBestByCode={marketBestByCode} />
                 <ProductCompareTray products={compareProducts} onClear={() => setCompareIds([])} onView={setDetailProduct} />
                 <motion.div
                   className="grid grid-cols-1 min-[520px]:grid-cols-2 min-[1150px]:grid-cols-3 min-[1500px]:grid-cols-4 min-[2000px]:grid-cols-5 gap-3 sm:gap-4 auto-rows-fr"
@@ -426,18 +395,6 @@ export default function Storefront() {
                     ))
                   )}
                 </motion.div>
-                <StoreGuidedFinder onChoose={(action) => {
-                  if (action === 'quote' || action === 'orders') {
-                    setTab(action);
-                    return;
-                  }
-                  setTab('catalog');
-                  setCategory(action);
-                  setSearch('');
-                }} />
-                <HowItWorksStrip />
-                <RedscarTrustStrip />
-                <RecentDeliveries />
               </div>
             )}
             {tab === 'quote' && <QuoteBuilder products={storefrontProducts} onLoad={(p, qty, loc) => { addToCart(p, qty); if (loc) setPreferredLocation(loc); setTab('catalog'); }} />}
@@ -456,6 +413,7 @@ export default function Storefront() {
                 <AboutFsis />
               </>
             )}
+            </div>
           </div>
         </div>
 
@@ -476,6 +434,15 @@ export default function Storefront() {
       <div className="shrink-0">
         <OpsFeed />
       </div>
+
+      <StoreIntelDrawer
+        open={intelOpen}
+        onClose={() => setIntelOpen(false)}
+        products={storefrontProducts}
+        marketPrices={marketPrices}
+        buyerProfile={buyerProfile}
+        onProfileSaved={setBuyerProfile}
+      />
 
       <ActiveOrderBanner onViewOrders={(code) => { if (code) storeCache.addTrackingCode(code); setTab('orders'); }} />
       <MobileCartBar cart={cart} setCart={setCart} user={user} buyerProfile={buyerProfile} preferredLocation={preferredLocation} storeStatus={storeStatus} />
