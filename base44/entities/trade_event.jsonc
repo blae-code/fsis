@@ -1,0 +1,93 @@
+{
+  "name": "trade_event",
+  "type": "object",
+  "properties": {
+    "patron_user_id": {
+      "type": "string",
+      "description": "The account this trade record concerns. Guests carry no ledger at all"
+    },
+    "patron_email": {
+      "type": "string"
+    },
+    "patron_handle": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "handoff_completed",
+        "handoff_no_show",
+        "late_cancellation",
+        "council_adjustment",
+        "amnesty",
+        "decay"
+      ],
+      "default": "handoff_completed",
+      "description": "What the buyer did at the handoff, or what the council did about it. Kept wholly apart from labour standing"
+    },
+    "delta": {
+      "type": "number",
+      "default": 0
+    },
+    "effective_delta": {
+      "type": "number",
+      "default": 0,
+      "description": "The figure that actually counts toward the buyer's trade standing"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Plainly stated cause \u2014 a hand that waited at the meeting point lost that time"
+    },
+    "order_id": {
+      "type": "string"
+    },
+    "order_tracking_code": {
+      "type": "string"
+    },
+    "actor_email": {
+      "type": "string"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the mark lapses of its own accord"
+    },
+    "voided": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "patron_user_id",
+    "kind"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.patron_user_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

@@ -56,7 +56,13 @@ value, the collective owns the means of production, plain solidarity language, n
   never deciding anything; `ruleIdentityLink` lets the council rule one comrade — carrying the lock and an
   equal mark across with the ordinary appeal route intact — or two comrades, which retires the pair for good.
   Surfaced in the Access tab.
-  Still open: patron trade standing, and muster-attendance awards (which wait on Phase 4.8's live sessions).
+  Also built: patron trade standing — a wholly separate ledger (`trade_event`, `trade_standing` /
+  `trade_locked` on the account) recorded by the council at handoff (`recordTradeConduct`: turned up,
+  cancelled late, left a hand waiting), locking automatically at -20 with the reason stated; guest orders
+  carry no ledger at all; marks lapse after 90 days in the same daily sweep; the two ledgers are read apart
+  and only their price effects are added, inside the existing caps (`placeOrder`); shown back to the buyer in
+  full on the ACTIVE ORDERS tab and to the council in the Access tab.
+  Still open: muster-attendance awards (which wait on Phase 4.8's live sessions).
   Reputation as a record of labour given and labour withheld, not a credit score:
   - Reputation earned on credited work orders and on musters actually stood, held on the member record
     with an immutable event log (source task/operation, delta, reason, actor).

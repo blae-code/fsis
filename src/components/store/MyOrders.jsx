@@ -16,6 +16,7 @@ import OrderTimeline from '@/components/store/OrderTimeline';
 import CancelOrder from '@/components/store/CancelOrder';
 import CargoLotEta from '@/components/store/CargoLotEta';
 import ClaimOrdersPanel from '@/components/store/ClaimOrdersPanel';
+import TradeStandingNotice from '@/components/store/TradeStandingNotice';
 import { etaFor } from '@/lib/storeLocations';
 
 // Per-status fulfillment expectation shown to buyers
@@ -161,6 +162,8 @@ export default function MyOrders({ onReorder }) {
       </div>
 
       <ClaimOrdersPanel user={account} orders={allOrders} />
+
+      {account && <TradeStandingNotice user={account} />}
 
       {/* Tracked orders */}
       {allOrders.length === 0 && !isLoading ? (

@@ -10,6 +10,7 @@ import AccessGrantLog from '@/components/apps/management/access/AccessGrantLog';
 import StandingRequestQueue from '@/components/apps/management/access/StandingRequestQueue';
 import StandingLedgerConsole from '@/components/apps/management/access/StandingLedgerConsole';
 import IdentityLinkPanel from '@/components/apps/management/access/IdentityLinkPanel';
+import TradeStandingPanel from '@/components/apps/management/access/TradeStandingPanel';
 
 const ORDER = ['proprietor', 'owner', 'contractor', 'patron'];
 
@@ -78,6 +79,8 @@ export default function AccessConsole() {
       <StandingLedgerConsole members={members} />
 
       <IdentityLinkPanel />
+
+      <TradeStandingPanel />
 
       {isProprietor(actor) && <OwnerInviteForm />}
       {!isProprietor(actor) && (

@@ -58,6 +58,20 @@
     "standing_locked_reason": {
       "type": "string",
       "description": "Why the comrade was dismissed, shown back to them in plain words"
+    },
+    "trade_standing": {
+      "type": "number",
+      "default": 0,
+      "description": "Cached buyer-side trade standing, recomputed from the account's own trade_event record. Never mixed with labour standing"
+    },
+    "trade_locked": {
+      "type": "boolean",
+      "default": false,
+      "description": "A buyer who has repeatedly left a hand waiting: the full trade surcharge stands until the council is satisfied"
+    },
+    "trade_locked_reason": {
+      "type": "string",
+      "description": "Why the buyer's trade standing was locked, shown back to them plainly"
     }
   }
 }

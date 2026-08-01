@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
-import { storefrontAdjustment, tierFor, MAX_TOTAL_DISCOUNT_PERCENT } from '../../shared/reputation.js';
+import { storefrontAdjustment, tierFor, MAX_TOTAL_DISCOUNT_PERCENT, MAX_DISCOUNT_PERCENT, MAX_SURCHARGE_PERCENT } from '../../shared/reputation.js';
+import { tradeAdjustment, tradeTierFor } from '../../shared/trade.js';
 
 // Public guest checkout: validates the cart against the live catalog server-side,
 // recomputes pricing, reserves physical stock, issues a tracking code, and creates
@@ -72,12 +73,18 @@ Deno.serve(async (req) => {
     // carry no adjustment. A code and a discount are capped together; a surcharge always stands.
     const buyer = await base44.auth.me().catch(() => null);
     const codePercent = applied ? Number(applied.discount_percent) || 0 : 0;
-    const rawStanding = buyer ? storefrontAdjustment(buyer) : 0;
+    // Labour standing and trade standing are separate records and stay separate: they are read
+    // independently and only their price effects are added together, within the same stated bounds.
+    const labourAdj = buyer ? storefrontAdjustment(buyer) : 0;
+    const tradeAdj = buyer ? tradeAdjustment(buyer) : 0;
+    const rawStanding = Math.max(-MAX_SURCHARGE_PERCENT, Math.min(MAX_DISCOUNT_PERCENT, labourAdj + tradeAdj));
     const standing_percent = rawStanding > 0
       ? Math.max(0, Math.min(rawStanding, MAX_TOTAL_DISCOUNT_PERCENT - codePercent))
       : rawStanding;
     const standing_auec = roundPrice((subtotal * standing_percent) / 100);
-    const standing_tier = buyer ? (buyer.standing_locked ? 'MARKED' : tierFor(buyer.reputation).label) : '';
+    const labourTier = buyer ? (buyer.standing_locked ? 'MARKED' : tierFor(buyer.reputation).label) : '';
+    const tradeTier = buyer ? (buyer.trade_locked ? 'TRADE BARRED' : tradeTierFor(buyer.trade_standing).label) : '';
+    const standing_tier = buyer ? [labourTier, tradeAdj !== 0 || buyer.trade_locked ? tradeTier : ''].filter(Boolean).join(' · ') : '';
 
     const total = Math.max(0, roundPrice(subtotal - discount_auec - standing_auec));
 
