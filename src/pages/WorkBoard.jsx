@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { claimTask } from '@/functions/claimTask';
 import { submitTaskProof } from '@/functions/submitTaskProof';
 import { rsvpOperation } from '@/functions/rsvpOperation';
+import { listMusters } from '@/functions/listMusters';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Hammer, Loader2, ArrowLeft } from 'lucide-react';
@@ -23,7 +24,7 @@ export default function WorkBoard() {
 
   const { data: operations = [] } = useQuery({
     queryKey: ['work_board_operations'],
-    queryFn: () => base44.entities.crew_operation.list('-starts_at', 100),
+    queryFn: () => listMusters({}).then((r) => r.data.operations || []),
     refetchInterval: 30000,
   });
 

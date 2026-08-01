@@ -113,6 +113,62 @@ value, the collective owns the means of production, plain solidarity language, n
     until standing is earned.
   - **Rounding & currency** — one rounding rule shared with storefront pricing so commission, bid and
     payout figures can never disagree by a credit.
+- **Phase 4.7 — Work orders, hardened** (audited 2026-08-01, not yet built)
+  The labour board works, but a task's life has holes in it. Each of these is a path a worker or the
+  council can walk into today with no way out:
+  - **Handing work back** — a worker may only go silent. Needs an explicit release with a reason, which is
+    also the hook Phase 4.5's abandonment penalty depends on.
+  - **Claim expiry** — a claimed task past its due date sits forever. Stale claims must age visibly and
+    return to the board.
+  - **Many hands on one task** — `assigned_user_id` is singular; work needing three scrapers cannot be
+    posted as one task.
+  - **Sequencing** — no way to say "haul after strip"; tasks need a blocked/ready state.
+  - **Templates, recurrence and bulk posting** — the council retypes the same brief every week, one at
+    a time.
+  - **A thread on every task** — proof is one-shot. Workers must be able to ask before claiming and answer
+    after being sent back, the way order messages already work.
+  - **Labour traced to value** — link a task to the order, cargo lot or operation it serves, so the true
+    labour cost of a lot can be stated rather than guessed.
+  - **Hours** — `time_log` exists and is unwired. Estimated against actual hours belongs on the task.
+  - **Credit guidance** — suggest a fair sum from category and hours so pay does not drift by mood.
+  - **Notice to the worker** — claim, return and credit events must reach them.
+  - **Council load view** — who holds what, who is carrying too much, what is ageing unreviewed.
+  - **Skills are collected and ignored** — match posted work against declared skills from standing requests.
+
+- **Phase 4.8 — Operations command & live sessions** (audited 2026-08-01, not yet built)
+  Council-only. Today an operation is a notice board with a status flag; the run itself is untracked, so
+  nothing an operation produces can pay anybody. Taking regolith.rocks as the reference, the centre of
+  gravity is the **live session**, not the calendar:
+  - **The live session** — start and stop a run, with a roster of who actually turned up. RSVP is intent;
+    attendance is fact, and only fact may pay people.
+  - **Time present** — hands join and leave over a long run. Attendance-weighted shares are impossible
+    without a clock.
+  - **Yield capture** — scans, lots and loot won during a run attach to the run. Without this there is no
+    per-op profit and no honest answer to "was that worth flying".
+  - **Costs of the run** — fuel, ammo, rearm, repair, insurance, deducted before any split.
+  - **Closeout** — the session summary is regolith's best feature: yield, costs, per-hand payout, and a
+    tick that each hand was actually paid. Today `completed` simply erases the run; there is no bridge
+    from an operation to a payday cycle at all.
+  - **Clusters and finds** — `salvage_scan` is unlinked to operations. Mark a wreck field, who is working
+    it, whether it is stripped.
+  - **Processing timers** — refinery-style countdowns with notice on completion.
+  - **Loss log** — hull destroyed, cargo lost, claim timer running.
+  - **Role slots, not a headcount** — one pilot, two scrapers, with fill state, a waitlist, and no-show
+    marking that feeds standing.
+  - **Ad-hoc musters in one tap** — "I am going out now, who is on?" is the most-used flow that does not
+    exist, and matters most to a proprietor who plays opportunistically.
+  - **Reminders and fair time** — T-24h and T-1h notice, times shown in each comrade's own zone, a best-time
+    reading across respondents, calendar export. Timezones are collected and unused.
+  - **Standing an op down must speak** — cancellation currently tells nobody who said they were in.
+  - **Debrief and audit** — lessons recorded, and `ops_log` finally carrying operations so musters have
+    a trail.
+  - **Planning joined to logistics** — expected haul against hull capacity, tied into freight plans and
+    cargo lots, so an Owner can plan the run before calling the muster.
+  - **Access** ✅ corrected 2026-08-01 — operation records are council-only; workers read a redacted muster
+    board through `listMusters`, which withholds internal notes and other comrades' standings.
+  - Cross-cutting comfort: a worker notification centre, a second-screen mode for a live op, quick logging
+    during a run, "your next muster" on the labour board, and a per-member availability profile.
+
 - **Phase 5 — Governance & launch**
   Council invite/role management hardening, access audit surfacing, end-to-end readiness pass across all
   four standings.
