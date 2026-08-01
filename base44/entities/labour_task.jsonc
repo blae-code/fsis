@@ -84,6 +84,27 @@
       "type": "string",
       "description": "Where the work happens, e.g. 'Aaron Halo' or 'Port Tressler'"
     },
+    "serves_type": {
+      "type": "string",
+      "enum": [
+        "none",
+        "order",
+        "cargo_lot",
+        "operation",
+        "fab_project",
+        "work_order"
+      ],
+      "default": "none",
+      "description": "What this labour was for. Value does not appear from nowhere — it is made by hands, and this is the link that lets us say whose"
+    },
+    "serves_id": {
+      "type": "string",
+      "description": "Id of the thing this labour served"
+    },
+    "serves_name": {
+      "type": "string",
+      "description": "Name of that thing when the task was posted, so the link still reads plainly if it is later renamed or removed"
+    },
     "proof_notes": {
       "type": "string",
       "description": "The worker's own account of what was done"

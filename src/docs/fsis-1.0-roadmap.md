@@ -173,8 +173,11 @@ value, the collective owns the means of production, plain solidarity language, n
     a time.
   - **A thread on every task** — proof is one-shot. Workers must be able to ask before claiming and answer
     after being sent back, the way order messages already work.
-  - **Labour traced to value** — link a task to the order, cargo lot or operation it serves, so the true
-    labour cost of a lot can be stated rather than guessed.
+  - **Labour traced to value** ✅ built 2026-08-01 — `serves_type` / `serves_id` / `serves_name` on the
+    task, and `getLabourCost` to read it back: the hands, the hours, what has been settled and what is
+    still committed but unfinished, kept apart so a half-done job is never read as a settled cost.
+    Not an efficiency measure and must not be read as one — it exists so the collective can say where
+    value came from, and so a lot is never priced as though it made itself.
   - **Hours** ✅ built 2026-08-01 — `estimated_hours` on the posting so a comrade can judge the offer
     against their own time before taking it up, and `actual_hours` filed by the worker with their
     proof, as their own account of their own labour rather than a figure measured over them.
