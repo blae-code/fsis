@@ -54,6 +54,20 @@
       "type": "number",
       "description": "Discount amount in aUEC"
     },
+    "standing_percent": {
+      "type": "number",
+      "default": 0,
+      "description": "Standing adjustment carried by the buyer: positive returns value to a comrade whose labour built it, negative is a surcharge on a comrade released from the yard"
+    },
+    "standing_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "The standing adjustment in aUEC \u2014 subtracted from the total when positive, added when a surcharge stands"
+    },
+    "standing_tier": {
+      "type": "string",
+      "description": "Tier the buyer stood in when the order was placed, recorded so the figure can always be explained"
+    },
     "items": {
       "type": "array",
       "description": "Ordered line items",

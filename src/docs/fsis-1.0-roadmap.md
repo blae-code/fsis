@@ -45,9 +45,13 @@ value, the collective owns the means of production, plain solidarity language, n
   neutralise) with reasoning shown back; `adjustStanding` for audited hand-set changes, dismissal,
   reinstatement and amnesty; dismissal locks claiming and muster answers; a worker-facing standing panel
   on the labour board and a council appeal queue in the Access tab.
-  Still open: applying the standing adjustment to storefront pricing (with the combined discount cap),
-  a scheduled sweep to lapse marks, patron trade standing, alt-account flagging, and muster-attendance
-  awards (which wait on Phase 4.8's live sessions).
+  Also built: the standing adjustment now settles at checkout in `placeOrder` (recorded on the order as
+  `standing_percent` / `standing_auec` / `standing_tier`, capped with any code at 20% in total, surcharge
+  always standing, guests carrying none) and is stated to the buyer in the manifest; and a daily
+  `lapseStandingMarks` sweep voids marks past their lifetime, writes a plain 'mark lapsed' entry and
+  recomputes the totals.
+  Still open: patron trade standing, alt-account flagging, and muster-attendance awards (which wait on
+  Phase 4.8's live sessions).
   Reputation as a record of labour given and labour withheld, not a credit score:
   - Reputation earned on credited work orders and on musters actually stood, held on the member record
     with an immutable event log (source task/operation, delta, reason, actor).

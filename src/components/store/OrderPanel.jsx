@@ -17,6 +17,8 @@ import DeliveryRouteCard from '@/components/store/DeliveryRouteCard';
 import BuyerSafetyPanel from '@/components/store/BuyerSafetyPanel';
 import { DELIVERY_LOCATIONS, etaFor } from '@/lib/storeLocations';
 import { roundPrice } from '@/lib/pricing';
+import StandingPriceNotice from '@/components/store/StandingPriceNotice';
+import { storefrontAdjustment } from '@/lib/reputation';
 
 const fieldStyle = { borderColor: '#5C4424', background: 'linear-gradient(180deg, #14100B, #0B0906)', color: '#EDE5D6', boxShadow: 'inset 0 1px 0 rgba(224,162,46,0.06)' };
 
@@ -43,7 +45,10 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
 
   const total = cart.reduce((sum, item) => sum + roundPrice(item.unit_price) * item.quantity, 0);
   const hasDiscountCode = discountCode.trim().length > 0;
-  const estimatedTotal = total;
+  // Standing shown here for the buyer's sight; the server settles the authoritative figure.
+  const standingPercent = user ? storefrontAdjustment(user) : 0;
+  const standingAuec = Math.round((total * standingPercent) / 100 / 100) * 100;
+  const estimatedTotal = Math.max(0, total - standingAuec);
   const hasService = cart.some((i) => i.category === 'service');
   const deliveryEta = etaFor(location);
   const ordersPaused = storeStatus?.maintenance_mode || storeStatus?.orders_paused;
@@ -215,6 +220,8 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
             </div>
           </div>
 
+          <StandingPriceNotice user={user} subtotal={total} hasCode={hasDiscountCode} />
+
           <BuyerSafetyPanel />
 
           <div className="border p-3 font-mono space-y-2" style={{ borderColor: '#5C4424', background: 'rgba(92, 68, 36, 0.12)' }}>
@@ -222,6 +229,14 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
             <div className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1 text-[10px]">
               <span style={{ color: '#8A7E6C' }}>MANIFEST VALUE</span><span className="text-right" style={{ color: '#D8CFC0' }}>{total.toLocaleString()} aUEC</span>
               {hasDiscountCode && <><span style={{ color: '#8A8F45' }}>PRIVATE CODE</span><span className="text-right" style={{ color: '#8A8F45' }}>VERIFY ON TRANSMIT</span></>}
+              {standingPercent !== 0 && (
+                <>
+                  <span style={{ color: standingPercent > 0 ? '#8A8F45' : '#C05050' }}>STANDING ADJUSTMENT</span>
+                  <span className="text-right" style={{ color: standingPercent > 0 ? '#8A8F45' : '#C05050' }}>
+                    {standingPercent > 0 ? '−' : '+'}{Math.abs(standingAuec).toLocaleString()} aUEC
+                  </span>
+                </>
+              )}
               <span style={{ color: '#8A7E6C' }}>DESTINATION</span><span className="text-right" style={{ color: '#D8CFC0' }}>{location || 'UNSET'}</span>
               {deliveryEta && <><span style={{ color: '#8A7E6C' }}>EST. WINDOW</span><span className="text-right" style={{ color: '#D8CFC0' }}>{deliveryEta} after confirmation</span></>}
               <span style={{ color: '#F2EADC' }}>TRANSMIT TOTAL</span><span className="text-right font-bold" style={{ color: '#F0B43A' }}>{estimatedTotal.toLocaleString()} aUEC</span>

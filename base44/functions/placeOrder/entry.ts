@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { storefrontAdjustment, tierFor, MAX_TOTAL_DISCOUNT_PERCENT } from '../../shared/reputation.js';
 
 // Public guest checkout: validates the cart against the live catalog server-side,
 // recomputes pricing, reserves physical stock, issues a tracking code, and creates
@@ -65,7 +66,20 @@ Deno.serve(async (req) => {
       applied = codes[0];
     }
     const discount_auec = applied ? roundPrice((subtotal * applied.discount_percent) / 100) : 0;
-    const total = roundPrice(subtotal - discount_auec);
+
+    // Standing: the collective returns value to comrades whose labour built it, and carries a
+    // surcharge on those it released. Ordering never requires an account, so guests simply
+    // carry no adjustment. A code and a discount are capped together; a surcharge always stands.
+    const buyer = await base44.auth.me().catch(() => null);
+    const codePercent = applied ? Number(applied.discount_percent) || 0 : 0;
+    const rawStanding = buyer ? storefrontAdjustment(buyer) : 0;
+    const standing_percent = rawStanding > 0
+      ? Math.max(0, Math.min(rawStanding, MAX_TOTAL_DISCOUNT_PERCENT - codePercent))
+      : rawStanding;
+    const standing_auec = roundPrice((subtotal * standing_percent) / 100);
+    const standing_tier = buyer ? (buyer.standing_locked ? 'MARKED' : tierFor(buyer.reputation).label) : '';
+
+    const total = Math.max(0, roundPrice(subtotal - discount_auec - standing_auec));
 
     const tracking_code = 'FSIS-' + crypto.randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase();
 
@@ -105,6 +119,9 @@ Deno.serve(async (req) => {
       discount_code: applied ? applied.code : '',
       discount_percent: applied ? applied.discount_percent : 0,
       discount_auec,
+      standing_percent,
+      standing_auec,
+      standing_tier,
         delivery_location: delivery_location.trim(),
         customer_notes: customer_notes || '',
         internal_notes: reservedProducts.length ? `STOCK RESERVED ON CHECKOUT: ${reservedProducts.map((p) => `${p.name} ×${p.quantity}`).join(', ')}` : '',
@@ -150,7 +167,12 @@ Deno.serve(async (req) => {
       total_auec: total,
       payment_terms: 'Payment due in aUEC in the in-game trade window after handoff verification.',
       handoff_passphrase,
-      notes: customer_notes || '',
+      notes: [
+        customer_notes || '',
+        standing_percent !== 0
+          ? `STANDING ${standing_tier}: ${standing_percent > 0 ? 'returned' : 'surcharge'} ${Math.abs(standing_percent)}% (${Math.abs(standing_auec).toLocaleString()} aUEC)`
+          : '',
+      ].filter(Boolean).join('\n'),
     });
 
       await svc.order.update(order.id, { invoice_id: invoice.id, invoice_number: invoiceNumber });
@@ -183,6 +205,9 @@ Deno.serve(async (req) => {
       subtotal_auec: subtotal,
       discount_auec,
       discount_percent: applied ? applied.discount_percent : 0,
+      standing_percent,
+      standing_auec,
+      standing_tier,
       handoff_passphrase,
       stock_reserved: reservedProducts.length > 0,
     });
