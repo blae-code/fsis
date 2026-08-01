@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Clock, MapPin, Loader2, Upload } from 'lucide-react';
+import { Clock, MapPin, Loader2, Upload, Hourglass } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { TASK_STATUS_META, PRIORITY_COLOR, fmtAuec, daysUntil } from '@/components/apps/management/tasks/taskMeta';
 import TaskMessageThread from '@/components/work/TaskMessageThread';
+import CrewStrip from '@/components/work/CrewStrip';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 
@@ -13,10 +14,14 @@ export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, onReleas
   const [uploading, setUploading] = useState(false);
   const [releasing, setReleasing] = useState(false);
   const [releaseReason, setReleaseReason] = useState('');
+  const [hours, setHours] = useState('');
   const meta = TASK_STATUS_META[task.status] || TASK_STATUS_META.posted;
   const left = daysUntil(task.due_date);
   const overdue = left !== null && left < 0 && !['credited', 'cancelled'].includes(task.status);
-  const canFile = mine && ['claimed', 'returned'].includes(task.status);
+  // A hand who has already filed is not asked twice while the rest of the crew finishes.
+  const myHand = (task.crew || []).find((h) => h && h.user_id === actor?.id && !h.released_at);
+  const iFiled = !!myHand?.submitted_at;
+  const canFile = mine && !iFiled && ['claimed', 'returned'].includes(task.status);
 
   const upload = async (file) => {
     if (!file) return;
@@ -47,6 +52,9 @@ export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, onReleas
 
       <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[9px]" style={{ color: '#6B6155' }}>
         <span className="font-bold" style={{ color: '#8A8F45' }}>{fmtAuec(task.agreed_credit_auec)} — YOURS IN FULL</span>
+        {task.estimated_hours > 0 && (
+          <span className="flex items-center gap-1"><Hourglass className="w-2.5 h-2.5" /> ~{task.estimated_hours}H RECKONED</span>
+        )}
         {task.location && <span className="flex items-center gap-1"><MapPin className="w-2.5 h-2.5" /> {task.location}</span>}
         {task.due_date && (
           <span className="flex items-center gap-1" style={{ color: overdue ? '#D08A6A' : '#6B6155' }}>
@@ -85,9 +93,26 @@ export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, onReleas
             </label>
             {fileUrl && <span className="text-[8px]" style={{ color: '#8A8F45' }}>PROOF ATTACHED</span>}
           </div>
+          <div className="space-y-1">
+            <input
+              type="number"
+              min="0"
+              max="24"
+              step="0.25"
+              value={hours}
+              onChange={(e) => setHours(e.target.value)}
+              placeholder="Hours it actually took (optional)"
+              className="w-full border px-2 py-1.5 text-[10px]"
+              style={box}
+            />
+            <p className="text-[8px] leading-relaxed" style={{ color: '#6B6155' }}>
+              Your own count of your own labour — no clock is kept over you. It corrects the council's estimate so
+              the next comrade offered this work is offered it honestly.
+            </p>
+          </div>
           <button
             disabled={pending || uploading || (!notes.trim() && !fileUrl)}
-            onClick={() => onSubmit({ task_id: task.id, proof_notes: notes.trim(), proof_file_url: fileUrl })}
+            onClick={() => onSubmit({ task_id: task.id, proof_notes: notes.trim(), proof_file_url: fileUrl, ...(hours ? { actual_hours: Number(hours) } : {}) })}
             className="h-9 w-full border text-[9px] font-bold tracking-[0.14em] disabled:opacity-40"
             style={{ borderColor: '#8A8F4555', color: '#8A8F45', background: '#0E1009' }}
           >
@@ -96,7 +121,7 @@ export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, onReleas
         </div>
       )}
 
-      {canFile && onRelease && (
+      {mine && ['claimed', 'returned'].includes(task.status) && onRelease && (
         releasing ? (
           <div className="space-y-1.5 border-t pt-2" style={{ borderColor: '#2E2519' }}>
             <p className="text-[8px] leading-relaxed" style={{ color: '#8A7E6C' }}>
@@ -140,9 +165,15 @@ export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, onReleas
         )
       )}
 
+      {iFiled && task.status !== 'submitted' && mine && (
+        <p className="text-[9px]" style={{ color: '#C8893B' }}>YOUR ACCOUNT IS FILED — waiting on the rest of the crew.</p>
+      )}
+
       {task.status === 'submitted' && mine && (
         <p className="text-[9px]" style={{ color: '#C8893B' }}>FILED — awaiting the council's review.</p>
       )}
+
+      {mine && <CrewStrip task={task} userId={actor?.id} />}
 
       <TaskMessageThread task={task} as="worker" actor={actor} />
     </div>

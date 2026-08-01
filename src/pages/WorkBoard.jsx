@@ -5,6 +5,7 @@ import { submitTaskProof } from '@/functions/submitTaskProof';
 import { releaseTask } from '@/functions/releaseTask';
 import { rsvpOperation } from '@/functions/rsvpOperation';
 import { listMusters } from '@/functions/listMusters';
+import { listOpenWork } from '@/functions/listOpenWork';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Hammer, Loader2, ArrowLeft } from 'lucide-react';
@@ -12,6 +13,8 @@ import WorkerTaskCard from '@/components/work/WorkerTaskCard';
 import OperationRsvpCard from '@/components/work/OperationRsvpCard';
 import WorkHistoryPanel from '@/components/work/WorkHistoryPanel';
 import StandingPanel from '@/components/work/StandingPanel';
+import NoticeCentre from '@/components/work/NoticeCentre';
+import OpenWorkCard from '@/components/work/OpenWorkCard';
 import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 
 /** The labour board: work open to any comrade, and the tasks each holds in hand. */
@@ -24,6 +27,12 @@ export default function WorkBoard() {
     refetchInterval: 30000,
   });
 
+  const { data: board } = useQuery({
+    queryKey: ['open_work'],
+    queryFn: () => listOpenWork({}).then((r) => r.data),
+    refetchInterval: 30000,
+  });
+
   const { data: operations = [] } = useQuery({
     queryKey: ['work_board_operations'],
     queryFn: () => listMusters({}).then((r) => r.data.operations || []),
@@ -33,6 +42,8 @@ export default function WorkBoard() {
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ['work_board_tasks'] });
     qc.invalidateQueries({ queryKey: ['labour_tasks'] });
+    qc.invalidateQueries({ queryKey: ['open_work'] });
+    qc.invalidateQueries({ queryKey: ['my_notices'] });
   };
   const claim = useMutation({ mutationFn: (task) => claimTask({ task_id: task.id }), onSuccess: invalidate });
   const release = useMutation({
@@ -49,8 +60,12 @@ export default function WorkBoard() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['work_board_operations'] }),
   });
 
-  const mine = useMemo(() => tasks.filter((t) => user && t.assigned_user_id === user.id), [tasks, user]);
-  const open = useMemo(() => tasks.filter((t) => t.status === 'posted'), [tasks]);
+  // Every hand on a crew holds the work, not only the lead who took it up first.
+  const mine = useMemo(
+    () => tasks.filter((t) => user && (t.assigned_user_id === user.id || (t.crew_user_ids || []).includes(user.id))),
+    [tasks, user],
+  );
+  const open = board?.tasks || [];
   const earned = useMemo(
     () => mine.filter((t) => t.status === 'credited').reduce((s, t) => s + (Number(t.credited_auec) || 0), 0),
     [mine],
@@ -90,6 +105,8 @@ export default function WorkBoard() {
             {error?.response?.data?.error || error.message}
           </p>
         )}
+
+        <NoticeCentre />
 
         <StandingPanel user={user} />
 
@@ -139,6 +156,9 @@ export default function WorkBoard() {
 
         <section className="space-y-2">
           <div className="text-[9px] tracking-[0.2em]" style={{ color: '#E0A22E' }}>OPEN ON THE BOARD — {open.length}</div>
+          {board?.note && (
+            <p className="text-[8px] leading-relaxed" style={{ color: '#8A7E6C' }}>{board.note}</p>
+          )}
           {open.length === 0 ? (
             <p className="text-[9px] py-4 text-center border" style={{ color: '#6B6155', borderColor: '#2E2519' }}>
               No work posted right now. Check back — the yard rarely stays quiet.
@@ -146,7 +166,7 @@ export default function WorkBoard() {
           ) : (
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
               {open.map((t) => (
-                <WorkerTaskCard key={t.id} task={t} mine={false} actor={user} pending={claim.isPending} onClaim={(task) => claim.mutate(task)} onSubmit={() => {}} />
+                <OpenWorkCard key={t.id} task={t} pending={claim.isPending} onClaim={(task) => claim.mutate(task)} />
               ))}
             </div>
           )}

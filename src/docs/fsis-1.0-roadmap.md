@@ -180,7 +180,9 @@ value, the collective owns the means of production, plain solidarity language, n
     agreed; standing is awarded in full to each hand, because three comrades who stripped a hull
     each gave their labour to it and standing is a record of labour given, not a pot to divide.
     The old single-hand fields are kept as a mirror of the lead hand, so nothing that reads a task
-    the old way breaks.
+    the old way breaks. The board now reads through `listOpenWork` and shows places left, who is
+    already on, what a task is waiting on and why it was put in front of you; every hand on a crew
+    sees the work in their own hands, not only the lead, and files their own hours with their proof.
   - **Sequencing** ✅ built 2026-08-01 — `blocked_by` on the task and `setTaskDependencies` to write it,
     refusing an arrangement that cannot work: no task waiting on itself, on work that does not exist,
     or in a circle with other work. A prerequisite counts as met once credited **or cancelled**,
@@ -227,8 +229,9 @@ value, the collective owns the means of production, plain solidarity language, n
     and work sent back (`reviewTask`, carrying the council's reasoning in full), work handed back
     (`releaseTask`, stating what the mark cost, how it was weighted, the date by which it may be
     answered and the date it lapses), and a claim lapsing back to the board (`expireStaleClaims`,
-    stating plainly that no standing was taken). Still owed: a worker notice centre to read them
-    in, which is the frontend's half.
+    stating plainly that no standing was taken). ✅ the frontend's half closed 2026-08-01 — a notice
+    centre at the head of the labour board (`NoticeCentre`), reading `listNotices` and marking read
+    only by the comrade's own hand, each notice carrying its kind, its reason and who decided it.
   - **Council load view** — who holds what, who is carrying too much, what is ageing unreviewed.
   - **Skills are collected and ignored** ✅ built 2026-08-01 — `shared/skills.js` reads the trades a
     comrade named in their own words on their application (a Vulture means salvage whether or not the
