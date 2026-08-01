@@ -118,23 +118,9 @@
   ],
   "rls": {
     "read": {
-      "$or": [
-        {
-          "user_condition": {
-            "role": "admin"
-          }
-        },
-        {
-          "data.status": {
-            "$in": [
-              "scheduled",
-              "mustering",
-              "underway",
-              "completed"
-            ]
-          }
-        }
-      ]
+      "user_condition": {
+        "role": "admin"
+      }
     },
     "create": {
       "user_condition": {
