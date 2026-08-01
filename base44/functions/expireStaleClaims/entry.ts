@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { notifyMany } from '../../shared/notices.js';
 
 /**
  * Work claimed but never filed cannot sit in one comrade's hands forever while the yard waits.
@@ -33,6 +34,25 @@ export default async function (req: Request): Promise<Response> {
         t.notes,
         `Claim lapsed ${now.toISOString().slice(0, 10)}: held by ${t.assigned_handle || t.assigned_email || 'a comrade'} and unfiled ${GRACE_DAYS} days past the due date. Returned to the board.`,
       ].filter(Boolean).join('\n'),
+    })));
+
+    // Told, not simply taken back. Work leaving a comrade's hands is a thing done to them, even
+    // where no standing is taken for it — and they may want to claim it again.
+    await notifyMany(base44, stale.map((t) => ({
+      recipient_user_id: t.assigned_user_id,
+      recipient_handle: t.assigned_handle,
+      kind: 'claim_lapsed',
+      title: `A claim lapsed and returned to the board: ${t.title}`,
+      body: [
+        `This work was held in your hands and unfiled ${GRACE_DAYS} days past its due date of ${t.due_date}, so it has gone back to the board where another hand can take it up.`,
+        'No standing has been taken for this. Silence may mean anything, and a mark is only ever assessed where a comrade has stated their own reason for walking away.',
+        'If the work is still yours to do, claim it again from the labour board.',
+      ].join('\n\n'),
+      source_type: 'labour_task',
+      source_id: t.id,
+      source_name: t.title,
+      actor_email: 'FSIS.bot',
+      actor_role: 'system',
     })));
 
     await svc.ops_log.create({

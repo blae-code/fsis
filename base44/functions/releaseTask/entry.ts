@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole } from '../../shared/roles.js';
 import { abandonmentCost, MARK_LIFETIME_DAYS, APPEAL_WINDOW_DAYS, recomputeStanding } from '../../shared/reputation.js';
+import { notify } from '../../shared/notices.js';
 
 /**
  * A comrade hands back work in hand. Nobody is chained to a task they cannot finish — but
@@ -32,6 +33,8 @@ export default async function (req: Request): Promise<Response> {
 
     const now = new Date();
     const delta = abandonmentCost(task);
+    const appealDueBy = new Date(now.getTime() + APPEAL_WINDOW_DAYS * 86400000);
+    const markExpiresAt = new Date(now.getTime() + MARK_LIFETIME_DAYS * 86400000);
 
     await base44.asServiceRole.entities.labour_task.update(taskId, {
       status: 'posted',
@@ -57,8 +60,8 @@ export default async function (req: Request): Promise<Response> {
       actor_email: 'FSIS.bot',
       actor_role: 'system',
       appeal_status: 'none',
-      appeal_due_by: new Date(now.getTime() + APPEAL_WINDOW_DAYS * 86400000).toISOString(),
-      expires_at: new Date(now.getTime() + MARK_LIFETIME_DAYS * 86400000).toISOString(),
+      appeal_due_by: appealDueBy.toISOString(),
+      expires_at: markExpiresAt.toISOString(),
     });
 
     const total = await recomputeStanding(base44, user.id);
@@ -72,6 +75,27 @@ export default async function (req: Request): Promise<Response> {
       before: { status: task.status, assigned_handle: task.assigned_handle },
       after: { status: 'posted', standing_delta: delta, standing_total: total },
       notes: reason,
+    });
+
+    // A mark is never applied silently. The comrade is told what it cost, how the figure was
+    // reached, by when they may answer it, and the date it lapses of its own accord.
+    await notify(base44, {
+      recipient_user_id: user.id,
+      recipient_handle: user.handle || user.full_name || user.email,
+      kind: 'work_released',
+      title: `You handed back: ${task.title}`,
+      body: [
+        `The work has returned to the board and is open to any hand. Nobody is chained to a task they cannot finish.`,
+        `A mark of ${delta} standing has been recorded. It is weighted by the harm actually done — how close the deadline stood, how urgent the work was, and what had been agreed for it — not by the fact of walking away. Your standing now stands at ${total}.`,
+        `Your stated cause, as the council will read it: ${reason}`,
+        `If the assessment is wrong, you may answer it once, by ${appealDueBy.toISOString().slice(0, 10)}. An Owner or above must respond, and their reasoning will be shown back to you.`,
+        `Whether or not you answer it, this mark lapses on ${markExpiresAt.toISOString().slice(0, 10)}. No comrade is condemned in perpetuity by one bad month.`,
+      ].join('\n\n'),
+      source_type: 'standing_event',
+      source_id: event?.id,
+      source_name: task.title,
+      actor_email: 'FSIS.bot',
+      actor_role: 'system',
     });
 
     return Response.json({ ok: true, standing_event: event, reputation: total });

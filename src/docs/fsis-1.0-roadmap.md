@@ -175,13 +175,16 @@ value, the collective owns the means of production, plain solidarity language, n
     hours. It is not idle at the other end — it is the sole source of shares, so whatever writes it
     feeds the pay pool directly. Estimated against actual hours belongs on the task.
   - **Credit guidance** — suggest a fair sum from category and hours so pay does not drift by mood.
-  - **Notice to the worker** — claim, return and credit events must reach them. The substrate is
-    built (2026-08-01): a `notice` addressed to one comrade and readable by them alone, a shared
-    emitter in `shared/notices.js`, and `listNotices` / `markNoticesRead`. Nothing produces notices
-    yet — wiring the labour events is the remaining half of this item. Two rules hold in the
-    substrate: notice is always addressed to a person and never broadcast, and a failure to give
-    notice can never undo the thing being reported, because labour credited must stay credited
-    even if we could not tell them.
+  - **Notice to the worker** ✅ built 2026-08-01 — a `notice` addressed to one comrade and readable
+    by them alone, a shared emitter in `shared/notices.js`, and `listNotices` / `markNoticesRead`.
+    Two rules hold in the substrate: notice is always addressed to a person and never broadcast,
+    and a failure to give notice can never undo the thing being reported, because labour credited
+    must stay credited even if we could not tell them. Wired to the labour events: work credited
+    and work sent back (`reviewTask`, carrying the council's reasoning in full), work handed back
+    (`releaseTask`, stating what the mark cost, how it was weighted, the date by which it may be
+    answered and the date it lapses), and a claim lapsing back to the board (`expireStaleClaims`,
+    stating plainly that no standing was taken). Still owed: a worker notice centre to read them
+    in, which is the frontend's half.
   - **Council load view** — who holds what, who is carrying too much, what is ageing unreviewed.
   - **Skills are collected and ignored** — match posted work against declared skills from standing requests.
 

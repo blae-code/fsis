@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { creditAward, recomputeStanding } from '../../shared/reputation.js';
+import { notify } from '../../shared/notices.js';
 
 /**
  * Council review of filed work. Credit settles the agreed sum in full and directly —
@@ -45,8 +46,10 @@ export default async function (req: Request): Promise<Response> {
     });
 
     // Labour given is recorded in the worker's standing the moment it is credited.
+    let standingAwarded = 0;
     if (decision === 'credit' && task.assigned_user_id) {
       const delta = creditAward(task);
+      standingAwarded = delta;
       await base44.asServiceRole.entities.standing_event.create({
         member_user_id: task.assigned_user_id,
         member_email: task.assigned_email,
@@ -74,6 +77,35 @@ export default async function (req: Request): Promise<Response> {
       after: { status: updated.status, credited_auec: updated.credited_auec },
       notes: reviewNotes || `Reviewed by ${fsisRole(user)}.`,
     });
+
+    // The comrade whose labour this was is told, in their own terms, what the council decided.
+    // Nobody should learn the answer to filed work by refreshing a page.
+    if (task.assigned_user_id) {
+      await notify(base44, {
+        recipient_user_id: task.assigned_user_id,
+        recipient_handle: task.assigned_handle,
+        kind: decision === 'credit' ? 'work_credited' : 'work_returned',
+        title: decision === 'credit'
+          ? `Your labour was credited: ${task.title}`
+          : `Work sent back for more: ${task.title}`,
+        body: decision === 'credit'
+          ? [
+            `${credited.toLocaleString()} aUEC settled in full and directly — this is yours, and it is never drawn from the share pool.`,
+            standingAwarded ? `${standingAwarded} standing recorded to your name for labour given.` : '',
+            reviewNotes,
+          ].filter(Boolean).join('\n\n')
+          : [
+            'The council has sent this work back rather than crediting it. Their reasoning, in full:',
+            reviewNotes,
+            'The task is still in your hands. File again when you are ready, or hand it back if you cannot carry it.',
+          ].filter(Boolean).join('\n\n'),
+        source_type: 'labour_task',
+        source_id: taskId,
+        source_name: task.title,
+        actor_email: user.email,
+        actor_role: fsisRole(user),
+      });
+    }
 
     return Response.json({ ok: true, task: updated });
   } catch (error) {
