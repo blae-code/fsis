@@ -8,6 +8,7 @@ import OwnerInviteForm from '@/components/apps/management/access/OwnerInviteForm
 import MemberStandingRow from '@/components/apps/management/access/MemberStandingRow';
 import AccessGrantLog from '@/components/apps/management/access/AccessGrantLog';
 import StandingRequestQueue from '@/components/apps/management/access/StandingRequestQueue';
+import StandingLedgerConsole from '@/components/apps/management/access/StandingLedgerConsole';
 
 const ORDER = ['proprietor', 'owner', 'contractor', 'patron'];
 
@@ -72,6 +73,8 @@ export default function AccessConsole() {
       </div>
 
       <StandingRequestQueue />
+
+      <StandingLedgerConsole members={members} />
 
       {isProprietor(actor) && <OwnerInviteForm />}
       {!isProprietor(actor) && (

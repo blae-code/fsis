@@ -1,0 +1,143 @@
+{
+  "name": "standing_event",
+  "type": "object",
+  "properties": {
+    "member_user_id": {
+      "type": "string",
+      "description": "The comrade whose standing this event concerns"
+    },
+    "member_email": {
+      "type": "string"
+    },
+    "member_handle": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "work_credited",
+        "muster_stood",
+        "work_abandoned",
+        "dismissed",
+        "reinstated",
+        "council_adjustment",
+        "amnesty",
+        "decay"
+      ],
+      "default": "council_adjustment",
+      "description": "What the comrade did, or what the council did about it"
+    },
+    "delta": {
+      "type": "number",
+      "default": 0,
+      "description": "Standing awarded or withheld by this event, as first assessed"
+    },
+    "effective_delta": {
+      "type": "number",
+      "default": 0,
+      "description": "Standing actually counted, after any appeal ruling. This is the figure that pays or costs"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Plainly stated cause, always shown back to the comrade"
+    },
+    "source_type": {
+      "type": "string",
+      "description": "What the event arose from, e.g. labour_task, crew_operation, council"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "source_name": {
+      "type": "string"
+    },
+    "actor_email": {
+      "type": "string",
+      "description": "Who recorded the event \u2014 a council member, or FSIS.bot for automatic assessments"
+    },
+    "actor_role": {
+      "type": "string"
+    },
+    "appeal_status": {
+      "type": "string",
+      "enum": [
+        "none",
+        "filed",
+        "upheld",
+        "reduced",
+        "neutralised",
+        "increased",
+        "denied"
+      ],
+      "default": "none",
+      "description": "Where the comrade's appeal stands, if one was filed"
+    },
+    "appeal_reason": {
+      "type": "string",
+      "description": "The comrade's own account of why the assessment was wrong"
+    },
+    "appeal_filed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "appeal_due_by": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date by which the council owes an answer \u2014 silence is not a denial"
+    },
+    "ruling": {
+      "type": "string",
+      "description": "The council's reasoning, shown back to the comrade in full"
+    },
+    "ruled_by_email": {
+      "type": "string"
+    },
+    "ruled_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When a mark lapses of its own accord. No comrade is condemned in perpetuity"
+    },
+    "voided": {
+      "type": "boolean",
+      "default": false,
+      "description": "Set only by amnesty or a neutralising ruling \u2014 the record itself is never rewritten or deleted"
+    }
+  },
+  "required": [
+    "member_user_id",
+    "kind"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.member_user_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

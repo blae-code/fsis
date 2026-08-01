@@ -44,6 +44,20 @@
       "type": "string",
       "format": "date-time",
       "description": "When the current standing was granted"
+    },
+    "reputation": {
+      "type": "number",
+      "default": 0,
+      "description": "Cached standing total, recomputed from the member's own append-only standing_event record"
+    },
+    "standing_locked": {
+      "type": "boolean",
+      "default": false,
+      "description": "A dismissed comrade: no claiming work, no answering musters, and a storefront surcharge until an Owner reinstates them"
+    },
+    "standing_locked_reason": {
+      "type": "string",
+      "description": "Why the comrade was dismissed, shown back to them in plain words"
     }
   }
 }

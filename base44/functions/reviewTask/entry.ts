@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
+import { creditAward, recomputeStanding } from '../../shared/reputation.js';
 
 /**
  * Council review of filed work. Credit settles the agreed sum in full and directly —
@@ -42,6 +43,26 @@ export default async function (req: Request): Promise<Response> {
       reviewed_at: now,
       review_notes: reviewNotes,
     });
+
+    // Labour given is recorded in the worker's standing the moment it is credited.
+    if (decision === 'credit' && task.assigned_user_id) {
+      const delta = creditAward(task);
+      await base44.asServiceRole.entities.standing_event.create({
+        member_user_id: task.assigned_user_id,
+        member_email: task.assigned_email,
+        member_handle: task.assigned_handle,
+        kind: 'work_credited',
+        delta,
+        effective_delta: delta,
+        reason: `Work credited in full: ${task.title}`,
+        source_type: 'labour_task',
+        source_id: taskId,
+        source_name: task.title,
+        actor_email: user.email,
+        actor_role: fsisRole(user),
+      });
+      await recomputeStanding(base44, task.assigned_user_id);
+    }
 
     await base44.asServiceRole.entities.ops_log.create({
       action: decision === 'credit' ? 'labour_task.credited' : 'labour_task.returned',

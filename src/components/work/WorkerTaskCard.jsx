@@ -6,10 +6,12 @@ import { TASK_STATUS_META, PRIORITY_COLOR, fmtAuec, daysUntil } from '@/componen
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 
 /** A task as the worker sees it: take it up, then file your own account of the labour done. */
-export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, pending }) {
+export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, onRelease, pending }) {
   const [notes, setNotes] = useState('');
   const [fileUrl, setFileUrl] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [releasing, setReleasing] = useState(false);
+  const [releaseReason, setReleaseReason] = useState('');
   const meta = TASK_STATUS_META[task.status] || TASK_STATUS_META.posted;
   const left = daysUntil(task.due_date);
   const overdue = left !== null && left < 0 && !['credited', 'cancelled'].includes(task.status);
@@ -91,6 +93,50 @@ export default function WorkerTaskCard({ task, mine, onClaim, onSubmit, pending 
             FILE THE WORK
           </button>
         </div>
+      )}
+
+      {canFile && onRelease && (
+        releasing ? (
+          <div className="space-y-1.5 border-t pt-2" style={{ borderColor: '#2E2519' }}>
+            <p className="text-[8px] leading-relaxed" style={{ color: '#8A7E6C' }}>
+              Nobody is chained to work they cannot finish. Handing it back costs the collective time it cannot
+              recover, so it is counted against your standing — weighted by the harm done, and open to appeal.
+            </p>
+            <textarea
+              value={releaseReason}
+              onChange={(e) => setReleaseReason(e.target.value)}
+              rows={2}
+              placeholder="Why the work is going back on the board"
+              className="w-full border px-2 py-1.5 text-[10px]"
+              style={box}
+            />
+            <div className="flex gap-1">
+              <button
+                onClick={() => setReleasing(false)}
+                className="flex-1 h-8 border text-[8px] font-bold tracking-[0.12em]"
+                style={{ borderColor: '#2E2519', color: '#7A6E60', background: '#0C0A07' }}
+              >
+                KEEP IT
+              </button>
+              <button
+                disabled={pending || !releaseReason.trim()}
+                onClick={() => onRelease({ task_id: task.id, reason: releaseReason.trim() })}
+                className="flex-1 h-8 border text-[8px] font-bold tracking-[0.12em] disabled:opacity-40"
+                style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}
+              >
+                HAND IT BACK
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => setReleasing(true)}
+            className="h-7 w-full border text-[8px] font-bold tracking-[0.12em]"
+            style={{ borderColor: '#3A2F20', color: '#8A7E6C', background: '#0C0A07' }}
+          >
+            HAND THIS WORK BACK
+          </button>
+        )
       )}
 
       {task.status === 'submitted' && mine && (

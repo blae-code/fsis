@@ -18,6 +18,11 @@ export default async function (req: Request): Promise<Response> {
     if (user.membership_status === 'suspended') {
       return Response.json({ error: 'Your standing is suspended pending council review.' }, { status: 403 });
     }
+    if (user.standing_locked) {
+      return Response.json({
+        error: `You were released from the yard and may not take up work until an Owner reinstates you.${user.standing_locked_reason ? ` Reason recorded: ${user.standing_locked_reason}` : ''}`,
+      }, { status: 403 });
+    }
 
     const body = await req.json();
     const taskId = String(body?.task_id || '').trim();

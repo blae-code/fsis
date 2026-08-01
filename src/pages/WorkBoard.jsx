@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { claimTask } from '@/functions/claimTask';
 import { submitTaskProof } from '@/functions/submitTaskProof';
+import { releaseTask } from '@/functions/releaseTask';
 import { rsvpOperation } from '@/functions/rsvpOperation';
 import { listMusters } from '@/functions/listMusters';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -10,6 +11,7 @@ import { Hammer, Loader2, ArrowLeft } from 'lucide-react';
 import WorkerTaskCard from '@/components/work/WorkerTaskCard';
 import OperationRsvpCard from '@/components/work/OperationRsvpCard';
 import WorkHistoryPanel from '@/components/work/WorkHistoryPanel';
+import StandingPanel from '@/components/work/StandingPanel';
 import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 
 /** The labour board: work open to any comrade, and the tasks each holds in hand. */
@@ -33,6 +35,14 @@ export default function WorkBoard() {
     qc.invalidateQueries({ queryKey: ['labour_tasks'] });
   };
   const claim = useMutation({ mutationFn: (task) => claimTask({ task_id: task.id }), onSuccess: invalidate });
+  const release = useMutation({
+    mutationFn: (payload) => releaseTask(payload),
+    onSuccess: () => {
+      invalidate();
+      qc.invalidateQueries({ queryKey: ['user'] });
+      qc.invalidateQueries({ queryKey: ['my_standing_events'] });
+    },
+  });
   const submit = useMutation({ mutationFn: (payload) => submitTaskProof(payload), onSuccess: invalidate });
   const rsvp = useMutation({
     mutationFn: (payload) => rsvpOperation(payload),
@@ -49,7 +59,7 @@ export default function WorkBoard() {
     () => operations.filter((o) => ['scheduled', 'mustering', 'underway'].includes(o.status)),
     [operations],
   );
-  const error = claim.error || submit.error || rsvp.error;
+  const error = claim.error || submit.error || rsvp.error || release.error;
 
   if (loadingUser || isLoading) {
     return (
@@ -81,6 +91,8 @@ export default function WorkBoard() {
           </p>
         )}
 
+        <StandingPanel user={user} />
+
         <section className="space-y-2">
           <div className="flex items-center gap-2 text-[9px] tracking-[0.2em]" style={{ color: '#6FA0C8' }}>
             WORK IN YOUR HANDS
@@ -93,7 +105,15 @@ export default function WorkBoard() {
           ) : (
             <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
               {mine.map((t) => (
-                <WorkerTaskCard key={t.id} task={t} mine pending={submit.isPending} onSubmit={(p) => submit.mutate(p)} onClaim={() => {}} />
+                <WorkerTaskCard
+                  key={t.id}
+                  task={t}
+                  mine
+                  pending={submit.isPending || release.isPending}
+                  onSubmit={(p) => submit.mutate(p)}
+                  onRelease={(p) => release.mutate(p)}
+                  onClaim={() => {}}
+                />
               ))}
             </div>
           )}

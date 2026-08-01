@@ -36,7 +36,18 @@ value, the collective owns the means of production, plain solidarity language, n
   ✅ Patron guest-order claiming: `claimOrder` binds device-tracked tracking codes to an account
   (`order.claimed_by_user_id`, read/update RLS extended), surfaced on the ACTIVE ORDERS tab.
   ⬜ Remaining: onboarding branched into Patron / Contractor / Operator paths.
-- **Phase 4.5 — Contractor standing & reputation** (requested, not yet built)
+- **Phase 4.5 — Contractor standing & reputation** (core built 2026-08-01)
+  Built: `standing_event` as an append-only record (readable by the comrade it concerns and the council);
+  `reputation` / `standing_locked` on the member record, recomputed from events; tiers with stated
+  discount/surcharge and hard caps in `shared/reputation.js`; standing earned automatically when work is
+  credited; `releaseTask` hand-back with a harm-weighted cost; one appeal per mark via
+  `appealStandingEvent` with an answer date the council owes; `ruleOnAppeal` (uphold / reduce / increase /
+  neutralise) with reasoning shown back; `adjustStanding` for audited hand-set changes, dismissal,
+  reinstatement and amnesty; dismissal locks claiming and muster answers; a worker-facing standing panel
+  on the labour board and a council appeal queue in the Access tab.
+  Still open: applying the standing adjustment to storefront pricing (with the combined discount cap),
+  a scheduled sweep to lapse marks, patron trade standing, alt-account flagging, and muster-attendance
+  awards (which wait on Phase 4.8's live sessions).
   Reputation as a record of labour given and labour withheld, not a credit score:
   - Reputation earned on credited work orders and on musters actually stood, held on the member record
     with an immutable event log (source task/operation, delta, reason, actor).
