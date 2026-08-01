@@ -1,0 +1,138 @@
+{
+  "name": "task_template",
+  "type": "object",
+  "properties": {
+    "template_name": {
+      "type": "string",
+      "description": "What the council calls this standing brief, e.g. 'Weekly Halo sweep — scrapers'"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title given to each task posted from this brief"
+    },
+    "brief": {
+      "type": "string",
+      "description": "What the work involves, written once and posted as often as needed"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "salvage",
+        "hauling",
+        "escort",
+        "repair",
+        "intake",
+        "delivery",
+        "admin",
+        "other"
+      ],
+      "default": "salvage"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "routine",
+        "elevated",
+        "urgent"
+      ],
+      "default": "routine"
+    },
+    "agreed_credit_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "What each task posted from this brief pays, settled in full and directly as task labour always is"
+    },
+    "estimated_hours": {
+      "type": "number",
+      "description": "Hours the council reckons the work takes, carried onto every posting so a comrade can judge the offer"
+    },
+    "hands_needed": {
+      "type": "number",
+      "default": 1,
+      "description": "How many pairs of hands each posting calls for"
+    },
+    "location": {
+      "type": "string"
+    },
+    "due_in_days": {
+      "type": "number",
+      "default": 7,
+      "description": "How long each posting is given, counted from the day it goes up. Stored as a span rather than a date because a standing brief has no one deadline"
+    },
+    "serves_type": {
+      "type": "string",
+      "enum": [
+        "none",
+        "order",
+        "cargo_lot",
+        "operation",
+        "fab_project",
+        "work_order"
+      ],
+      "default": "none",
+      "description": "What labour from this brief usually serves, carried onto each posting so the cost can be traced"
+    },
+    "cadence": {
+      "type": "string",
+      "enum": [
+        "none",
+        "daily",
+        "weekly",
+        "fortnightly",
+        "monthly"
+      ],
+      "default": "none",
+      "description": "How often this brief posts itself. 'none' means it is posted by hand when wanted"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this brief still stands. Set false to stop it posting without losing the record of it"
+    },
+    "next_due_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this brief next posts itself. Also the guard against double-posting: the sweep claims a brief by moving this date forward before it writes anything"
+    },
+    "last_posted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "times_posted": {
+      "type": "number",
+      "default": 0
+    },
+    "created_by_email": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "template_name",
+    "title"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

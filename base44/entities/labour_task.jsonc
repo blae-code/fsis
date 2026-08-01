@@ -219,6 +219,14 @@
     "posted_by_email": {
       "type": "string"
     },
+    "template_id": {
+      "type": "string",
+      "description": "The standing brief this posting came from, if any, so the terms a task was posted under can always be traced back to where they were written"
+    },
+    "template_name": {
+      "type": "string",
+      "description": "Name of that brief when this was posted, kept readable even if the brief is later renamed or retired"
+    },
     "notes": {
       "type": "string"
     }

@@ -185,8 +185,14 @@ value, the collective owns the means of production, plain solidarity language, n
     against the real prerequisites rather than the stored flag, so a stale flag can never let blocked
     work be taken up, and it names which work is being waited on rather than only that there is a wait.
     Crediting work opens whatever was waiting on it, in one batch.
-  - **Templates, recurrence and bulk posting** — the council retypes the same brief every week, one at
-    a time.
+  - **Templates, recurrence and bulk posting** ✅ built 2026-08-01 — `task_template` holds the terms in
+    one place, `postFromTemplate` puts it on the board (up to 20 at once, in one write), and
+    `postRecurringTasks` lets a standing brief come round on its own at daily / weekly / fortnightly /
+    monthly. Retyping a brief from memory is how the terms quietly drift — the same job pays a little
+    differently each week and asks for a little more, and a comrade comparing this week's board to
+    last week's cannot tell whether the work changed or only the mood did. A template holds a span
+    rather than a deadline, since a recurring brief has no one due date. Each posting starts with
+    nobody on it: a template cannot put a comrade on a task on their behalf.
   - **A thread on every task** — proof is one-shot. Workers must be able to ask before claiming and answer
     after being sent back, the way order messages already work.
   - **Labour traced to value** ✅ built 2026-08-01 — `serves_type` / `serves_id` / `serves_name` on the
