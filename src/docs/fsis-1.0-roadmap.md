@@ -151,17 +151,20 @@ value, the collective owns the means of production, plain solidarity language, n
     storefront rule had been copy-pasted into three functions and is now held once, so commission, bid
     and payout figures cannot drift apart by a credit. Negative zero is flattened on the way out — no
     comrade reads "-0" on a statement of what they are owed.
-- **Phase 4.7 — Work orders, hardened** (audited 2026-08-01, partly built)
+- **Phase 4.7 — Work orders, hardened** ✅ COMPLETE (backend, 2026-08-01)
   Built: handing work back (`releaseTask`, Phase 4.5); a daily `expireStaleClaims` sweep returning work
   claimed but unfiled 7 days past its due date to the board, with the lapse written into the task and
   `ops_log`; and a council load view (`LabourLoadPanel`) showing who carries what, who is overdue, what is
   owed to each hand, and which filed work has waited 3+ days unpaid.
   Also built: a thread on every task (`task_message`, `TaskMessageThread`) readable by the comrade party to
   it and the council, so work can be asked about before it is taken up and answered for after it is sent back.
-  Still open below: many hands on one task, sequencing, templates/recurrence/bulk posting, labour traced to
-  value, hours, credit guidance, notice to the worker, and skills matching.
-  The labour board works, but a task's life has holes in it. Each of these is a path a worker or the
-  council can walk into today with no way out:
+  Every item below is now built on the backend. What remains for this phase is the frontend's half:
+  crew places on the board, a blocked treatment, "my tasks" reading a comrade's own crew entry rather
+  than the lead-hand mirror, a standing-briefs tab, hours fields, the credit suggestion with its
+  working shown, a "waits on" picker, and a worker notice centre. The single-hand fields are kept as a
+  mirror throughout, so the existing board keeps working until that lands.
+  These were the holes in a task's life — each one a path a worker or the council could walk into with
+  no way out:
   - **Handing work back** — a worker may only go silent. Needs an explicit release with a reason, which is
     also the hook Phase 4.5's abandonment penalty depends on.
   - **Claim expiry** — a claimed task past its due date sits forever. Stale claims must age visibly and
