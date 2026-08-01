@@ -5,9 +5,16 @@ import { PackagePlus } from 'lucide-react';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07' };
 
-export default function AdminRestockControls({ products = [] }) {
+export default function AdminRestockControls({ products: productsProp }) {
   const qc = useQueryClient();
   const [values, setValues] = useState({});
+  // Standalone mode (e.g. Management Console tab): fetch the catalog itself
+  const { data: fetchedProducts = [] } = useQuery({
+    queryKey: ['restock_controls_products'],
+    queryFn: () => base44.entities.product.list('sort_order', 300),
+    enabled: !productsProp,
+  });
+  const products = productsProp ?? fetchedProducts;
   const { data: requests = [] } = useQuery({
     queryKey: ['restock_notify_admin_controls'],
     queryFn: () => base44.entities.restock_notify.list('-created_date', 200),
@@ -32,10 +39,14 @@ export default function AdminRestockControls({ products = [] }) {
     },
   });
   const watched = products.filter((p) => demandByProduct[p.id] || (p.stock || 0) < 50).slice(0, 6);
-  if (watched.length === 0) return null;
+  // Embedded in the storefront catalog: stay hidden when nothing needs attention.
+  if (watched.length === 0 && productsProp) return null;
   return (
     <section className="border p-3 space-y-2 font-mono" style={{ borderColor: '#5C4424', background: 'linear-gradient(180deg, #14100B, #0B0906)' }}>
       <div className="flex items-center gap-2 text-[9px] tracking-[0.22em]" style={{ color: '#E0A22E' }}><PackagePlus className="w-3.5 h-3.5" /> PROPRIETOR RESTOCK CONTROLS</div>
+      {watched.length === 0 && (
+        <p className="text-[9px] py-4 text-center" style={{ color: '#7A6E60' }}>No watched products — nothing has open reserve demand or stock below 50.</p>
+      )}
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
         {watched.map((p) => (
           <div key={p.id} className="border p-2 space-y-2" style={box}>

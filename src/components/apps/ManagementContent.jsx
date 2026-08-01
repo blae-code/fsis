@@ -16,6 +16,7 @@ import ProprietorCommandCenter from '@/components/apps/management/ProprietorComm
 import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
 import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
 import RestockInbox from '@/components/apps/management/RestockInbox';
+import AdminRestockControls from '@/components/store/AdminRestockControls';
 import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
 import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
@@ -43,6 +44,7 @@ const TABS = [
   { id: 'ops',       label: 'OPS DECK',   glyph: '◉' },
   { id: 'market',    label: 'MARKET',     glyph: '◇' },
   { id: 'inbox',     label: 'INBOX',      glyph: '▣' },
+  { id: 'restock',   label: 'RESTOCK',    glyph: '▲' },
 ];
 
 export default function ManagementContent() {
@@ -144,6 +146,7 @@ export default function ManagementContent() {
         {activeTab === 'ops'       && <OpsCommandDeck />}
         {activeTab === 'market'    && <div className="p-4"><MarketPriceComparator /></div>}
         {activeTab === 'inbox'    && <div className="p-4"><RestockInbox /></div>}
+        {activeTab === 'restock'  && <div className="p-4"><AdminRestockControls /></div>}
       </div>
     </div>
   );
