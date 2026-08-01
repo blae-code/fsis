@@ -6,6 +6,7 @@ import TaskPostForm from '@/components/apps/management/tasks/TaskPostForm';
 import TaskReviewQueue from '@/components/apps/management/tasks/TaskReviewQueue';
 import TaskCard from '@/components/apps/management/tasks/TaskCard';
 import LabourLoadPanel from '@/components/apps/management/tasks/LabourLoadPanel';
+import StandingBriefsPanel from '@/components/apps/management/tasks/StandingBriefsPanel';
 import OperationScheduleConsole from '@/components/apps/management/tasks/OperationScheduleConsole';
 import { TASK_STATUS_META, fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 
@@ -73,6 +74,7 @@ export default function TaskWorkOrderConsole() {
       </div>
 
       <TaskPostForm actorEmail={actor?.email} />
+      <StandingBriefsPanel actorEmail={actor?.email} />
       <TaskReviewQueue tasks={submitted} />
       <LabourLoadPanel tasks={tasks} />
 

@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ClipboardPlus, Loader2 } from 'lucide-react';
+import CreditSuggestion from '@/components/apps/management/tasks/CreditSuggestion';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 const CATEGORIES = ['salvage', 'hauling', 'escort', 'repair', 'intake', 'delivery', 'admin', 'other'];
 
-const EMPTY = { title: '', brief: '', category: 'salvage', priority: 'routine', agreed_credit_auec: '', due_date: '', location: '' };
+const EMPTY = { title: '', brief: '', category: 'salvage', priority: 'routine', agreed_credit_auec: '', estimated_hours: '', hands_needed: '1', due_date: '', location: '' };
 
 /** Post a task to the board. The sum is agreed up front so no comrade works on an open promise. */
 export default function TaskPostForm({ actorEmail }) {
@@ -21,6 +22,8 @@ export default function TaskPostForm({ actorEmail }) {
       category: form.category,
       priority: form.priority,
       agreed_credit_auec: Math.max(0, Number(form.agreed_credit_auec) || 0),
+      ...(Number(form.estimated_hours) > 0 ? { estimated_hours: Number(form.estimated_hours) } : {}),
+      hands_needed: Math.max(1, Number(form.hands_needed) || 1),
       due_date: form.due_date || undefined,
       location: form.location.trim(),
       status: 'posted',
@@ -50,9 +53,12 @@ export default function TaskPostForm({ actorEmail }) {
           <option value="urgent">URGENT</option>
         </select>
         <input type="number" min="0" value={form.agreed_credit_auec} onChange={(e) => set('agreed_credit_auec', e.target.value)} placeholder="Agreed credit (aUEC)" className="h-9 border px-2 text-[10px]" style={box} />
+        <input type="number" min="0" step="0.25" value={form.estimated_hours} onChange={(e) => set('estimated_hours', e.target.value)} placeholder="Hours reckoned (stated to the worker)" className="h-9 border px-2 text-[10px]" style={box} />
+        <input type="number" min="1" value={form.hands_needed} onChange={(e) => set('hands_needed', e.target.value)} placeholder="Hands needed" className="h-9 border px-2 text-[10px]" style={box} />
         <input type="date" value={form.due_date} onChange={(e) => set('due_date', e.target.value)} className="h-9 border px-2 text-[10px]" style={box} />
         <input value={form.location} onChange={(e) => set('location', e.target.value)} placeholder="Where the work happens" className="h-9 border px-2 text-[10px] sm:col-span-2" style={box} />
       </div>
+      <CreditSuggestion category={form.category} estimatedHours={form.estimated_hours} onUse={(v) => set('agreed_credit_auec', String(v))} />
       {post.error && <p className="text-[9px]" style={{ color: '#D08A6A' }}>{post.error.message}</p>}
       <button
         onClick={() => post.mutate()}

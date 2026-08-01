@@ -198,7 +198,10 @@ value, the collective owns the means of production, plain solidarity language, n
     differently each week and asks for a little more, and a comrade comparing this week's board to
     last week's cannot tell whether the work changed or only the mood did. A template holds a span
     rather than a deadline, since a recurring brief has no one due date. Each posting starts with
-    nobody on it: a template cannot put a comrade on a task on their behalf.
+    nobody on it: a template cannot put a comrade on a task on their behalf. ✅ the council's half landed
+    2026-08-01 — a standing-briefs panel in the task console (write a brief, put it on the board,
+    retire or reinstate it), and the credit suggestion shown with its working beside both the
+    one-off post form and the brief form, offering nothing where the record does not yet say enough.
   - **A thread on every task** — proof is one-shot. Workers must be able to ask before claiming and answer
     after being sent back, the way order messages already work.
   - **Labour traced to value** ✅ built 2026-08-01 — `serves_type` / `serves_id` / `serves_name` on the
