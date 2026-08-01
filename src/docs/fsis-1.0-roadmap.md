@@ -49,6 +49,24 @@ value, the collective owns the means of production, plain solidarity language, n
   - Owners may dismiss a contractor: contractor privileges locked (no claiming, no RSVP), a negative
     reputation mark applied, and a storefront surcharge — not a discount — applied to that account until
     an Owner reinstates them.
+- **Phase 4.6 — Exchange: auction house, buyback & instruments** (requested, not yet built)
+  A second hall beside the storefront, built to the same standard — members trade with one another; FSIS
+  keeps the hall, not the goods.
+  - **Auction house**: registered members list lots via a smart intake form — screenshot upload with
+    AI-assisted extraction of item, grade, condition and suggested reserve (reuse the loot-intake analysis
+    path), then reviewed by the seller before posting. Bidding, watch lists, close/settle, handoff
+    coordination reusing the storefront handoff machinery.
+  - **Hall fee**: a flat commission on every completed sale, owed to FSIS within 30 days of close.
+    Tracked as an obligation with due date, paid/overdue state, and a council collections view.
+  - **Gear buyback**: members sell loot directly to FSIS at a fair, openly-stated fraction of market —
+    stated plainly as stock bought for resale. Council appraises, offers, and on acceptance the item flows
+    into loot intake and on to the storefront.
+  - **Bulk intake**: sellers with a hold full of loot add many lines at once — paste/tabular entry and
+    multi-item screenshot extraction, reviewed as a batch before submission.
+  - **Contracts as the connective tissue** — faux, transparent, immersive, never tedious: a signing-on
+    charter at registration (terms differ per standing), a hall-listing agreement carrying the commission
+    terms, and a release of ownership on buyback. Each is a stored, versioned document with the signatory,
+    timestamp and accepted version on record, readable back at any time.
 - **Phase 5 — Governance & launch**
   Council invite/role management hardening, access audit surfacing, end-to-end readiness pass across all
   four standings.
