@@ -137,8 +137,12 @@ value, the collective owns the means of production, plain solidarity language, n
     Needs a stated handling path, tied into the existing patch-transition tooling.
   - **Rate limits** — listing floods and junk lots throttled per member; new members held to lower limits
     until standing is earned.
-  - **Rounding & currency** — one rounding rule shared with storefront pricing so commission, bid and
-    payout figures can never disagree by a credit.
+  - **Rounding & currency** ✅ settled 2026-08-01 — one rounding rule now lives in `shared/money.js` and
+    is stated in three parts: a settled sum changes hands in whole credits, a shelf price sits on the
+    storefront's increment of 100, and shares carry two places because they are a division. The
+    storefront rule had been copy-pasted into three functions and is now held once, so commission, bid
+    and payout figures cannot drift apart by a credit. Negative zero is flattened on the way out — no
+    comrade reads "-0" on a statement of what they are owed.
 - **Phase 4.7 — Work orders, hardened** (audited 2026-08-01, partly built)
   Built: handing work back (`releaseTask`, Phase 4.5); a daily `expireStaleClaims` sweep returning work
   claimed but unfiled 7 days past its due date to the board, with the lapse written into the task and

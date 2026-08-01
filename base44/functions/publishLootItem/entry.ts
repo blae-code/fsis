@@ -1,6 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
-
-const roundPrice = (value) => Math.round((Number(value) || 0) / 100) * 100;
+import { roundPrice } from '../../shared/money.js';
 
 function categoryForLoot(itemType) {
   if (itemType === 'bulk_cargo') return 'salvage_commodity';

@@ -1,10 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { roundPrice } from '../../shared/money.js';
 
 // FairShare pricing policy: every commodity-coded product is anchored to the
 // current UEX best sell price plus one consistent, published margin.
 // "Show the math" — the reference, margin, and timestamp are stored on the product.
 const DEFAULT_MARGIN_PERCENT = 8;
-const roundPrice = (value) => Math.round((Number(value) || 0) / 100) * 100;
 
 Deno.serve(async (req) => {
     try {

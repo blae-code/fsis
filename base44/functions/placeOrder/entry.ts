@@ -1,12 +1,11 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { storefrontAdjustment, tierFor, MAX_TOTAL_DISCOUNT_PERCENT, MAX_DISCOUNT_PERCENT, MAX_SURCHARGE_PERCENT } from '../../shared/reputation.js';
 import { tradeAdjustment, tradeTierFor } from '../../shared/trade.js';
+import { roundPrice, roundPriceFloored, percentOfPrice } from '../../shared/money.js';
 
 // Public guest checkout: validates the cart against the live catalog server-side,
 // recomputes pricing, reserves physical stock, issues a tracking code, and creates
 // the order via service role so buyers don't need an account.
-
-const roundPrice = (value) => Math.round((Number(value) || 0) / 100) * 100;
 
 Deno.serve(async (req) => {
   try {
@@ -66,7 +65,7 @@ Deno.serve(async (req) => {
       }
       applied = codes[0];
     }
-    const discount_auec = applied ? roundPrice((subtotal * applied.discount_percent) / 100) : 0;
+    const discount_auec = applied ? percentOfPrice(subtotal, applied.discount_percent) : 0;
 
     // Standing: the collective returns value to comrades whose labour built it, and carries a
     // surcharge on those it released. Ordering never requires an account, so guests simply
@@ -81,12 +80,12 @@ Deno.serve(async (req) => {
     const standing_percent = rawStanding > 0
       ? Math.max(0, Math.min(rawStanding, MAX_TOTAL_DISCOUNT_PERCENT - codePercent))
       : rawStanding;
-    const standing_auec = roundPrice((subtotal * standing_percent) / 100);
+    const standing_auec = percentOfPrice(subtotal, standing_percent);
     const labourTier = buyer ? (buyer.standing_locked ? 'MARKED' : tierFor(buyer.reputation).label) : '';
     const tradeTier = buyer ? (buyer.trade_locked ? 'TRADE BARRED' : tradeTierFor(buyer.trade_standing).label) : '';
     const standing_tier = buyer ? [labourTier, tradeAdj !== 0 || buyer.trade_locked ? tradeTier : ''].filter(Boolean).join(' · ') : '';
 
-    const total = Math.max(0, roundPrice(subtotal - discount_auec - standing_auec));
+    const total = roundPriceFloored(subtotal - discount_auec - standing_auec);
 
     const tracking_code = 'FSIS-' + crypto.randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase();
 
