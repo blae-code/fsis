@@ -36,6 +36,19 @@ value, the collective owns the means of production, plain solidarity language, n
   ✅ Patron guest-order claiming: `claimOrder` binds device-tracked tracking codes to an account
   (`order.claimed_by_user_id`, read/update RLS extended), surfaced on the ACTIVE ORDERS tab.
   ⬜ Remaining: onboarding branched into Patron / Contractor / Operator paths.
+- **Phase 4.5 — Contractor standing & reputation** (requested, not yet built)
+  Reputation as a record of labour given and labour withheld, not a credit score:
+  - Reputation earned on credited work orders and on musters actually stood, held on the member record
+    with an immutable event log (source task/operation, delta, reason, actor).
+  - Reputation tiers grant the contractor a standing discount at the storefront, scaled to the tier —
+    the collective returns value to those who make it.
+  - A contractor may abandon work in hand, at cost: an automatic reputation reduction weighted by the
+    harm done to operations (lead time lost, urgency, agreed credit).
+  - The contractor may file a reason with the abandonment; an Owner-or-above reviews it and may reduce,
+    increase, or wholly neutralise the reduction, with the ruling recorded and shown back to the worker.
+  - Owners may dismiss a contractor: contractor privileges locked (no claiming, no RSVP), a negative
+    reputation mark applied, and a storefront surcharge — not a discount — applied to that account until
+    an Owner reinstates them.
 - **Phase 5 — Governance & launch**
   Council invite/role management hardening, access audit surfacing, end-to-end readiness pass across all
   four standings.
