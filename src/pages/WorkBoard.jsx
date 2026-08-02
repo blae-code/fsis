@@ -17,6 +17,7 @@ import NoticeCentre from '@/components/work/NoticeCentre';
 import OpenWorkCard from '@/components/work/OpenWorkCard';
 import BoardSection from '@/components/work/BoardSection';
 import BoardEmpty from '@/components/work/BoardEmpty';
+import BoardStatStrip from '@/components/work/BoardStatStrip';
 import OperationCalendar from '@/components/work/OperationCalendar';
 import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 
@@ -115,6 +116,15 @@ export default function WorkBoard() {
             {error?.response?.data?.error || error.message}
           </p>
         )}
+
+        <BoardStatStrip
+          stats={[
+            { label: 'IN YOUR HANDS', value: mine.filter((t) => ['claimed', 'submitted', 'returned'].includes(t.status)).length, color: '#6FA0C8', hint: 'work you took up' },
+            { label: 'OPEN ON THE BOARD', value: open.length, color: '#E0A22E', hint: 'yours to take or leave' },
+            { label: 'MUSTERS CALLED', value: upcoming.length, color: '#C8A05B', hint: 'time you may offer' },
+            { label: 'CREDITED TO YOU', value: fmtAuec(earned), color: '#8A8F45', hint: 'paid in full, never skimmed' },
+          ]}
+        />
 
         <NoticeCentre />
 
