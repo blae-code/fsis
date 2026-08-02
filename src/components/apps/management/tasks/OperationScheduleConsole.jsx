@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CalendarPlus, Users, Loader2 } from 'lucide-react';
 import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 import OperationTemplatePanel from '@/components/apps/management/tasks/OperationTemplatePanel';
+import SaveOperationAsTemplate from '@/components/apps/management/tasks/SaveOperationAsTemplate';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 const EMPTY = { op_name: '', brief: '', op_type: 'salvage', starts_at: '', duration_hours: 2, muster_location: '', ship: '', crew_needed: 2, roles_wanted: '', pay_basis: 'shares', flat_credit_auec: '' };
@@ -128,6 +129,7 @@ export default function OperationScheduleConsole({ actorEmail }) {
                     </button>
                   ))}
                 </div>
+                <SaveOperationAsTemplate op={op} actorEmail={actorEmail} />
               </div>
             );
           })}
