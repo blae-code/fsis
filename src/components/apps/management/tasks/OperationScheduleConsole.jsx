@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CalendarPlus, Users, Loader2 } from 'lucide-react';
 import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
+import OperationTemplatePanel from '@/components/apps/management/tasks/OperationTemplatePanel';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 const EMPTY = { op_name: '', brief: '', op_type: 'salvage', starts_at: '', duration_hours: 2, muster_location: '', ship: '', crew_needed: 2, roles_wanted: '', pay_basis: 'shares', flat_credit_auec: '' };
@@ -76,6 +77,8 @@ export default function OperationScheduleConsole({ actorEmail }) {
           {post.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <CalendarPlus className="w-3 h-3" />} CALL MUSTER
         </button>
       </div>
+
+      <OperationTemplatePanel draft={form} actorEmail={actorEmail} />
 
       {isLoading ? (
         <div className="flex justify-center py-6"><Loader2 className="w-4 h-4 animate-spin" style={{ color: '#E0A22E' }} /></div>

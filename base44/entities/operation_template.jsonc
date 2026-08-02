@@ -1,0 +1,110 @@
+{
+  "name": "operation_template",
+  "type": "object",
+  "properties": {
+    "template_name": {
+      "type": "string",
+      "description": "What the council calls this standing run, e.g. 'Saturday Aaron Halo sweep'"
+    },
+    "op_name": {
+      "type": "string",
+      "description": "Name the muster is posted under when the template is called"
+    },
+    "brief": {
+      "type": "string"
+    },
+    "op_type": {
+      "type": "string",
+      "enum": [
+        "salvage",
+        "hauling",
+        "escort",
+        "mining",
+        "recovery",
+        "other"
+      ],
+      "default": "salvage"
+    },
+    "duration_hours": {
+      "type": "number",
+      "default": 2
+    },
+    "muster_location": {
+      "type": "string"
+    },
+    "ship": {
+      "type": "string"
+    },
+    "crew_needed": {
+      "type": "number",
+      "default": 2
+    },
+    "roles_wanted": {
+      "type": "string"
+    },
+    "pay_basis": {
+      "type": "string",
+      "enum": [
+        "shares",
+        "flat_credit"
+      ],
+      "default": "shares"
+    },
+    "flat_credit_auec": {
+      "type": "number",
+      "default": 0
+    },
+    "weekday": {
+      "type": "number",
+      "default": 6,
+      "description": "Day of the week the run usually falls on. 0 = Sunday, 6 = Saturday"
+    },
+    "time_of_day": {
+      "type": "string",
+      "default": "20:00",
+      "description": "Local start time in HH:MM, so a weekly run is written once rather than retyped"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Retired templates are kept rather than deleted, so the terms a past muster was called under can still be read"
+    },
+    "times_called": {
+      "type": "number",
+      "default": 0
+    },
+    "last_called_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_by_email": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "template_name",
+    "op_name"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
