@@ -4,7 +4,7 @@
   "properties": {
     "title": {
       "type": "string",
-      "description": "Short name of the task, e.g. 'Strip hull panels \u2014 Reclaimer bay 2'"
+      "description": "Short name of the task, e.g. 'Strip hull panels — Reclaimer bay 2'"
     },
     "brief": {
       "type": "string",
@@ -229,6 +229,11 @@
     },
     "notes": {
       "type": "string"
+    },
+    "review_escalated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When filed work was put over a quiet reviewer's head to the proprietor. Also the guard against escalating the same work twice"
     }
   },
   "required": [

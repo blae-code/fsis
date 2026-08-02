@@ -53,7 +53,7 @@
     },
     "actor_email": {
       "type": "string",
-      "description": "Who recorded the event \u2014 a council member, or FSIS.bot for automatic assessments"
+      "description": "Who recorded the event — a council member, or FSIS.bot for automatic assessments"
     },
     "actor_role": {
       "type": "string"
@@ -83,7 +83,7 @@
     "appeal_due_by": {
       "type": "string",
       "format": "date-time",
-      "description": "The date by which the council owes an answer \u2014 silence is not a denial"
+      "description": "The date by which the council owes an answer — silence is not a denial"
     },
     "ruling": {
       "type": "string",
@@ -104,7 +104,12 @@
     "voided": {
       "type": "boolean",
       "default": false,
-      "description": "Set only by amnesty or a neutralising ruling \u2014 the record itself is never rewritten or deleted"
+      "description": "Set only by amnesty or a neutralising ruling — the record itself is never rewritten or deleted"
+    },
+    "appeal_escalated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When an unanswered appeal was escalated to the proprietor past its promised answer date. Silence from the council must not work as a denial"
     }
   },
   "required": [

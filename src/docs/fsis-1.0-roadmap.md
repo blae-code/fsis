@@ -96,10 +96,13 @@ value, the collective owns the means of production, plain solidarity language, n
     reason; the event log is append-only and never rewritten.
   - **Alt accounts** ✅ built 2026-08-01 — a dismissed worker returning under a fresh account defeats the whole system.
     Council needs linked-identity flagging (handle, contact, order history) and a stated policy.
-  - **Review-queue service level** ⬜ PART-BUILT — the council load view ages filed work and flags what has
-    waited 3+ days unpaid, so it is visible. **Escalation to the proprietor is not built**: nothing yet
-    reaches past a quiet reviewer. This is the last open item in 4.5 and the honest gap in the standing
-    story — a comrade whose credit is stuck depends on somebody noticing.
+  - **Review-queue service level** ✅ built 2026-08-01 — the council load view ages filed work, and
+    `escalateStaleReviews` now goes over a quiet reviewer's head: work filed and undecided past five
+    days, and appeals past the answer date the council itself promised, are put in front of the
+    proprietor by name. The worker is told too — that their work was escalated, and that the delay is
+    not theirs and counts against them in no way. Nothing is decided by it; silence is broken, not
+    resolved. An obligation nobody is reminded of is a wish, and a load view only helps somebody who
+    goes and looks.
 - **Phase 4.6 — Exchange: auction house, buyback & instruments** ✅ COMPLETE (backend, 2026-08-01)
   A second hall beside the storefront, built to the same standard — members trade with one another; FSIS
   keeps the hall, not the goods.
