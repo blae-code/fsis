@@ -387,6 +387,13 @@ value, the collective owns the means of production, plain solidarity language, n
     nothing here is won by timing a click. Council members see the control withheld with the reason:
     they can read reserves, so they do not bid. A seller sees their own reserve, labelled as never
     shown to bidders, and may withdraw or put an unsold lot back on the floor.
+  - **Selling into the hall** ✅ built 2026-08-02 — a listing form, and a bulk write-up for a hold
+    full of gear. The listing agreement gate shows the terms in full and signs them in place rather
+    than sending a comrade away with an error: a lot listed under terms nobody can point to is a lot
+    with no terms, and the commission is one of them. The reserve field says on its face that it is
+    never shown to bidders. Bulk lines land as drafts and are read back twice — once before sending
+    and once as `rejected[]` afterwards, line by line with the reason — because bulk entry is where a
+    mistyped reserve gets past somebody.
   - **Standing runs called properly** ✅ corrected 2026-08-02 — the template panel now calls
     `callMuster` rather than writing `crew_operation` directly. A muster written straight to the record
     notifies nobody, and a muster nobody is told about is an evening nobody sets aside.

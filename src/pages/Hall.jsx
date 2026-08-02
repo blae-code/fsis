@@ -6,6 +6,9 @@ import { watchHallLot } from '@/functions/watchHallLot';
 import { Gavel, Loader2, ArrowLeft } from 'lucide-react';
 import HallLotCard from '@/components/hall/HallLotCard';
 import HallLotDetail from '@/components/hall/HallLotDetail';
+import HallListForm from '@/components/hall/HallListForm';
+import BulkDraftPanel from '@/components/hall/BulkDraftPanel';
+import { PlusSquare } from 'lucide-react';
 
 const SCOPES = [
   { key: 'open', label: 'ON THE FLOOR' },
@@ -23,6 +26,7 @@ export default function Hall() {
   const qc = useQueryClient();
   const [scope, setScope] = useState('open');
   const [openLot, setOpenLot] = useState(null);
+  const [selling, setSelling] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['hall', scope],
@@ -89,7 +93,25 @@ export default function Hall() {
               {s.label}
             </button>
           ))}
+          <button
+            onClick={() => setSelling((v) => !v)}
+            className="h-8 px-3 border text-[8px] font-bold tracking-[0.14em] inline-flex items-center gap-1 ml-auto"
+            style={{
+              borderColor: selling ? '#E0A22E' : '#2E2519',
+              color: selling ? '#E0A22E' : '#7A6E60',
+              background: selling ? '#E0A22E1A' : '#0C0A07',
+            }}
+          >
+            <PlusSquare className="w-3 h-3" /> SELL SOMETHING
+          </button>
         </div>
+
+        {selling && (
+          <div className="space-y-2">
+            <HallListForm onListed={() => { setScope('mine'); setSelling(false); }} />
+            <BulkDraftPanel />
+          </div>
+        )}
 
         {isLoading ? (
           <div className="flex justify-center py-10"><Loader2 className="w-4 h-4 animate-spin" style={{ color: '#E0A22E' }} /></div>
