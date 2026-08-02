@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { PROPRIETOR_EMAIL } from '../../shared/roles.js';
 import { contractorIndex, isContractorLine, logsBelongingTo, normaliseHandle, sameHandle, sharesInLogs } from '../../shared/members.js';
 import { roundAuec, roundShares } from '../../shared/money.js';
+import { notifyMany } from '../../shared/notices.js';
 
 // Closes pay day cycles whose 72-hour window has elapsed (hourly FSIS.bot check),
 // or immediately when management force-closes. Publishes the final transparency
@@ -136,6 +137,34 @@ Deno.serve(async (req) => {
         deferred_shares: roundShares(deferredShares),
         force_closed: targeted && !due,
       });
+
+      // Each comrade is told their own line of the report. The transparency report has always been
+      // published in-app; publishing it and telling nobody means a comrade learns what they were
+      // paid by going and looking, which is the same as not being told.
+      await notifyMany(base44, report
+        .filter((line: any) => line.user_id)
+        .map((line: any) => ({
+          recipient_user_id: line.user_id,
+          recipient_handle: line.handle,
+          kind: 'payday_published',
+          title: `Pay day ${cycle.payday_date} is settled`,
+          body: [
+            line.decision === 'cash_in'
+              ? `${roundAuec(line.payout_auec).toLocaleString()} aUEC for ${roundShares(line.shares)} shares, at ${roundAuec(shareValue).toLocaleString()} aUEC a share — the same rate as everyone else.`
+              : line.decision === 'contractor_paid_directly'
+                ? 'You are settled in full at the point of work rather than from the share pool, so there is nothing here for you to draw.'
+                : `${roundShares(line.shares)} shares deferred and rolled forward to the next cycle. Nothing is forfeited; they are still yours.`,
+            line.decision === 'no_response_defer'
+              ? 'You did not make an election this cycle, so they were deferred by default. That costs you nothing, and you can cash in next time.'
+              : '',
+            `The pool was ${roundAuec(pool).toLocaleString()} aUEC across ${roundShares(totalShares)} shares. The full report is published in-app for anybody to check, keyed by callsign.`,
+          ].filter(Boolean).join('\n\n'),
+          source_type: 'payday_cycle',
+          source_id: cycle.id,
+          source_name: cycle.cycle_name,
+          actor_email: 'FSIS.bot',
+          actor_role: 'system',
+        })));
 
       // No emails / PII — the transparency report is published in-app, keyed by callsign only.
       console.log(`Cycle ${cycle.id} published: paid ${totalPaid}, deferred ${deferredShares} shares`);

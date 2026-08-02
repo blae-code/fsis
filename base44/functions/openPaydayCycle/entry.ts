@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { groupLogsByMember } from '../../shared/members.js';
 import { roundAuec, roundShares, sumShares } from '../../shared/money.js';
+import { notifyMany } from '../../shared/notices.js';
 
 // Opens a Pay Day cycle with a 72-hour decision window.
 // Runs automatically every Friday morning (FSIS.bot), or manually by management.
@@ -74,6 +75,32 @@ Deno.serve(async (req) => {
         shares: roundShares(member.shares),
       })),
     });
+
+    // Every comrade with shares in this cycle is told the window has opened.
+    //
+    // Without this the whole election is a trap: the window runs 72 hours, a comrade who says
+    // nothing is deferred by default, and nobody was ever told there was anything to say. Deferring
+    // never forfeits shares, so the loss is not of money — it is of the choice, which is the part
+    // the cycle exists to give them.
+    await notifyMany(base44, members
+      .filter((member) => member.user_id && member.shares > 0)
+      .map((member) => ({
+        recipient_user_id: member.user_id,
+        recipient_handle: member.handle,
+        kind: 'payday_opened',
+        title: `Pay day is open — ${roundShares(member.shares)} shares standing to you`,
+        body: [
+          `The pool for this cycle is ${pool.toLocaleString()} aUEC across ${roundShares(totalShares)} shares, which is about ${roundAuec(shareValue).toLocaleString()} aUEC a share.`,
+          `You have ${roundShares(member.shares)} shares outstanding.`,
+          `You have until ${closes.toISOString().slice(0, 16).replace('T', ' ')} UTC to say whether you are cashing in or deferring.`,
+          'Saying nothing defers, and deferred shares roll forward — they are never forfeited. But the choice is yours to make rather than to miss, which is why you are being told rather than left to find out.',
+        ].join('\n\n'),
+        source_type: 'payday_cycle',
+        source_id: cycle.id,
+        source_name: cycle.cycle_name,
+        actor_email: 'FSIS.bot',
+        actor_role: 'system',
+      })));
 
     // No emails / PII — crew see the open window in-app (Station → MY PAY DAY),
     // identified by callsign only.

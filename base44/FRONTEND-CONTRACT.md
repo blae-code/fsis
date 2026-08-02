@@ -323,6 +323,13 @@ wording agreed to) and `asked[]` with `what_is_needed` written for the comrade.
 
 ## 10. The hall
 
+**`browseHall`** — **the ONLY way to read the hall.** `{ lot_id?, scope?: 'open'|'mine'|'watching', limit? }`.
+`hall_lot` rows are readable directly ONLY by their seller and the council, precisely so the reserve
+cannot be read off the record — every careful refusal message is worthless if the number is one
+query away. `browseHall` never returns `reserve_auec` to a non-seller, and returns no "reserve met"
+flag either, since that lets it be found by probing. With `lot_id` it also returns the bid history,
+which is public: that is what makes the run of bidding checkable.
+
 **`listHallLot`** — refused if the listing agreement is unsigned (409 carries `instrument_id`), the
 item is already committed, a commission has suspended them, or the allowance is reached. A lot drawn
 from a screenshot needs `extraction_confirmed: true`.
