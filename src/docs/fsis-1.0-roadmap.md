@@ -77,41 +77,45 @@ value, the collective owns the means of production, plain solidarity language, n
     reputation mark applied, and a storefront surcharge — not a discount — applied to that account until
     an Owner reinstates them.
   Critical paths that must be settled before building:
-  - **Patron trade standing** — buyers who no-show at handoff are the same failure from the other side.
+  - **Patron trade standing** ✅ built 2026-08-01 — buyers who no-show at handoff are the same failure from the other side.
     Decide one ledger or two; a patron mark must never bleed into labour standing.
-  - **Decay & amnesty** — marks lapse on a stated schedule and can be expunged by the council. No comrade
+  - **Decay & amnesty** ✅ built 2026-08-01 — marks lapse on a stated schedule and can be expunged by the council. No comrade
     is condemned in perpetuity by one bad month.
-  - **Hard floors and ceilings** — maximum discount, maximum surcharge, and an explicit rule for how
+  - **Hard floors and ceilings** ✅ built 2026-08-01 — maximum discount, maximum surcharge, and an explicit rule for how
     standing adjustments compose with discount codes (cap the total, never stack unbounded). Never price
     a lot below acquisition cost.
-  - **Visible to the worker** — standing, tier, current adjustment and every event with its reason shown
+  - **Visible to the worker** ✅ built 2026-08-01 — standing, tier, current adjustment and every event with its reason shown
     plainly on the labour board. No hidden score.
-  - **Appeals discipline** — one appeal per event, a filing window, a stated review deadline, and the
-    ruling shown back with reasoning. Silence from the council must not be a de facto denial.
-    ✅ closed 2026-08-01 — the ruling, the marks a comrade carries, the amnesty, the dismissal, the
+  - **Appeals discipline** ✅ closed 2026-08-01 — one appeal per event, a filing window, a stated review
+    deadline, and the ruling shown back with reasoning. Silence from the council must not be a de facto
+    denial. — the ruling, the marks a comrade carries, the amnesty, the dismissal, the
     reinstatement and the lapse are now each put in front of the comrade they concern via `notice`,
     carrying the reason, the date by which it may be answered and the date it stops counting. The
     obligations existed on the record before this; nothing had ever shown them to the person.
-  - **Direct edits are governed** — any hand-set reputation change is an audited event with actor and
+  - **Direct edits are governed** ✅ built 2026-08-01 — any hand-set reputation change is an audited event with actor and
     reason; the event log is append-only and never rewritten.
-  - **Alt accounts** — a dismissed worker returning under a fresh account defeats the whole system.
+  - **Alt accounts** ✅ built 2026-08-01 — a dismissed worker returning under a fresh account defeats the whole system.
     Council needs linked-identity flagging (handle, contact, order history) and a stated policy.
-  - **Review-queue service level** — work awaiting credit or appeal must age visibly, with escalation to
-    the proprietor, so labour is never left unpaid because a reviewer went quiet.
-- **Phase 4.6 — Exchange: auction house, buyback & instruments** (requested, not yet built)
+  - **Review-queue service level** ⬜ PART-BUILT — the council load view ages filed work and flags what has
+    waited 3+ days unpaid, so it is visible. **Escalation to the proprietor is not built**: nothing yet
+    reaches past a quiet reviewer. This is the last open item in 4.5 and the honest gap in the standing
+    story — a comrade whose credit is stuck depends on somebody noticing.
+- **Phase 4.6 — Exchange: auction house, buyback & instruments** ✅ COMPLETE (backend, 2026-08-01)
   A second hall beside the storefront, built to the same standard — members trade with one another; FSIS
   keeps the hall, not the goods.
-  - **Auction house**: registered members list lots via a smart intake form — screenshot upload with
-    AI-assisted extraction of item, grade, condition and suggested reserve (reuse the loot-intake analysis
-    path), then reviewed by the seller before posting. Bidding, watch lists, close/settle, handoff
-    coordination reusing the storefront handoff machinery.
-  - **Hall fee**: a flat commission on every completed sale, owed to FSIS within 30 days of close.
-    Tracked as an obligation with due date, paid/overdue state, and a council collections view.
-  - **Gear buyback**: members sell loot directly to FSIS at a fair, openly-stated fraction of market —
-    stated plainly as stock bought for resale. Council appraises, offers, and on acceptance the item flows
-    into loot intake and on to the storefront.
-  - **Bulk intake**: sellers with a hold full of loot add many lines at once — paste/tabular entry and
-    multi-item screenshot extraction, reviewed as a batch before submission.
+  - **Auction house** ✅ built 2026-08-01 — `hall_lot` / `hall_bid` with `listHallLot`, `placeHallBid`,
+    `watchHallLot`, `withdrawHallLot`, `relistHallLot`, `closeHallLots` and `confirmHallSettlement`.
+  - **Hall fee** ✅ built 2026-08-01 — `hall_obligation`, raised at close with the rate fixed at listing
+    so it cannot move under the seller, and never taken: the hall records what is owed, it does not hold
+    money.
+  - **Gear buyback** ✅ built 2026-08-01 — `buyback_offer` with `offerBuyback`, `respondToBuyback` and
+    `expireBuybackOffers`. The fraction is a stated field rather than arithmetic hidden inside a number,
+    and the offer tells the member outright they would likely get more selling it themselves in the hall
+    — what they are buying is certainty and speed.
+  - **Bulk intake** ✅ built 2026-08-01 — `bulkDraftHallLots`. Everything arrives as a DRAFT and nothing
+    goes live: bulk entry is where a wrong grade gets past somebody, because the care that goes into one
+    careful listing does not survive being asked for forty times. Lines are validated and reported
+    individually, so three bad rows do not throw away thirty-seven good ones.
   - **Contracts as the connective tissue** ✅ built 2026-08-01 — `instrument` + `instrument_signature`
     (named so, because `contract` is already the in-game hauling contract and reusing it would break
     every frontend read of that entity), with `publishInstrument`, `signInstrument`,
@@ -119,29 +123,40 @@ value, the collective owns the means of production, plain solidarity language, n
     signature**, so a comrade always reads exactly what they signed rather than whatever the document
     says now.
   Critical paths that must be settled before building:
-  - **Disputes** — non-delivery, wrong grade, vanished counterparty. A filing route, an Owner-or-above
-    ruling, stated remedies (refund, relist, void), and whether the outcome touches standing.
-  - **Unpaid commission ladder** — reminder → listing privileges suspended → standing mark, with a council
+  - **Disputes** ✅ built 2026-08-01 — `hall_dispute`, `raiseHallDispute`, `ruleHallDispute`. Every
+    remedy is something the hall can actually do; there is deliberately **no refund remedy**, because
+    settlement is off-platform and the hall cannot reverse a payment. Both parties are told at once and
+    the accused is asked for their account before anybody rules. Whether a ruling touches standing is
+    decided explicitly and separately from the remedy — most disputes are two comrades describing the
+    same evening differently.
+  - **Unpaid commission ladder** ✅ built 2026-08-01 — reminder → listing privileges suspended → standing mark, with a council
     collections view showing what is owed, by whom, and how overdue.
-  - **Lot end-states** — reserve not met, no bids, seller withdrawal mid-bid, expiry, relist. Every lot
-    must have a terminal state; none may hang open forever.
-  - **Close behaviour** — soft close / extension on late bids. A hall that can be sniped is not trusted.
-  - **FSIS in its own hall** — either barred from bidding or openly disclosed, with council recusal on any
-    lot they have an interest in, and no council eyes on hidden reserves they could exploit.
-  - **Double-listing guard** — the same physical item cannot sit in the hall while also sold to buyback or
-    listed on the storefront. One item, one live commitment.
-  - **Intake honesty** — AI screenshot extraction is a draft, never an authority: seller confirms every
-    field, the original image is retained as evidence, and suspicious grades can be held for appraisal.
-  - **Notifications** — bid placed, outbid, reserve met, lot closing, lot won, commission due, offer
+  - **Lot end-states** ✅ built 2026-08-01 — settled, reserve_not_met, no_bids, withdrawn, expired, void.
+    `closeHallLots` gives every lot past its time a terminal state, and `relistHallLot` carries the history
+    forward rather than starting afresh. **Withdrawal mid-bid is deliberately restricted**: free before any
+    bid, council-only with a reason afterwards, with every bidder told. A hall where lots vanish once the
+    price is inconvenient is a hall nobody bids in seriously.
+  - **Close behaviour** ✅ built 2026-08-01 — a bid inside the last two minutes pushes the close out by
+    two minutes from that bid, so two comrades genuinely competing keep it open between them.
+  - **FSIS in its own hall** ✅ settled 2026-08-01 — the council is **barred from bidding outright**, since
+    they can read reserves. Any lot a council member lists declares that interest on the record.
+  - **Double-listing guard** ✅ built 2026-08-01 — enforced across listing, relisting, bulk intake and
+    buyback alike, including the same item appearing twice within one bulk batch.
+  - **Intake honesty** ✅ built 2026-08-01 — a lot drawn from a screenshot cannot be listed until the
+    seller confirms every field; the image is kept as evidence; and a seller may ask for the lot to be held
+    for appraisal before it opens — held, not refused, with the reason told to them.
+  - **Notifications** ✅ built 2026-08-01 — bid placed, outbid, reserve met, lot closing, lot won, commission due, offer
     expiring. Reuse the in-app notification path; no external email promises. Correction: there was
     no such path to reuse — what existed was three bespoke outbound alerts (`checkPriceAlerts`,
     `checkStockAlerts`, `notifyRestock`), each welded to its own alert record. The shared substrate
     now exists (`notice`, `shared/notices.js`), built once for 4.6, 4.7 and 4.8 together; the hall's
     events are added to its `kind` list when the hall is built.
-  - **Buyback offers expire** — a stated validity window, the appraisal basis shown as an explicit
-    fraction of live market, and a record of the market figure used at appraisal time.
-  - **Settlement is off-platform** — payment happens in-game, so every close needs a confirmation step
-    from both parties and a plain statement that FSIS records the trade rather than escrows it.
+  - **Buyback offers expire** ✅ built 2026-08-01 — a stated window, the fraction shown explicitly, the
+    market figure and its source recorded, and an expired offer refused rather than quietly honoured.
+  - **Settlement is off-platform** ✅ built 2026-08-01 — `confirmHallSettlement` takes **both** parties'
+    confirmation, because one party's word is a claim and two is a record. Both are told plainly at the
+    point of winning that FSIS records the trade rather than holding it. Completing a handoff credits both
+    trade records.
   - **Contracts, properly** ✅ settled 2026-08-01 — FSIS countersigns everything (publishing standing
     terms openly is itself the offer and the countersignature; bespoke terms wait for an Owner), a
     withdrawal path that needs no permission and carries no penalty, and `listMyInstruments` as the one
@@ -152,10 +167,13 @@ value, the collective owns the means of production, plain solidarity language, n
     versioning is exactly what makes it easy, so it is refused rather than discouraged. A summary of
     changes is required to publish a new version: asking somebody to re-read a whole document to find
     one altered clause is a way of hoping they will not.
-  - **Patch resets** — a game patch or economy wipe invalidates reserves, appraisals and open lots.
-    Needs a stated handling path, tied into the existing patch-transition tooling.
-  - **Rate limits** — listing floods and junk lots throttled per member; new members held to lower limits
-    until standing is earned.
+  - **Patch resets** ✅ built 2026-08-01 — `applyPatchReset` voids open lots rather than closing them
+    (closing would name winners at obsolete prices and raise commission on sales nobody meant to make),
+    expires live buyback offers, sets bids aside with the reason recorded rather than deleting them, tells
+    everybody affected, and leaves already-settled trades untouched — those happened, in the world as it
+    was. It has a dry_run so a sweep this broad can be previewed.
+  - **Rate limits** ✅ built 2026-08-01 — three live lots for a new member, twenty once standing is earned.
+    Not suspicion: a hall full of one account's junk costs every other seller their visibility.
   - **Rounding & currency** ✅ settled 2026-08-01 — one rounding rule now lives in `shared/money.js` and
     is stated in three parts: a settled sum changes hands in whole credits, a shelf price sits on the
     storefront's increment of 100, and shares carry two places because they are a division. The
@@ -176,9 +194,9 @@ value, the collective owns the means of production, plain solidarity language, n
   mirror throughout, so the existing board keeps working until that lands.
   These were the holes in a task's life — each one a path a worker or the council could walk into with
   no way out:
-  - **Handing work back** — a worker may only go silent. Needs an explicit release with a reason, which is
+  - **Handing work back** ✅ built 2026-08-01 — a worker may only go silent. Needs an explicit release with a reason, which is
     also the hook Phase 4.5's abandonment penalty depends on.
-  - **Claim expiry** — a claimed task past its due date sits forever. Stale claims must age visibly and
+  - **Claim expiry** ✅ built 2026-08-01 — a claimed task past its due date sits forever. Stale claims must age visibly and
     return to the board.
   - **Many hands on one task** ✅ built 2026-08-01 — `hands_needed` and a `crew` on the task, so work
     wanting three scrapers is one brief with three places rather than three copies nobody can tell
@@ -212,7 +230,7 @@ value, the collective owns the means of production, plain solidarity language, n
     2026-08-01 — a standing-briefs panel in the task console (write a brief, put it on the board,
     retire or reinstate it), and the credit suggestion shown with its working beside both the
     one-off post form and the brief form, offering nothing where the record does not yet say enough.
-  - **A thread on every task** — proof is one-shot. Workers must be able to ask before claiming and answer
+  - **A thread on every task** ✅ built 2026-08-01 — proof is one-shot. Workers must be able to ask before claiming and answer
     after being sent back, the way order messages already work.
   - **Labour traced to value** ✅ built 2026-08-01 — `serves_type` / `serves_id` / `serves_name` on the
     task, and `getLabourCost` to read it back: the hands, the hours, what has been settled and what is
@@ -245,7 +263,7 @@ value, the collective owns the means of production, plain solidarity language, n
     stating plainly that no standing was taken). ✅ the frontend's half closed 2026-08-01 — a notice
     centre at the head of the labour board (`NoticeCentre`), reading `listNotices` and marking read
     only by the comrade's own hand, each notice carrying its kind, its reason and who decided it.
-  - **Council load view** — who holds what, who is carrying too much, what is ageing unreviewed.
+  - **Council load view** ✅ built 2026-08-01 — who holds what, who is carrying too much, what is ageing unreviewed.
   - **Skills are collected and ignored** ✅ built 2026-08-01 — `shared/skills.js` reads the trades a
     comrade named in their own words on their application (a Vulture means salvage whether or not the
     word appears), carries them onto the record when the council admits them, and `listOpenWork`
@@ -339,8 +357,9 @@ value, the collective owns the means of production, plain solidarity language, n
     the behaviour the collective marks buyers for at handoff, so it cannot be acceptable in the other
     direction. A run with hands already on it cannot be stood down at all: it is settled through
     closeout instead, because time already given must still be paid.
-  - **Debrief and audit** — lessons recorded, and `ops_log` finally carrying operations so musters have
-    a trail.
+  - **Debrief and audit** ✅ built 2026-08-01 — a `debrief` recorded at closeout, and `ops_log` now
+    carrying operations throughout: sessions started and closed, presence, yield attached, losses,
+    musters called, stood down and reminded.
   - **Planning joined to logistics** ✅ built 2026-08-01 — `expected_haul_scu` / `hull_capacity_scu` /
     `freight_plan_id` on the muster, `shared/logistics.js` and `getOperationPlan`. A linked freight plan
     is the authority on capacity, since typing a hull size twice is how the two come to disagree.
