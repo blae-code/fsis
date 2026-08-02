@@ -9,6 +9,7 @@ import Desktop from '@/pages/Desktop';
 import Storefront from '@/pages/Storefront';
 import LootTracker from '@/pages/LootTracker';
 import WorkBoard from '@/pages/WorkBoard';
+import Hall from '@/pages/Hall';
 import ManagementContent from '@/components/apps/ManagementContent';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -54,6 +55,8 @@ const AuthenticatedApp = () => {
       <Route path="/desktop" element={<Desktop />} />
       <Route path="/work" element={<WorkBoard />} />
       <Route path="/WorkBoard" element={<WorkBoard />} />
+      <Route path="/hall" element={<Hall />} />
+      <Route path="/Hall" element={<Hall />} />
       <Route path="/loot" element={<LootTracker />} />
       <Route path="/LootTracker" element={<LootTracker />} />
       <Route path="/loot-tracker" element={<LootTracker />} />

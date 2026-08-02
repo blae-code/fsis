@@ -376,6 +376,24 @@ value, the collective owns the means of production, plain solidarity language, n
   - Cross-cutting comfort: a worker notification centre, a second-screen mode for a live op, quick logging
     during a run, "your next muster" on the labour board, and a per-member availability profile.
 
+- **Phase 4.6 — The hall (frontend)**
+  - **The floor** ✅ built 2026-08-02 — `/hall`, read only through `browseHall`: lots on the floor, a
+    comrade's own lots, and what they are watching. No reserve appears anywhere, and no "reserve met"
+    indicator either — a hall that confirms the figure has been reached has given it away to anybody
+    willing to bid twice.
+  - **The lot** ✅ built 2026-08-02 — the lot in full with the run of bidding shown openly, since
+    bidding nobody can read is bidding nobody can check. The bid control states plainly that a bid
+    under an unseen reserve is taken rather than refused, and that a late bid pushes the close out, so
+    nothing here is won by timing a click. Council members see the control withheld with the reason:
+    they can read reserves, so they do not bid. A seller sees their own reserve, labelled as never
+    shown to bidders, and may withdraw or put an unsold lot back on the floor.
+  - **Standing runs called properly** ✅ corrected 2026-08-02 — the template panel now calls
+    `callMuster` rather than writing `crew_operation` directly. A muster written straight to the record
+    notifies nobody, and a muster nobody is told about is an evening nobody sets aside.
+  - **The eight silent sweeps** ✅ registered 2026-08-02 — every scheduled job in the contract is now a
+    platform automation. `closeHallLots` was the worst of them: bids would have accumulated, nothing
+    ever won, no commission ever raised, and the hall would have looked like it worked.
+
 - **Phase 5 — Governance & launch**
   Council invite/role management hardening, access audit surfacing, end-to-end readiness pass across all
   four standings.

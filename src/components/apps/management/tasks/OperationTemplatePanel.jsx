@@ -3,7 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Repeat, Loader2, Save } from 'lucide-react';
 import OperationTemplateRow from '@/components/apps/management/tasks/OperationTemplateRow';
-import { WEEKDAYS, operationFromTemplate } from '@/lib/operationTemplates';
+import { callMuster } from '@/functions/callMuster';
+import { WEEKDAYS, nextOccurrence } from '@/lib/operationTemplates';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 
@@ -47,14 +48,13 @@ export default function OperationTemplatePanel({ draft, actorEmail }) {
     onSuccess: () => { setName(''); invalidate(); },
   });
 
+  // Called through callMuster, never written straight to crew_operation: that is what tells the yard
+  // a muster has been called. A standing run that goes up silently is a muster nobody comes to.
   const call = useMutation({
-    mutationFn: async (tpl) => {
-      await base44.entities.crew_operation.create(operationFromTemplate(tpl, actorEmail));
-      await base44.entities.operation_template.update(tpl.id, {
-        times_called: (Number(tpl.times_called) || 0) + 1,
-        last_called_at: new Date().toISOString(),
-      });
-    },
+    mutationFn: (tpl) => callMuster({
+      operation_template_id: tpl.id,
+      starts_at: nextOccurrence(tpl.weekday, tpl.time_of_day).toISOString(),
+    }),
     onSuccess: () => {
       invalidate();
       qc.invalidateQueries({ queryKey: ['crew_operations'] });
