@@ -4,7 +4,7 @@
   "properties": {
     "op_name": {
       "type": "string",
-      "description": "Name of the scheduled operation, e.g. 'Aaron Halo sweep \u2014 Saturday'"
+      "description": "Name of the scheduled operation, e.g. 'Aaron Halo sweep — Saturday'"
     },
     "brief": {
       "type": "string",
@@ -34,7 +34,7 @@
     },
     "muster_location": {
       "type": "string",
-      "description": "Where to gather, e.g. 'Port Tressler \u2014 Hangar 4'"
+      "description": "Where to gather, e.g. 'Port Tressler — Hangar 4'"
     },
     "ship": {
       "type": "string",
@@ -102,6 +102,15 @@
           },
           "responded_at": {
             "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "description": "The place this comrade came for, chosen by them"
+          },
+          "waitlisted": {
+            "type": "boolean",
+            "default": false,
+            "description": "True when the place was already full. Not a refusal — a place in the queue, taken in the order answers arrived when somebody stands down"
           }
         }
       }
@@ -111,6 +120,37 @@
     },
     "notes": {
       "type": "string"
+    },
+    "role_slots": {
+      "type": "array",
+      "description": "The places this run calls for — one pilot, two scrapers — rather than a bare headcount. A statement of what the work needs, never an assignment: a comrade chooses their own place. Where none are stated the muster falls back to crew_needed as open places of no particular trade, so older musters still read sensibly",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "any",
+              "pilot",
+              "scraper",
+              "gunner",
+              "security",
+              "hauler",
+              "engineer",
+              "medic"
+            ],
+            "default": "any"
+          },
+          "wanted": {
+            "type": "number",
+            "default": 1
+          }
+        }
+      }
+    },
+    "stood_down_reason": {
+      "type": "string",
+      "description": "Why the run was called off, told to everyone who said they were coming. A muster that vanishes without a word wastes an evening somebody had set aside"
     }
   },
   "required": [

@@ -291,13 +291,27 @@ value, the collective owns the means of production, plain solidarity language, n
     deducted from the split**: a comrade who lost a hull has already borne it, and taking it out of the
     crew's share as well would charge the collective's bad luck to the people who were there for it.
     Recorded so the collective can make them whole, never so it can be held against them.
-  - **Role slots, not a headcount** — one pilot, two scrapers, with fill state, a waitlist, and no-show
-    marking that feeds standing.
-  - **Ad-hoc musters in one tap** — "I am going out now, who is on?" is the most-used flow that does not
-    exist, and matters most to a proprietor who plays opportunistically.
+  - **Role slots, not a headcount** ✅ built 2026-08-01 — `role_slots` on the muster and a chosen `role`
+    on each answer, with fill state and a waitlist. "Crew needed: 4" cannot describe a run wanting one
+    pilot and two scrapers, and four hands who all came to scrape is a run that does not fly. A full
+    place **queues rather than refuses**, taken in the order answers arrived; when a holder stands down
+    the next in line takes it and is told, because a place that comes free silently is a place nobody
+    knows they have. First come, first served in public — the alternative is the council picking who
+    flies, which is a different kind of outfit. Musters written before places still read sensibly,
+    falling back to their headcount as open places of no particular trade.
+  - **Ad-hoc musters in one tap** ✅ built 2026-08-01 — `callMuster` makes the muster, tells everyone who
+    could come, and with `start_now` opens the run immediately with the caller already counted present.
+    Calling a run had meant filling in a scheduled operation as though every flight were planned a week
+    out, which is not how anybody plays — so runs went uncalled and the hands who would have come never
+    heard.
   - **Reminders and fair time** — T-24h and T-1h notice, times shown in each comrade's own zone, a best-time
     reading across respondents, calendar export. Timezones are collected and unused.
-  - **Standing an op down must speak** — cancellation currently tells nobody who said they were in.
+  - **Standing an op down must speak** ✅ built 2026-08-01 — `standDownOperation` requires a reason and
+    tells everyone who said they were in **or might be**, since they held the time open too. A comrade
+    who kept an evening free and worked it out from the silence has paid a real cost — and it is exactly
+    the behaviour the collective marks buyers for at handoff, so it cannot be acceptable in the other
+    direction. A run with hands already on it cannot be stood down at all: it is settled through
+    closeout instead, because time already given must still be paid.
   - **Debrief and audit** — lessons recorded, and `ops_log` finally carrying operations so musters have
     a trail.
   - **Planning joined to logistics** — expected haul against hull capacity, tied into freight plans and
