@@ -86,6 +86,10 @@ export default async function (req: Request): Promise<Response> {
           payouts: session.payouts || [],
           no_shows: session.no_shows || [],
           closed_at: session.closed_at,
+          // Money that changes hands directly and has not yet been confirmed as landed. A member's
+          // shares are not counted here: they settle at pay day and are nobody's to hand over.
+          outstanding_payouts: (session.payouts || [])
+            .filter((p: any) => !p.settles_at_payday && !p.paid).length,
         }
         : null,
       // Clusters, so a field is worked once rather than rediscovered.

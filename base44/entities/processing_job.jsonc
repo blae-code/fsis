@@ -1,0 +1,109 @@
+{
+  "name": "processing_job",
+  "type": "object",
+  "properties": {
+    "label": {
+      "type": "string",
+      "description": "What is being processed, e.g. 'Refine 320 SCU raw quantanium — ArcCorp 141'"
+    },
+    "operation_session_id": {
+      "type": "string",
+      "description": "The run this came off, where it came off one"
+    },
+    "location": {
+      "type": "string",
+      "description": "Where it is being processed, and therefore where somebody has to go to collect it"
+    },
+    "material": {
+      "type": "string",
+      "description": "What is in the hopper"
+    },
+    "quantity_scu": {
+      "type": "number",
+      "default": 0
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ready_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When it comes out. The whole point of the record: a refinery run nobody is watching is a refinery run somebody forgets"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "ready",
+        "collected",
+        "abandoned"
+      ],
+      "default": "running",
+      "description": "running = still cooking; ready = out and waiting; collected = someone went and got it; abandoned = written off, stated rather than left running forever"
+    },
+    "notified": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the comrades watching it have been told it is ready. Also the guard against telling them twice"
+    },
+    "watcher_user_ids": {
+      "type": "array",
+      "description": "Who wants to know when it is out. Whoever started it is watching by default; anyone who is going to collect it should be too",
+      "items": {
+        "type": "string"
+      }
+    },
+    "started_by_email": {
+      "type": "string"
+    },
+    "collected_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "collected_by_handle": {
+      "type": "string"
+    },
+    "est_value_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "What is expected out of it, so a run's yield can be reckoned before the hopper is empty"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "label",
+    "ready_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.watcher_user_ids": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

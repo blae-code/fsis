@@ -140,13 +140,24 @@ export default async function (req: Request): Promise<Response> {
       .filter((h) => h.minutes > 0)
       .map((hand, i) => [hand.user_id, writtenLogs?.[i]?.id || '']));
 
-    const payouts = stood.map((hand) => ({
-      user_id: hand.user_id,
-      handle: hand.handle,
-      minutes: hand.minutes,
-      shares: drawsFromSharePool(roleById.get(hand.user_id)) ? hand.shares : 0,
-      time_log_id: logIdByUser.get(hand.user_id) || '',
-    }));
+    // A member's time became shares and settles at pay day with everyone else's, so it is not the
+    // council's to tick. A contractor's pay changes hands directly and is owed a confirmation that
+    // it actually landed — money moves in-game, so FSIS records the transfer rather than making it.
+    const payouts = stood.map((hand) => {
+      const isMember = drawsFromSharePool(roleById.get(hand.user_id));
+      return {
+        user_id: hand.user_id,
+        handle: hand.handle,
+        minutes: hand.minutes,
+        shares: isMember ? hand.shares : 0,
+        time_log_id: logIdByUser.get(hand.user_id) || '',
+        settles_at_payday: isMember,
+        paid: false,
+        paid_at: '',
+        paid_by_email: '',
+        paid_note: '',
+      };
+    });
 
     const absent = noShows(operation?.rsvps, attendance);
 

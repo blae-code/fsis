@@ -279,13 +279,22 @@ value, the collective owns the means of production, plain solidarity language, n
   - **Costs of the run** ✅ built 2026-08-01 — fuel, ammo, rearm, repair and insurance recorded on the
     session and deducted from the gross before anything is divided, stated openly so hands can see what
     was taken and why. A negative cost is never read as a refund.
-  - **Closeout** — the session summary is regolith's best feature: yield, costs, per-hand payout, and a
-    tick that each hand was actually paid. Today `completed` simply erases the run; there is no bridge
-    from an operation to a payday cycle at all.
+  - **Closeout** ✅ built 2026-08-01 — the summary reads yield, costs, per-hand time and payout, and
+    `markSessionPayoutPaid` records that money actually landed. "Settled" and "paid" are kept as two
+    different facts: payment happens in-game, so FSIS records the transfer rather than making it, and
+    collapsing the two would let the record show a comrade paid when nobody had sent them anything.
+    A member's shares are **not** the council's to tick — they settle at pay day with everyone else's,
+    and ticking them is refused so a run summary cannot show a false debt discharged. The tick can be
+    lifted again, with the comrade told either way. The bridge from an operation to a pay day cycle now
+    exists: run time becomes confirmed `time_log` shares.
   - **Clusters and finds** ✅ built 2026-08-01 — `cluster_name`, `worked_by_handle` and `stripped` on the
     scan, reported by `getSessionSummary`, so a field is marked, worked once and finished rather than
     rediscovered — and two hands do not fly to the same wreck.
-  - **Processing timers** — refinery-style countdowns with notice on completion.
+  - **Processing timers** ✅ built 2026-08-01 — `processing_job` with `startProcessingTimer` and a
+    `checkProcessingTimers` sweep that tells the comrades watching a hopper the moment it is out,
+    claimed atomically so an overlapping sweep cannot wake them twice. A refinery run that finished at
+    four in the morning used to sit until somebody happened to look, and material left standing is
+    material at risk — borne by the hand who went out and won it.
   - **Loss log** ✅ built 2026-08-01 — `recordSessionLoss` writes hull, cargo and other losses with the
     claim window, so nobody misses it. Losses are kept apart from the running costs and are **never
     deducted from the split**: a comrade who lost a hull has already borne it, and taking it out of the

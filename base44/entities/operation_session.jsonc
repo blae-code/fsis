@@ -188,6 +188,27 @@
           "time_log_id": {
             "type": "string",
             "description": "The time log written for this hand, so the share can be followed from the run to the pay day it settles on"
+          },
+          "settles_at_payday": {
+            "type": "boolean",
+            "default": false,
+            "description": "True for members of the co-op, whose time became shares and is settled at pay day with everyone else's. Not the council's to tick — the tick below is for money that changes hands directly"
+          },
+          "paid": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether the aUEC actually reached this comrade. Payment happens in-game, so FSIS records the transfer rather than making it — this tick is a person confirming it landed, never the system assuming it did"
+          },
+          "paid_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "paid_by_email": {
+            "type": "string"
+          },
+          "paid_note": {
+            "type": "string",
+            "description": "Anything the council needs to record about the transfer — a part payment, a delay and why"
           }
         }
       }
