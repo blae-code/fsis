@@ -1,0 +1,117 @@
+{
+  "name": "hall_obligation",
+  "type": "object",
+  "properties": {
+    "lot_id": {
+      "type": "string"
+    },
+    "lot_title": {
+      "type": "string"
+    },
+    "debtor_user_id": {
+      "type": "string",
+      "description": "The comrade who owes it. FSIS never takes the money — it records what is owed and by whom, and the debt is settled in-game like everything else"
+    },
+    "debtor_handle": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "commission",
+        "other"
+      ],
+      "default": "commission"
+    },
+    "amount_auec": {
+      "type": "number"
+    },
+    "sale_auec": {
+      "type": "number",
+      "description": "What the lot sold for, so the commission can be checked by anyone who wants to"
+    },
+    "commission_percent": {
+      "type": "number",
+      "description": "The rate as it stood when the lot was listed, not as it stands now"
+    },
+    "incurred_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "due_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "owed",
+        "paid",
+        "overdue",
+        "waived",
+        "void"
+      ],
+      "default": "owed",
+      "description": "waived = the council forgave it, with a reason; void = the sale it came from was undone, so it was never really owed"
+    },
+    "reminded_at": {
+      "type": "array",
+      "description": "Which reminders have gone out. Also the guard against a sweep dunning somebody twice for the same debt",
+      "items": {
+        "type": "string"
+      }
+    },
+    "listing_suspended": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether listing privileges are presently suspended over this debt. A step on a stated ladder, never a surprise"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "paid_confirmed_by_email": {
+      "type": "string",
+      "description": "Who confirmed it landed. Payment happens in-game, so a person says so and their name goes on it"
+    },
+    "waived_reason": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "debtor_user_id",
+    "amount_auec"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.debtor_user_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

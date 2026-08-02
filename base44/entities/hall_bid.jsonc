@@ -1,0 +1,61 @@
+{
+  "name": "hall_bid",
+  "type": "object",
+  "properties": {
+    "lot_id": {
+      "type": "string"
+    },
+    "lot_title": {
+      "type": "string",
+      "description": "The lot's title when the bid was placed, so the record reads plainly afterwards"
+    },
+    "bidder_user_id": {
+      "type": "string"
+    },
+    "bidder_handle": {
+      "type": "string"
+    },
+    "amount_auec": {
+      "type": "number"
+    },
+    "placed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "withdrawn": {
+      "type": "boolean",
+      "default": false,
+      "description": "A bid is never deleted. Where one is set aside — a lot voided by a patch reset, a bid placed in error — it is marked and the reason stated, so the run of bidding on a lot can always be read back honestly"
+    },
+    "withdrawn_reason": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "lot_id",
+    "bidder_user_id",
+    "amount_auec"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "user"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

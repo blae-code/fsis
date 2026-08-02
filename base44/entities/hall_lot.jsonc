@@ -1,0 +1,192 @@
+{
+  "name": "hall_lot",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "What is being sold, as the seller describes it"
+    },
+    "description": {
+      "type": "string"
+    },
+    "seller_user_id": {
+      "type": "string"
+    },
+    "seller_handle": {
+      "type": "string"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "ship_component",
+        "vehicle_component",
+        "fps_gear",
+        "weapon",
+        "bulk_cargo",
+        "other"
+      ],
+      "default": "other"
+    },
+    "condition_grade": {
+      "type": "string",
+      "description": "Condition as the seller states it. A grade the hall cannot verify is the seller's word, and is shown as such"
+    },
+    "condition_pct": {
+      "type": "number"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 1
+    },
+    "manufacturer": {
+      "type": "string"
+    },
+    "size_class": {
+      "type": "string"
+    },
+    "loot_item_id": {
+      "type": "string",
+      "description": "The item behind this lot, where it came from stock already on record. The double-listing guard reads this: one item, one live commitment"
+    },
+    "start_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Where bidding opens"
+    },
+    "reserve_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "The least the seller will accept. Never shown to bidders — a hall that reveals its reserves lets them be found by probing"
+    },
+    "current_bid_auec": {
+      "type": "number",
+      "default": 0
+    },
+    "current_bidder_user_id": {
+      "type": "string"
+    },
+    "current_bidder_handle": {
+      "type": "string"
+    },
+    "bid_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Also the compare-and-swap token: a bid states the count it believed and lands only if that is still true, so two bids at the same instant cannot both win"
+    },
+    "opens_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "closes_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When bidding ends. A bid in the last two minutes pushes this out, so the lot goes to whoever wants it most rather than whoever timed a click best"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "listed",
+        "bidding",
+        "won",
+        "settled",
+        "reserve_not_met",
+        "no_bids",
+        "withdrawn",
+        "expired",
+        "disputed",
+        "void"
+      ],
+      "default": "draft",
+      "description": "Every lot reaches a terminal state — settled, reserve_not_met, no_bids, withdrawn, expired or void. A lot that can hang open forever is a lot somebody's property is stuck inside"
+    },
+    "watcher_user_ids": {
+      "type": "array",
+      "description": "Comrades watching this lot, told when it is closing or has closed",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commission_percent": {
+      "type": "number",
+      "default": 5,
+      "description": "What the hall keeps on a completed sale, fixed at listing so it cannot move under the seller"
+    },
+    "commission_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "Settled when the lot closes above reserve"
+    },
+    "listing_signature_id": {
+      "type": "string",
+      "description": "The listing agreement this seller signed, and the version of it. A lot listed under terms nobody can point to is a lot with no terms"
+    },
+    "evidence_image_url": {
+      "type": "string",
+      "description": "The screenshot the listing was drawn from, kept as evidence. AI extraction is a draft and never an authority"
+    },
+    "extraction_confirmed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the seller confirmed every field themselves. Nothing extracted from an image reaches the hall unconfirmed"
+    },
+    "held_for_appraisal": {
+      "type": "boolean",
+      "default": false,
+      "description": "The council has held this lot to look at the stated grade before it opens. Held, not refused — and the seller is told why"
+    },
+    "council_interest": {
+      "type": "string",
+      "description": "Declared where FSIS or a council member has an interest in this lot. The council can see reserves, so any interest is stated openly and they recuse themselves from bidding"
+    },
+    "seller_confirmed_at": {
+      "type": "string",
+      "description": "When the seller confirmed the goods changed hands. Settlement happens in-game, so the hall records a trade rather than holding it"
+    },
+    "buyer_confirmed_at": {
+      "type": "string",
+      "description": "When the buyer confirmed the same. Both are needed: one party's word is a claim, two is a record"
+    },
+    "relisted_from_lot_id": {
+      "type": "string",
+      "description": "Where this lot is a second attempt at one that did not sell, so a lot's history is not lost in relisting"
+    },
+    "closed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "void_reason": {
+      "type": "string",
+      "description": "Why a lot was set aside — a patch reset, a duplicate, an error. Stated rather than deleted"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "seller_user_id"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "user"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
