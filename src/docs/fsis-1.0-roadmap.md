@@ -112,10 +112,12 @@ value, the collective owns the means of production, plain solidarity language, n
     into loot intake and on to the storefront.
   - **Bulk intake**: sellers with a hold full of loot add many lines at once — paste/tabular entry and
     multi-item screenshot extraction, reviewed as a batch before submission.
-  - **Contracts as the connective tissue** — faux, transparent, immersive, never tedious: a signing-on
-    charter at registration (terms differ per standing), a hall-listing agreement carrying the commission
-    terms, and a release of ownership on buyback. Each is a stored, versioned document with the signatory,
-    timestamp and accepted version on record, readable back at any time.
+  - **Contracts as the connective tissue** ✅ built 2026-08-01 — `instrument` + `instrument_signature`
+    (named so, because `contract` is already the in-game hauling contract and reusing it would break
+    every frontend read of that entity), with `publishInstrument`, `signInstrument`,
+    `withdrawFromInstrument` and `listMyInstruments`. The wording agreed to is stored **verbatim on the
+    signature**, so a comrade always reads exactly what they signed rather than whatever the document
+    says now.
   Critical paths that must be settled before building:
   - **Disputes** — non-delivery, wrong grade, vanished counterparty. A filing route, an Owner-or-above
     ruling, stated remedies (refund, relist, void), and whether the outcome touches standing.
@@ -140,8 +142,16 @@ value, the collective owns the means of production, plain solidarity language, n
     fraction of live market, and a record of the market figure used at appraisal time.
   - **Settlement is off-platform** — payment happens in-game, so every close needs a confirmation step
     from both parties and a plain statement that FSIS records the trade rather than escrows it.
-  - **Contracts, properly** — countersignature by FSIS, a repudiation/withdrawal path, re-consent when a
-    version changes, and one place a member can read every instrument they have ever signed.
+  - **Contracts, properly** ✅ settled 2026-08-01 — FSIS countersigns everything (publishing standing
+    terms openly is itself the offer and the countersignature; bespoke terms wait for an Owner), a
+    withdrawal path that needs no permission and carries no penalty, and `listMyInstruments` as the one
+    place a comrade reads everything they ever signed, withdrawn and superseded ones included.
+    **A new version never binds somebody who signed an older one** — they are told in plain words what
+    changed and asked to agree again, and until they do they stand on the version they actually read.
+    Changing terms under people who are not looking is the worst thing a document system can do, and
+    versioning is exactly what makes it easy, so it is refused rather than discouraged. A summary of
+    changes is required to publish a new version: asking somebody to re-read a whole document to find
+    one altered clause is a way of hoping they will not.
   - **Patch resets** — a game patch or economy wipe invalidates reserves, appraisals and open lots.
     Needs a stated handling path, tied into the existing patch-transition tooling.
   - **Rate limits** — listing floods and junk lots throttled per member; new members held to lower limits

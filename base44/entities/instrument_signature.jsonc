@@ -1,0 +1,94 @@
+{
+  "name": "instrument_signature",
+  "type": "object",
+  "properties": {
+    "instrument_id": {
+      "type": "string"
+    },
+    "instrument_title": {
+      "type": "string",
+      "description": "The title as it stood when signed, so the record still reads plainly if the instrument is later renamed"
+    },
+    "instrument_kind": {
+      "type": "string"
+    },
+    "accepted_version": {
+      "type": "number",
+      "default": 1,
+      "description": "The version this comrade actually read and agreed to. Never updated when new terms are published — that is the whole point of recording it"
+    },
+    "accepted_body": {
+      "type": "string",
+      "description": "The terms as they stood at signing, kept verbatim. A comrade must be able to read exactly what they agreed to, not the current wording of a document that has since moved on"
+    },
+    "signatory_user_id": {
+      "type": "string"
+    },
+    "signatory_handle": {
+      "type": "string"
+    },
+    "signatory_email": {
+      "type": "string"
+    },
+    "signatory_standing": {
+      "type": "string",
+      "description": "The standing they held when they signed, since terms differ per standing"
+    },
+    "signed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "countersigned_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When FSIS put its own name to this. An agreement only one side is bound by is not an agreement"
+    },
+    "countersigned_by_email": {
+      "type": "string"
+    },
+    "withdrawn_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the comrade withdrew. A signature that cannot be taken back is not consent — withdrawing is a right, not a fault"
+    },
+    "withdrawal_reason": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "instrument_id",
+    "signatory_user_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.signatory_user_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

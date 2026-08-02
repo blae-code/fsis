@@ -1,0 +1,93 @@
+{
+  "name": "instrument",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": [
+        "charter",
+        "listing_agreement",
+        "buyback_release",
+        "other"
+      ],
+      "default": "other",
+      "description": "What this instrument governs. The charter is signed on joining; the listing agreement carries the hall's commission terms; the release passes ownership on buyback"
+    },
+    "title": {
+      "type": "string",
+      "description": "What it is called, in words a comrade would use"
+    },
+    "version": {
+      "type": "number",
+      "default": 1,
+      "description": "Counts upward. A new version NEVER binds somebody who signed an older one — they are asked to read what changed and agree to it, and until they do they stand on the version they actually signed"
+    },
+    "body": {
+      "type": "string",
+      "description": "The terms in full, readable before signing and readable forever afterwards. A term nobody can find again is a term that was never really agreed"
+    },
+    "summary_of_changes": {
+      "type": "string",
+      "description": "What changed from the previous version, in plain words. Asking somebody to re-read a whole document to find one altered clause is a way of hoping they will not"
+    },
+    "applies_to_standing": {
+      "type": "array",
+      "description": "Which standings this instrument is asked of. Terms differ per standing, and each comrade should see only what actually applies to them",
+      "items": {
+        "type": "string",
+        "enum": [
+          "proprietor",
+          "owner",
+          "contractor",
+          "patron"
+        ]
+      }
+    },
+    "counter_signs_automatically": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether publishing these terms is itself the collective's countersignature. True for standing terms the hall offers openly; false where a bespoke agreement wants an Owner to put their name to it individually"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether these terms are presently asked of anybody. Retiring an instrument never voids signatures already given"
+    },
+    "effective_from": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "published_by_email": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "body"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "user"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
