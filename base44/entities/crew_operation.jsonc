@@ -158,6 +158,20 @@
       "items": {
         "type": "string"
       }
+    },
+    "expected_haul_scu": {
+      "type": "number",
+      "default": 0,
+      "description": "How much the run expects to bring back, in SCU. Stated before the muster is called so the hull can be judged against it rather than the shortfall discovered over the belt"
+    },
+    "hull_capacity_scu": {
+      "type": "number",
+      "default": 0,
+      "description": "What the hull holds. Where a freight plan is linked its capacity is used instead"
+    },
+    "freight_plan_id": {
+      "type": "string",
+      "description": "A freight plan this run flies to, if any — its capacity and destinations are read from there rather than typed twice"
     }
   },
   "required": [

@@ -246,7 +246,7 @@ value, the collective owns the means of production, plain solidarity language, n
     convenience that quietly became a gate would be worse than the inconvenience it fixed. Skills are
     self-declared and never an assessment made over anyone.
 
-- **Phase 4.8 — Operations command & live sessions** (audited 2026-08-01, not yet built)
+- **Phase 4.8 — Operations command & live sessions** ✅ COMPLETE (backend, 2026-08-01)
   Council-only. Today an operation is a notice board with a status flag; the run itself is untracked, so
   nothing an operation produces can pay anybody. Taking regolith.rocks as the reference, the centre of
   gravity is the **live session**, not the calendar:
@@ -331,8 +331,14 @@ value, the collective owns the means of production, plain solidarity language, n
     closeout instead, because time already given must still be paid.
   - **Debrief and audit** — lessons recorded, and `ops_log` finally carrying operations so musters have
     a trail.
-  - **Planning joined to logistics** — expected haul against hull capacity, tied into freight plans and
-    cargo lots, so an Owner can plan the run before calling the muster.
+  - **Planning joined to logistics** ✅ built 2026-08-01 — `expected_haul_scu` / `hull_capacity_scu` /
+    `freight_plan_id` on the muster, `shared/logistics.js` and `getOperationPlan`. A linked freight plan
+    is the authority on capacity, since typing a hull size twice is how the two come to disagree.
+    Where capacity is unstated it says the gap out loud rather than guessing — a confident wrong answer
+    about whether a haul fits is worse than an admitted one, because somebody acts on it. Once a run has
+    flown, the estimate is set beside what came back, as a reading to make the NEXT estimate better and
+    for nothing else: a run that came back light was usually a thin field, and treating that as a failing
+    teaches the yard to promise less rather than plan better.
   - **Access** ✅ corrected 2026-08-01 — operation records are council-only; workers read a redacted muster
     board through `listMusters`, which withholds internal notes and other comrades' standings.
   - Cross-cutting comfort: a worker notification centre, a second-screen mode for a live op, quick logging
