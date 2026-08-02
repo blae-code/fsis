@@ -50,7 +50,7 @@
         "suspended"
       ],
       "default": "active",
-      "description": "Standing within FSIS \u2014 pending applies to contractors awaiting review"
+      "description": "Standing within FSIS — pending applies to contractors awaiting review"
     },
     "role_granted_by": {
       "type": "string",
@@ -88,6 +88,10 @@
     "trade_locked_reason": {
       "type": "string",
       "description": "Why the buyer's trade standing was locked, shown back to them plainly"
+    },
+    "timezone": {
+      "type": "string",
+      "description": "The comrade's own timezone, as an IANA name. Carried from their application so musters read in their own clock — collected on every application and, until now, never read back"
     }
   }
 }

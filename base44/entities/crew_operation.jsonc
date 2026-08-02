@@ -151,6 +151,13 @@
     "stood_down_reason": {
       "type": "string",
       "description": "Why the run was called off, told to everyone who said they were coming. A muster that vanishes without a word wastes an evening somebody had set aside"
+    },
+    "reminders_sent": {
+      "type": "array",
+      "description": "Which notices have already gone out for this muster (t24, t1). Also the guard against telling everybody twice: the sweep claims these before it sends",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": [

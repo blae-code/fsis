@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole, canGrant, platformRoleFor, FSIS_ROLES, PROPRIETOR_EMAIL } from '../../shared/roles.js';
 import { parseSkills } from '../../shared/skills.js';
+import { knownZone } from '../../shared/timekeeping.js';
 
 /**
  * Council-level standing changes. The proprietor may set any standing; owners may only
@@ -59,6 +60,11 @@ export default async function (req: Request): Promise<Response> {
       );
       const declared = parseSkills(requests[0]?.skills || '');
       if (declared.length > 0) patch.skills = declared;
+
+      // Their timezone too, for the same reason: they wrote it down and nothing ever read it, so
+      // every muster has been posted in somebody else's clock.
+      const zone = String(requests[0]?.timezone || '').trim();
+      if (zone && !target.timezone && knownZone(zone)) patch.timezone = zone;
     }
 
     await base44.asServiceRole.entities.User.update(targetId, patch);

@@ -304,8 +304,16 @@ value, the collective owns the means of production, plain solidarity language, n
     Calling a run had meant filling in a scheduled operation as though every flight were planned a week
     out, which is not how anybody plays — so runs went uncalled and the hands who would have come never
     heard.
-  - **Reminders and fair time** — T-24h and T-1h notice, times shown in each comrade's own zone, a best-time
-    reading across respondents, calendar export. Timezones are collected and unused.
+  - **Reminders and fair time** ✅ built 2026-08-01 — `shared/timekeeping.js`, `sendMusterReminders`
+    (T-24h and T-1h, claimed atomically so an overlapping sweep cannot tell everybody twice) and
+    `getMusterTimes` (each comrade's own clock, the ranked best-time reading, and a calendar file).
+    Timezones are now carried onto the record when a comrade is admitted, from what they wrote on
+    their own application. Offsets are computed at the instant, so a run in July and a run in December
+    both read correctly where summer time is kept, and an unknown zone returns **nothing rather than
+    being quietly treated as UTC** — assuming a zone is how somebody is told the wrong hour with total
+    confidence. The best-time reading names **who each hour is awkward for**, because "best" measured
+    by headcount alone quietly means "worst for the same two comrades every week", and they are the
+    ones who stop answering.
   - **Standing an op down must speak** ✅ built 2026-08-01 — `standDownOperation` requires a reason and
     tells everyone who said they were in **or might be**, since they held the time open too. A comrade
     who kept an evening free and worked it out from the silence has paid a real cost — and it is exactly
