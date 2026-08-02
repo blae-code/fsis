@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole } from '../../shared/roles.js';
+import { slotState } from '../../shared/musters.js';
 
 /**
  * Musters as a working comrade may see them.
@@ -39,6 +40,11 @@ export default async function (req: Request): Promise<Response> {
       pay_basis: op.pay_basis,
       flat_credit_auec: op.flat_credit_auec,
       status: op.status,
+      stood_down_reason: op.stood_down_reason,
+      // The places the run calls for, and how each stands. A headcount cannot tell a comrade
+      // whether the place they would come for is still open.
+      role_slots: op.role_slots || [],
+      slots: slotState(op, op.rsvps),
       // Own answer in full; everyone else reduced to a handle and a yes/maybe/no.
       rsvps: (op.rsvps || []).map((r) =>
         r.user_id === user.id || isCouncil
