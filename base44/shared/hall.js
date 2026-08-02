@@ -153,6 +153,54 @@ export function bidRefusal(lot, bidder, amountAuec, now = new Date()) {
 }
 
 /**
+ * The ladder for a debt to the hall.
+ *
+ * Stated in full, in advance, and climbed one rung at a time — because the alternative is a member
+ * losing their listing privileges one morning with no idea it was coming. Every rung is a notice
+ * before it is a consequence, and the last rung is reached only after a month of silence.
+ *
+ * A commission is owed for keeping the hall, not for existing, and the ladder is about somebody who
+ * will not answer rather than somebody who cannot pay. The council can waive any rung; nothing here
+ * happens that an Owner cannot undo.
+ */
+export const OBLIGATION_LADDER = [
+  { key: 'reminded', after_days: 0, action: 'A reminder that it is due.' },
+  { key: 'chased', after_days: 7, action: 'A second notice, saying what happens next.' },
+  { key: 'suspended', after_days: 14, action: 'Listing privileges suspended until it is settled.' },
+  { key: 'marked', after_days: 30, action: 'A trade standing mark, with the ordinary appeal route.' },
+];
+
+/** How overdue a debt is, in whole days. Negative where it is not yet due. */
+export function daysOverdue(obligation, now = new Date()) {
+  if (!obligation?.due_at) return 0;
+  const due = new Date(obligation.due_at);
+  if (Number.isNaN(due.getTime())) return 0;
+  return Math.floor((now.getTime() - due.getTime()) / 86400000);
+}
+
+/**
+ * Which rungs a debt has reached that have not yet been acted on.
+ *
+ * A settled, waived or void debt has reached none: the ladder is for money still owed and is never
+ * climbed against somebody who has already paid.
+ *
+ * @returns {any[]}
+ */
+export function dueLadderSteps(obligation, now = new Date()) {
+  if (!obligation || !['owed', 'overdue'].includes(obligation.status)) return [];
+  const overdue = daysOverdue(obligation, now);
+  if (overdue < 0) return [];
+
+  const done = new Set(obligation.reminded_at || []);
+  return OBLIGATION_LADDER.filter((step) => !done.has(step.key) && overdue >= step.after_days);
+}
+
+/** Whether this debt presently stops its owner listing anything new. */
+export function suspendsListing(obligation) {
+  return ['owed', 'overdue'].includes(obligation?.status) && obligation?.listing_suspended === true;
+}
+
+/**
  * The least a bid must rise by. Proportional, so a hundred-credit step on a ten-million lot does
  * not turn an auction into a war of attrition nobody enjoys.
  */

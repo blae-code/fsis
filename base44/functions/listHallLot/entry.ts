@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole, isCouncil } from '../../shared/roles.js';
 import { latestSignature, mayProceed } from '../../shared/instruments.js';
 import {
-  DEFAULT_COMMISSION_PERCENT, LIVE_STATES, liveLotAllowance, isLive,
+  DEFAULT_COMMISSION_PERCENT, LIVE_STATES, liveLotAllowance, isLive, suspendsListing,
 } from '../../shared/hall.js';
 import { roundAuec } from '../../shared/money.js';
 import { notify } from '../../shared/notices.js';
@@ -83,7 +83,18 @@ export default async function (req: Request): Promise<Response> {
       }
     }
 
-    // 3. Not flooding the hall.
+    // 3. Nothing owed long enough to have suspended them. A rung on a stated ladder they have
+    // already been told about twice — never a surprise at the moment of listing.
+    const debts = await svc.hall_obligation.filter({ debtor_user_id: user.id }, '-due_at', 50);
+    const suspending = debts.find((debt: any) => suspendsListing(debt));
+    if (suspending) {
+      return Response.json({
+        error: `Listing is suspended while ${Number(suspending.amount_auec).toLocaleString()} aUEC is outstanding on "${suspending.lot_title}". Settle it, or tell the council why you cannot — it can be waived, and a debt somebody is talking about is not the problem this is for.`,
+        obligation_id: suspending.id,
+      }, { status: 409 });
+    }
+
+    // 4. Not flooding the hall.
     const allowance = liveLotAllowance(user);
     if (allowance === 0) {
       return Response.json({ error: 'Your standing is locked, so you may not list in the hall at present.' }, { status: 403 });
