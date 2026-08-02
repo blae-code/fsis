@@ -1,0 +1,108 @@
+{
+  "name": "visual_asset",
+  "type": "object",
+  "properties": {
+    "slot_key": {
+      "type": "string",
+      "description": "Where this goes, e.g. 'task_category.salvage' or 'storefront.hero'. Slots are derived from the app's real enums in shared/assets.js, so the day a new task category is added its slot exists and shows as unfilled"
+    },
+    "family": {
+      "type": "string",
+      "description": "The group of slots this belongs to, carried for filtering — task_category, muster_role, standing_tier, standalone and so on"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "icon",
+        "badge",
+        "illustration",
+        "banner",
+        "portrait",
+        "texture",
+        "seal"
+      ],
+      "default": "icon",
+      "description": "What sort of thing it is, which tells the interface how to place it"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Where the file lives. Uploaded and referenced by URL — the image itself is never stored in this record"
+    },
+    "alt_text": {
+      "type": "string",
+      "description": "What the image says, for a comrade who cannot see it. Required in practice: an asset with no alt text is decoration that has quietly become information for everyone except the people it excludes"
+    },
+    "theme": {
+      "type": "string",
+      "enum": [
+        "any",
+        "dark",
+        "light"
+      ],
+      "default": "any",
+      "description": "Some work reads differently on a dark ground. An 'any' asset is used wherever a theme-specific one is not supplied"
+    },
+    "artist_handle": {
+      "type": "string",
+      "description": "The hand that made it. An asset is labour like any other and this collective does not take work and file the maker's name off it"
+    },
+    "artist_user_id": {
+      "type": "string",
+      "description": "Their account, where they have one, so credit follows the comrade rather than a spelling of their name"
+    },
+    "licence": {
+      "type": "string",
+      "description": "The terms it was given under, stated plainly. Work borrowed from outside the collective carries whatever terms it came with, and pretending otherwise puts the outfit in the wrong"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "placeholder",
+        "live",
+        "retired"
+      ],
+      "default": "placeholder",
+      "description": "placeholder = standing in until real work is made, and shown as such; live = the intended thing; retired = kept on the record but never served"
+    },
+    "width": {
+      "type": "number"
+    },
+    "height": {
+      "type": "number"
+    },
+    "version": {
+      "type": "number",
+      "default": 1,
+      "description": "Counts upward when the same slot is remade, so a change can be pointed at"
+    },
+    "added_by_email": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Anything the next person needs — the brief it was made to, what was tried, what to avoid"
+    }
+  },
+  "required": [
+    "slot_key",
+    "image_url"
+  ],
+  "rls": {
+    "read": null,
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

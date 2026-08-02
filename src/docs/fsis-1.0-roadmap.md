@@ -405,6 +405,18 @@ value, the collective owns the means of production, plain solidarity language, n
   Council invite/role management hardening, access audit surfacing, end-to-end readiness pass across all
   four standings.
 
+- **Visual asset library** ✅ backend built 2026-08-02 — somewhere for bespoke visual work to live.
+  `visual_asset` + `shared/assets.js` + `listVisualAssets` / `upsertVisualAsset`. **89 slots**, and the
+  slot keys are DERIVED from the app's real enums rather than written out again, so the day somebody
+  adds a task category or a muster role the slot for it exists and shows up as unfilled — a
+  hand-written list would drift within a month and nobody would notice until the icon was missing.
+  Two rules hold: **every slot degrades**, so no screen may require an asset and a missing one renders
+  as its absence rather than a gap; and **the hand that made it is credited**, because an asset is
+  labour like any other. Alt text is required — an image without it is decoration that has become
+  information for everyone except the comrades it excludes. `listVisualAssets` answers "what does the
+  app still want?" with a brief attached to each gap, so an artist can be given a commission rather
+  than a screenshot and a vague ask.
+
 - **Final pass — visual & thematic polish**
   Full visual/thematic detail sweep once phases 1–5 land, plus completion of the Marxist tone refactor
   across all existing copy.

@@ -384,3 +384,52 @@ and the hall looks like it works.
 - **Never sum settled and committed labour cost**, or gross and losses.
 - **`fits: null` is not `false`.** It means capacity is unstated.
 - **Session closeout and lot close are irreversible.** Confirm first.
+
+---
+
+## 13. The visual asset library
+
+Somewhere for bespoke visual work to live, so it does not get hard-coded into whichever component
+needed it first.
+
+**`listVisualAssets`** — **readable without an account**, because the storefront is a public front
+door.
+```
+→ { theme?: 'any'|'dark'|'light', family?: string, include_unfilled?: boolean }
+← { assets: { [slot_key]: { image_url, alt_text, kind, theme, artist_handle, licence, status,
+                            width, height } },
+    filled_count, slot_count, note,
+    unfilled?: [{ key, family, family_label, value, kind, guidance }], credits? }
+```
+
+**`upsertVisualAsset`** *(council)* — `{ slot_key, image_url, alt_text, kind?, theme?,
+artist_handle?, licence?, status?, notes? }`, or `{ slot_key, retire: true }`. An unknown
+`slot_key` is refused with `did_you_mean`. Replacing a slot retires the previous asset rather than
+overwriting it.
+
+### The two rules
+
+- **Every slot degrades.** 89 slots exist; most will be empty for a long time. A slot with no asset
+  must render as its absence — never a broken image, never a blank reserved box, and **no figure or
+  state may be conveyed by an image alone**. Build the screen so it is complete with nothing loaded,
+  then let assets enrich it.
+- **Credit the maker.** `artist_handle` comes back with every asset; surface it somewhere a person
+  can see, and show `licence` where one is set.
+
+### Slots are derived, not listed
+
+Slot keys come from the app's real enums (`shared/assets.js` imports `TIERS`, `MUSTER_ROLES`,
+`NOTICE_KINDS`, `LOT_STATES`, `SKILL_TAGS`, `INSTRUMENT_KINDS` and the entity enums). Add a task
+category and its slot appears automatically as unfilled. **Do not hard-code a slot list in the
+frontend** — call `listVisualAssets` with `include_unfilled: true` and render what comes back.
+
+Families: `task_category`, `muster_role`, `standing_tier`, `trade_tier`, `skill`, `op_type`,
+`lot_item_type`, `lot_state`, `notice_kind`, `instrument_kind`, plus `standalone` (brand mark, hero
+banners, empty states, run-underway, payday-published).
+
+`status: 'placeholder'` is served like any other asset but marked — show placeholders as provisional
+so nobody mistakes a stand-in for finished work.
+
+**Suggested screen:** a council asset library — the 89 slots grouped by family, each showing what is
+in it or an empty frame with its `guidance`, an upload/replace control, and a credits list. That
+turns "make the app prettier" into a commissionable list of briefs.
