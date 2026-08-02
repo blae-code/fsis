@@ -19,6 +19,7 @@ import BoardSection from '@/components/work/BoardSection';
 import BoardEmpty from '@/components/work/BoardEmpty';
 import BoardStatStrip from '@/components/work/BoardStatStrip';
 import OperationCalendar from '@/components/work/OperationCalendar';
+import MyRunsPanel from '@/components/work/MyRunsPanel';
 import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 
 /** The labour board: work open to any comrade, and the tasks each holds in hand. */
@@ -168,6 +169,8 @@ export default function WorkBoard() {
             </div>
           )}
         </BoardSection>
+
+        <MyRunsPanel userId={user?.id} />
 
         <WorkHistoryPanel tasks={mine} operations={operations} userId={user?.id} />
 

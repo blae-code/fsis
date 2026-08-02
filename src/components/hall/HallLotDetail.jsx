@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { browseHall } from '@/functions/browseHall';
 import { placeHallBid } from '@/functions/placeHallBid';
@@ -8,10 +8,12 @@ import { X, Loader2, Clock, ShieldAlert, RotateCcw, Ban } from 'lucide-react';
 import { LOT_STATUS_META, CONDITION_COLOR, fmtAuec, timeLeft } from '@/components/hall/hallMeta';
 import HallBidForm from '@/components/hall/HallBidForm';
 import HallBidHistory from '@/components/hall/HallBidHistory';
+import HallDisputeForm from '@/components/hall/HallDisputeForm';
 
 /** A lot in full: what it is, what it stands at, who has bid, and what you may do about it. */
 export default function HallLotDetail({ lotId, youMayBid, onClose }) {
   const qc = useQueryClient();
+  const [disputing, setDisputing] = useState(false);
   const { data, isLoading } = useQuery({
     queryKey: ['hall_lot', lotId],
     queryFn: () => browseHall({ lot_id: lotId }).then((r) => r.data),
@@ -129,6 +131,21 @@ export default function HallLotDetail({ lotId, youMayBid, onClose }) {
                   </button>
                 )}
               </div>
+            )}
+
+            {/* A vanished counterparty needs a route. Party checks live server-side; a non-party is refused plainly. */}
+            {['won', 'settled', 'disputed'].includes(lot.status) && (
+              disputing ? (
+                <HallDisputeForm lotId={lotId} />
+              ) : (
+                <button
+                  onClick={() => setDisputing(true)}
+                  className="h-8 px-3 border text-[8px] font-bold tracking-[0.12em]"
+                  style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}
+                >
+                  SOMETHING WENT WRONG WITH THIS TRADE
+                </button>
+              )
             )}
 
             {relist.data?.data?.note && (

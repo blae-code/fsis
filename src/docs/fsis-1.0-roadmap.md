@@ -401,6 +401,22 @@ value, the collective owns the means of production, plain solidarity language, n
     platform automation. `closeHallLots` was the worst of them: bids would have accumulated, nothing
     ever won, no commission ever raised, and the hall would have looked like it worked.
 
+- **Phase 4.6/4.8 — frontend, second cut** (2026-08-02)
+  - **Disputes surfaced** ✅ — a filing form on the lot itself (won / settled / disputed states), honest
+    that the hall records rather than reverses; and an Owner ruling panel under a new HALL tab in the
+    council console, with the fixed remedy list, no refund remedy, and `touches_standing` as its own
+    deliberate control never derived from the remedy.
+  - **Live runs** ✅ — a RUNS tab in the council console: open a run (from a muster or from nothing),
+    a live roster polling time as it accrues, join/leave and marking hands present from the muster's
+    answers, costs edited on the session, losses recorded apart from costs, yield attached, and an
+    irreversible closeout that asks twice, prefilling the suggested gross with its basis rendered.
+    Plus `RunSummary`, readable by every hand who stood the run — surfaced on the labour board as
+    RUNS YOU STOOD with step-off/back-on for underway runs. Payout ticks are disabled for
+    `settles_at_payday` lines with the reason stated rather than letting them error.
+  - Remaining from the screens list: musters (`standDownOperation`, `getMusterTimes`,
+    `getOperationPlan`), buyback, collections, instruments admin, "waits on" picker, labour-cost
+    panel, processing timers, patch reset — and all of Part B (the visual asset library).
+
 - **Phase 5 — Governance & launch**
   Council invite/role management hardening, access audit surfacing, end-to-end readiness pass across all
   four standings.

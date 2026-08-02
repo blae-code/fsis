@@ -24,6 +24,8 @@ import QuickLogModal from '@/components/apps/management/QuickLogModal';
 import LootSummaryTab from '@/components/loot/LootSummaryTab';
 import AccessConsole from '@/components/apps/management/access/AccessConsole';
 import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrderConsole';
+import RunConsole from '@/components/apps/management/runs/RunConsole';
+import HallDisputePanel from '@/components/apps/management/hall/HallDisputePanel';
 import { hasCouncilAccess, fsisRole, ROLE_META } from '@/lib/roles';
 import { Link } from 'react-router-dom';
 
@@ -52,6 +54,8 @@ const TABS = [
   { id: 'restock',   label: 'RESTOCK',    glyph: '▲' },
   { id: 'access',    label: 'STANDING',   glyph: '✶' },
   { id: 'tasks',     label: 'TASKS',      glyph: '⌗' },
+  { id: 'runs',      label: 'RUNS',       glyph: '◎' },
+  { id: 'hall',      label: 'HALL',       glyph: '⚖' },
 ];
 
 export default function ManagementContent() {
@@ -161,6 +165,8 @@ export default function ManagementContent() {
         {activeTab === 'restock'  && <div className="p-4"><AdminRestockControls /></div>}
         {activeTab === 'access'   && <AccessConsole />}
         {activeTab === 'tasks'    && <TaskWorkOrderConsole />}
+        {activeTab === 'runs'     && <RunConsole />}
+        {activeTab === 'hall'     && <div className="p-4 font-mono"><HallDisputePanel /></div>}
       </div>
     </div>
   );
