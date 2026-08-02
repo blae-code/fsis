@@ -153,6 +153,44 @@ export function bidRefusal(lot, bidder, amountAuec, now = new Date()) {
 }
 
 /**
+ * What can go wrong between two comrades, and what the hall can actually do about it.
+ *
+ * Settlement is off-platform, so the hall cannot reverse a payment, cannot recover an item, and
+ * cannot compel anybody. Pretending otherwise would be the real harm here — a member who believes
+ * they are protected takes risks they would not otherwise take. What the hall CAN do is rule on
+ * what happened, say so in the record, and let both trade standings carry it.
+ */
+export const DISPUTE_KINDS = ['non_delivery', 'not_as_described', 'vanished', 'payment_not_received', 'other'];
+
+/** What an Owner may actually order. Each is a thing the hall can really do. */
+export const DISPUTE_REMEDIES = [
+  'no_action',     // the complaint does not stand
+  'relist',        // the seller may put it back in the hall at no further cost
+  'void_sale',     // the sale is set aside and the commission with it
+  'commission_waived', // the sale stands but the hall takes nothing
+  'settled_between', // the parties sorted it out themselves
+];
+
+/** How long after a lot closes a dispute may be raised. */
+export const DISPUTE_WINDOW_DAYS = 21;
+
+/**
+ * Whether a dispute may still be raised on this lot.
+ *
+ * A window rather than forever: memories fade, and a counterparty should not be answerable for a
+ * trade indefinitely. Long enough that somebody waiting on a handoff across a couple of weekends
+ * has not lost their route.
+ */
+export function disputeWindowOpen(lot, now = new Date()) {
+  if (!lot) return false;
+  if (!['won', 'settled', 'disputed'].includes(lot.status)) return false;
+  if (!lot.closed_at) return true;
+  const closed = new Date(lot.closed_at);
+  if (Number.isNaN(closed.getTime())) return true;
+  return (now.getTime() - closed.getTime()) <= DISPUTE_WINDOW_DAYS * 86400000;
+}
+
+/**
  * The ladder for a debt to the hall.
  *
  * Stated in full, in advance, and climbed one rung at a time — because the alternative is a member

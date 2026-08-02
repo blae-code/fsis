@@ -1,0 +1,125 @@
+{
+  "name": "buyback_offer",
+  "type": "object",
+  "properties": {
+    "item_name": {
+      "type": "string"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": [
+        "ship_component",
+        "vehicle_component",
+        "fps_gear",
+        "weapon",
+        "bulk_cargo",
+        "other"
+      ],
+      "default": "other"
+    },
+    "condition_grade": {
+      "type": "string"
+    },
+    "condition_pct": {
+      "type": "number"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 1
+    },
+    "seller_user_id": {
+      "type": "string"
+    },
+    "seller_handle": {
+      "type": "string"
+    },
+    "market_reference_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "What the market was paying at the moment of appraisal. Recorded so the offer can be checked afterwards against the figure it was actually based on, rather than against today's market"
+    },
+    "market_reference_source": {
+      "type": "string",
+      "description": "Where that figure came from, so 'the market' is not an assertion"
+    },
+    "fraction_percent": {
+      "type": "number",
+      "default": 60,
+      "description": "The openly-stated fraction of market this offer represents. FSIS buys stock for resale and says so plainly — a fraction hidden inside a number is a worse deal than a fraction stated"
+    },
+    "offer_auec": {
+      "type": "number",
+      "default": 0
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "An offer is good until this moment and no longer. Market prices move, and an offer that never expires is one the collective can be held to at a price that has stopped making sense"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "offered",
+        "accepted",
+        "declined",
+        "expired",
+        "withdrawn"
+      ],
+      "default": "offered"
+    },
+    "appraised_by_email": {
+      "type": "string"
+    },
+    "appraisal_notes": {
+      "type": "string",
+      "description": "How the council reached the figure, readable by the comrade being offered it"
+    },
+    "responded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "loot_item_id": {
+      "type": "string",
+      "description": "The stock record created when the offer was accepted, so an item can be followed from a member's hold to the shelf"
+    },
+    "evidence_image_url": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "item_name",
+    "seller_user_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.seller_user_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

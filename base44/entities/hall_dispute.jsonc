@@ -1,0 +1,134 @@
+{
+  "name": "hall_dispute",
+  "type": "object",
+  "properties": {
+    "lot_id": {
+      "type": "string"
+    },
+    "lot_title": {
+      "type": "string"
+    },
+    "raised_by_user_id": {
+      "type": "string"
+    },
+    "raised_by_handle": {
+      "type": "string"
+    },
+    "against_user_id": {
+      "type": "string",
+      "description": "The other party to the trade. Named, because a complaint nobody can answer is not a process"
+    },
+    "against_handle": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "non_delivery",
+        "not_as_described",
+        "vanished",
+        "payment_not_received",
+        "other"
+      ],
+      "default": "other"
+    },
+    "account": {
+      "type": "string",
+      "description": "What happened, in the words of the comrade raising it"
+    },
+    "evidence_url": {
+      "type": "string",
+      "description": "A screenshot or log, where there is one. Never required — a comrade without evidence is not thereby in the wrong"
+    },
+    "answer": {
+      "type": "string",
+      "description": "The other party's account of the same events, in their own words. A ruling made without hearing them is not a ruling"
+    },
+    "answered_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "open",
+        "answered",
+        "ruled",
+        "withdrawn"
+      ],
+      "default": "open"
+    },
+    "remedy": {
+      "type": "string",
+      "enum": [
+        "no_action",
+        "relist",
+        "void_sale",
+        "commission_waived",
+        "settled_between"
+      ],
+      "description": "What the council actually ordered. Every one is something the hall can really do — it cannot reverse a payment or recover an item, and pretending otherwise would be the real harm"
+    },
+    "ruling": {
+      "type": "string",
+      "description": "The council's reasoning, shown to both parties in full"
+    },
+    "touches_standing": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the ruling puts a mark on anybody's trade record. Decided explicitly by an Owner rather than following from the remedy — most disputes are a misunderstanding, and treating every one as fault would make the record useless"
+    },
+    "marked_user_id": {
+      "type": "string",
+      "description": "Who the mark fell on, where one did"
+    },
+    "ruled_by_email": {
+      "type": "string"
+    },
+    "ruled_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "raised_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "lot_id",
+    "raised_by_user_id",
+    "account"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.raised_by_user_id": "{{user.id}}"
+        },
+        {
+          "data.against_user_id": "{{user.id}}"
+        }
+      ]
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
