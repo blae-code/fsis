@@ -244,3 +244,136 @@ means polishing something scheduled for replacement.
 - **Task credit and run time are different money.** Task labour settles directly at agreed credit;
   run time becomes shares in the pay pool. Never present them as the same thing, and never show task
   credit as contributing to shares.
+
+---
+
+# Part II — operations and the hall
+
+Added after Phases 4.8 and 4.6 landed. Everything above still stands.
+
+## 6. New entities (part II)
+
+| Entity | Who reads it | Purpose |
+|---|---|---|
+| `operation_session` | anyone in `attendance_user_ids`, admins | a live run |
+| `processing_job` | its `watcher_user_ids`, admins | a refinery clock |
+| `instrument` / `instrument_signature` | all users / the signatory + admins | terms, and who signed what |
+| `hall_lot` / `hall_bid` | all users | the auction house |
+| `hall_obligation` | the debtor + admins | commission owed |
+| `hall_dispute` | either party + admins | something went wrong |
+| `buyback_offer` | the seller + admins | FSIS offers to buy |
+
+Additions: `crew_operation` gains `role_slots[]`, `rsvps[].role`, `rsvps[].waitlisted`,
+`stood_down_reason`, `reminders_sent[]`, `expected_haul_scu`, `hull_capacity_scu`,
+`freight_plan_id`, `operation_template_id`. `User` gains `timezone`. `cargo_lot` / `loot_item` /
+`salvage_scan` gain `operation_session_id`; scans also gain `cluster_name`, `worked_by_handle`,
+`stripped`.
+
+## 7. Live runs
+
+**`startOperationSession`** *(council)* — `{ operation_id?, session_name?, op_type? }`. `operation_id`
+is optional: ad-hoc runs are first-class.
+
+**`markSessionPresence`** — `{ session_id, action: 'join'|'leave', user_id? }`. `user_id` marks
+somebody else and is council-only. Returns a live `roster` whose minutes accrue against the clock —
+safe to poll.
+
+**`closeOperationSession`** *(council)* — `{ session_id, gross_auec?, debrief? }`. **Irreversible;
+confirm before calling.** Writes `time_log` shares for members, settles contractors directly, awards
+`muster_stood`, records no-shows, notifies everyone.
+
+**`getSessionSummary`** — readable by **anyone who stood the run**, not just the council. Returns
+roster, yield, costs, losses, clusters, and once closed the payouts with `outstanding_payouts`.
+`yield.suggested_gross_auec` is a **reading, not a decision** — show `yield.basis` beside it.
+
+**`attachToSession`** / **`recordSessionLoss`** *(council)*. Attaching is refused on a settled run.
+
+**`markSessionPayoutPaid`** *(council)* — `{ session_id, user_id, paid?, paid_note? }`. **Refused for
+lines with `settles_at_payday: true`** — those are members' shares, settled at pay day and not the
+council's to tick. Disable the control for those rows with that explanation.
+
+## 8. Musters
+
+**`callMuster`** *(council)* — `{ op_name?, operation_template_id?, role_slots?, start_now?, … }`.
+Pass `operation_template_id` to call a standing muster. **Always call this rather than creating
+`crew_operation` directly** — it is what notifies the yard, carries role slots, and prevents a
+zero-length run.
+
+**`rsvpOperation`** — `{ operation_id, response: 'in'|'maybe'|'out', role?, note? }`. Returns
+`slots`, `waitlisted`, and a `note` written for the comrade — render the note. A full place queues
+rather than refusing.
+
+**`standDownOperation`** *(council)* — `{ operation_id, reason }`. Reason required. Refused while a
+run is underway.
+
+**`getMusterTimes`** — each comrade's own clock plus a calendar file. Council additionally gets
+`best_times` (all 24 hours ranked, each naming who it is **awkward for**) and `respondents`. Show
+`your_time_note` where `your_time` is null.
+
+**`getOperationPlan`** *(council)* — expected haul against hull capacity. `haul.fits` and
+`haul.trips` are **null** when capacity is unstated; render `haul.note` rather than guessing.
+
+## 9. Instruments
+
+**`listMyInstruments`** — `signed[]` (including withdrawn and superseded, each with the **verbatim**
+wording agreed to) and `asked[]` with `what_is_needed` written for the comrade.
+
+**`signInstrument`** / **`withdrawFromInstrument`** / **`publishInstrument`** *(council, requires
+`summary_of_changes` on a new version)*.
+
+## 10. The hall
+
+**`listHallLot`** — refused if the listing agreement is unsigned (409 carries `instrument_id`), the
+item is already committed, a commission has suspended them, or the allowance is reached. A lot drawn
+from a screenshot needs `extraction_confirmed: true`.
+
+**`bulkDraftHallLots`** — `{ lots: [...] }`, max 50. Everything lands as **drafts**; `rejected[]`
+reports per-line failures with reasons. Review as a batch before releasing.
+
+**`placeHallBid`** — returns `next_bid_at_least`, `closes_at`, `close_extended`. **Never display the
+reserve.** Bids below it are accepted and simply may not win.
+
+**`watchHallLot`** / **`withdrawHallLot`** / **`relistHallLot`**. Withdrawal is free before any bid
+and **council-only with a reason** afterwards (403 tells the seller why).
+
+**`closeHallLots`** — scheduled. **`confirmHallSettlement`** — needs **both** parties.
+
+**`raiseHallDispute`** / **`ruleHallDispute`** *(Owner)* — remedies are `no_action`, `relist`,
+`void_sale`, `commission_waived`, `settled_between`. There is deliberately **no refund remedy**.
+`touches_standing` is a **separate, deliberate control** — do not derive it from the remedy.
+
+**`offerBuyback`** *(council)* / **`respondToBuyback`** — show `fraction_percent` and
+`market_reference_auec` openly; the offer's honesty is the point.
+
+**`settleHallObligation`** *(council)* — `paid` | `waived` | `void`; a reason is required for the
+latter two. **`sweepHallObligations`** — scheduled.
+
+## 11. Scheduled jobs — EIGHT, all silent when absent
+
+These need registering as platform automations. **Every one fails invisibly**: the feature simply
+never happens, and nothing errors.
+
+| Job | If unregistered |
+|---|---|
+| `postRecurringTasks` | standing briefs never post |
+| `sendMusterReminders` | no muster reminders at all |
+| `checkProcessingTimers` | hoppers never announce |
+| `expireStaleClaims` | stale claims sit forever |
+| `lapseStandingMarks` | marks never lapse — comrades stay penalised |
+| `closeHallLots` | **the hall silently does nothing** — no lot ever closes |
+| `expireBuybackOffers` | stale offers stay honourable |
+| `sweepHallObligations` | no commission is ever chased |
+| `escalateStaleReviews` | quiet reviewers are never escalated past |
+
+`closeHallLots` is the worst of these: bids accumulate, nothing is ever won, no commission is raised,
+and the hall looks like it works.
+
+## 12. Things that will bite (part II)
+
+- **Never show a lot's reserve.** Not in the bid form, not in a tooltip.
+- **The council cannot bid** — hide the bid control for them rather than letting it 403.
+- **`suggested_gross_auec`, `best_times`, `haul`, `basis`, `what_is_needed`** are all readings that
+  state their own limits. Render the accompanying note; a bare number loses the honesty.
+- **Never sum settled and committed labour cost**, or gross and losses.
+- **`fits: null` is not `false`.** It means capacity is unstated.
+- **Session closeout and lot close are irreversible.** Confirm first.
