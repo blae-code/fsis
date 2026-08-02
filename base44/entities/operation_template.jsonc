@@ -79,6 +79,33 @@
     },
     "created_by_email": {
       "type": "string"
+    },
+    "role_slots": {
+      "type": "array",
+      "description": "The places this standing run calls for, carried onto every muster called from it. Without these a templated run falls back to a bare headcount, which cannot say it wants one pilot and two scrapers",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "any",
+              "pilot",
+              "scraper",
+              "gunner",
+              "security",
+              "hauler",
+              "engineer",
+              "medic"
+            ],
+            "default": "any"
+          },
+          "wanted": {
+            "type": "number",
+            "default": 1
+          }
+        }
+      }
     }
   },
   "required": [

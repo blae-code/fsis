@@ -172,6 +172,10 @@
     "freight_plan_id": {
       "type": "string",
       "description": "A freight plan this run flies to, if any — its capacity and destinations are read from there rather than typed twice"
+    },
+    "operation_template_id": {
+      "type": "string",
+      "description": "The standing muster this was called from, if any, so a run can be traced back to the terms it was written under"
     }
   },
   "required": [

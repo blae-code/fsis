@@ -24,16 +24,30 @@ export default async function (req: Request): Promise<Response> {
     }
 
     const body = await req.json().catch(() => ({}));
-    const opName = String(body?.op_name || '').trim();
-    const brief = String(body?.brief || '').trim();
-    const opType = String(body?.op_type || 'salvage').trim();
-    const location = String(body?.muster_location || '').trim();
-    const ship = String(body?.ship || '').trim();
+
+    // A standing muster written once and called again. Called THROUGH here rather than written
+    // straight to crew_operation, so a templated run tells the yard like any other — a muster
+    // nobody hears about is not a muster, however it was created.
+    const templateId = String(body?.operation_template_id || '').trim();
+    let template: any = null;
+    if (templateId) {
+      template = await base44.asServiceRole.entities.operation_template.get(templateId).catch(() => null);
+      if (!template) return Response.json({ error: 'No such standing muster.' }, { status: 404 });
+      if (template.active === false) {
+        return Response.json({ error: 'That standing muster has been retired. Make it active again to call it.' }, { status: 409 });
+      }
+    }
+
+    const opName = String(body?.op_name || template?.op_name || '').trim();
+    const brief = String(body?.brief || template?.brief || '').trim();
+    const opType = String(body?.op_type || template?.op_type || 'salvage').trim();
+    const location = String(body?.muster_location || template?.muster_location || '').trim();
+    const ship = String(body?.ship || template?.ship || '').trim();
     const startNow = body?.start_now === true;
 
     if (!opName) return Response.json({ error: 'Give the run a name — anything the yard will recognise.' }, { status: 400 });
 
-    const slots = (Array.isArray(body?.role_slots) ? body.role_slots : [])
+    const slots = (Array.isArray(body?.role_slots) ? body.role_slots : (template?.role_slots || []))
       .filter((slot: any) => slot && MUSTER_ROLES.includes(slot.role))
       .map((slot: any) => ({ role: slot.role, wanted: Math.max(1, Math.floor(Number(slot.wanted) || 1)) }));
 
@@ -45,13 +59,21 @@ export default async function (req: Request): Promise<Response> {
       brief,
       op_type: opType,
       starts_at: startsAt,
-      duration_hours: Number(body?.duration_hours) > 0 ? Number(body.duration_hours) : 2,
+      // Never zero: a run with no length breaks the calendar export, whose DTEND would equal its
+      // DTSTART, and tells a comrade nothing about how much of their evening is being asked for.
+      duration_hours: Number(body?.duration_hours) > 0
+        ? Number(body.duration_hours)
+        : (Number(template?.duration_hours) > 0 ? Number(template.duration_hours) : 2),
       muster_location: location,
       ship,
-      crew_needed: slots.reduce((total: number, slot: any) => total + slot.wanted, 0) || Number(body?.crew_needed) || 2,
+      crew_needed: slots.reduce((total: number, slot: any) => total + slot.wanted, 0)
+        || Number(body?.crew_needed) || Number(template?.crew_needed) || 2,
       ...(slots.length > 0 ? { role_slots: slots } : {}),
-      pay_basis: body?.pay_basis === 'flat_credit' ? 'flat_credit' : 'shares',
-      flat_credit_auec: Number(body?.flat_credit_auec) > 0 ? Number(body.flat_credit_auec) : 0,
+      pay_basis: (body?.pay_basis || template?.pay_basis) === 'flat_credit' ? 'flat_credit' : 'shares',
+      flat_credit_auec: Number(body?.flat_credit_auec) > 0
+        ? Number(body.flat_credit_auec)
+        : Math.max(0, Number(template?.flat_credit_auec) || 0),
+      ...(templateId ? { operation_template_id: templateId } : {}),
       status: startNow ? 'mustering' : 'scheduled',
       rsvps: [],
       posted_by_email: user.email,
@@ -111,6 +133,14 @@ export default async function (req: Request): Promise<Response> {
         gross_auec: 0,
       });
       await base44.asServiceRole.entities.crew_operation.update(operation.id, { status: 'underway' });
+    }
+
+    // The standing muster records that it was called, so the council can see it is being used.
+    if (templateId) {
+      await base44.asServiceRole.entities.operation_template.update(templateId, {
+        times_called: (Number(template?.times_called) || 0) + 1,
+        last_called_at: now.toISOString(),
+      });
     }
 
     await base44.asServiceRole.entities.ops_log.create({
