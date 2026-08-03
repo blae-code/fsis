@@ -14,6 +14,7 @@ export default function StoreHeroStrip({ onOpenIntel }) {
       }}
     >
       <div className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, #E0A22E, transparent)' }} />
+      <div className="absolute inset-x-0 bottom-0 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(224,162,46,0.35), transparent)' }} />
       <span className="hidden sm:inline font-mono text-[8px] tracking-[0.28em] px-2 py-1 border shrink-0" style={{ color: '#E0A22E', borderColor: '#8A6430', background: 'rgba(8,6,4,0.6)' }}>
         EST. {FSIS.founded} — STANTON
       </span>
@@ -21,7 +22,7 @@ export default function StoreHeroStrip({ onOpenIntel }) {
         <h2 className="font-mono text-xs sm:text-sm font-bold tracking-[0.1em] truncate">
           <span style={{ color: '#F2EADC' }}>Honest salvage.</span> <span style={{ color: '#E0A22E' }}>Fair prices.</span>
         </h2>
-        <p className="hidden md:block font-mono text-[9px] truncate" style={{ color: '#8A7E6C' }}>
+        <p className="hidden sm:block font-mono text-[9px] truncate" style={{ color: '#8A7E6C' }}>
           Reclaimed materials and fabricated goods, sourced and delivered across the 'verse by FSIS crews.
         </p>
       </div>

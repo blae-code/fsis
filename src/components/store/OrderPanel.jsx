@@ -120,8 +120,11 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
 
       {cart.length === 0 ? (
         <div className="border p-7 text-center" style={{ borderColor: '#5C4424', background: 'radial-gradient(circle at 50% 0%, rgba(224,162,46,0.10), transparent 55%), #0C0A07' }}>
-          <p className="text-xs font-mono" style={{ color: '#C8BDAA' }}>Manifest empty — add wares from the catalog</p>
-          <p className="text-[9px] mt-2 font-mono tracking-[0.14em]" style={{ color: '#8A6430' }}>PREMIUM CRATE QUEUE STANDING BY</p>
+          <ShoppingCart className="w-5 h-5 mx-auto mb-2" style={{ color: '#5C4424' }} />
+          <p className="text-xs font-mono" style={{ color: '#C8BDAA' }}>Manifest empty — add wares from the catalogue</p>
+          <p className="text-[9px] mt-2 font-mono leading-relaxed" style={{ color: '#8A6430' }}>
+            Nothing is charged here. You transmit a manifest, FSIS confirms it, and the handoff happens in person.
+          </p>
         </div>
       ) : (
         <>
@@ -136,7 +139,12 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
                 transition={{ duration: 0.22, ease: 'easeOut' }}
                 className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 text-xs font-mono overflow-hidden"
               >
-                <span className="flex-1 truncate" style={{ color: '#D8CFC0' }}>{item.code || item.product_name}</span>
+                <span className="min-w-0">
+                  <span className="block truncate" style={{ color: '#D8CFC0' }}>{item.code || item.product_name}</span>
+                  <span className="block text-[9px]" style={{ color: '#6B6155' }}>
+                    {roundPrice(item.unit_price).toLocaleString()} aUEC / {item.unit || 'SCU'}
+                  </span>
+                </span>
                 <ManifestStepper
                   value={item.quantity}
                   min={1}
@@ -157,12 +165,6 @@ export default function OrderPanel({ cart, setCart, user, buyerProfile, preferre
               <span className="text-xs font-bold tracking-[0.15em]" style={{ color: '#A89C8A' }}>TOTAL</span>
               <span className="text-lg font-bold tracking-tight" style={{ color: '#F0B43A', textShadow: '0 0 14px rgba(240, 180, 58, 0.18)' }}>{total.toLocaleString()} aUEC</span>
             </div>
-            {hasDiscountCode && (
-              <div className="flex items-center justify-between text-[10px] tracking-[0.12em]">
-                <span style={{ color: '#8A8F45' }}>PRIVATE CODE ENTERED</span>
-                <span style={{ color: '#8A8F45' }}>VERIFIED ON TRANSMIT</span>
-              </div>
-            )}
           </div>
 
           <div className="space-y-3">

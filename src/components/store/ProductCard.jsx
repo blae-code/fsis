@@ -126,7 +126,7 @@ export default function ProductCard({ product, onAdd, onView, marketBest, inCart
         </div>
 
         {product.description && (
-          <p className="text-[10px] leading-snug truncate" style={{ color: '#877D6D' }}>{product.description}</p>
+          <p className="text-[10px] leading-snug line-clamp-2" style={{ color: '#877D6D' }}>{product.description}</p>
         )}
 
         {/* Readout + CTA */}
