@@ -2,16 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Calculator, Copy, Check } from 'lucide-react';
+import { CONDITIONS, computeOffer } from '@/components/apps/management/hall/appraisalMath';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
-
-/** Condition takes its cut of the fraction, stated as a factor rather than folded silently into the number. */
-const CONDITIONS = [
-  { key: 'new', label: 'NEW', factor: 1.0, color: '#6FA05B' },
-  { key: 'refurbished', label: 'REFURBISHED', factor: 0.9, color: '#5BA08F' },
-  { key: 'used', label: 'USED', factor: 0.75, color: '#C8893B' },
-  { key: 'worn', label: 'WORN', factor: 0.55, color: '#C05050' },
-];
 
 /**
  * The appraisal, worked in the open.
@@ -38,14 +31,13 @@ export default function AppraisalCard() {
   });
 
   const calc = useMemo(() => {
-    const cond = CONDITIONS.find((c) => c.key === condition);
     const tier = tiers.find((t) => t.tier_name === tierName);
     const tierBonus = Number(tier?.tier_discount_percent) || 0;
-    const base = Math.min(100, Math.max(1, Number(baseFraction) || 60));
-    const fraction = Math.min(100, Math.round(base * cond.factor + tierBonus));
-    const marketTotal = (Number(market) || 0) * Math.max(1, Number(quantity) || 1);
-    const offer = Math.round(marketTotal * fraction / 100);
-    return { cond, tier, tierBonus, base, fraction, marketTotal, offer };
+    return {
+      tier,
+      tierBonus,
+      ...computeOffer({ marketEach: market, quantity, baseFraction, conditionKey: condition, tierBonus }),
+    };
   }, [condition, tierName, tiers, baseFraction, market, quantity]);
 
   const qty = Math.max(1, Number(quantity) || 1);

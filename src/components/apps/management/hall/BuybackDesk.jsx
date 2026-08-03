@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { offerBuyback } from '@/functions/offerBuyback';
 import { Loader2, HandCoins } from 'lucide-react';
 import AppraisalCard from '@/components/apps/management/hall/AppraisalCard';
+import BulkAppraisalPanel from '@/components/apps/management/hall/BulkAppraisalPanel';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 const ITEM_TYPES = ['ship_component', 'vehicle_component', 'fps_gear', 'weapon', 'bulk_cargo', 'other'];
@@ -22,6 +23,7 @@ const EMPTY = {
 export default function BuybackDesk() {
   const qc = useQueryClient();
   const [form, setForm] = useState(EMPTY);
+  const [mode, setMode] = useState('single');
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
   const { data: users = [] } = useQuery({ queryKey: ['all_users'], queryFn: () => base44.entities.User.list('-created_date', 200) });
@@ -65,7 +67,27 @@ export default function BuybackDesk() {
         be checked later against the market as it stood.
       </p>
 
-      <AppraisalCard />
+      <div className="flex gap-1">
+        {[
+          { key: 'single', label: 'ONE ITEM' },
+          { key: 'bulk', label: 'A WHOLE HAUL' },
+        ].map((m) => (
+          <button
+            key={m.key}
+            onClick={() => setMode(m.key)}
+            className="h-8 px-3 border text-[8px] font-bold tracking-[0.14em]"
+            style={{
+              borderColor: mode === m.key ? '#E0A22E' : '#2E2519',
+              color: mode === m.key ? '#E0A22E' : '#7A6E60',
+              background: mode === m.key ? '#E0A22E1A' : '#0C0A07',
+            }}
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+
+      {mode === 'single' ? <AppraisalCard /> : <BulkAppraisalPanel />}
 
       <div className="border p-3 space-y-2" style={{ borderColor: '#5C4424', background: 'linear-gradient(180deg, #14100B, #0B0906)' }}>
         <div className="grid sm:grid-cols-3 gap-2">
