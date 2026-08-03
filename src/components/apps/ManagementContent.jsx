@@ -11,6 +11,7 @@ import DiscountManager from '@/components/apps/management/DiscountManager';
 import OrdersContent from '@/components/apps/OrdersContent';
 import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
 import InventoryManager from '@/components/apps/management/InventoryManager';
+import StockByClassPanel from '@/components/apps/management/inventory/StockByClassPanel';
 import SalvageCommodityDashboard from '@/components/apps/management/SalvageCommodityDashboard';
 import ProprietorCommandCenter from '@/components/apps/management/ProprietorCommandCenter';
 import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
@@ -159,7 +160,7 @@ export default function ManagementContent() {
         {activeTab === 'intake'    && <div className="p-4"><RapidLootIntakePanel /></div>}
         {activeTab === 'warehouse' && <div className="p-4"><WarehouseCommandLayer /></div>}
         {activeTab === 'salvage'   && <div className="p-4"><SalvageCommodityDashboard /></div>}
-        {activeTab === 'inventory' && <div className="p-4"><InventoryManager /></div>}
+        {activeTab === 'inventory' && <div className="p-4 space-y-6"><StockByClassPanel /><InventoryManager /></div>}
         {activeTab === 'lootsummary' && <LootSummaryTab />}
         {activeTab === 'auditlog'  && <OpsAuditLog />}
         {activeTab === 'ops'       && <OpsCommandDeck />}
