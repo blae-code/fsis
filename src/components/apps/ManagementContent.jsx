@@ -27,6 +27,7 @@ import LootSummaryTab from '@/components/loot/LootSummaryTab';
 import AccessConsole from '@/components/apps/management/access/AccessConsole';
 import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrderConsole';
 import RunConsole from '@/components/apps/management/runs/RunConsole';
+import RunProfitChart from '@/components/apps/management/runs/RunProfitChart';
 import HallDisputePanel from '@/components/apps/management/hall/HallDisputePanel';
 import BuybackDesk from '@/components/apps/management/hall/BuybackDesk';
 import AssetLibraryPanel from '@/components/apps/management/assets/AssetLibraryPanel';
@@ -170,7 +171,7 @@ export default function ManagementContent() {
         {activeTab === 'restock'  && <div className="p-4"><AdminRestockControls /></div>}
         {activeTab === 'access'   && <AccessConsole />}
         {activeTab === 'tasks'    && <TaskWorkOrderConsole />}
-        {activeTab === 'runs'     && <RunConsole />}
+        {activeTab === 'runs'     && <div className="space-y-6"><div className="p-4 pb-0"><RunProfitChart /></div><RunConsole /></div>}
         {activeTab === 'hall'     && <div className="p-4 font-mono space-y-6"><HallDisputePanel /><BuybackDesk /></div>}
         {activeTab === 'assets'   && <div className="p-4"><AssetLibraryPanel /></div>}
       </div>
