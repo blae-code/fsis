@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { offerBuyback } from '@/functions/offerBuyback';
 import { Loader2, HandCoins } from 'lucide-react';
+import AppraisalCard from '@/components/apps/management/hall/AppraisalCard';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 const ITEM_TYPES = ['ship_component', 'vehicle_component', 'fps_gear', 'weapon', 'bulk_cargo', 'other'];
@@ -63,6 +64,8 @@ export default function BuybackDesk() {
         that is a fact about the fraction. The market figure and its source are recorded so the offer can
         be checked later against the market as it stood.
       </p>
+
+      <AppraisalCard />
 
       <div className="border p-3 space-y-2" style={{ borderColor: '#5C4424', background: 'linear-gradient(180deg, #14100B, #0B0906)' }}>
         <div className="grid sm:grid-cols-3 gap-2">
