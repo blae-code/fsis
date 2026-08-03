@@ -8,6 +8,7 @@ import HallLotCard from '@/components/hall/HallLotCard';
 import HallLotDetail from '@/components/hall/HallLotDetail';
 import HallListForm from '@/components/hall/HallListForm';
 import BulkDraftPanel from '@/components/hall/BulkDraftPanel';
+import BuybackOffers from '@/components/hall/BuybackOffers';
 import { PlusSquare } from 'lucide-react';
 
 const SCOPES = [
@@ -73,6 +74,8 @@ export default function Hall() {
             {data.note}
           </p>
         )}
+
+        <BuybackOffers />
 
         {errText && (
           <p className="border p-2 text-[9px]" style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}>{errText}</p>

@@ -413,9 +413,22 @@ value, the collective owns the means of production, plain solidarity language, n
     Plus `RunSummary`, readable by every hand who stood the run — surfaced on the labour board as
     RUNS YOU STOOD with step-off/back-on for underway runs. Payout ticks are disabled for
     `settles_at_payday` lines with the reason stated rather than letting them error.
-  - Remaining from the screens list: musters (`standDownOperation`, `getMusterTimes`,
-    `getOperationPlan`), buyback, collections, instruments admin, "waits on" picker, labour-cost
-    panel, processing timers, patch reset — and all of Part B (the visual asset library).
+  - **Musters, third cut** ✅ (2026-08-03) — `StandDownControl` on the schedule console routes
+    stand-downs through the backend with a required reason (the raw `stood_down` status button is
+    gone: a silent flag flip tells nobody who kept the evening free); `MusterInsight` reads
+    `getMusterTimes` (each respondent's own clock, zones unknown left out rather than assumed, the
+    best-time reading with who each hour is awkward for, and a calendar file download) and
+    `getOperationPlan` (haul against hull with capacity source named, and expectation-vs-actual once
+    a run has flown, stated as a reading not a grading).
+  - **Buyback** ✅ (2026-08-03) — `BuybackDesk` under the HALL council tab (`offerBuyback`: seller,
+    market reference with its source, the fraction as a visible field, a stated-figure override, the
+    offer previewed exactly as the member will read it) and `BuybackOffers` on the hall floor
+    (`respondToBuyback`: countdown, expired offers refused on their face, accept behind a
+    confirmation stating the item passes under the release, decline labelled as the ordinary
+    no-cost outcome it is).
+  - Remaining from the screens list: collections (`settleHallObligation` view), instruments admin,
+    "waits on" picker, labour-cost panel, processing timers, patch reset — and all of Part B (the
+    visual asset library).
 
 - **Phase 5 — Governance & launch**
   Council invite/role management hardening, access audit surfacing, end-to-end readiness pass across all

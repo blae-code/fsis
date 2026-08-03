@@ -5,10 +5,14 @@ import { CalendarPlus, Users, Loader2 } from 'lucide-react';
 import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 import OperationTemplatePanel from '@/components/apps/management/tasks/OperationTemplatePanel';
 import SaveOperationAsTemplate from '@/components/apps/management/tasks/SaveOperationAsTemplate';
+import StandDownControl from '@/components/apps/management/tasks/StandDownControl';
+import MusterInsight from '@/components/apps/management/tasks/MusterInsight';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 const EMPTY = { op_name: '', brief: '', op_type: 'salvage', starts_at: '', duration_hours: 2, muster_location: '', ship: '', crew_needed: 2, roles_wanted: '', pay_basis: 'shares', flat_credit_auec: '' };
-const STATUSES = ['scheduled', 'mustering', 'underway', 'completed', 'stood_down'];
+// stood_down is deliberately absent: standing a run down goes through the backend, which tells
+// everyone who kept the evening free. A silent status flip is exactly the failure it exists to fix.
+const STATUSES = ['scheduled', 'mustering', 'underway', 'completed'];
 
 /** Council scheduling of musters, and the answers that come back from the crew. */
 export default function OperationScheduleConsole({ actorEmail }) {
@@ -116,8 +120,13 @@ export default function OperationScheduleConsole({ actorEmail }) {
                     ))}
                   </div>
                 )}
+                {op.status === 'stood_down' && op.stood_down_reason && (
+                  <p className="text-[8px] leading-relaxed border px-2 py-1" style={{ color: '#D08A6A', borderColor: '#5C302A', background: '#140B08' }}>
+                    STOOD DOWN: {op.stood_down_reason}
+                  </p>
+                )}
                 <div className="flex flex-wrap gap-1">
-                  {STATUSES.filter((s) => s !== op.status).map((s) => (
+                  {op.status !== 'stood_down' && STATUSES.filter((s) => s !== op.status).map((s) => (
                     <button
                       key={s}
                       disabled={patch.isPending}
@@ -128,6 +137,8 @@ export default function OperationScheduleConsole({ actorEmail }) {
                       {s.replace('_', ' ').toUpperCase()}
                     </button>
                   ))}
+                  <StandDownControl op={op} />
+                  <MusterInsight op={op} />
                 </div>
                 <SaveOperationAsTemplate op={op} actorEmail={actorEmail} />
               </div>

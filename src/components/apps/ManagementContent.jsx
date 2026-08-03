@@ -26,6 +26,7 @@ import AccessConsole from '@/components/apps/management/access/AccessConsole';
 import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrderConsole';
 import RunConsole from '@/components/apps/management/runs/RunConsole';
 import HallDisputePanel from '@/components/apps/management/hall/HallDisputePanel';
+import BuybackDesk from '@/components/apps/management/hall/BuybackDesk';
 import { hasCouncilAccess, fsisRole, ROLE_META } from '@/lib/roles';
 import { Link } from 'react-router-dom';
 
@@ -166,7 +167,7 @@ export default function ManagementContent() {
         {activeTab === 'access'   && <AccessConsole />}
         {activeTab === 'tasks'    && <TaskWorkOrderConsole />}
         {activeTab === 'runs'     && <RunConsole />}
-        {activeTab === 'hall'     && <div className="p-4 font-mono"><HallDisputePanel /></div>}
+        {activeTab === 'hall'     && <div className="p-4 font-mono space-y-6"><HallDisputePanel /><BuybackDesk /></div>}
       </div>
     </div>
   );
