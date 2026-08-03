@@ -439,6 +439,11 @@ value, the collective owns the means of production, plain solidarity language, n
   slot keys are DERIVED from the app's real enums rather than written out again, so the day somebody
   adds a task category or a muster role the slot for it exists and shows up as unfilled — a
   hand-written list would drift within a month and nobody would notice until the icon was missing.
+  ✅ frontend built 2026-08-03 — an ASSETS tab in the council console: STILL WANTED / MADE / EVERY SLOT
+  with a family filter, each gap carrying its brief so it can be commissioned rather than guessed at,
+  upload-or-paste placement with alt text refused when empty, maker and licence as fields, and retire.
+  Replacing keeps the old version rather than overwriting it. An unfilled slot renders as a labelled
+  absence, never a broken frame.
   Two rules hold: **every slot degrades**, so no screen may require an asset and a missing one renders
   as its absence rather than a gap; and **the hand that made it is credited**, because an asset is
   labour like any other. Alt text is required — an image without it is decoration that has become

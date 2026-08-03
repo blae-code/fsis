@@ -27,6 +27,7 @@ import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrd
 import RunConsole from '@/components/apps/management/runs/RunConsole';
 import HallDisputePanel from '@/components/apps/management/hall/HallDisputePanel';
 import BuybackDesk from '@/components/apps/management/hall/BuybackDesk';
+import AssetLibraryPanel from '@/components/apps/management/assets/AssetLibraryPanel';
 import { hasCouncilAccess, fsisRole, ROLE_META } from '@/lib/roles';
 import { Link } from 'react-router-dom';
 
@@ -57,6 +58,7 @@ const TABS = [
   { id: 'tasks',     label: 'TASKS',      glyph: '⌗' },
   { id: 'runs',      label: 'RUNS',       glyph: '◎' },
   { id: 'hall',      label: 'HALL',       glyph: '⚖' },
+  { id: 'assets',    label: 'ASSETS',     glyph: '▨' },
 ];
 
 export default function ManagementContent() {
@@ -168,6 +170,7 @@ export default function ManagementContent() {
         {activeTab === 'tasks'    && <TaskWorkOrderConsole />}
         {activeTab === 'runs'     && <RunConsole />}
         {activeTab === 'hall'     && <div className="p-4 font-mono space-y-6"><HallDisputePanel /><BuybackDesk /></div>}
+        {activeTab === 'assets'   && <div className="p-4"><AssetLibraryPanel /></div>}
       </div>
     </div>
   );
