@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole } from '../../shared/roles.js';
+import { mayRequest } from '../../shared/onboarding.js';
 
 /**
  * A comrade asks to take up work as a contractor. Anyone with an account may ask;
@@ -20,12 +21,15 @@ export default async function (req: Request): Promise<Response> {
     const handle = String(body?.handle || '').trim();
     if (!handle) return Response.json({ error: 'Give the handle you work under.' }, { status: 400 });
 
-    const existing = await base44.asServiceRole.entities.standing_request.filter({
-      applicant_user_id: user.id,
-      status: 'pending',
-    });
-    if (existing.length > 0) {
-      return Response.json({ error: 'Your request is already before the council.' }, { status: 400 });
+    // Whether they may ask at all — one request before the council at a time, and a stated wait
+    // after a decline. Read through the shared rule rather than checked here, because the same
+    // question is asked by getOnboardingState and the two answers must never differ.
+    const priorRequests = await base44.asServiceRole.entities.standing_request.filter(
+      { applicant_user_id: user.id }, '-created_date', 20,
+    );
+    const askable = mayRequest(user, priorRequests);
+    if (!askable.allowed) {
+      return Response.json({ error: askable.reason }, { status: 409 });
     }
 
     const created = await base44.asServiceRole.entities.standing_request.create({

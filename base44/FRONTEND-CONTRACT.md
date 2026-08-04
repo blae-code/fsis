@@ -525,3 +525,47 @@ wrong for a run where two people found the field stripped and went to bed. This 
 pay, no shares, no standing, and keeps the presence record because those comrades did turn up.
 **Guarded:** 30+ logged minutes returns 409 asking for `confirm_unpaid: true`, because real time
 given should be settled rather than written off.
+
+---
+
+## 17. Onboarding — the three paths (2026-08-03)
+
+**`getOnboardingState`** — **works without an account**; a guest is a first-class state, not a 401.
+Call it on landing and branch on the result.
+```
+← { path: 'patron'|'contractor'|'owner', standing, is_guest, has_account,
+    owner_is_invitation_only: true,
+    request: { status, reviewed_at, review_notes } | null,
+    may_request_contractor, may_request_reason,
+    charter: { instrument_id, title, version, signed, needs_reconsent } | null,
+    account_gives: string[], orders_claimable,
+    next_step: { key, title, body, action, ... } }
+```
+
+**`next_step` is deliberately singular — render exactly one.** A person landing here should be told
+what to do, not shown a checklist of everything they have not done. That is how somebody decides
+this is more trouble than it is worth and closes the tab. Keys: `browse_or_account`,
+`awaiting_council`, `sign_charter`, `offer_contractor`, `declined`, `get_to_work`, `settled`.
+
+**`reviewStandingRequest`** *(council)* — `{ request_id, decision: 'accept'|'decline', review_notes }`.
+Reason **required** on decline and shown to them in full. Accepting grants standing, carries their
+declared skills and timezone onto the record, writes the access grant, and tells them.
+
+**`withdrawStandingRequest`** — `{ request_id? }`. No reason required and none asked for.
+
+### What was broken
+
+`standing_request` was a **write-only queue**. Nothing ever wrote `accepted`, `declined` or
+`withdrawn`, so: every request ever filed still read `pending`; "declined with a reason shown back"
+was unreachable; nobody was told they had been admitted; and the stale `pending` row **blocked a
+second request forever**, trapping anyone turned down.
+
+### Rules worth keeping in the UI
+
+- **Never offer a route to ask for Owner.** It is invitation-only; a route to ask would be a route
+  to lobby. `owner_is_invitation_only` is there so the interface can be sure.
+- **The account is offered as use, not as an ask.** Render `account_gives` — claiming a guest order,
+  a trade record that earns a better price, restock notice. Never "create an account to continue".
+- **A decline is not a wall.** Show `review_notes` in full and `may_request_reason`, which says when
+  they may ask again. Being turned down once is not a verdict for life.
+- The charter is surfaced but **not hard-gated** — that is a product decision, not mine to make.
