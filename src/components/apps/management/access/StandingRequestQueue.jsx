@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { setMemberStanding } from '@/functions/setMemberStanding';
+import { reviewStandingRequest } from '@/functions/reviewStandingRequest';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { HardHat, Loader2 } from 'lucide-react';
 
@@ -16,20 +16,11 @@ export default function StandingRequestQueue() {
   });
 
   const answer = useMutation({
-    mutationFn: async ({ request, accept }) => {
-      if (accept) {
-        await setMemberStanding({
-          user_id: request.applicant_user_id,
-          fsis_role: 'contractor',
-          notes: `Admitted from open request — ${notes[request.id] || 'labour offered and accepted'}`,
-        });
-      }
-      await base44.entities.standing_request.update(request.id, {
-        status: accept ? 'accepted' : 'declined',
-        review_notes: notes[request.id] || '',
-        reviewed_at: new Date().toISOString(),
-      });
-    },
+    mutationFn: ({ request, accept }) => reviewStandingRequest({
+      request_id: request.id,
+      decision: accept ? 'accept' : 'decline',
+      review_notes: notes[request.id] || '',
+    }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['standing_requests'] });
       qc.invalidateQueries({ queryKey: ['access_roster'] });
@@ -68,7 +59,7 @@ export default function StandingRequestQueue() {
               <input
                 value={notes[r.id] || ''}
                 onChange={(e) => setNotes((n) => ({ ...n, [r.id]: e.target.value }))}
-                placeholder="Answer to the comrade (optional)"
+                placeholder="Answer to the comrade — required to decline, and shown to them in full"
                 className="h-8 w-full border px-2 text-[10px]"
                 style={{ borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' }}
               />
@@ -82,7 +73,7 @@ export default function StandingRequestQueue() {
                   ADMIT AS CONTRACTOR
                 </button>
                 <button
-                  disabled={answer.isPending}
+                  disabled={answer.isPending || !(notes[r.id] || '').trim()}
                   onClick={() => answer.mutate({ request: r, accept: false })}
                   className="flex-1 h-8 border text-[8px] font-bold tracking-[0.12em] disabled:opacity-40"
                   style={{ borderColor: '#5A2A2A', color: '#C05050', background: '#140A0A' }}
