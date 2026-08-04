@@ -9,10 +9,7 @@ import ManagementView from '@/components/apps/station/ManagementView';
 import TradeConsole from '@/components/apps/management/trade/TradeConsole';
 import YardConsole from '@/components/apps/management/yard/YardConsole';
 import LabourConsole from '@/components/apps/management/labour/LabourConsole';
-import CollectionsPanel from '@/components/apps/management/hall/CollectionsPanel';
-import HallDisputePanel from '@/components/apps/management/hall/HallDisputePanel';
-import BuybackDesk from '@/components/apps/management/hall/BuybackDesk';
-import AssetLibraryPanel from '@/components/apps/management/assets/AssetLibraryPanel';
+import HallConsole from '@/components/apps/management/hall/HallConsole';
 import ConsoleFold from '@/components/console/ConsoleFold';
 
 /**
@@ -72,10 +69,7 @@ export const CONSOLE_GROUPS = [
     id: 'hall', label: 'HALL', icon: Scale,
     blurb: 'The trading hall — settlements, disputes, buybacks and the site itself.',
     sections: [
-      { id: 'collections', label: 'COLLECTIONS', glyph: '⚖', render: () => <CollectionsPanel /> },
-      { id: 'disputes',    label: 'DISPUTES',    glyph: '⚑', render: () => <HallDisputePanel /> },
-      { id: 'buyback',     label: 'BUYBACK',     glyph: '◆', render: () => <BuybackDesk /> },
-      { id: 'assets',      label: 'ASSETS',      glyph: '▨', render: () => <AssetLibraryPanel /> },
+      { id: 'floor', label: 'TRADING HALL', glyph: '⚖', bare: true, render: () => <HallConsole /> },
     ],
     links: [
       { to: '/hall', label: 'PUBLIC HALL ↗' },
