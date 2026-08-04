@@ -12,7 +12,7 @@ export const placesWanted = (op) => (op.role_slots?.length
 
 export const handsIn = (op) => (op.rsvps || []).filter((r) => r.response === 'in' && !r.waitlisted).length;
 
-export function buildOpsSignals({ operations = [], plans = [], crates = [] }) {
+export function buildOpsSignals({ operations = [], plans = [], crates = [], fleet = [] }) {
   const out = [];
   const push = (s) => { if (s.count > 0) out.push(s); };
   const now = Date.now();
@@ -31,6 +31,8 @@ export function buildOpsSignals({ operations = [], plans = [], crates = [] }) {
   push({ id: 'mustering', severity: 'warning', count: mustering.length, label: 'MUSTERING NOW', detail: 'Gathering at the pad, not yet away.', stage: 'telemetry' });
   push({ id: 'holds', severity: 'warning', count: heldHolds.length, label: 'HOLDS STILL LOADED', detail: 'Cargo packed or loaded and not yet delivered.', stage: 'haul' });
   push({ id: 'staged', severity: 'notice', count: staged.length, label: 'FREIGHT STAGED', detail: 'Plans ready to fly — pick the terminal.', stage: 'haul' });
+  push({ id: 'seats', severity: 'critical', count: fleet.filter((h) => !h.pilot_handle && h.status !== 'lost').length, label: 'HULLS WITHOUT A PILOT', detail: 'Commissioned and nobody in the seat.', stage: 'fleet' });
+  push({ id: 'hurt', severity: 'warning', count: fleet.filter((h) => ['damaged', 'maintenance'].includes(h.status)).length, label: 'HULLS OUT OF ACTION', detail: 'Damaged or held in the yard.', stage: 'fleet' });
   push({ id: 'soon', severity: 'notice', count: soon.length, label: 'CALLED WITHIN 48H', detail: 'Scheduled runs coming up on the board.', stage: 'telemetry' });
 
   return out.sort((a, b) => RANK[a.severity] - RANK[b.severity] || b.count - a.count);

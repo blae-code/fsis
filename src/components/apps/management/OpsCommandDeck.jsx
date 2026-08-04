@@ -13,10 +13,12 @@ import OpsBoard from '@/components/apps/management/ops/OpsBoard';
 import FleetGauges from '@/components/apps/management/ops/FleetGauges';
 import DeckChevronRail from '@/components/console/deck/DeckChevronRail';
 import DeckPanel from '@/components/console/deck/DeckPanel';
+import FleetCommandPanel from '@/components/apps/management/ops/fleet/FleetCommandPanel';
 import { buildOpsSignals, fleetModel } from '@/components/apps/management/ops/opsSignals';
 
 /** The run, read left to right: what is afloat, what it will yield, where it sells, what it cost, what came back. */
 const TOOLS = [
+  { id: 'fleet',     label: 'FLEET',     glyph: '⛭', tone: 'hot', desc: 'Order of battle — wings, orders and hulls' },
   { id: 'telemetry', label: 'AFLOAT',    glyph: '◉', tone: 'hot', desc: 'Live session pulse — hull, hold and phase' },
   { id: 'hull',      label: 'HULL PRED', glyph: '⬡',              desc: 'Predict RMC/CMR/CMS yield by ship type' },
   { id: 'haul',      label: 'HAUL MAP',  glyph: '▸',              desc: 'Best terminal for the current loadout' },
@@ -25,7 +27,7 @@ const TOOLS = [
 ];
 
 export default function OpsCommandDeck() {
-  const [stage, setStage] = useState('telemetry');
+  const [stage, setStage] = useState('fleet');
   const active = TOOLS.find((t) => t.id === stage);
 
   const { data: operations = [] } = useQuery({
@@ -44,7 +46,13 @@ export default function OpsCommandDeck() {
     refetchInterval: 120000,
   });
 
-  const signals = useMemo(() => buildOpsSignals({ operations, plans, crates }), [operations, plans, crates]);
+  const { data: hulls = [] } = useQuery({
+    queryKey: ['fleet_assets'],
+    queryFn: () => base44.entities.fleet_asset.filter({ active: true }, 'sort_order', 200),
+    refetchInterval: 60000,
+  });
+
+  const signals = useMemo(() => buildOpsSignals({ operations, plans, crates, fleet: hulls }), [operations, plans, crates, hulls]);
   const fleet = useMemo(() => fleetModel({ operations, plans, crates }), [operations, plans, crates]);
   const counts = useMemo(
     () => signals.reduce((acc, s) => ({ ...acc, [s.stage]: (acc[s.stage] || 0) + s.count }), {}),
@@ -71,6 +79,9 @@ export default function OpsCommandDeck() {
           </div>
 
           <div className="min-h-0">
+            {stage === 'fleet' ? (
+              <FleetCommandPanel />
+            ) : (
             <DeckPanel glyph={active?.glyph} title={active?.label} meta={active?.desc?.toUpperCase()} notch="both" bright>
               <AnimatePresence mode="wait">
                 <motion.div
@@ -93,6 +104,7 @@ export default function OpsCommandDeck() {
                 </motion.div>
               </AnimatePresence>
             </DeckPanel>
+            )}
           </div>
 
           <div className="hidden lg:block min-h-0">

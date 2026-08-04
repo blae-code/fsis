@@ -1,0 +1,118 @@
+{
+  "name": "fleet_asset",
+  "type": "object",
+  "properties": {
+    "callsign": {
+      "type": "string",
+      "description": "What this hull is called on the net, e.g. 'VULTURE-1'"
+    },
+    "hull": {
+      "type": "string",
+      "description": "The ship itself, e.g. 'Drake Vulture'"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "commander",
+        "salvage",
+        "hauler",
+        "escort",
+        "mining",
+        "support",
+        "scout",
+        "medical"
+      ],
+      "default": "salvage",
+      "description": "What the hull is for. A commander is a wing lead \u2014 everything under it answers to it"
+    },
+    "parent_id": {
+      "type": "string",
+      "description": "The hull this one flies under. Empty means it stands at the top of the order \u2014 a fleet in its own right"
+    },
+    "standing_order": {
+      "type": "string",
+      "enum": [
+        "standby",
+        "follow",
+        "defend",
+        "collect",
+        "haul",
+        "patrol",
+        "trade",
+        "repair"
+      ],
+      "default": "standby",
+      "description": "What this hull does without being told again, the way a subordinate holds an order in X4"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "docked",
+        "ready",
+        "underway",
+        "damaged",
+        "maintenance",
+        "lost"
+      ],
+      "default": "docked"
+    },
+    "pilot_handle": {
+      "type": "string",
+      "description": "The comrade flying it. Empty means the seat is open \u2014 a hull nobody is in cannot be counted on"
+    },
+    "capacity_scu": {
+      "type": "number",
+      "default": 0
+    },
+    "condition_pct": {
+      "type": "number",
+      "default": 100
+    },
+    "assigned_operation_id": {
+      "type": "string",
+      "description": "The muster this hull is committed to, if any"
+    },
+    "assigned_operation_name": {
+      "type": "string"
+    },
+    "home_location": {
+      "type": "string"
+    },
+    "sort_order": {
+      "type": "number",
+      "default": 0
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "callsign"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
