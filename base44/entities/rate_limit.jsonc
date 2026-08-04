@@ -1,0 +1,43 @@
+{
+  "name": "rate_limit",
+  "type": "object",
+  "properties": {
+    "limit_key": {
+      "type": "string",
+      "description": "action:subject — one row per caller per guarded action"
+    },
+    "action": {
+      "type": "string",
+      "description": "Which guarded action this counts, e.g. claim_order"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Who was wrong. An account id where the caller is signed in — which is why the tightest limits are on actions that require an account, since there the caller cannot simply be anonymous"
+    },
+    "failures": {
+      "type": "number",
+      "default": 0,
+      "description": "Wrong attempts in the current window. FAILURES, not requests — reading your own order forty times is not an attack; getting it wrong forty times is"
+    },
+    "window_started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current window opened. It starts at the first failure and rolls, so somebody who fumbles once in the morning and once at night is never treated as having done it twice"
+    },
+    "last_failure_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_detail": {
+      "type": "string",
+      "description": "A short note on the last miss, for the council to read when deciding whether somebody is locked out of their own order or sweeping a keyspace"
+    }
+  },
+  "required": ["limit_key"],
+  "rls": {
+    "read": { "user_condition": { "role": "admin" } },
+    "create": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

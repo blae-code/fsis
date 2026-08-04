@@ -650,3 +650,30 @@ The council may hand it back, which needs one.
 - **Show what they'd get, not just the shelf price.** The payout figure is what they're deciding on.
 - A sold-but-unpaid consignment is **a debt the collective owes a member** — the only one in the app
   that runs that direction. Surface it as outstanding, not as revenue.
+
+---
+
+## 20. Security — guest order endpoints hardened (2026-08-04) — BREAKING
+
+**`claimOrder` and `cancelOrder` now require the handoff passphrase as well as the tracking code.**
+Both are on the buyer's manifest. Any UI calling either must send both.
+
+```
+claimOrder  → { tracking_code, handoff_passphrase }   // one order at a time now
+cancelOrder → { tracking_code, handoff_passphrase }
+```
+
+**Why:** a claimed order decides whose trade standing a handoff belongs to, so claiming a stranger's
+order harvested their purchase history *and* accrued them trade standing — which moves storefront
+prices. It was protected by six hex characters (~16.7M), `claimOrder` accepted an **array** of them,
+and nothing counted wrong guesses. A thousand guesses per request swept the space in a few thousand
+requests.
+
+**New failure modes to render:**
+- `400` — passphrase missing, or more than one code sent to `claimOrder`.
+- `404` — code and passphrase do not match. **Deliberately the same message** whether the code was
+  wrong or the passphrase was; saying which halves the attacker's work. Carries `attempts_remaining`.
+- `429` — too many wrong attempts. Carries `retry_after_seconds`. Show the message as written: it
+  tells a comrade locked out of their own order to ask the council rather than keep guessing.
+
+Batch claiming is gone. Claim one order at a time — each has its own passphrase.

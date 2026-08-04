@@ -5,15 +5,29 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { tracking_code } = await req.json();
+    const { tracking_code, handoff_passphrase } = await req.json();
 
     if (!tracking_code?.trim()) {
       return Response.json({ error: 'Tracking code required' }, { status: 400 });
     }
 
     const svc = base44.asServiceRole.entities;
+    // Cancelling is destructive — it voids the order and puts the stock back on the shelf — so it
+    // needs both halves of the receipt, as claiming does. The tracking code alone is six hex
+    // characters, and nothing was counting wrong guesses.
+    const passphrase = String(handoff_passphrase || '').trim().toUpperCase();
+    if (!passphrase) {
+      return Response.json({
+        error: 'Give the handoff passphrase from your manifest as well as the tracking code. Both are on your receipt.',
+      }, { status: 400 });
+    }
+
     const orders = await svc.order.filter({ tracking_code: tracking_code.trim().toUpperCase() });
     if (orders.length === 0) {
+      return Response.json({ error: 'Order not found' }, { status: 404 });
+    }
+    if (String(orders[0].handoff_passphrase || '').trim().toUpperCase() !== passphrase) {
+      // Same message either way: telling a guesser which half they got right halves their work.
       return Response.json({ error: 'Order not found' }, { status: 404 });
     }
 
