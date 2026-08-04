@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { fsisRole } from '@/lib/roles';
 import { tierFor } from '@/lib/reputation';
+import { displayHandle } from '@/lib/displayName';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 
@@ -34,7 +35,7 @@ export default function StandingAdjustForm({ members, onAdjust, pending }) {
           <option value="">Select a comrade…</option>
           {workers.map((m) => (
             <option key={m.id} value={m.id}>
-              {(m.handle || m.full_name || m.email)} — {Number(m.reputation) || 0} ({tierFor(m.reputation).label})
+              {displayHandle(m)} — {Number(m.reputation) || 0} ({tierFor(m.reputation).label})
             </option>
           ))}
         </select>

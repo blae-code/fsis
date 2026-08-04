@@ -1,6 +1,7 @@
 import React from 'react';
 import { ROLE_META, fsisRole, canGrant, PROPRIETOR_EMAIL } from '@/lib/roles';
 import { ShieldCheck, Ban, RotateCcw } from 'lucide-react';
+import { displayHandle } from '@/lib/displayName';
 
 const STATUS_COLOR = { active: '#8A8F45', pending: '#E0A22E', suspended: '#C05050' };
 
@@ -16,8 +17,9 @@ export default function MemberStandingRow({ member, actor, onSet, pending }) {
     <div className="border p-2 space-y-2" style={{ borderColor: '#2E2519', background: '#0C0A07' }}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <div className="text-[11px] truncate" style={{ color: '#EDE5D6' }}>{member.handle || member.full_name || member.email}</div>
-          <div className="text-[8px] truncate" style={{ color: '#6B6155' }}>{member.email}</div>
+          {/* Chosen handle only — never a legal name or an email address. */}
+          <div className="text-[11px] truncate" style={{ color: '#EDE5D6' }}>{displayHandle(member)}</div>
+          <div className="text-[8px] truncate" style={{ color: '#6B6155' }}>ACCT {String(member.id || '').slice(-6).toUpperCase()}</div>
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
           <span className="px-1.5 py-0.5 border text-[7px] font-bold tracking-[0.14em]" style={{ borderColor: `${meta.color}55`, color: meta.color, background: `${meta.color}14` }}>

@@ -25,13 +25,13 @@ export default function AccessGrantLog() {
             <div key={g.id} className="flex items-start justify-between gap-2 border-b pb-1" style={{ borderColor: '#1E1913' }}>
               <div className="min-w-0">
                 <div className="text-[9px] truncate" style={{ color: '#EDE5D6' }}>
-                  {g.target_handle || g.target_email || 'unknown comrade'}
+                  {g.target_handle || 'unknown comrade'}
                   <span className="ml-1.5" style={{ color: '#6B6155' }}>
                     {g.previous_role ? `${g.previous_role} → ` : ''}{g.new_role}
                   </span>
                 </div>
                 <div className="text-[8px] truncate" style={{ color: '#6B6155' }}>
-                  by {g.granted_by_email} ({g.granted_by_role}){g.notes ? ` — ${g.notes}` : ''}
+                  by the {g.granted_by_role || 'council'}{g.notes ? ` — ${g.notes}` : ''}
                 </div>
               </div>
               <span className="text-[7px] font-bold tracking-[0.14em] shrink-0" style={{ color: ACTION_COLOR[g.action] || '#7A6E60' }}>
