@@ -433,3 +433,31 @@ so nobody mistakes a stand-in for finished work.
 **Suggested screen:** a council asset library — the 89 slots grouped by family, each showing what is
 in it or an empty frame with its `guidance`, an upload/replace control, and a credits list. That
 turns "make the app prettier" into a commissionable list of briefs.
+
+---
+
+## 14. Buyback appraisal — policy moved to the backend (2026-08-03)
+
+`shared/buyback.js` now owns the appraisal. `src/components/apps/management/hall/appraisalMath.js`
+should become a thin mirror of it or be deleted, because two copies of a pricing rule is how a haul
+comes to be appraised on different terms than the item beside it.
+
+**`offerBuyback` now accepts** `{ market_each_auec, quantity, base_fraction_percent, condition_key }`
+and reckons the rest. It records `base_fraction_percent`, `condition_key`, `condition_factor`,
+`standing_bonus_percent`, the effective `fraction_percent`, and a written `basis`.
+
+Two corrections to what the calculators were doing:
+
+1. **`fraction_percent` is the EFFECTIVE fraction** — after condition and standing — because it is
+   the figure the member is told. A headline 60% while actually paying 45% breaks the one rule the
+   feature rests on. Where a council member states a figure outright, the recorded fraction is the
+   one that figure genuinely represents.
+2. **The standing bonus comes from LABOUR standing**, not `pricing_tier.tier_discount_percent`.
+   A storefront buyer discount ("this buyer gets 10% off products") is not a seller's buyback bonus
+   ("we pay this seller 10 points more"). They are unrelated, and treating one as the other was a
+   category error rather than a generous policy. The bonus is small, bounded, and **never negative**:
+   a poor labour record is a matter for the standing ledger, not something taken out of what the
+   collective pays a comrade for their own property.
+
+Render `basis` on the offer card — it is the arithmetic in words, and it is what makes an offer
+checkable rather than something a member has to take on trust.

@@ -45,7 +45,7 @@
     "fraction_percent": {
       "type": "number",
       "default": 60,
-      "description": "The openly-stated fraction of market this offer represents. FSIS buys stock for resale and says so plainly — a fraction hidden inside a number is a worse deal than a fraction stated"
+      "description": "The fraction of market this offer actually represents, AFTER condition and standing. This is the figure the member receives and the figure they are told — never a headline rate that further arithmetic then quietly moved"
     },
     "offer_auec": {
       "type": "number",
@@ -87,6 +87,33 @@
     },
     "notes": {
       "type": "string"
+    },
+    "base_fraction_percent": {
+      "type": "number",
+      "description": "The hall's plain rate before condition and standing, so the effective fraction can be taken apart and checked"
+    },
+    "condition_key": {
+      "type": "string",
+      "enum": [
+        "new",
+        "refurbished",
+        "used",
+        "worn"
+      ],
+      "description": "Condition as appraised, which takes a stated cut of the fraction rather than being folded silently into the number"
+    },
+    "condition_factor": {
+      "type": "number",
+      "description": "What that condition multiplied the rate by, recorded so an old offer still explains itself if the factors are later changed"
+    },
+    "standing_bonus_percent": {
+      "type": "number",
+      "default": 0,
+      "description": "Points added for the seller's LABOUR standing — the collective returns value to those who make it. Small and bounded, never negative: a poor labour record is a matter for the standing ledger, not something taken out of what we pay a comrade for their own property. Never drawn from storefront buyer pricing tiers, which are an unrelated thing"
+    },
+    "basis": {
+      "type": "string",
+      "description": "The arithmetic in words, as shown to the member. An offer a comrade cannot check is a number they have to take on trust"
     }
   },
   "required": [
