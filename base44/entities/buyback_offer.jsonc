@@ -18,7 +18,15 @@
       "default": "other"
     },
     "condition_grade": {
-      "type": "string"
+      "type": "string",
+      "enum": [
+        "new",
+        "refurb",
+        "used",
+        "worn"
+      ],
+      "default": "used",
+      "description": "Condition, from the one vocabulary in shared/taxonomy.js. Normalise anything arriving as free text with normaliseCondition() — \"refurbished\" and \"refurb\" are the same thing"
     },
     "condition_pct": {
       "type": "number"

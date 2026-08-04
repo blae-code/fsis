@@ -1,0 +1,60 @@
+{
+  "name": "ship_spec",
+  "type": "object",
+  "properties": {
+    "ship_name": {
+      "type": "string",
+      "description": "The hull as the game names it, e.g. 'Drake Vulture'. This entity exists because 'ship' was free text in six places — musters, sessions, templates, freight plans, salvage sessions and the fleet — so 'Reclaimer' and 'Relcaimer' were different ships and neither had a capacity"
+    },
+    "manufacturer": {
+      "type": "string"
+    },
+    "cargo_scu": {
+      "type": "number",
+      "default": 0,
+      "description": "What the hull carries. getOperationPlan needs this to answer whether a haul fits, and until now somebody typed it by hand every time — which is how a run discovers over the belt that it needed two trips"
+    },
+    "primary_role": {
+      "type": "string",
+      "enum": ["salvage", "hauling", "mining", "escort", "recovery", "repair", "exploration", "multi", "other"],
+      "default": "other"
+    },
+    "crew_min": {
+      "type": "number",
+      "default": 1
+    },
+    "crew_max": {
+      "type": "number",
+      "default": 1,
+      "description": "Useful when calling a muster: the places a run needs follow from the hulls flying it"
+    },
+    "size_class": {
+      "type": "string",
+      "enum": ["snub", "small", "medium", "large", "capital", "unknown"],
+      "default": "unknown"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Set false for a hull the game has removed, rather than deleting it — older records still name it"
+    },
+    "verified_patch": {
+      "type": "string",
+      "description": "The game version these figures were last checked against. Capacities change between patches, and a stale number quietly plans a run wrong — an unverified row should be treated as a hint, not an authority"
+    },
+    "uex_vehicle_id": {
+      "type": "string",
+      "description": "The UEX id, so this table can eventually be synced rather than hand-kept — the same way commodities and terminals already are"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": ["ship_name"],
+  "rls": {
+    "read": { "user_condition": { "role": "user" } },
+    "create": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

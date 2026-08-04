@@ -23,7 +23,8 @@
       "enum": [
         "salvage_operator",
         "cargo_hauler",
-        "management"
+        "management",
+        "other"
       ],
       "description": "Duty role determining which Station dashboard view the user sees"
     },

@@ -18,7 +18,8 @@
         "rack",
         "bay",
         "ship_hold",
-        "staging_area"
+        "staging_area",
+        "other"
       ],
       "default": "bay"
     },

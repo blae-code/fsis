@@ -19,7 +19,8 @@
         "fps_gear",
         "weapon",
         "ship_component",
-        "vehicle_component"
+        "vehicle_component",
+        "other"
       ],
       "default": "salvage_commodity",
       "description": "Type of ware"
@@ -40,22 +41,32 @@
     },
     "condition_pct": {
       "type": "number",
-      "description": "Numeric condition percentage 0\u2013100"
+      "description": "Numeric condition percentage 0–100"
     },
     "size_class": {
       "type": "string",
       "enum": [
+        "S0",
         "S1",
         "S2",
         "S3",
         "S4",
         "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9",
+        "S10",
+        "S11",
+        "S12",
+        "XS",
+        "S",
         "M",
         "L",
         "XL",
         "N/A"
       ],
-      "description": "Size class for ship/vehicle components"
+      "description": "Component size. Runs to S12 because a Reclaimer — the yard’s own trade — carries components well past S5, which the old list stopped at"
     },
     "manufacturer": {
       "type": "string",
@@ -116,6 +127,31 @@
       "type": "boolean",
       "default": false,
       "description": "If true, buyers submit an offer instead of a direct cart purchase"
+    },
+    "component_grade": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "unknown"
+      ],
+      "default": "unknown",
+      "description": "The component's GRADE in the game — a real thing and a real difference in price. Not condition: an A-grade part in poor shape and a D-grade part in good shape are different goods"
+    },
+    "component_class": {
+      "type": "string",
+      "enum": [
+        "military",
+        "civilian",
+        "industrial",
+        "competition",
+        "stealth",
+        "unknown"
+      ],
+      "default": "unknown",
+      "description": "What the component is tuned for. Also priced differently, and missing from the app until now"
     }
   },
   "required": [

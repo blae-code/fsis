@@ -7,11 +7,26 @@
     },
     "item_type": {
       "type": "string",
-      "enum": ["ship_component", "vehicle_component", "fps_gear", "weapon", "bulk_cargo", "other"],
+      "enum": [
+        "ship_component",
+        "vehicle_component",
+        "fps_gear",
+        "weapon",
+        "bulk_cargo",
+        "other"
+      ],
       "default": "other"
     },
     "condition_grade": {
-      "type": "string"
+      "type": "string",
+      "enum": [
+        "new",
+        "refurb",
+        "used",
+        "worn"
+      ],
+      "default": "used",
+      "description": "Condition, from the one vocabulary in shared/taxonomy.js. Normalise anything arriving as free text with normaliseCondition() — \"refurbished\" and \"refurb\" are the same thing"
     },
     "condition_pct": {
       "type": "number"
@@ -56,7 +71,15 @@
     },
     "status": {
       "type": "string",
-      "enum": ["proposed", "listed", "sold", "settled", "returned", "withdrawn", "declined"],
+      "enum": [
+        "proposed",
+        "listed",
+        "sold",
+        "settled",
+        "returned",
+        "withdrawn",
+        "declined"
+      ],
       "default": "proposed",
       "description": "Terminal states are settled, returned, withdrawn and declined. A consignment must never be able to hang open holding somebody's property"
     },
@@ -105,16 +128,37 @@
       "type": "string"
     }
   },
-  "required": ["item_name", "consignor_user_id"],
+  "required": [
+    "item_name",
+    "consignor_user_id"
+  ],
   "rls": {
     "read": {
       "$or": [
-        { "user_condition": { "role": "admin" } },
-        { "data.consignor_user_id": "{{user.id}}" }
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "data.consignor_user_id": "{{user.id}}"
+        }
       ]
     },
-    "create": { "user_condition": { "role": "admin" } },
-    "update": { "user_condition": { "role": "admin" } },
-    "delete": { "user_condition": { "role": "admin" } }
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
   }
 }

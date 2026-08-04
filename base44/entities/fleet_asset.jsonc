@@ -20,14 +20,15 @@
         "mining",
         "support",
         "scout",
-        "medical"
+        "medical",
+        "other"
       ],
       "default": "salvage",
-      "description": "What the hull is for. A commander is a wing lead \u2014 everything under it answers to it"
+      "description": "What the hull is for. A commander is a wing lead — everything under it answers to it"
     },
     "parent_id": {
       "type": "string",
-      "description": "The hull this one flies under. Empty means it stands at the top of the order \u2014 a fleet in its own right"
+      "description": "The hull this one flies under. Empty means it stands at the top of the order — a fleet in its own right"
     },
     "standing_order": {
       "type": "string",
@@ -58,7 +59,7 @@
     },
     "pilot_handle": {
       "type": "string",
-      "description": "The comrade flying it. Empty means the seat is open \u2014 a hull nobody is in cannot be counted on"
+      "description": "The comrade flying it. Empty means the seat is open — a hull nobody is in cannot be counted on"
     },
     "capacity_scu": {
       "type": "number",

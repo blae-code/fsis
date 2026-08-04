@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { notify } from '../../shared/notices.js';
+import { normaliseCondition } from '../../shared/taxonomy.js';
 import { reportError } from '../../shared/diagnostics.js';
 
 /**
@@ -62,7 +63,10 @@ export default async function (req: Request): Promise<Response> {
         const loot = await svc.loot_item.create({
           item_name: offer.item_name,
           item_type: offer.item_type,
-          condition_grade: offer.condition_grade,
+          // Normalised, because the offer carries free text and the shelf carries an enum — and the
+          // two vocabularies disagreed ('refurbished' against 'refurb'), so a bought-back part could
+          // land on the shelf in a condition the shelf does not recognise.
+          condition_grade: normaliseCondition(offer.condition_key || offer.condition_grade),
           condition_pct: offer.condition_pct,
           quantity: offer.quantity || 1,
           crew_handle: offer.seller_handle,

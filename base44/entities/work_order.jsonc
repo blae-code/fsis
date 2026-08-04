@@ -10,14 +10,18 @@
       "type": "string",
       "enum": [
         "salvage",
-        "bounty",
-        "cargo",
-        "piracy",
+        "hauling",
+        "mining",
         "escort",
+        "recovery",
+        "repair",
+        "bounty",
+        "piracy",
+        "cargo",
         "other"
       ],
       "default": "salvage",
-      "description": "Operation type for performance analytics"
+      "description": "What the run is. One vocabulary across musters, sessions and work orders — normalise older spellings with normaliseOpType(); \"cargo\" and \"hauling\" were the same thing under two names"
     },
     "session_id": {
       "type": "string",

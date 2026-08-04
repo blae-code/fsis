@@ -12,7 +12,8 @@
         "commodity",
         "gear",
         "component",
-        "weapon"
+        "weapon",
+        "other"
       ],
       "default": "commodity",
       "description": "Type of cargo in this lot"

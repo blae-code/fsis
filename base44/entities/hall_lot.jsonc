@@ -29,7 +29,14 @@
     },
     "condition_grade": {
       "type": "string",
-      "description": "Condition as the seller states it. A grade the hall cannot verify is the seller's word, and is shown as such"
+      "description": "Condition, from the one vocabulary in shared/taxonomy.js. Normalise anything arriving as free text with normaliseCondition() — \"refurbished\" and \"refurb\" are the same thing",
+      "enum": [
+        "new",
+        "refurb",
+        "used",
+        "worn"
+      ],
+      "default": "used"
     },
     "condition_pct": {
       "type": "number"
@@ -161,6 +168,31 @@
     },
     "notes": {
       "type": "string"
+    },
+    "component_grade": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "unknown"
+      ],
+      "default": "unknown",
+      "description": "The component's GRADE in the game — a real thing and a real difference in price. Not condition: an A-grade part in poor shape and a D-grade part in good shape are different goods"
+    },
+    "component_class": {
+      "type": "string",
+      "enum": [
+        "military",
+        "civilian",
+        "industrial",
+        "competition",
+        "stealth",
+        "unknown"
+      ],
+      "default": "unknown",
+      "description": "What the component is tuned for. Also priced differently, and missing from the app until now"
     }
   },
   "required": [

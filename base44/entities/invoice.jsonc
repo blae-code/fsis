@@ -13,7 +13,8 @@
         "ledger_entry",
         "payout",
         "repair",
-        "adjustment"
+        "adjustment",
+        "other"
       ],
       "default": "order"
     },

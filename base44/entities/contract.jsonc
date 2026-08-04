@@ -13,7 +13,8 @@
         "commodity_sale",
         "fabrication",
         "salvage_op",
-        "service"
+        "service",
+        "other"
       ],
       "default": "hauling",
       "description": "Type of work being contracted"

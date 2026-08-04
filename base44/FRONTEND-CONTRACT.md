@@ -694,3 +694,42 @@ settling on part of the answer, so two new failure modes can surface:
 
 Nothing changes at current scale. These fire only where the old code would silently have used part
 of a set.
+
+---
+
+## 22. Vocabularies — stop hand-writing dropdown lists (2026-08-04)
+
+**`getVocabularies`** *(any signed-in member)* — every list the UI needs, in one call.
+```
+← { conditions, component_grades, component_classes, size_classes, op_types, star_systems,
+    ships: [{ ship_name, manufacturer, cargo_scu, crew_min, crew_max, verified_patch, verified }],
+    terminals: [...], materials: [...], note }
+```
+
+**Do not hand-write option arrays in components.** That is exactly how the app ended up with
+`['new','refurb',…]` in one place and `['new','refurbished',…]` in another — a bug no amount of
+backend care can find.
+
+### What changed
+
+- **Condition** is now one vocabulary. Free-text `condition_grade` on `hall_lot`, `consignment` and
+  `buyback_offer` became an enum. Anything arriving as text should go through `normaliseCondition()`
+  server-side — `refurbished` and `refurb` are the same thing, and an unknown value resolves to
+  **`used`, never `new`**.
+- **Size classes run to S12.** They stopped at S5, which could not describe a Reclaimer's own
+  components.
+- **Op types are one union** across musters, sessions, templates and work orders. `cargo` normalises
+  to `hauling`; `bounty` and `piracy` are kept.
+- **New: `component_grade` (A–D) and `component_class`** (military/civilian/industrial/competition/
+  stealth) on `loot_item`, `product`, `hall_lot`, `item_spec`. These are *not* condition — an A-grade
+  part in poor shape and a D-grade part in good shape are different goods at different prices, and
+  the app could not say so.
+- **New: `ship_spec`** reference table. `ship` was free text in six places with no capacity anywhere,
+  so `getOperationPlan` had a hull size typed by hand every time.
+
+### Two things still free text, deliberately
+
+**Locations** (18 fields) — the `terminal` table already carries real places from UEX and is the
+right source for a location picker, but wiring 18 fields to it is a migration, not a rename.
+**`ship_spec` starts empty** — until it is filled, ship pickers have nothing to show and the `note`
+field says so.

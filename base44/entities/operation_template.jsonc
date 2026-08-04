@@ -18,12 +18,16 @@
       "enum": [
         "salvage",
         "hauling",
-        "escort",
         "mining",
+        "escort",
         "recovery",
+        "repair",
+        "bounty",
+        "piracy",
         "other"
       ],
-      "default": "salvage"
+      "default": "salvage",
+      "description": "What the run is. One vocabulary across musters, sessions and work orders — normalise older spellings with normaliseOpType(); \"cargo\" and \"hauling\" were the same thing under two names"
     },
     "duration_hours": {
       "type": "number",

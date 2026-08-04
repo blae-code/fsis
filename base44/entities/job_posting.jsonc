@@ -4,7 +4,7 @@
   "properties": {
     "title": {
       "type": "string",
-      "description": "Job title, e.g. 'Hull scraper \u2014 Reclaimer crew'"
+      "description": "Job title, e.g. 'Hull scraper — Reclaimer crew'"
     },
     "job_type": {
       "type": "string",

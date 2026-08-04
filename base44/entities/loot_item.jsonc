@@ -13,7 +13,8 @@
         "weapon",
         "ship_component",
         "vehicle_component",
-        "bulk_cargo"
+        "bulk_cargo",
+        "other"
       ],
       "default": "ship_component",
       "description": "Category of the looted item"
@@ -37,18 +38,28 @@
     "size_class": {
       "type": "string",
       "enum": [
+        "S0",
         "S1",
         "S2",
         "S3",
         "S4",
         "S5",
+        "S6",
+        "S7",
+        "S8",
+        "S9",
+        "S10",
+        "S11",
+        "S12",
+        "XS",
+        "S",
         "M",
         "L",
         "XL",
         "N/A"
       ],
       "default": "N/A",
-      "description": "Size class for ship/vehicle components"
+      "description": "Component size. Runs to S12 because a Reclaimer — the yard’s own trade — carries components well past S5, which the old list stopped at"
     },
     "manufacturer": {
       "type": "string",
@@ -139,6 +150,31 @@
     "consignor_user_id": {
       "type": "string",
       "description": "Whose it is, where the yard is selling it on somebody else's behalf rather than having bought it"
+    },
+    "component_grade": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "unknown"
+      ],
+      "default": "unknown",
+      "description": "The component's GRADE in the game — a real thing and a real difference in price. Not condition: an A-grade part in poor shape and a D-grade part in good shape are different goods"
+    },
+    "component_class": {
+      "type": "string",
+      "enum": [
+        "military",
+        "civilian",
+        "industrial",
+        "competition",
+        "stealth",
+        "unknown"
+      ],
+      "default": "unknown",
+      "description": "What the component is tuned for. Also priced differently, and missing from the app until now"
     }
   },
   "required": [
