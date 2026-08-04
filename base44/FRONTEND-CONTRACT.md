@@ -461,3 +461,34 @@ Two corrections to what the calculators were doing:
 
 Render `basis` on the offer card — it is the arithmetic in words, and it is what makes an offer
 checkable rather than something a member has to take on trust.
+
+---
+
+## 15. Operations and debugging (2026-08-03)
+
+**`runHealthCheck`** *(council)* — `{ deep?: boolean }`. Read-only; it never repairs anything, because
+a diagnostic that silently fixes what it finds hides how often it is needed.
+```
+← { state: 'ok'|'warn'|'critical', headline, counts, findings: [...], sweeps: [...] }
+```
+Every finding carries `summary`, `what_it_means` and `what_to_do` — **render all three**. A
+diagnostic that only says something is wrong hands the reader a second problem.
+
+`deep: true` recomputes every cached standing total from its event log. Slower, and the only way to
+catch a drifted cache.
+
+**`traceMember`** *(self, or council for anyone)* — `{ user_id? }`. Answers "why is my standing /
+my pay what it is?" by walking the records and **recomputing rather than reading the cache**. If the
+two disagree, that appears in `discrepancies` at the top, and it is almost always the answer.
+
+**`sweep_run`** records every scheduled job. The useful signal is the **absence** of recent rows: a
+sweep that stops running writes nothing at all. `runHealthCheck.sweeps` reports each job's
+`last_run_at`, `silent_hours` and `overdue`.
+
+**`debug_log`** now receives every failure from the sweeps and the money paths, with source, stack
+and context. Nothing is thrown by the logger itself — reporting a failure must never cause a second.
+
+**Suggested screen:** a council operations panel — the health verdict as a badge, findings worst
+first with their what-to-do, the sweep table with anything overdue highlighted, and recent
+`debug_log` entries with a resolve toggle. Plus a member lookup running `traceMember`, which is what
+you will actually want the first time somebody says their shares vanished.

@@ -1,0 +1,60 @@
+{
+  "name": "sweep_run",
+  "type": "object",
+  "properties": {
+    "job": {
+      "type": "string",
+      "description": "Which scheduled job this was, e.g. closeHallLots"
+    },
+    "ok": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether it finished without throwing"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The useful field is the ABSENCE of recent rows. A sweep that stops running writes nothing at all, so 'when did this last run' is the question worth being able to ask"
+    },
+    "duration_ms": {
+      "type": "number",
+      "default": 0
+    },
+    "outcome": {
+      "type": "string",
+      "description": "What it actually did, as JSON — how many lots closed, how many notices went out. A sweep running every hour and doing nothing looks identical to one that is broken, unless it says so"
+    },
+    "error_message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "job"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

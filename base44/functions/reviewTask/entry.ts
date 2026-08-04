@@ -6,14 +6,15 @@ import {
   activeHands, crewFields, splitCredit, withHandUpdated, unmetPrerequisites, prerequisiteIds,
 } from '../../shared/tasks.js';
 import { roundAuec } from '../../shared/money.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 /**
  * Council review of filed work. Credit settles the agreed sum in full and directly —
  * task labour is paid for itself and is never drawn from the share pool.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (!isCouncil(user) && user.role !== 'admin') {
@@ -171,6 +172,7 @@ export default async function (req: Request): Promise<Response> {
 
     return Response.json({ ok: true, task: updated, hands: hands.length, split: perHand, unblocked });
   } catch (error) {
+    await reportError(base44, { source: 'reviewTask', error, route: 'reviewTask' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

@@ -4,6 +4,7 @@ import { LIVE_STATES } from '../../shared/hall.js';
 import { roundAuec } from '../../shared/money.js';
 import { appraise, appraisalBasis, standingBonusFor } from '../../shared/buyback.js';
 import { notify } from '../../shared/notices.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 /** An offer stands this long unless the council says otherwise. */
 const DEFAULT_VALID_HOURS = 72;
@@ -22,8 +23,8 @@ const MAX_VALID_HOURS = 24 * 14;
  * checkable against the market as it stood at appraisal, not as it stands now.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (!isCouncil(user) && user.role !== 'admin') {
@@ -154,6 +155,7 @@ export default async function (req: Request): Promise<Response> {
 
     return Response.json({ ok: true, offer: offerRecord, expires_at: expiresAt.toISOString() });
   } catch (error) {
+    await reportError(base44, { source: 'offerBuyback', error, route: 'offerBuyback' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

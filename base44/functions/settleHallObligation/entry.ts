@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { notify } from '../../shared/notices.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 /**
  * A debt to the hall is settled, or forgiven.
@@ -14,8 +15,8 @@ import { notify } from '../../shared/notices.js';
  * punishment nobody decided to impose.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (!isCouncil(user) && user.role !== 'admin') {
@@ -95,6 +96,7 @@ export default async function (req: Request): Promise<Response> {
 
     return Response.json({ ok: true, obligation: updated });
   } catch (error) {
+    await reportError(base44, { source: 'settleHallObligation', error, route: 'settleHallObligation' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

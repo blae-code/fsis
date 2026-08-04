@@ -1,12 +1,13 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { reportError } from '../../shared/diagnostics.js';
 
 // FSIS.bot payroll agent: when a FairShare work order is settled, compute each
 // crew member's payout, auto-log crew_pay expense entries in the Ledger,
 // and append a summary row to the configured Google Sheets master log.
 
 Deno.serve(async (req) => {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me().catch(() => null);
     if (user?.role !== 'admin') return Response.json({ error: 'Forbidden' }, { status: 403 });
     const payload = await req.json();
@@ -141,7 +142,7 @@ Deno.serve(async (req) => {
     console.log(`Work order ${wo.id} settled: ${entries.length} crew payouts booked, net ${net}`);
     return Response.json({ applied: true, payouts: entries.length, net_auec: net });
   } catch (error) {
-    console.error('onWorkOrderSettled error:', error);
+    await reportError(base44, { source: 'onWorkOrderSettled', error, route: 'onWorkOrderSettled' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

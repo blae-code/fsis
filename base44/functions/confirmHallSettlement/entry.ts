@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole } from '../../shared/roles.js';
 import { notify } from '../../shared/notices.js';
 import { TRADE_AWARD, recomputeTradeStanding } from '../../shared/trade.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 /**
  * Both parties say the goods changed hands.
@@ -15,8 +16,8 @@ import { TRADE_AWARD, recomputeTradeStanding } from '../../shared/trade.js';
  * stands as `won` and unsettled — visible to the council as something that may need a ruling.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -125,6 +126,7 @@ export default async function (req: Request): Promise<Response> {
         : `Recorded. The trade settles when the ${isSeller ? 'buyer' : 'seller'} confirms too — one party's word is a claim, two is a record.`,
     });
   } catch (error) {
+    await reportError(base44, { source: 'confirmHallSettlement', error, route: 'confirmHallSettlement' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

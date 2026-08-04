@@ -3,6 +3,7 @@ import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { DISPUTE_REMEDIES } from '../../shared/hall.js';
 import { TRADE_COST, TRADE_MARK_LIFETIME_DAYS, recomputeTradeStanding } from '../../shared/trade.js';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 /**
  * An Owner rules on a dispute.
@@ -20,8 +21,8 @@ import { notifyMany } from '../../shared/notices.js';
  * Both parties get the ruling in full. The one it goes against is owed the reasoning most of all.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (!isCouncil(user) && user.role !== 'admin') {
@@ -159,6 +160,7 @@ export default async function (req: Request): Promise<Response> {
 
     return Response.json({ ok: true, dispute: updated, lot_status: lotStatus });
   } catch (error) {
+    await reportError(base44, { source: 'ruleHallDispute', error, route: 'ruleHallDispute' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

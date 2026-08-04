@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { notify } from '../../shared/notices.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 /**
  * The member accepts or declines the offer.
@@ -13,8 +14,8 @@ import { notify } from '../../shared/notices.js';
  * stopped making sense.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -125,6 +126,7 @@ export default async function (req: Request): Promise<Response> {
 
     return Response.json({ ok: true, decision, loot_item_id: lootItemId });
   } catch (error) {
+    await reportError(base44, { source: 'respondToBuyback', error, route: 'respondToBuyback' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

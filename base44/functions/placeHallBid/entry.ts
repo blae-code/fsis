@@ -3,6 +3,7 @@ import { fsisRole, isCouncil } from '../../shared/roles.js';
 import { bidRefusal, closeAfterBid, minimumIncrement } from '../../shared/hall.js';
 import { roundAuec } from '../../shared/money.js';
 import { notify } from '../../shared/notices.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 /**
  * A bid in the hall.
@@ -17,8 +18,8 @@ import { notify } from '../../shared/notices.js';
  * reserve tells bidders where it sits just as surely as printing it would.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -118,6 +119,7 @@ export default async function (req: Request): Promise<Response> {
         : '',
     });
   } catch (error) {
+    await reportError(base44, { source: 'placeHallBid', error, route: 'placeHallBid' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

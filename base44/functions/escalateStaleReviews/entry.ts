@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { PROPRIETOR_EMAIL } from '../../shared/roles.js';
 import { APPEAL_ANSWER_DAYS } from '../../shared/reputation.js';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 /** How long filed work may wait for a decision before it goes over the reviewer's head. */
 const CREDIT_ESCALATION_DAYS = 5;
@@ -21,8 +22,9 @@ const CREDIT_ESCALATION_DAYS = 5;
  * Nothing is decided here. Silence is broken, not resolved.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
+  const sweepStartedAt = new Date();
   try {
-    const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole.entities;
     const now = new Date();
 
@@ -158,6 +160,8 @@ export default async function (req: Request): Promise<Response> {
       told: notices.length,
     });
   } catch (error) {
+    await reportError(base44, { source: 'escalateStaleReviews', error, route: 'escalateStaleReviews' });
+    await recordSweep(base44, { job: 'escalateStaleReviews', ok: false, error, startedAt: sweepStartedAt });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

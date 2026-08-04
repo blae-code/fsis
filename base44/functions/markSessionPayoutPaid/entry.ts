@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { notify } from '../../shared/notices.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 /**
  * Confirming the money actually reached a comrade.
@@ -18,8 +19,8 @@ import { notify } from '../../shared/notices.js';
  * is told either way — a tick that appeared and quietly vanished would be worse than no tick.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (!isCouncil(user) && user.role !== 'admin') {
@@ -100,6 +101,7 @@ export default async function (req: Request): Promise<Response> {
     const outstanding = payouts.filter((p: any) => !p.settles_at_payday && !p.paid).length;
     return Response.json({ ok: true, session: updated, outstanding });
   } catch (error) {
+    await reportError(base44, { source: 'markSessionPayoutPaid', error, route: 'markSessionPayoutPaid' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

@@ -2,14 +2,15 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { storefrontAdjustment, tierFor, MAX_TOTAL_DISCOUNT_PERCENT, MAX_DISCOUNT_PERCENT, MAX_SURCHARGE_PERCENT } from '../../shared/reputation.js';
 import { tradeAdjustment, tradeTierFor } from '../../shared/trade.js';
 import { roundPrice, roundPriceFloored, percentOfPrice } from '../../shared/money.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 // Public guest checkout: validates the cart against the live catalog server-side,
 // recomputes pricing, reserves physical stock, issues a tracking code, and creates
 // the order via service role so buyers don't need an account.
 
 Deno.serve(async (req) => {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const { customer_handle, items, delivery_location, customer_notes, discount_code, profile_key } = await req.json();
 
     if (!customer_handle?.trim() || !Array.isArray(items) || items.length === 0) {
@@ -218,7 +219,7 @@ Deno.serve(async (req) => {
       stock_reserved: reservedProducts.length > 0,
     });
   } catch (error) {
-    console.error('placeOrder error:', error);
+    await reportError(base44, { source: 'placeOrder', error, route: 'placeOrder' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

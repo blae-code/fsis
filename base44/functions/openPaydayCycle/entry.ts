@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { groupLogsByMember } from '../../shared/members.js';
 import { roundAuec, roundShares, sumShares } from '../../shared/money.js';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 // Opens a Pay Day cycle with a 72-hour decision window.
 // Runs automatically every Friday morning (FSIS.bot), or manually by management.
@@ -9,8 +10,9 @@ import { notifyMany } from '../../shared/notices.js';
 // anchored to real earnings — management can adjust it while the window is open.
 
 Deno.serve(async (req) => {
+  const base44 = createClientFromRequest(req);
+  const sweepStartedAt = new Date();
   try {
-    const base44 = createClientFromRequest(req);
 
     // Manual invocations must be admin; scheduled automation runs unauthenticated.
     const user = await base44.auth.me().catch(() => null);
@@ -107,7 +109,8 @@ Deno.serve(async (req) => {
     console.log(`Pay day cycle ${cycle.id} opened: pool ${pool}, ${totalShares} shares`);
     return Response.json({ opened: true, cycle_id: cycle.id, pool_auec: pool, total_shares: totalShares });
   } catch (error) {
-    console.error('openPaydayCycle error:', error);
+    await reportError(base44, { source: 'openPaydayCycle', error, route: 'openPaydayCycle' });
+    await recordSweep(base44, { job: 'openPaydayCycle', ok: false, error, startedAt: sweepStartedAt });
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

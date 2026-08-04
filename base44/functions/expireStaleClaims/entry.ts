@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 /**
  * Work claimed but never filed cannot sit in one comrade's hands forever while the yard waits.
@@ -10,8 +11,14 @@ import { notifyMany } from '../../shared/notices.js';
 const GRACE_DAYS = 7;
 
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
+  const sweepStartedAt = new Date();
+  /** Record that the sweep ran — the absence of these rows is how a stopped sweep is found. */
+  const recordAnd = async (payload: any) => {
+    await recordSweep(base44, { job: 'expireStaleClaims', ok: true, outcome: payload, startedAt: sweepStartedAt });
+    return Response.json(payload);
+  };
   try {
-    const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole.entities;
     const now = new Date();
     const cutoff = new Date(now.getTime() - GRACE_DAYS * 86400000).toISOString().slice(0, 10);
@@ -20,7 +27,7 @@ export default async function (req: Request): Promise<Response> {
     const stale = held.filter((t) => t.due_date && t.due_date <= cutoff);
 
     if (stale.length === 0) {
-      return Response.json({ ok: true, returned_to_board: 0, grace_days: GRACE_DAYS });
+      return recordAnd({ ok: true, returned_to_board: 0, grace_days: GRACE_DAYS });
     }
 
     await svc.labour_task.bulkUpdate(stale.map((t) => ({
@@ -64,8 +71,10 @@ export default async function (req: Request): Promise<Response> {
       notes: stale.map((t) => `${t.title} — ${t.assigned_handle || t.assigned_email || 'unknown'}`).join('; '),
     });
 
-    return Response.json({ ok: true, returned_to_board: stale.length, grace_days: GRACE_DAYS });
+    return recordAnd({ ok: true, returned_to_board: stale.length, grace_days: GRACE_DAYS });
   } catch (error) {
+    await reportError(base44, { source: 'expireStaleClaims', error, route: 'expireStaleClaims' });
+    await recordSweep(base44, { job: 'expireStaleClaims', ok: false, error, startedAt: sweepStartedAt });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isDue, nextDueAt, taskFromTemplate } from '../../shared/templates.js';
+import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 /**
  * Standing briefs put themselves back on the board when they come round.
@@ -14,8 +15,14 @@ import { isDue, nextDueAt, taskFromTemplate } from '../../shared/templates.js';
  * the date already moved simply steps aside.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
+  const sweepStartedAt = new Date();
+  /** Record that the sweep ran — the absence of these rows is how a stopped sweep is found. */
+  const recordAnd = async (payload: any) => {
+    await recordSweep(base44, { job: 'postRecurringTasks', ok: true, outcome: payload, startedAt: sweepStartedAt });
+    return Response.json(payload);
+  };
   try {
-    const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole.entities;
     const now = new Date();
 
@@ -23,7 +30,7 @@ export default async function (req: Request): Promise<Response> {
     const due = templates.filter((t) => isDue(t, now));
 
     if (due.length === 0) {
-      return Response.json({ ok: true, posted: 0, briefs_checked: templates.length });
+      return recordAnd({ ok: true, posted: 0, briefs_checked: templates.length });
     }
 
     const postedRows = [];
@@ -52,7 +59,7 @@ export default async function (req: Request): Promise<Response> {
     }
 
     if (postedRows.length === 0) {
-      return Response.json({ ok: true, posted: 0, briefs_checked: templates.length });
+      return recordAnd({ ok: true, posted: 0, briefs_checked: templates.length });
     }
 
     // One write for every brief that came round.
@@ -74,6 +81,8 @@ export default async function (req: Request): Promise<Response> {
       briefs: claimed.map((t) => t.template_name),
     });
   } catch (error) {
+    await reportError(base44, { source: 'postRecurringTasks', error, route: 'postRecurringTasks' });
+    await recordSweep(base44, { job: 'postRecurringTasks', ok: false, error, startedAt: sweepStartedAt });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

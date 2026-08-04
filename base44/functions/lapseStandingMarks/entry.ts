@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { totalFromEvents } from '../../shared/reputation.js';
 import { recomputeTradeStanding } from '../../shared/trade.js';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 /** One notice per comrade, however many of their marks lapsed — not one per mark. */
 const countByRecipient = (events: any[], key: string) => {
@@ -23,8 +24,14 @@ const countByRecipient = (events: any[], key: string) => {
  * standing moved, and every affected total is recomputed.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
+  const sweepStartedAt = new Date();
+  /** Record that the sweep ran — the absence of these rows is how a stopped sweep is found. */
+  const recordAnd = async (payload: any) => {
+    await recordSweep(base44, { job: 'lapseStandingMarks', ok: true, outcome: payload, startedAt: sweepStartedAt });
+    return Response.json(payload);
+  };
   try {
-    const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole.entities;
     const now = new Date();
 
@@ -82,7 +89,7 @@ export default async function (req: Request): Promise<Response> {
     const stillCounting = expired.filter((e) => (Number(e.effective_delta) || 0) !== 0);
 
     if (stillCounting.length === 0) {
-      return Response.json({ ok: true, lapsed: 0, members_recomputed: 0, trade_marks_lapsed: tradeCounting.length });
+      return recordAnd({ ok: true, lapsed: 0, members_recomputed: 0, trade_marks_lapsed: tradeCounting.length });
     }
 
     // The original assessment is never rewritten — it is voided, and its lapse is recorded.
@@ -144,6 +151,8 @@ export default async function (req: Request): Promise<Response> {
       trade_marks_lapsed: tradeCounting.length,
     });
   } catch (error) {
+    await reportError(base44, { source: 'lapseStandingMarks', error, route: 'lapseStandingMarks' });
+    await recordSweep(base44, { job: 'lapseStandingMarks', ok: false, error, startedAt: sweepStartedAt });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

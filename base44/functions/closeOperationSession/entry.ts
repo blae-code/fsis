@@ -5,6 +5,7 @@ import { AWARD, recomputeStanding } from '../../shared/reputation.js';
 import { roundAuec, roundShares } from '../../shared/money.js';
 import { noShows, roster, stintMinutes, totalCosts } from '../../shared/sessions.js';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 /**
  * The run is settled.
@@ -24,8 +25,8 @@ import { notifyMany } from '../../shared/notices.js';
  * Settling twice would pay twice, so the run is claimed atomically before anything is written.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (!isCouncil(user) && user.role !== 'admin') {
@@ -229,6 +230,7 @@ export default async function (req: Request): Promise<Response> {
       no_shows: absent.length,
     });
   } catch (error) {
+    await reportError(base44, { source: 'closeOperationSession', error, route: 'closeOperationSession' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

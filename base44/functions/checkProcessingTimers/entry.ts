@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 /**
  * Telling the comrades watching a hopper that it is out.
@@ -12,8 +13,14 @@ import { notifyMany } from '../../shared/notices.js';
  * wake the same comrades twice for the same hopper.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
+  const sweepStartedAt = new Date();
+  /** Record that the sweep ran — the absence of these rows is how a stopped sweep is found. */
+  const recordAnd = async (payload: any) => {
+    await recordSweep(base44, { job: 'checkProcessingTimers', ok: true, outcome: payload, startedAt: sweepStartedAt });
+    return Response.json(payload);
+  };
   try {
-    const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole.entities;
     const now = new Date();
 
@@ -23,7 +30,7 @@ export default async function (req: Request): Promise<Response> {
     const ready = running.filter((job: any) => job.ready_at && new Date(job.ready_at) <= now);
 
     if (ready.length === 0) {
-      return Response.json({ ok: true, ready: 0, watched: running.length });
+      return recordAnd({ ok: true, ready: 0, watched: running.length });
     }
 
     let told = 0;
@@ -71,8 +78,10 @@ export default async function (req: Request): Promise<Response> {
       });
     }
 
-    return Response.json({ ok: true, ready: announced.length, notices_sent: told, watched: running.length });
+    return recordAnd({ ok: true, ready: announced.length, notices_sent: told, watched: running.length });
   } catch (error) {
+    await reportError(base44, { source: 'checkProcessingTimers', error, route: 'checkProcessingTimers' });
+    await recordSweep(base44, { job: 'checkProcessingTimers', ok: false, error, startedAt: sweepStartedAt });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

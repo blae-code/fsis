@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { commissionDueAt, commissionOn, endStateFor, hasClosed } from '../../shared/hall.js';
 import { roundAuec } from '../../shared/money.js';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 /**
  * Every lot whose time is up reaches a terminal state.
@@ -17,8 +18,14 @@ import { notifyMany } from '../../shared/notices.js';
  * close the same lot twice and raise two commissions on one sale.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
+  const sweepStartedAt = new Date();
+  /** Record that the sweep ran — the absence of these rows is how a stopped sweep is found. */
+  const recordAnd = async (payload: any) => {
+    await recordSweep(base44, { job: 'closeHallLots', ok: true, outcome: payload, startedAt: sweepStartedAt });
+    return Response.json(payload);
+  };
   try {
-    const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole.entities;
     const now = new Date();
 
@@ -29,7 +36,7 @@ export default async function (req: Request): Promise<Response> {
     const due = open.filter((lot: any) => hasClosed(lot, now));
 
     if (due.length === 0) {
-      return Response.json({ ok: true, closed: 0, open: open.length });
+      return recordAnd({ ok: true, closed: 0, open: open.length });
     }
 
     const closed = [];
@@ -161,8 +168,10 @@ export default async function (req: Request): Promise<Response> {
       });
     }
 
-    return Response.json({ ok: true, closed: closed.length, lots: closed, open: open.length });
+    return recordAnd({ ok: true, closed: closed.length, lots: closed, open: open.length });
   } catch (error) {
+    await reportError(base44, { source: 'closeHallLots', error, route: 'closeHallLots' });
+    await recordSweep(base44, { job: 'closeHallLots', ok: false, error, startedAt: sweepStartedAt });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

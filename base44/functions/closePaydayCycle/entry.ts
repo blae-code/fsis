@@ -3,6 +3,7 @@ import { PROPRIETOR_EMAIL } from '../../shared/roles.js';
 import { contractorIndex, isContractorLine, logsBelongingTo, normaliseHandle, sameHandle, sharesInLogs } from '../../shared/members.js';
 import { roundAuec, roundShares } from '../../shared/money.js';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 // Closes pay day cycles whose 72-hour window has elapsed (hourly FSIS.bot check),
 // or immediately when management force-closes. Publishes the final transparency
@@ -11,8 +12,9 @@ import { notifyMany } from '../../shared/notices.js';
 // pool stays in the business treasury for future pay days.
 
 Deno.serve(async (req) => {
+  const base44 = createClientFromRequest(req);
+  const sweepStartedAt = new Date();
   try {
-    const base44 = createClientFromRequest(req);
 
     const user = await base44.auth.me().catch(() => null);
     const payload = await req.json().catch(() => ({}));
@@ -173,7 +175,8 @@ Deno.serve(async (req) => {
 
     return Response.json({ checked: openCycles.length, closed: results });
   } catch (error) {
-    console.error('closePaydayCycle error:', error);
+    await reportError(base44, { source: 'closePaydayCycle', error, route: 'closePaydayCycle' });
+    await recordSweep(base44, { job: 'closePaydayCycle', ok: false, error, startedAt: sweepStartedAt });
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

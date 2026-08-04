@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { daysOverdue, dueLadderSteps } from '../../shared/hall.js';
 import { TRADE_COST, TRADE_MARK_LIFETIME_DAYS, recomputeTradeStanding } from '../../shared/trade.js';
 import { notify } from '../../shared/notices.js';
+import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 /**
  * Climbing the ladder on debts to the hall, one rung at a time.
@@ -41,8 +42,14 @@ const STEP_NEXT: Record<string, string> = {
 };
 
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
+  const sweepStartedAt = new Date();
+  /** Record that the sweep ran — the absence of these rows is how a stopped sweep is found. */
+  const recordAnd = async (payload: any) => {
+    await recordSweep(base44, { job: 'sweepHallObligations', ok: true, outcome: payload, startedAt: sweepStartedAt });
+    return Response.json(payload);
+  };
   try {
-    const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole.entities;
     const now = new Date();
 
@@ -127,8 +134,10 @@ export default async function (req: Request): Promise<Response> {
       });
     }
 
-    return Response.json({ ok: true, checked: owed.length, acted_on: climbed.length, climbed });
+    return recordAnd({ ok: true, checked: owed.length, acted_on: climbed.length, climbed });
   } catch (error) {
+    await reportError(base44, { source: 'sweepHallObligations', error, route: 'sweepHallObligations' });
+    await recordSweep(base44, { job: 'sweepHallObligations', ok: false, error, startedAt: sweepStartedAt });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 /**
  * Offers that have run their course.
@@ -11,8 +12,14 @@ import { notifyMany } from '../../shared/notices.js';
  * Each is claimed before anybody is told, so an overlapping sweep cannot expire one twice.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
+  const sweepStartedAt = new Date();
+  /** Record that the sweep ran — the absence of these rows is how a stopped sweep is found. */
+  const recordAnd = async (payload: any) => {
+    await recordSweep(base44, { job: 'expireBuybackOffers', ok: true, outcome: payload, startedAt: sweepStartedAt });
+    return Response.json(payload);
+  };
   try {
-    const base44 = createClientFromRequest(req);
     const svc = base44.asServiceRole.entities;
     const now = new Date();
 
@@ -20,7 +27,7 @@ export default async function (req: Request): Promise<Response> {
     const lapsed = live.filter((offer: any) => offer.expires_at && new Date(offer.expires_at) <= now);
 
     if (lapsed.length === 0) {
-      return Response.json({ ok: true, expired: 0, live: live.length });
+      return recordAnd({ ok: true, expired: 0, live: live.length });
     }
 
     const expired = [];
@@ -60,8 +67,10 @@ export default async function (req: Request): Promise<Response> {
       });
     }
 
-    return Response.json({ ok: true, expired: expired.length, live: live.length });
+    return recordAnd({ ok: true, expired: expired.length, live: live.length });
   } catch (error) {
+    await reportError(base44, { source: 'expireBuybackOffers', error, route: 'expireBuybackOffers' });
+    await recordSweep(base44, { job: 'expireBuybackOffers', ok: false, error, startedAt: sweepStartedAt });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
