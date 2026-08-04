@@ -1,7 +1,7 @@
 import React from 'react';
 import { Command, Scale, Store, Boxes, HardHat } from 'lucide-react';
 
-import ProprietorCommandCenter from '@/components/apps/management/ProprietorCommandCenter';
+import ProprietorCommandCenter from '@/components/apps/management/proprietor/ProprietorCommandCenter';
 import CouncilReviewQueue from '@/components/apps/management/review/CouncilReviewQueue';
 import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
 import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
