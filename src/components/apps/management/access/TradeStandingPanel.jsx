@@ -66,7 +66,8 @@ export default function TradeStandingPanel() {
           {eligible.map((o) => (
             <div key={o.id} className="border p-1.5 space-y-1" style={{ borderColor: '#241D14', background: '#0A0805' }}>
               <div className="flex items-center justify-between gap-2 text-[9px]">
-                <span className="truncate" style={{ color: '#EDE5D6' }}>{o.customer_handle} · {o.tracking_code}</span>
+                {/* Never customer_handle — that is whatever the buyer typed, often their real name. */}
+                <span className="truncate" style={{ color: '#EDE5D6' }}>{o.guest_number || o.customer_profile_handle || 'GUEST'} · {o.tracking_code}</span>
                 <span className="text-[8px] shrink-0" style={{ color: '#7A6E60' }}>{(o.status || '').toUpperCase()}</span>
               </div>
               <input

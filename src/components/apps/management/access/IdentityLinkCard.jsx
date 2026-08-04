@@ -17,10 +17,6 @@ export default function IdentityLinkCard({ link, onRule, pending }) {
         <span className="text-[8px] font-bold shrink-0" style={{ color: '#E0A22E' }}>WEIGHT {link.score}</span>
       </div>
 
-      <div className="text-[8px]" style={{ color: '#6B6155' }}>
-        {link.flagged_email} · {link.other_email}
-      </div>
-
       <ul className="space-y-0.5">
         {(link.signals || []).map((s, i) => (
           <li key={i} className="text-[9px] border-l pl-2 leading-snug" style={{ borderColor: '#3A2F20', color: '#A89C8A' }}>{s}</li>
@@ -29,7 +25,7 @@ export default function IdentityLinkCard({ link, onRule, pending }) {
 
       {!open ? (
         <p className="text-[8px]" style={{ color: link.status === 'linked' ? '#D08A6A' : '#8A8F45' }}>
-          {link.status === 'linked' ? 'RULED ONE COMRADE' : 'RULED TWO COMRADES'} by {link.ruled_by_email} — {link.ruling}
+          {link.status === 'linked' ? 'RULED ONE COMRADE' : 'RULED TWO COMRADES'} by the council — {link.ruling}
         </p>
       ) : (
         <div className="space-y-1.5 border-t pt-1.5" style={{ borderColor: '#2E2519' }}>

@@ -169,7 +169,9 @@ Deno.serve(async (req) => {
         hq: 'Stanton System',
       },
       buyer: {
-        handle: customer_handle.trim(),
+        // The assigned number or callsign, never what was typed at checkout — an invoice is read
+        // by hands who are not the buyer, and a real name must not travel with it.
+        handle: guest_number,
         profile_id: customerProfile?.id || '',
         profile_handle: customerProfile?.handle || '',
         delivery_location: delivery_location.trim(),

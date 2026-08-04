@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import ClientHistoryRow from '@/components/apps/management/proprietor/ClientHistoryRow';
+import { buyerLabel } from '@/lib/buyerLabel';
 
 // Groups all past orders by customer handle, surfacing repeat customers
 // and each client's preferred salvage commodities.
@@ -11,7 +12,7 @@ export default function ClientHistoryPanel({ orders, products }) {
   const salvageCodes = new Set(products.filter((p) => p.category === 'salvage_commodity' && p.code).map((p) => p.code));
 
   const clients = Object.values(orders.reduce((map, o) => {
-    const key = o.customer_handle || 'Unknown buyer';
+    const key = buyerLabel(o);
     map[key] ||= { handle: key, orders: [], total: 0, commodities: {} };
     map[key].orders.push(o);
     if (o.status !== 'cancelled') {

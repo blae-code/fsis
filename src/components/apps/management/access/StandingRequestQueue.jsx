@@ -54,7 +54,6 @@ export default function StandingRequestQueue() {
                 {r.skills && <div>OFFERS: {r.skills}</div>}
                 {r.availability && <div>AVAILABLE: {r.availability}{r.timezone ? ` (${r.timezone})` : ''}</div>}
                 {r.note && <div style={{ color: '#9C9080' }}>“{r.note}”</div>}
-                {r.applicant_email && <div style={{ color: '#5F564A' }}>{r.applicant_email}</div>}
               </div>
               <input
                 value={notes[r.id] || ''}

@@ -1,9 +1,10 @@
 import React from 'react';
 import { money } from '@/components/apps/management/proprietor/proprietorUtils';
+import { buyerLabel } from '@/lib/buyerLabel';
 
 export default function BuyerLedger({ orders }) {
   const buyers = Object.values(orders.reduce((map, o) => {
-    const key = o.customer_handle || 'Unknown buyer';
+    const key = buyerLabel(o);
     map[key] ||= { handle: key, count: 0, total: 0, last: o.created_date, active: 0 };
     map[key].count += 1; map[key].total += Number(o.total_auec || 0);
     if (!['delivered', 'cancelled'].includes(o.status)) map[key].active += 1;
