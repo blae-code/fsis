@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ConsoleFold from '@/components/console/ConsoleFold';
 import MaterialPlanner from '@/components/apps/fabrication/MaterialPlanner';
 import RecipeLibrary from '@/components/apps/fabrication/RecipeLibrary';
+import ProductionPipeline from '@/components/apps/management/pipeline/ProductionPipeline';
 import FabQueueCard from './FabQueueCard';
 import FabProjectForm from './FabProjectForm';
 
@@ -49,6 +50,8 @@ export default function FabQueueConsole() {
 
   return (
     <div className="space-y-4 font-mono">
+      <ProductionPipeline />
+
       <div className="flex items-center gap-2 text-[9px] tracking-[0.22em]" style={{ color: '#E0A22E' }}>
         ⚙ MANUFACTURING QUEUE — {projects.filter((p) => p.status !== 'complete').length} RUNS OPEN
         {urgent > 0 && <span style={{ color: '#C05050' }}>· {urgent} URGENT</span>}
