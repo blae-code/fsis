@@ -18,6 +18,7 @@ import InventoryManager from '@/components/apps/management/InventoryManager';
 import StockByClassPanel from '@/components/apps/management/inventory/StockByClassPanel';
 import StockBySizePanel from '@/components/apps/management/inventory/StockBySizePanel';
 import SalvageCommodityDashboard from '@/components/apps/management/SalvageCommodityDashboard';
+import SalvageProfitDashboard from '@/components/apps/management/SalvageProfitDashboard';
 import LootSummaryTab from '@/components/loot/LootSummaryTab';
 import PatchResetConsole from '@/components/apps/management/processing/PatchResetConsole';
 import ProcessingTimersPanel from '@/components/apps/management/processing/ProcessingTimersPanel';
@@ -69,7 +70,7 @@ export const CONSOLE_GROUPS = [
       { id: 'intake',    label: 'LOOT INTAKE',  glyph: '⬚', render: () => <RapidLootIntakePanel /> },
       { id: 'warehouse', label: 'WAREHOUSE',    glyph: '▦', render: () => <WarehouseCommandLayer /> },
       { id: 'inventory', label: 'INVENTORY',    glyph: '▤', render: () => <div className="space-y-4"><ConsoleFold label="STOCK ROLLUPS — BY CLASS & SIZE"><StockByClassPanel /><StockBySizePanel /></ConsoleFold><InventoryManager /></div> },
-      { id: 'salvage',   label: 'SALVAGE',      glyph: '◈', render: () => <SalvageCommodityDashboard /> },
+      { id: 'salvage',   label: 'SALVAGE',      glyph: '◈', render: () => <div className="space-y-4"><SalvageProfitDashboard /><ConsoleFold label="COMMODITY YIELD — SCU HARVESTED & SESSIONS"><SalvageCommodityDashboard /></ConsoleFold></div> },
       { id: 'lootsum',   label: 'LOOT SUMMARY', glyph: '◔', bare: true, render: () => <LootSummaryTab /> },
       { id: 'hoppers',   label: 'HOPPERS',      glyph: '⧗', render: () => <div className="space-y-4"><ProcessingTimersPanel /><ConsoleFold label="PATCH RESET CONSOLE — BULK HOPPER CLEAR"><PatchResetConsole /></ConsoleFold></div> },
     ],
