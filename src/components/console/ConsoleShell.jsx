@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ConsoleGroupRail from '@/components/console/ConsoleGroupRail';
 import ConsoleSectionTabs from '@/components/console/ConsoleSectionTabs';
 import ConsoleStatusBar from '@/components/console/ConsoleStatusBar';
+import ConsoleRoom from '@/components/console/ConsoleRoom';
 
 /**
  * The council console deck — one fixed-viewport shell shared by every management
@@ -67,9 +68,9 @@ export default function ConsoleShell({ groups, header }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.16, ease: 'easeOut' }}
-                className={`absolute inset-0 overflow-y-auto ${section.bare ? '' : 'p-4'}`}
+                className={`absolute inset-0 ${section.bare ? '' : 'overflow-hidden'}`}
               >
-                {section.render()}
+                <ConsoleRoom group={group} section={section} />
               </motion.div>
             </AnimatePresence>
           </div>
