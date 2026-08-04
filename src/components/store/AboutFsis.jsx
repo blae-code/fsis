@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import FsisSeal from '@/components/brand/FsisSeal';
 import { FSIS, OPERATOR, FOUNDING_STORY, CORE_VALUES, FLEET_REGISTRY, FLEET_NOTE, PRINCIPLES } from '@/lib/fsisLore';
 import PatronFaq from '@/components/store/PatronFaq';
+import HomeBerth from '@/components/store/HomeBerth';
 
 export default function AboutFsis() {
   return (
@@ -64,6 +65,8 @@ export default function AboutFsis() {
           </motion.div>
         ))}
       </div>
+
+      <HomeBerth />
 
       <div>
         <h4 className="font-mono text-[10px] tracking-[0.25em] mb-2" style={{ color: '#8A7E6C' }}>// FLEET REGISTRY</h4>

@@ -1,10 +1,10 @@
 // Known delivery destinations with ETA hints — used by checkout, quotes and tracking
 // kind: 'orbital' (station), 'ground' (city/landing zone), 'outpost' (asteroid base)
 export const DELIVERY_LOCATIONS = [
-  { name: 'Port Tressler', region: 'microTech', eta: '2–6h', kind: 'orbital', note: 'FSIS home port — fastest turnaround' },
-  { name: 'New Babbage', region: 'microTech', eta: '4–8h', kind: 'ground' },
-  { name: 'Everus Harbor', region: 'Hurston', eta: '6–12h', kind: 'orbital' },
-  { name: 'Lorville', region: 'Hurston', eta: '8–14h', kind: 'ground' },
+  { name: 'Lorville', region: 'Hurston', eta: '2–6h', kind: 'ground', note: 'FSIS home berth — Teasa Spaceport, fastest turnaround' },
+  { name: 'Everus Harbor', region: 'Hurston', eta: '4–8h', kind: 'orbital', note: 'Orbital transfer above home' },
+  { name: 'Port Tressler', region: 'microTech', eta: '8–14h', kind: 'orbital' },
+  { name: 'New Babbage', region: 'microTech', eta: '8–16h', kind: 'ground' },
   { name: 'Baijini Point', region: 'ArcCorp', eta: '6–12h', kind: 'orbital' },
   { name: 'Area18', region: 'ArcCorp', eta: '8–14h', kind: 'ground' },
   { name: 'Seraphim Station', region: 'Crusader', eta: '6–12h', kind: 'orbital' },
