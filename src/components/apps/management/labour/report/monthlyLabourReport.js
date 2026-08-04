@@ -53,7 +53,8 @@ export function buildMonthlyReport({ tasks = [], events = [], month }) {
 
   events.forEach((event) => {
     if (event.voided || !event.created_date || monthKey(event.created_date) !== month) return;
-    const r = row(event.member_handle || event.member_email || 'unattributed');
+    // Never the email — a report is read aloud at review, and an address is a real name in disguise.
+    const r = row(event.member_handle || 'unattributed');
     const delta = Number(event.effective_delta ?? event.delta) || 0;
     r.standing += delta;
     if (delta < 0) r.marks += 1;
