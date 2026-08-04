@@ -5,19 +5,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import DeckChevronRail from '@/components/console/deck/DeckChevronRail';
 import DeckPanel from '@/components/console/deck/DeckPanel';
 import ProductionPipeline from '@/components/apps/management/pipeline/ProductionPipeline';
+import RefineryThroughputDashboard from './RefineryThroughputDashboard';
 import RefineYieldPlanner from './RefineYieldPlanner';
 import ProcessingTimersPanel from './ProcessingTimersPanel';
 import PatchResetConsole from './PatchResetConsole';
 
 /** The refining bench, read in stages: reckon the load, fill the hopper, collect it, clear the bench on a patch. */
 const STAGES = [
+  { id: 'floor',   label: 'THE FLOOR', glyph: '◉', tone: 'hot', desc: 'Throughput, capacity in use and expected turnaround on every batch' },
   { id: 'plan',    label: 'RECKON',   glyph: '⚗', tone: 'hot', desc: 'Method against yield, wait and fee before the hopper is filled' },
   { id: 'hoppers', label: 'HOPPERS',  glyph: '⧗', tone: 'hot', desc: 'What is cooking, what is ready, and what is owed collecting' },
   { id: 'reset',   label: 'PATCH',    glyph: '⚠',              desc: 'Clear hoppers wiped by a game patch' },
 ];
 
 export default function RefineryConsole() {
-  const [stage, setStage] = useState('plan');
+  const [stage, setStage] = useState('floor');
   const active = STAGES.find((s) => s.id === stage);
 
   const { data: jobs = [] } = useQuery({
@@ -27,6 +29,7 @@ export default function RefineryConsole() {
   });
 
   const counts = useMemo(() => ({
+    floor: jobs.filter((j) => j.status === 'running' || j.status === 'ready').length,
     hoppers: jobs.filter((j) => j.status === 'running' || j.status === 'ready').length,
   }), [jobs]);
 
@@ -53,6 +56,7 @@ export default function RefineryConsole() {
             transition={{ duration: 0.16 }}
             className="p-3"
           >
+            {stage === 'floor' && <RefineryThroughputDashboard />}
             {stage === 'plan' && <RefineYieldPlanner />}
             {stage === 'hoppers' && <ProcessingTimersPanel />}
             {stage === 'reset' && <PatchResetConsole />}
