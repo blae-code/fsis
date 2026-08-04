@@ -35,6 +35,7 @@ import CollectionsPanel from '@/components/apps/management/hall/CollectionsPanel
 import AssetLibraryPanel from '@/components/apps/management/assets/AssetLibraryPanel';
 import ProcessingTimersPanel from '@/components/apps/management/processing/ProcessingTimersPanel';
 import PatchResetConsole from '@/components/apps/management/processing/PatchResetConsole';
+import CouncilReviewQueue from '@/components/apps/management/review/CouncilReviewQueue';
 import { hasCouncilAccess, fsisRole, ROLE_META } from '@/lib/roles';
 import { Link } from 'react-router-dom';
 
@@ -46,6 +47,7 @@ const TABS = [
   // ARCHIVED: { id: 'jobs', label: 'JOB BOARD', glyph: '✦' }, — operator feature
   // ARCHIVED: { id: 'crew', label: 'CREW',       glyph: '◉' }, — operator feature
   { id: 'command',   label: 'COMMAND',    glyph: '◈' },
+  { id: 'review',    label: 'REVIEW',     glyph: '⚖' },
   { id: 'payday',    label: 'PAYDAY',     glyph: '◉' },
   { id: 'overview',  label: 'OVERVIEW',   glyph: '◈' },
   { id: 'store',     label: 'STORE',      glyph: '⬡' },
@@ -158,6 +160,7 @@ export default function ManagementContent() {
       {/* Content */}
       <div className="flex-1 overflow-auto">
         {activeTab === 'command'   && <ProprietorCommandCenter />}
+        {activeTab === 'review'    && <CouncilReviewQueue />}
         {activeTab === 'payday'    && <PaydayManagementPanel />}
         {activeTab === 'overview'  && <div className="p-4"><ManagementView /></div>}
         {activeTab === 'store'     && <div className="p-4"><ProductManager /></div>}
