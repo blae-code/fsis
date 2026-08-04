@@ -70,7 +70,7 @@
         "denied"
       ],
       "default": "none",
-      "description": "Where the comrade's appeal stands, if one was filed"
+      "description": "Where the comrade's appeal stands, if one was filed NOTE: 'denied' is a dead value that nothing writes — a rejected appeal is recorded as 'upheld', meaning the original mark stands. Do not reach for 'denied'; two words for one outcome is how a record stops being readable."
     },
     "appeal_reason": {
       "type": "string",

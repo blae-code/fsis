@@ -492,3 +492,36 @@ and context. Nothing is thrown by the logger itself — reporting a failure must
 first with their what-to-do, the sweep table with anything overdue highlighted, and recent
 `debug_log` entries with a resolve toggle. Plus a member lookup running `traceMember`, which is what
 you will actually want the first time somebody says their shares vanished.
+
+---
+
+## 16. Loops that were missing (2026-08-03)
+
+Five processes could be started and never finished. Three of them were cases where backend copy
+*promised* something no endpoint could deliver.
+
+**`releaseHallDrafts`** — `{ lot_ids: string[], hours? }`. **The missing half of bulk intake.**
+`bulkDraftHallLots` writes up to 50 drafts and nothing could put them on the floor; a lot held for
+appraisal was a one-way door. Guards are re-checked at release, not at write-up, because a draft can
+sit for days. Returns `released` and per-lot `refused` with reasons. Council may release a lot held
+for appraisal; a seller may release their own.
+
+**`answerHallDispute`** — `{ dispute_id, answer?, withdraw? }`. `raiseHallDispute` told the accused
+"give your account, an Owner will read both before ruling" — and there was **no way to give it**.
+The accused answers; the complainant may withdraw (which returns the lot to `won`/`settled` rather
+than leaving it stuck at `disputed`). Show the answer beside the complaint in the Owner ruling panel.
+
+**`countersignInstrument`** *(Owner)* — `{ signature_id }`. For instruments with
+`counter_signs_automatically: false`, `signInstrument` promised "an Owner will countersign and you
+will be told when they are". Nothing could. A bespoke agreement stayed bound on one side only.
+
+**`collectProcessing`** *(council)* — `{ job_id, outcome: 'collected'|'abandoned', notes? }`. Hoppers
+announced "ready" and stayed there forever, burying the one signal that mattered — material standing
+unclaimed. `abandoned` requires a reason.
+
+**`abandonOperationSession`** *(council)* — `{ session_id, reason, confirm_unpaid? }`. The only exit
+from an underway run was to *settle* it, which awards standing and writes share-bearing time logs —
+wrong for a run where two people found the field stripped and went to bed. This closes it with no
+pay, no shares, no standing, and keeps the presence record because those comrades did turn up.
+**Guarded:** 30+ logged minutes returns 409 asking for `confirm_unpaid: true`, because real time
+given should be settled rather than written off.
