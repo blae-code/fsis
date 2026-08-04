@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Check } from 'lucide-react';
+import ExpenseReceiptReader from './ExpenseReceiptReader';
 
 const AMBER = '#E0A22E';
 const TEAL  = '#5F9A8C';
@@ -70,6 +71,8 @@ export default function MicroExpenseLogger() {
   return (
     <div className="space-y-4 font-mono p-4">
       <div className="text-[9px] tracking-[0.2em]" style={{ color: DIM }}>◈ MICRO-EXPENSE LOGGER</div>
+
+      <ExpenseReceiptReader />
 
       {/* Quick category picker */}
       <div className="border p-3" style={PANEL}>
