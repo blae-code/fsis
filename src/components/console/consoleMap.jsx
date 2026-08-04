@@ -14,6 +14,7 @@ import AdminRestockControls from '@/components/store/AdminRestockControls';
 import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
 import PricingAdvisorPanel from '@/components/apps/management/pricing/PricingAdvisorPanel';
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
+import ScanDesk from '@/components/apps/management/scan/ScanDesk';
 import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
 import InventoryManager from '@/components/apps/management/InventoryManager';
 import StockByClassPanel from '@/components/apps/management/inventory/StockByClassPanel';
@@ -79,6 +80,7 @@ export const CONSOLE_GROUPS = [
     id: 'yard', label: 'YARD', icon: Boxes,
     blurb: 'What comes in, where it sits, and what it is worth.',
     sections: [
+      { id: 'scan',      label: 'SCAN DESK',    glyph: '◎', render: () => <ScanDesk /> },
       { id: 'intake',    label: 'LOOT INTAKE',  glyph: '⬚', render: () => <RapidLootIntakePanel /> },
       { id: 'warehouse', label: 'WAREHOUSE',    glyph: '▦', render: () => <WarehouseCommandLayer /> },
       { id: 'inventory', label: 'INVENTORY',    glyph: '▤', render: () => <div className="space-y-4"><StationSweepPanel /><ConsoleFold label="STOCK ROLLUPS — BY CLASS & SIZE"><StockByClassPanel /><StockBySizePanel /></ConsoleFold><InventoryManager /></div> },
