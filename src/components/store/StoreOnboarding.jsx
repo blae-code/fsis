@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, Database, Download, LayoutDashboard, Maximize, ShoppingCart, ChevronRight, ChevronLeft, CheckCircle2, MonitorDown, Keyboard, ShieldCheck } from 'lucide-react';
+import { Bot, Database, Download, Maximize, ShoppingCart, ChevronRight, ChevronLeft, CheckCircle2, MonitorDown, Keyboard, ShieldCheck, ClipboardList, Handshake, PackageSearch } from 'lucide-react';
 import FsisLogo from '@/components/brand/FsisLogo';
 import SerialStrip from '@/components/brand/SerialStrip';
 import ScanlineOverlay from '@/components/onboarding/ScanlineOverlay';
@@ -144,17 +144,17 @@ export default function StoreOnboarding({ onComplete }) {
             {step === 1 && (
               <motion.div key="orientation" {...stepWrap} className="space-y-4">
                 <h2 className="text-xl font-bold leading-tight" style={{ color: '#E5DDD0' }}>
-                  Read the <span style={{ color: '#C8893B' }}>terminal map.</span>
+                  How <span style={{ color: '#C8893B' }}>buying works.</span>
                 </h2>
                 <p className="text-xs leading-relaxed" style={{ color: '#B8AC9A' }}>
-                  FSIS has two sides: the public storefront for buyers and the proprietor command layer for fulfillment, inventory, freight, and ledger work.
+                  Buying from FSIS is four steps, and none of them ask you for an account.
                 </p>
                 <div className="grid sm:grid-cols-2 gap-2">
                   {[
-                    [ShoppingCart, 'Storefront', 'Browse stock, build a manifest, schedule handoff, and track orders.'],
-                    [LayoutDashboard, 'Command Center', 'Admin-only operations for intake, warehouse, freight, payouts, and QA.'],
-                    [Keyboard, 'Fast Controls', 'Use / for search and number keys to jump between storefront sections.'],
-                    [MonitorDown, 'Live Terminal', 'Status strips, market ticker, and order rail keep the active workflow visible.'],
+                    [ShoppingCart, '1 · BROWSE THE CATALOG', 'Reclaimed commodities, salvaged gear and components — every listing shows stock, unit price and how it compares to the live market.'],
+                    [ClipboardList, '2 · BUILD A MANIFEST', 'Add what you want and transmit it. You are given a tracking code and a handoff passphrase — keep both.'],
+                    [Handshake, '3 · AGREE A HANDOFF', 'Propose a time and place. We confirm, meet you in game, and you pay only in the trade window at handoff.'],
+                    [PackageSearch, '4 · TRACK IT', 'Your code follows the order through confirmation, fulfilment and delivery. Message us on it at any point.'],
                   ].map(([Icon, title, text]) => (
                     <div key={title} className="border p-3" style={{ borderColor: '#3A2F20', background: '#0E0C09' }}>
                       <div className="flex items-center gap-2 text-[10px] font-bold" style={{ color: '#E0A22E' }}><Icon className="w-3.5 h-3.5" />{title}</div>

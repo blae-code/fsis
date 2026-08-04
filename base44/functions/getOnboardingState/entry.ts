@@ -29,13 +29,9 @@ export default async function (req: Request): Promise<Response> {
       svc.instrument_signature.filter({ signatory_user_id: user.id }, '-signed_at', 50),
     ]);
 
-    // Guest orders this comrade could still claim, which is the most concrete reason to have an
-    // account at all — so it is counted rather than asserted.
-    const orders = user.email
-      ? await svc.order.filter({ customer_email: user.email }, '-created_date', 50).catch(() => [])
-      : [];
-
-    return Response.json(onboardingState({ user, requests, instruments, signatures, orders }, new Date()));
+    // Guest orders are deliberately not counted here: nothing on an unclaimed order names an
+    // account, so only the buyer's own tracking codes can find them. The storefront does that.
+    return Response.json(onboardingState({ user, requests, instruments, signatures }, new Date()));
   } catch (error) {
     await reportError(base44, { source: 'getOnboardingState', error, route: 'getOnboardingState' });
     return Response.json({ error: error.message }, { status: 500 });

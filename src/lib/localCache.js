@@ -82,3 +82,12 @@ export const storeCache = {
   hasDismissedHowTo: () => read(STORE_KEYS.howto) === true,
   dismissHowTo: () => write(STORE_KEYS.howto, true),
 };
+
+// Labour board cache — a comrade is walked through the board once, not every visit.
+// Scoped per account, because standing is granted to a person and not to a browser.
+const WORK_KEYS = { onboarded: 'fsis.work.onboarded' };
+
+export const workCache = {
+  hasOnboarded: () => read(scopedKey(WORK_KEYS.onboarded)) === true,
+  markOnboarded: () => write(scopedKey(WORK_KEYS.onboarded), true),
+};

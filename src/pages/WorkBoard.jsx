@@ -16,6 +16,8 @@ import WorkerSignalBoard from '@/components/work/board/WorkerSignalBoard';
 import WorkerGauges from '@/components/work/board/WorkerGauges';
 import BoardDesk from '@/components/work/board/BoardDesk';
 import { boardModel } from '@/components/work/board/boardSignals';
+import ContractorOnboarding from '@/components/work/onboarding/ContractorOnboarding';
+import { workCache, setCacheScope } from '@/lib/localCache';
 
 const DESKS = [
   { id: 'mine',    label: 'IN YOUR HANDS', glyph: '◆', tone: 'hot', blurb: 'Work you took up — file your own account of it and collect the whole sum.' },
@@ -28,8 +30,17 @@ const DESKS = [
 export default function WorkBoard() {
   const qc = useQueryClient();
   const [desk, setDesk] = useState('mine');
+  const [showIntro, setShowIntro] = useState(false);
 
   const { data: user, isLoading: loadingUser } = useQuery({ queryKey: ['user'], queryFn: () => base44.auth.me() });
+
+  // Walk a comrade through the board once — scoped to their account, since standing is granted
+  // to a person rather than to a browser.
+  React.useEffect(() => {
+    if (!user) return;
+    setCacheScope(user.id);
+    if (!workCache.hasOnboarded()) setShowIntro(true);
+  }, [user]);
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['work_board_tasks'],
     queryFn: () => base44.entities.labour_task.list('-created_date', 200),
@@ -98,6 +109,14 @@ export default function WorkBoard() {
 
   return (
     <div className="os-viewport flex flex-col min-h-0 font-mono" style={{ background: '#080604' }}>
+      <AnimatePresence>
+        {showIntro && (
+          <ContractorOnboarding
+            onComplete={() => { workCache.markOnboarded(); setShowIntro(false); }}
+          />
+        )}
+      </AnimatePresence>
+
       <div className="shrink-0 px-3 py-2 flex items-center justify-between gap-2 border-b" style={{ borderColor: '#221B12' }}>
         <div className="flex items-center gap-2 text-[10px] font-bold tracking-[0.24em] xian-glow-subtle" style={{ color: '#E0A22E' }}>
           <Hammer className="w-4 h-4" /> THE LABOUR BOARD

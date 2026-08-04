@@ -86,10 +86,10 @@ export function mayRequest(user, requests, now = new Date()) {
  * a checklist of everything they have not done — the second is how somebody decides this is more
  * trouble than it is worth and closes the tab.
  *
- * @param {{ user?: any, requests?: any[], instruments?: any[], signatures?: any[], orders?: any[] }} [input]
+ * @param {{ user?: any, requests?: any[], instruments?: any[], signatures?: any[] }} [input]
  * @param {Date} [now]
  */
-export function onboardingState({ user, requests = [], instruments = [], signatures = [], orders = [] } = {}, now = new Date()) {
+export function onboardingState({ user, requests = [], instruments = [], signatures = [] } = {}, now = new Date()) {
   const standing = standingOf(user);
   const isGuest = !user;
 
@@ -190,7 +190,10 @@ export function onboardingState({ user, requests = [], instruments = [], signatu
       'A trade record that earns a better price the more plainly you deal',
       'Notice when something you wanted comes back into stock',
     ],
-    orders_claimable: (orders || []).filter((o) => o && !o.claimed_by_user_id).length,
+    // No count of claimable guest orders is asserted here. An order placed as a guest carries no
+    // account on it by design, so the only thing that can name one is the tracking code the buyer
+    // was given — which lives on their device. The storefront counts those; a figure invented
+    // server-side would only ever have read zero.
     next_step: nextStep,
   };
 }

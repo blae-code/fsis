@@ -51,7 +51,7 @@ export default function JoinTheCollective({ user, userLoading }) {
         ))}
       </div>
 
-      <div className="border p-3 space-y-2" style={{ borderColor: '#3A2F20', background: '#100E0B' }}>
+      <div id="offer-your-labour" className="border p-3 space-y-2" style={{ borderColor: '#3A2F20', background: '#100E0B' }}>
         <div className="flex items-center gap-2 text-[9px] tracking-[0.22em]" style={{ color: '#6FA0C8' }}>
           <HardHat className="w-3.5 h-3.5" /> OFFER YOUR LABOUR
         </div>

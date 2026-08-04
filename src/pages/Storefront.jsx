@@ -42,6 +42,7 @@ import SystemStatus from '@/components/store/SystemStatus';
 import StoreMaintenanceBanner from '@/components/store/StoreMaintenanceBanner';
 import { FSIS } from '@/lib/fsisLore';
 import { roundPrice } from '@/lib/pricing';
+import { fsisRole } from '@/lib/roles';
 
 const STOREFRONT_CATEGORIES = ['salvage_commodity', 'fps_gear', 'weapon', 'ship_component', 'vehicle_component'];
 
@@ -116,12 +117,16 @@ export default function Storefront() {
     queryFn: () => base44.auth.me(),
   });
 
+  // The setup tour is written for buyers. A comrade who holds standing gets the labour board's own
+  // walkthrough instead, so nobody is taught the wrong path.
+  const tourIsForThem = fsisRole(user) === 'patron' && user?.role !== 'admin';
+
   useEffect(() => {
-    if (user?.role === 'admin' && showOnboarding) {
+    if (user && !tourIsForThem && showOnboarding) {
       storeCache.markOnboarded();
       setShowOnboarding(false);
     }
-  }, [user, showOnboarding]);
+  }, [user, tourIsForThem, showOnboarding]);
 
   const { data: storeStatusRows = [] } = useQuery({
     queryKey: ['store_status_public'],
@@ -231,7 +236,7 @@ export default function Storefront() {
   return (
     <div className="os-viewport flex flex-col overflow-hidden" style={{ background: '#080604', backgroundImage: 'radial-gradient(circle at 12% 8%, rgba(224, 162, 46, 0.16), transparent 23%), radial-gradient(circle at 82% 18%, rgba(138, 100, 48, 0.16), transparent 25%), radial-gradient(circle at 70% 90%, rgba(92, 68, 36, 0.18), transparent 30%), linear-gradient(135deg, rgba(8, 6, 4, 0.96), rgba(18, 13, 8, 0.98) 42%, rgba(10, 8, 6, 0.96))' }}>
       <AnimatePresence>
-        {showOnboarding && !userLoading && user?.role !== 'admin' && (
+        {showOnboarding && !userLoading && (!user || tourIsForThem) && (
           <StoreOnboarding
             onComplete={() => {
               storeCache.markOnboarded();

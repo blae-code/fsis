@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowDown } from 'lucide-react';
 
 /** Where each next step actually sends somebody. `null` means there is nothing to press. */
 const ACTIONS = {
   optional_sign_in: { label: 'CREATE AN ACCOUNT', to: '/register' },
-  sign_instrument: { label: 'READ AND SIGN', to: '/work' },
   open_work_board: { label: 'OPEN THE LABOUR BOARD', to: '/work' },
+  // Signing happens in place, directly under this card — there is nowhere to send anybody.
+  sign_instrument: null,
   request_standing: null,
   wait: null,
   none: null,
@@ -36,8 +37,14 @@ export default function NextStepCard({ step }) {
           {action.label} <ArrowRight className="w-3 h-3" />
         </Link>
       )}
-      {step.action === 'request_standing' && (
-        <p className="text-[9px]" style={{ color: '#6B6155' }}>The form to ask is directly below — a person reads it, not a rule.</p>
+      {step.action === 'request_standing' && step.may_ask_again !== false && (
+        <a
+          href="#offer-your-labour"
+          className="h-9 px-4 border text-[9px] font-bold tracking-[0.14em] inline-flex items-center gap-2"
+          style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#120D08' }}
+        >
+          TAKE ME TO THE FORM <ArrowDown className="w-3 h-3" />
+        </a>
       )}
     </div>
   );
