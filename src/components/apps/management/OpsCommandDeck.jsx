@@ -14,12 +14,16 @@ import FleetGauges from '@/components/apps/management/ops/FleetGauges';
 import DeckChevronRail from '@/components/console/deck/DeckChevronRail';
 import DeckPanel from '@/components/console/deck/DeckPanel';
 import FleetCommandPanel from '@/components/apps/management/ops/fleet/FleetCommandPanel';
+import CargoChainConsole from '@/components/apps/management/ops/missions/CargoChainConsole';
+import SalvageOrchestrationConsole from '@/components/apps/management/ops/salvage/SalvageOrchestrationConsole';
 import { buildOpsSignals, fleetModel } from '@/components/apps/management/ops/opsSignals';
 
 /** The run, read left to right: what is afloat, what it will yield, where it sells, what it cost, what came back. */
 const TOOLS = [
   { id: 'fleet',     label: 'FLEET',     glyph: '⛭', tone: 'hot', desc: 'Order of battle — wings, orders and hulls' },
   { id: 'telemetry', label: 'AFLOAT',    glyph: '◉', tone: 'hot', desc: 'Live session pulse — hull, hold and phase' },
+  { id: 'cargo',     label: 'CARGO RUN', glyph: '▤', tone: 'hot', desc: 'Chain up to ten cargo contracts into one sorted flight path' },
+  { id: 'salvops',   label: 'SALV OPS',  glyph: '⬡', tone: 'hot', desc: 'Break salvage contracts into trades and work several at once' },
   { id: 'hull',      label: 'HULL PRED', glyph: '⬡',              desc: 'Predict RMC/CMR/CMS yield by ship type' },
   { id: 'haul',      label: 'HAUL MAP',  glyph: '▸',              desc: 'Best terminal for the current loadout' },
   { id: 'expense',   label: 'EXPENSE',   glyph: '◆',              desc: 'One-tap mid-run expense logging' },
@@ -81,6 +85,10 @@ export default function OpsCommandDeck() {
           <div className="min-h-0">
             {stage === 'fleet' ? (
               <FleetCommandPanel />
+            ) : stage === 'cargo' ? (
+              <CargoChainConsole />
+            ) : stage === 'salvops' ? (
+              <SalvageOrchestrationConsole />
             ) : (
             <DeckPanel glyph={active?.glyph} title={active?.label} meta={active?.desc?.toUpperCase()} notch="both" bright>
               <AnimatePresence mode="wait">
