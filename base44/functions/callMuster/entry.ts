@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { MUSTER_ROLES, roleSlots } from '../../shared/musters.js';
 import { notifyMany } from '../../shared/notices.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * "I am going out now, who is on?"
@@ -122,7 +123,7 @@ export default async function (req: Request): Promise<Response> {
         started_by_email: user.email,
         attendance: [{
           user_id: user.id,
-          handle: user.handle || user.full_name || user.email,
+          handle: callsignFor(user),
           email: user.email,
           joined_at: now.toISOString(),
           left_at: '',

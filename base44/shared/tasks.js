@@ -20,6 +20,7 @@
  */
 
 import { roundAuec } from './money.js';
+import { callsignFor } from './callsigns.js';
 
 /** Most work still wants one pair of hands. */
 export const DEFAULT_HANDS_NEEDED = 1;
@@ -98,7 +99,7 @@ export function crewFields(crew) {
 export function handFor(user, at = new Date()) {
   return {
     user_id: user.id,
-    handle: user.handle || user.full_name || user.email,
+    handle: callsignFor(user),
     email: user.email,
     claimed_at: at.toISOString(),
     released_at: '',

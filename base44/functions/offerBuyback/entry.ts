@@ -5,6 +5,7 @@ import { roundAuec } from '../../shared/money.js';
 import { appraise, appraisalBasis, standingBonusFor } from '../../shared/buyback.js';
 import { notify } from '../../shared/notices.js';
 import { reportError } from '../../shared/diagnostics.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /** An offer stands this long unless the council says otherwise. */
 const DEFAULT_VALID_HOURS = 72;
@@ -102,7 +103,7 @@ export default async function (req: Request): Promise<Response> {
       condition_pct: Number(body?.condition_pct) || 0,
       quantity,
       seller_user_id: sellerId,
-      seller_handle: seller.handle || seller.email,
+      seller_handle: callsignFor(seller),
       market_reference_auec: market || appraisal.market_total_auec,
       market_reference_source: String(body?.market_reference_source || '').trim(),
       // The fraction recorded is the one the member ACTUALLY gets.

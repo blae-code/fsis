@@ -27,6 +27,8 @@ import { totalFromEvents } from './reputation.js';
 import { totalFromTradeEvents } from './trade.js';
 import { activeHands, handsNeeded } from './tasks.js';
 import { isLive, hasClosed } from './hall.js';
+import { looksLikePii } from './callsigns.js';
+import { callsignFor } from './callsigns.js';
 
 export const SEVERITIES = ['critical', 'warn', 'info'];
 
@@ -56,7 +58,7 @@ export function checkStandingTotals(users, eventsByUserId, now = new Date()) {
     if (truth !== cached) {
       out.push(finding(
         'standing_total_drift', 'critical',
-        `${user.handle || user.email}: standing cached as ${cached}, events say ${truth}.`,
+        `${callsignFor(user)}: standing cached as ${cached}, events say ${truth}.`,
         'The member record is a cache of the event log. They are being shown, and priced at, a figure their own record does not support.',
         'Run recomputeStanding for this comrade. If several have drifted, something is writing standing_event without recomputing — find that path.',
         { entity_type: 'User', entity_id: user.id, cached, truth },
@@ -78,7 +80,7 @@ export function checkTradeTotals(users, eventsByUserId, now = new Date()) {
     if (truth !== cached) {
       out.push(finding(
         'trade_total_drift', 'critical',
-        `${user.handle || user.email}: trade standing cached as ${cached}, events say ${truth}.`,
+        `${callsignFor(user)}: trade standing cached as ${cached}, events say ${truth}.`,
         'A buyer is carrying a surcharge or discount their own record does not support.',
         'Run recomputeTradeStanding for this comrade.',
         { entity_type: 'User', entity_id: user.id, cached, truth },
@@ -260,6 +262,42 @@ export function checkReferentialHealth({ obligations = [], lotsById = {}, logs =
       { entity_type: 'crew_member', count: unlinked.length },
     ));
   }
+
+  return out;
+}
+
+/**
+ * Anything shaped like an address or a legal name sitting in a field meant for a callsign.
+ *
+ * The app leaked addresses by default for a long time — `handle || full_name || email` appeared
+ * thirty-two times, so any comrade who had not chosen a callsign had their address written into a
+ * handle field and then rendered on boards, stamped on events and mailed to other people. Those call
+ * sites are gone, but records written before are still out there, and one new fallback would put it
+ * back. So it is checked rather than trusted.
+ *
+ * @returns {any[]}
+ */
+export function checkForLeakedPii({ users = [], tasks = [], notices = [], events = [] } = {}) {
+  /** @type {any[]} */
+  const out = [];
+  const flag = (what, sample, where) => out.push(finding(
+    'pii_in_display_field', 'critical',
+    `${what} holds something shaped like an address or a legal name.`,
+    'Callsign fields are rendered on boards, in notices and in the audit trail. An address in one is the app revealing a comrade\'s identity to other members.',
+    `Rewrite the affected records through callsignFor(). Then find what wrote it: ${where}.`,
+    { entity_type: where, sample_count: sample },
+  ));
+
+  const bad = (rows, field) => rows.filter((r) => r && looksLikePii(r[field])).length;
+
+  const u = bad(users, 'handle');
+  if (u > 0) flag(`${u} account handle(s)`, u, 'User');
+  const t = bad(tasks, 'assigned_handle');
+  if (t > 0) flag(`${t} task assignment(s)`, t, 'labour_task');
+  const n = bad(notices, 'recipient_handle') + bad(notices, 'actor_callsign');
+  if (n > 0) flag(`${n} notice(s)`, n, 'notice');
+  const e = bad(events, 'member_handle');
+  if (e > 0) flag(`${e} standing event(s)`, e, 'standing_event');
 
   return out;
 }

@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { MARK_LIFETIME_DAYS, APPEAL_WINDOW_DAYS, MAX_SURCHARGE_PERCENT, recomputeStanding } from '../../shared/reputation.js';
 import { notify } from '../../shared/notices.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * The council sets standing by hand: an award, a mark, an amnesty, a dismissal or a
@@ -34,7 +35,7 @@ export default async function (req: Request): Promise<Response> {
     const identity = {
       member_user_id: memberId,
       member_email: member.email,
-      member_handle: member.handle || member.full_name || member.email,
+      member_handle: callsignFor(member),
       actor_email: user.email,
       actor_role: fsisRole(user),
       source_type: 'council',
@@ -147,7 +148,7 @@ export default async function (req: Request): Promise<Response> {
       action: `standing.${action}`,
       entity_type: 'User',
       entity_id: memberId,
-      entity_name: member.handle || member.email,
+      entity_name: callsignFor(member),
       actor: user.email,
       after: { standing_total: total, locked: action === 'dismiss' ? true : action === 'reinstate' ? false : member.standing_locked },
       notes: reason,

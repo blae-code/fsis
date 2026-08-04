@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole } from '../../shared/roles.js';
 import { notify } from '../../shared/notices.js';
 import { reportError } from '../../shared/diagnostics.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * The other party gives their account, or the complainant withdraws.
@@ -119,7 +120,7 @@ export default async function (req: Request): Promise<Response> {
       kind: 'order_update',
       title: `Answered: ${dispute.lot_title}`,
       body: [
-        `${user.handle || user.email} has given their account of this trade.`,
+        `${callsignFor(user)} has given their account of this trade.`,
         `What they say: ${account}`,
         'An Owner will now read both and rule. If this changes how you see it, you can withdraw the dispute — that is an ordinary outcome and nothing is recorded against anybody for it.',
       ].join('\n\n'),

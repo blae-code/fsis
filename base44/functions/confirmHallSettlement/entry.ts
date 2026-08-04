@@ -3,6 +3,7 @@ import { fsisRole } from '../../shared/roles.js';
 import { notify } from '../../shared/notices.js';
 import { TRADE_AWARD, recomputeTradeStanding } from '../../shared/trade.js';
 import { reportError } from '../../shared/diagnostics.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * Both parties say the goods changed hands.
@@ -73,7 +74,7 @@ export default async function (req: Request): Promise<Response> {
         kind: 'order_update',
         title: `Confirm the handoff: ${lot.title}`,
         body: [
-          `${user.handle || user.email} has confirmed that the goods changed hands on this lot.`,
+          `${callsignFor(user)} has confirmed that the goods changed hands on this lot.`,
           'Confirm it too and the trade is settled. If it did NOT happen, say so instead and raise a dispute — an Owner will rule on it, and confirming something that did not happen helps nobody.',
         ].join('\n\n'),
         source_type: 'hall_lot',

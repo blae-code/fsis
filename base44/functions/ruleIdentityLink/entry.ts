@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { MARK_LIFETIME_DAYS, APPEAL_WINDOW_DAYS, recomputeStanding } from '../../shared/reputation.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * The council rules on a suspected pair of accounts.
@@ -58,7 +59,7 @@ export default async function (req: Request): Promise<Response> {
         await svc.standing_event.create({
           member_user_id: other.id,
           member_email: other.email,
-          member_handle: other.handle || other.full_name || other.email,
+          member_handle: callsignFor(other),
           kind: 'dismissed',
           delta,
           effective_delta: delta,

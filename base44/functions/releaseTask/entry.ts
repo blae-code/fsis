@@ -3,6 +3,7 @@ import { fsisRole } from '../../shared/roles.js';
 import { abandonmentCost, MARK_LIFETIME_DAYS, APPEAL_WINDOW_DAYS, recomputeStanding } from '../../shared/reputation.js';
 import { notify } from '../../shared/notices.js';
 import { crewFields, holdsTask, statusForCrew, withHandUpdated } from '../../shared/tasks.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * A comrade hands back work in hand. Nobody is chained to a task they cannot finish — but
@@ -54,14 +55,14 @@ export default async function (req: Request): Promise<Response> {
     await base44.asServiceRole.entities.labour_task.update(taskId, {
       ...fields,
       status: nextStatus,
-      notes: [task.notes, `Handed back ${now.toISOString().slice(0, 10)} by ${user.handle || user.email}: ${reason}`]
+      notes: [task.notes, `Handed back ${now.toISOString().slice(0, 10)} by ${callsignFor(user)}: ${reason}`]
         .filter(Boolean).join('\n'),
     });
 
     const event = await base44.asServiceRole.entities.standing_event.create({
       member_user_id: user.id,
       member_email: user.email,
-      member_handle: user.handle || user.full_name || user.email,
+      member_handle: callsignFor(user),
       kind: 'work_abandoned',
       delta,
       effective_delta: delta,
@@ -93,7 +94,7 @@ export default async function (req: Request): Promise<Response> {
     // reached, by when they may answer it, and the date it lapses of its own accord.
     await notify(base44, {
       recipient_user_id: user.id,
-      recipient_handle: user.handle || user.full_name || user.email,
+      recipient_handle: callsignFor(user),
       kind: 'work_released',
       title: `You handed back: ${task.title}`,
       body: [

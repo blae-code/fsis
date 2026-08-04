@@ -56,7 +56,11 @@
     },
     "actor_email": {
       "type": "string",
-      "description": "Who did the thing being reported. A notice about a council decision names the council member who made it — decisions about a comrade's labour are not anonymous"
+      "description": "Who did the thing being reported. OPERATIONAL ONLY — never rendered. Show actor_callsign instead"
+    },
+    "actor_callsign": {
+      "type": "string",
+      "description": "What the comrade reading this actually sees. A callsign, never an address or a legal name — derived from the account where none was chosen"
     },
     "actor_role": {
       "type": "string",

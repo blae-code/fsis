@@ -3,6 +3,7 @@ import { fsisRole } from '../../shared/roles.js';
 import { latestSignature, mayProceed } from '../../shared/instruments.js';
 import { DEFAULT_COMMISSION_PERCENT, LIVE_STATES, liveLotAllowance, suspendsListing } from '../../shared/hall.js';
 import { roundAuec } from '../../shared/money.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /** A hold full of loot, but not an unbounded one. */
 const MAX_BATCH = 50;
@@ -100,7 +101,7 @@ export default async function (req: Request): Promise<Response> {
         title,
         description: String(row.description || '').trim(),
         seller_user_id: user.id,
-        seller_handle: user.handle || user.full_name || user.email,
+        seller_handle: callsignFor(user),
         item_type: String(row.item_type || 'other').trim(),
         condition_grade: String(row.condition_grade || '').trim(),
         condition_pct: Number(row.condition_pct) || 0,

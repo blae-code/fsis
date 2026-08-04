@@ -17,6 +17,7 @@
  */
 
 import { roundShares } from './money.js';
+import { callsignFor } from './callsigns.js';
 
 /** The rate `time_log` has always stated. Changing it here changes what an hour is worth. */
 export const MINUTES_PER_SHARE = 20;
@@ -30,7 +31,7 @@ const ms = (value) => (value ? new Date(value).getTime() : NaN);
 export function openStint(user, at = new Date()) {
   return {
     user_id: user.id,
-    handle: user.handle || user.full_name || user.email,
+    handle: callsignFor(user),
     email: user.email,
     joined_at: at.toISOString(),
     left_at: '',

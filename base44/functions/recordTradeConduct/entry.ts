@@ -4,6 +4,7 @@ import {
   TRADE_AWARD, TRADE_COST, TRADE_MARK_LIFETIME_DAYS, recomputeTradeStanding,
 } from '../../shared/trade.js';
 import { notify } from '../../shared/notices.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * The council records what happened at a handoff: the buyer turned up, or a hand was left waiting.
@@ -54,7 +55,7 @@ export default async function (req: Request): Promise<Response> {
     await svc.trade_event.create({
       patron_user_id: patronId,
       patron_email: patron.email,
-      patron_handle: patron.handle || order.customer_handle || patron.email,
+      patron_handle: callsignFor(patron),
       kind,
       delta,
       effective_delta: delta,
@@ -74,7 +75,7 @@ export default async function (req: Request): Promise<Response> {
       : '';
     await notify(base44, {
       recipient_user_id: patronId,
-      recipient_handle: patron.handle || order.customer_handle || patron.email,
+      recipient_handle: callsignFor(patron),
       kind: 'trade_marked',
       title: delta >= 0
         ? `Trade recorded in your favour — order ${order.tracking_code || orderId}`

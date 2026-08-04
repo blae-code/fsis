@@ -4,6 +4,7 @@ import { bidRefusal, closeAfterBid, minimumIncrement } from '../../shared/hall.j
 import { roundAuec } from '../../shared/money.js';
 import { notify } from '../../shared/notices.js';
 import { reportError } from '../../shared/diagnostics.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * A bid in the hall.
@@ -63,7 +64,7 @@ export default async function (req: Request): Promise<Response> {
         $set: {
           current_bid_auec: amount,
           current_bidder_user_id: user.id,
-          current_bidder_handle: user.handle || user.full_name || user.email,
+          current_bidder_handle: callsignFor(user),
           bid_count: (Number(lot.bid_count) || 0) + 1,
           status: 'bidding',
           closes_at: extendedClose || lot.closes_at,
@@ -80,7 +81,7 @@ export default async function (req: Request): Promise<Response> {
       lot_id: lotId,
       lot_title: lot.title,
       bidder_user_id: user.id,
-      bidder_handle: user.handle || user.full_name || user.email,
+      bidder_handle: callsignFor(user),
       amount_auec: amount,
       placed_at: now.toISOString(),
     });

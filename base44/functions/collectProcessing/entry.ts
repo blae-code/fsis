@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { notifyMany } from '../../shared/notices.js';
 import { reportError } from '../../shared/diagnostics.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * Somebody went and got it.
@@ -52,7 +53,7 @@ export default async function (req: Request): Promise<Response> {
         $set: {
           status: outcome,
           collected_at: now,
-          collected_by_handle: user.handle || user.email,
+          collected_by_handle: callsignFor(user),
           ...(notes ? { notes: [job.notes, notes].filter(Boolean).join('\n') } : {}),
         },
       },
@@ -70,7 +71,7 @@ export default async function (req: Request): Promise<Response> {
         ? `Collected: ${job.label}`
         : `Written off: ${job.label}`,
       body: outcome === 'collected'
-        ? `${user.handle || user.email} has collected this. Nothing is standing at ${job.location || 'the refinery'} any longer.`
+        ? `${callsignFor(user)} has collected this. Nothing is standing at ${job.location || 'the refinery'} any longer.`
         : [`This has been written off rather than collected.`, `What happened: ${notes}`].join('\n\n'),
       source_type: 'processing_job',
       source_id: jobId,

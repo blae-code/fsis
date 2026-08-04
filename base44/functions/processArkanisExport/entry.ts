@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { callsignFor } from '../../shared/callsigns.js';
 
 // Flexible key detection so different Arkanis export versions still parse
 const NAME_KEYS = ['name', 'item_name', 'itemname', 'label', 'item', 'product', 'commodity'];
@@ -197,7 +198,7 @@ Deno.serve(async (req) => {
         action: 'inventory.arkanis_import',
         entity_type: 'product',
         entity_name: 'Arkanis overlay import',
-        actor: user.full_name || 'proprietor',
+        actor: callsignFor(user),
         notes: `Arkanis import — ${updates.length} stock update(s), ${creates.length} new listing(s)`,
         before: logBefore,
         after: logAfter,

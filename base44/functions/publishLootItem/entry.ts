@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { roundPrice } from '../../shared/money.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 function categoryForLoot(itemType) {
   if (itemType === 'bulk_cargo') return 'salvage_commodity';
@@ -80,7 +81,7 @@ Deno.serve(async (req) => {
       entity_type: 'loot_item',
       entity_id: item.id,
       entity_name: item.item_name,
-      actor: user.full_name || user.email || 'FSIS.operator',
+      actor: callsignFor(user),
       after: { product_id: product.id, price_auec: price, stock: quantity },
       notes: `Loot item published to storefront as ${product.product_name}`,
     });

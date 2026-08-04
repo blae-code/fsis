@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole } from '../../shared/roles.js';
 import { currentVersion, latestSignature, signatureStatus } from '../../shared/instruments.js';
 import { notify } from '../../shared/notices.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * A comrade puts their name to the terms.
@@ -68,7 +69,7 @@ export default async function (req: Request): Promise<Response> {
       // Verbatim. The document may move on; this cannot.
       accepted_body: instrument.body || '',
       signatory_user_id: user.id,
-      signatory_handle: user.handle || user.full_name || user.email,
+      signatory_handle: callsignFor(user),
       signatory_email: user.email,
       signatory_standing: standing,
       signed_at: now,
@@ -87,7 +88,7 @@ export default async function (req: Request): Promise<Response> {
 
     await notify(base44, {
       recipient_user_id: user.id,
-      recipient_handle: user.handle,
+      recipient_handle: callsignFor(user),
       kind: 'council_message',
       title: `Signed: ${instrument.title}`,
       body: [

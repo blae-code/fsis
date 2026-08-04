@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole, isCouncil } from '../../shared/roles.js';
 import { isPresent, openStint, roster, stintMinutes } from '../../shared/sessions.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * A hand arrives, or stands down.
@@ -81,7 +82,7 @@ export default async function (req: Request): Promise<Response> {
     return Response.json({
       ok: true,
       action,
-      handle: subject.handle || subject.email,
+      handle: callsignFor(subject),
       roster: roster(updated.attendance || nextAttendance, now),
     });
   } catch (error) {

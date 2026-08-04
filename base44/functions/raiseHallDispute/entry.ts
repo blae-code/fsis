@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { DISPUTE_KINDS, disputeWindowOpen, DISPUTE_WINDOW_DAYS } from '../../shared/hall.js';
 import { notify } from '../../shared/notices.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * Something went wrong, and a comrade says so.
@@ -60,7 +61,7 @@ export default async function (req: Request): Promise<Response> {
       lot_id: lotId,
       lot_title: lot.title,
       raised_by_user_id: user.id,
-      raised_by_handle: user.handle || user.full_name || user.email,
+      raised_by_handle: callsignFor(user),
       against_user_id: againstId || '',
       against_handle: againstHandle || '',
       kind,
@@ -80,7 +81,7 @@ export default async function (req: Request): Promise<Response> {
         kind: 'order_update',
         title: `A dispute was raised on: ${lot.title}`,
         body: [
-          `${user.handle || user.email} has raised a dispute over this trade.`,
+          `${callsignFor(user)} has raised a dispute over this trade.`,
           `What they say happened: ${account}`,
           'Give your account of it. An Owner will read both before ruling, and a ruling made without hearing you would not be a ruling.',
           'If this is a misunderstanding, it very often is — most disputes are two people describing the same evening differently, and nothing is marked against anybody by default.',

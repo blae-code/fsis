@@ -569,3 +569,42 @@ second request forever**, trapping anyone turned down.
 - **A decline is not a wall.** Show `review_notes` in full and `may_request_reason`, which says when
   they may ask again. Being turned down once is not a verdict for life.
 - The charter is surfaced but **not hard-gated** — that is a product decision, not mine to make.
+
+---
+
+## 18. Nobody is named (2026-08-03) — HARD RULE
+
+**No screen, notice, log line or export may ever show a real name or an email address.** A comrade
+is their callsign. A buyer without an account is a guest number. Neither is ever anything a person
+did not deliberately choose to be known by.
+
+### What the backend now guarantees
+
+Every display value comes through `callsignFor()` in `shared/callsigns.js`, which **cannot** return
+an address or a legal name. Where a comrade has not chosen a callsign it derives a stable one
+(`COMRADE-7F2A`) from their account id. A handle field that already *contains* an address — written
+by the old fallback — is not passed on either.
+
+Guests get `order.guest_number` (`GUEST-0042`), assigned by us at checkout.
+
+### What the frontend must do
+
+- **Never render a field ending in `_email`.** They exist for auth, notification routing and the
+  audit trail. `notice.actor_email` in particular is operational; render **`notice.actor_callsign`**.
+- **Never render `order.customer_handle`.** People type their real names into that box. Render
+  `order.guest_number`, or the account's callsign where the order has been claimed.
+- **Never render `user.full_name`.** It is not used anywhere in the backend any more.
+- Handle/callsign fields (`assigned_handle`, `seller_handle`, `member_handle`, `recipient_handle`,
+  `debtor_handle`, roster `handle`) are all safe — they are written through `callsignFor()`.
+
+### Choosing a callsign
+
+`getOnboardingState` and `needsCallsign()` identify comrades still on a derived callsign. A prompt to
+choose one is worth having — a derived callsign is a placeholder, not an identity — but nothing is
+gated on it and nobody should be nagged.
+
+### It is checked, not trusted
+
+`runHealthCheck` with `deep: true` runs `checkForLeakedPii`, which scans handle and callsign fields
+for anything address- or name-shaped and reports it as **critical**. One new `|| user.email` fallback
+anywhere would put the leak back; this catches it.

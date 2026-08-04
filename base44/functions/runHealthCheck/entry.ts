@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil } from '../../shared/roles.js';
 import {
   checkStandingTotals, checkTradeTotals, checkCrewIntegrity, checkSweepLiveness,
-  checkReferentialHealth, rank, summarise, reportError,
+  checkReferentialHealth, checkForLeakedPii, rank, summarise, reportError,
 } from '../../shared/diagnostics.js';
 
 /** How long a sweep may be silent before its silence is itself the finding. */
@@ -125,6 +125,7 @@ export default async function (req: Request): Promise<Response> {
         ...checkStandingTotals(users, byMember, now),
         ...checkTradeTotals(users, byPatron, now),
         ...checkCrewIntegrity([...tasks, ...submitted]),
+        ...checkForLeakedPii({ users, tasks: [...tasks, ...submitted], events: standingEvents } as any),
       ];
     }
 

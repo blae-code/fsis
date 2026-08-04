@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { callsignFor } from '../../shared/callsigns.js';
 
 const STATUSES = ['new', 'confirmed', 'in_fulfillment', 'delivered', 'cancelled'];
 
@@ -30,7 +31,7 @@ Deno.serve(async (req) => {
       return Response.json({ ok: true, unchanged: true, order });
     }
 
-    const note = `ADMIN STATUS CHANGE: ${order.status || 'new'} → ${status} by ${user.email || user.full_name || 'admin'} (${new Date().toISOString()})`;
+    const note = `ADMIN STATUS CHANGE: ${order.status || 'new'} → ${status} by ${callsignFor(user)} (${new Date().toISOString()})`;
     const restoreTag = `[stock-restored:${order.id}]`;
     const restoreNotes = [];
     if (status === 'cancelled' && !(order.internal_notes || '').includes(restoreTag)) {
@@ -66,7 +67,7 @@ Deno.serve(async (req) => {
       entity_type: 'order',
       entity_id: order.id,
       entity_name: `Order from ${order.customer_handle}`,
-      actor: user.email || user.full_name || 'admin',
+      actor: callsignFor(user),
       before: { status: order.status || 'new' },
       after: { status },
       notes: note,

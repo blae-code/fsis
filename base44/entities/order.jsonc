@@ -4,7 +4,11 @@
   "properties": {
     "customer_handle": {
       "type": "string",
-      "description": "Customer's in-game handle / display name"
+      "description": "What the buyer typed at checkout. OPERATIONAL ONLY — people put their real names in these boxes, so it is never what the app displays. Show guest_number, or the account's callsign where the order has been claimed"
+    },
+    "guest_number": {
+      "type": "string",
+      "description": "What this buyer is called anywhere the order is shown — GUEST-0042. Assigned by us rather than typed by them, because a name somebody types into a checkout box is a name they may not have meant to publish"
     },
     "customer_profile_id": {
       "type": "string",
@@ -62,7 +66,7 @@
     "standing_auec": {
       "type": "number",
       "default": 0,
-      "description": "The standing adjustment in aUEC \u2014 subtracted from the total when positive, added when a surcharge stands"
+      "description": "The standing adjustment in aUEC — subtracted from the total when positive, added when a surcharge stands"
     },
     "standing_tier": {
       "type": "string",

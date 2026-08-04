@@ -1,3 +1,4 @@
+import { callsignFor } from './callsigns.js';
 /**
  * A muster with places in it, rather than a headcount.
  *
@@ -109,7 +110,7 @@ export function placeAnswer(operation, rsvps, user, { response, role = 'any', no
 
   const entry = {
     user_id: user.id,
-    handle: user.handle || user.full_name || user.email,
+    handle: callsignFor(user),
     standing: user.fsis_role || '',
     response,
     role: wanted,

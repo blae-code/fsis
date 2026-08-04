@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { storefrontAdjustment, tierFor, MAX_TOTAL_DISCOUNT_PERCENT, MAX_DISCOUNT_PERCENT, MAX_SURCHARGE_PERCENT } from '../../shared/reputation.js';
 import { tradeAdjustment, tradeTierFor } from '../../shared/trade.js';
 import { roundPrice, roundPriceFloored, percentOfPrice } from '../../shared/money.js';
+import { nextGuestNumber, callsignFor } from '../../shared/callsigns.js';
 import { reportError } from '../../shared/diagnostics.js';
 
 // Public guest checkout: validates the cart against the live catalog server-side,
@@ -90,6 +91,13 @@ Deno.serve(async (req) => {
 
     const tracking_code = 'FSIS-' + crypto.randomUUID().replace(/-/g, '').slice(0, 6).toUpperCase();
 
+    // What this buyer is called anywhere the order is shown. Assigned rather than taken from the
+    // checkout box, because people put their real names in those and an order is read by hands who
+    // are not the buyer — a picker, a courier, whoever meets them at the handoff.
+    const { number: guest_number } = buyer
+      ? { number: callsignFor(buyer) }
+      : await nextGuestNumber(base44, tracking_code);
+
     // Unique handoff passphrase — spoken in person to verify buyer identity at delivery
     const WORDS_A = ['IRON', 'HALO', 'BRONZE', 'SCRAP', 'CLAW', 'RELAY', 'DRIFT', 'HULL', 'EMBER', 'CARGO', 'SALVO', 'BEACON'];
     const WORDS_B = ['VULTURE', 'RAILEN', 'TRESSLER', 'STANTON', 'RECLAIM', 'NOMAD', 'CITADEL', 'ORBIT', 'FREIGHT', 'LATTICE', 'GANTRY', 'KEEL'];
@@ -117,6 +125,7 @@ Deno.serve(async (req) => {
     try {
       order = await svc.order.create({
       customer_handle: customer_handle.trim(),
+      guest_number,
       customer_profile_id: customerProfile?.id || '',
       customer_profile_handle: customerProfile?.handle || '',
       tracking_code,

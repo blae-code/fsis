@@ -1,3 +1,4 @@
+import { safeDisplay } from './callsigns.js';
 /**
  * Telling a comrade what was decided about their labour.
  *
@@ -63,6 +64,9 @@ export function buildNotice(notice) {
     source_id: text(notice?.source_id, 120),
     source_name: text(notice?.source_name, 200),
     actor_email: text(notice?.actor_email, 200),
+    // What a comrade actually sees. Derived from the address where a caller passed only that, so a
+    // missed call site cannot put somebody's email in front of another member.
+    actor_callsign: safeDisplay(notice?.actor_callsign || notice?.actor_email, notice?.actor_email),
     actor_role: text(notice?.actor_role, 40),
     ...(notice?.expires_at ? { expires_at: notice.expires_at } : {}),
   };

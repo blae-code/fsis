@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil } from '../../shared/roles.js';
 import { identityNames, compareIdentities, pairKey, THRESHOLD } from '../../shared/identity.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * Gathers grounds where an account carrying a mark or a dismissal appears to be the same comrade as
@@ -68,10 +69,10 @@ export default async function (req: Request): Promise<Response> {
           pair_key: key,
           flagged_user_id: a.user.id,
           flagged_email: a.user.email,
-          flagged_handle: a.user.handle || a.user.full_name || a.user.email,
+          flagged_handle: callsignFor(a.user),
           other_user_id: b.user.id,
           other_email: b.user.email,
-          other_handle: b.user.handle || b.user.full_name || b.user.email,
+          other_handle: callsignFor(b.user),
           signals,
           score,
           status: 'suspected',

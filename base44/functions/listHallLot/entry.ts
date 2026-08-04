@@ -6,6 +6,7 @@ import {
 } from '../../shared/hall.js';
 import { roundAuec } from '../../shared/money.js';
 import { notify } from '../../shared/notices.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /** A lot runs for this long unless the seller says otherwise. */
 const DEFAULT_HOURS = 48;
@@ -134,7 +135,7 @@ export default async function (req: Request): Promise<Response> {
       title,
       description: String(body?.description || '').trim(),
       seller_user_id: user.id,
-      seller_handle: user.handle || user.full_name || user.email,
+      seller_handle: callsignFor(user),
       item_type: String(body?.item_type || 'other').trim(),
       condition_grade: String(body?.condition_grade || '').trim(),
       condition_pct: Number(body?.condition_pct) || 0,

@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.38';
+import { callsignFor } from '../../shared/callsigns.js';
 
 // Flexible key detection across Arkanis log format versions
 const SHIP_KEYS = ['ship', 'ship_name', 'vessel', 'vehicle', 'craft'];
@@ -210,7 +211,7 @@ Deno.serve(async (req) => {
         action: 'salvage.arkanis_log_import',
         entity_type: 'salvage_session',
         entity_name: 'Arkanis salvage log import',
-        actor: user.full_name || 'proprietor',
+        actor: callsignFor(user),
         notes: `Imported ${created.length} salvage session(s) from an Arkanis overlay log`,
         after: Object.fromEntries(created.map((c) => [c.session_name, `RMC ${c.rmc_scu} / CMR ${c.cmr_scu} / CMS ${c.cms_scu} SCU`])),
       });

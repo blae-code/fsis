@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { fsisRole } from '../../shared/roles.js';
 import { LIVE_STATES, liveLotAllowance, suspendsListing } from '../../shared/hall.js';
 import { roundAuec } from '../../shared/money.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /** A relisted lot runs for this long unless the seller says otherwise. */
 const DEFAULT_HOURS = 48;
@@ -84,7 +85,7 @@ export default async function (req: Request): Promise<Response> {
       title: original.title,
       description: original.description,
       seller_user_id: user.id,
-      seller_handle: user.handle || user.full_name || user.email,
+      seller_handle: callsignFor(user),
       item_type: original.item_type,
       condition_grade: original.condition_grade,
       condition_pct: original.condition_pct,

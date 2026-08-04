@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { reportError } from '../../shared/diagnostics.js';
+import { callsignFor } from '../../shared/callsigns.js';
 
 /**
  * Taking back a request to work with us.
@@ -39,7 +40,7 @@ export default async function (req: Request): Promise<Response> {
       action: 'standing_request.withdrawn',
       entity_type: 'standing_request',
       entity_id: request.id,
-      entity_name: request.handle || user.email,
+      entity_name: request.handle || callsignFor(user),
       actor: user.email,
       before: { status: 'pending' },
       after: { status: 'withdrawn' },

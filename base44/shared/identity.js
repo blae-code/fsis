@@ -13,10 +13,17 @@ export const THRESHOLD = 4;
 const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const localPart = (email) => norm(String(email || '').split('@')[0]);
 
-/** Every name an account is known by, drawn from the record, its applications and its orders. */
+/**
+ * Every CALLSIGN an account is known by, drawn from the record, its applications and its orders.
+ *
+ * Legal names are deliberately excluded. They used to be matched on, and the matched token is then
+ * quoted back to the council inside `signals` — so a flag could print somebody's real name onto a
+ * council screen. A callsign is a thing a comrade chose to be known by and is safe to repeat; a name
+ * on an account is not, and no amount of usefulness to the detection makes it so.
+ */
 export function identityNames(user, { requests = [], orders = [] } = {}) {
   const names = new Set();
-  [user.handle, user.full_name].forEach((n) => { if (norm(n).length >= 3) names.add(norm(n)); });
+  [user.handle].forEach((n) => { if (norm(n).length >= 3) names.add(norm(n)); });
   requests.forEach((r) => {
     [r.handle, r.timezone && null].forEach((n) => { if (norm(n).length >= 3) names.add(norm(n)); });
   });
