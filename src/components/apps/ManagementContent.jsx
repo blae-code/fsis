@@ -1,79 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
 import { ShieldAlert } from 'lucide-react';
-import ManagementView from '@/components/apps/station/ManagementView';
-import ProductManager from '@/components/apps/management/ProductManager';
-import DiscountManager from '@/components/apps/management/DiscountManager';
-// ARCHIVED: import JobBoardAdmin from '@/components/apps/fairshare/JobBoardAdmin'; (operator feature)
-// ARCHIVED: import CrewRoster from '@/components/apps/fairshare/CrewRoster'; (operator feature)
-import OrdersContent from '@/components/apps/OrdersContent';
-import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
-import InventoryManager from '@/components/apps/management/InventoryManager';
-import StockByClassPanel from '@/components/apps/management/inventory/StockByClassPanel';
-import StockBySizePanel from '@/components/apps/management/inventory/StockBySizePanel';
-import SalvageCommodityDashboard from '@/components/apps/management/SalvageCommodityDashboard';
-import ProprietorCommandCenter from '@/components/apps/management/ProprietorCommandCenter';
-import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
-import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
-import RestockInbox from '@/components/apps/management/RestockInbox';
-import AdminRestockControls from '@/components/store/AdminRestockControls';
-import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
-import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
-import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
 import QuickLogModal from '@/components/apps/management/QuickLogModal';
-import LootSummaryTab from '@/components/loot/LootSummaryTab';
-import AccessConsole from '@/components/apps/management/access/AccessConsole';
-import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrderConsole';
-import LabourCostPanel from '@/components/apps/management/tasks/LabourCostPanel';
-import RunConsole from '@/components/apps/management/runs/RunConsole';
-import RunProfitChart from '@/components/apps/management/runs/RunProfitChart';
-import HallDisputePanel from '@/components/apps/management/hall/HallDisputePanel';
-import BuybackDesk from '@/components/apps/management/hall/BuybackDesk';
-import CollectionsPanel from '@/components/apps/management/hall/CollectionsPanel';
-import AssetLibraryPanel from '@/components/apps/management/assets/AssetLibraryPanel';
-import ProcessingTimersPanel from '@/components/apps/management/processing/ProcessingTimersPanel';
-import PatchResetConsole from '@/components/apps/management/processing/PatchResetConsole';
-import CouncilReviewQueue from '@/components/apps/management/review/CouncilReviewQueue';
+import ConsoleShell from '@/components/console/ConsoleShell';
+import { CONSOLE_GROUPS } from '@/components/console/consoleMap';
 import { hasCouncilAccess, fsisRole, ROLE_META } from '@/lib/roles';
-import { Link } from 'react-router-dom';
 
 const AMBER  = '#E0A22E';
 const DIM    = '#7A6E60';
 const DIMMER = '#3A3028';
 
-const TABS = [
-  // ARCHIVED: { id: 'jobs', label: 'JOB BOARD', glyph: '✦' }, — operator feature
-  // ARCHIVED: { id: 'crew', label: 'CREW',       glyph: '◉' }, — operator feature
-  { id: 'command',   label: 'COMMAND',    glyph: '◈' },
-  { id: 'review',    label: 'REVIEW',     glyph: '⚖' },
-  { id: 'payday',    label: 'PAYDAY',     glyph: '◉' },
-  { id: 'overview',  label: 'OVERVIEW',   glyph: '◈' },
-  { id: 'store',     label: 'STORE',      glyph: '⬡' },
-  { id: 'discounts', label: 'DISCOUNTS',  glyph: '◆' },
-  { id: 'orders',    label: 'ORDERS',     glyph: '▸' },
-  { id: 'intake',    label: 'LOOT INTAKE', glyph: '⬚' },
-  { id: 'warehouse', label: 'WAREHOUSE',  glyph: '▦' },
-  { id: 'salvage',   label: 'SALVAGE',    glyph: '◈' },
-  { id: 'inventory', label: 'INVENTORY',  glyph: '▦' },
-  { id: 'lootsummary', label: 'LOOT SUMMARY', glyph: '◔' },
-  { id: 'auditlog',  label: 'AUDIT LOG',  glyph: '⬚' },
-  { id: 'ops',       label: 'OPS DECK',   glyph: '◉' },
-  { id: 'market',    label: 'MARKET',     glyph: '◇' },
-  { id: 'inbox',     label: 'INBOX',      glyph: '▣' },
-  { id: 'restock',   label: 'RESTOCK',    glyph: '▲' },
-  { id: 'access',    label: 'STANDING',   glyph: '✶' },
-  { id: 'tasks',     label: 'TASKS',      glyph: '⌗' },
-  { id: 'runs',      label: 'RUNS',       glyph: '◎' },
-  { id: 'hall',      label: 'HALL',       glyph: '⚖' },
-  { id: 'hoppers',   label: 'HOPPERS',    glyph: '⧗' },
-  { id: 'assets',    label: 'ASSETS',     glyph: '▨' },
-];
-
 export default function ManagementContent() {
-  const [activeTab, setActiveTab] = useState('command');
-
   const { data: user, isLoading } = useQuery({
     queryKey: ['user'],
     queryFn: () => base44.auth.me(),
@@ -102,88 +40,21 @@ export default function ManagementContent() {
     );
   }
 
-  return (
-    <div className="h-full flex flex-col font-mono" style={{ background: 'hsl(30, 8%, 9%)' }}>
-      <QuickLogModal />
-      {/* Header */}
-      <div className="shrink-0 px-3 py-2 border-b flex items-center gap-2" style={{ borderColor: '#2A2118', background: '#0A0806' }}>
-        <span style={{ color: AMBER }}>◈</span>
-        <span className="text-[9px] tracking-[0.25em]" style={{ color: '#7A6050' }}>COUNCIL CONSOLE — HELD IN COMMON</span>
-        <span className="text-[8px] ml-auto flex items-center gap-2">
-          <span style={{ color: ROLE_META[fsisRole(user)].color }}>{ROLE_META[fsisRole(user)].label}</span>
-          <span style={{ color: DIMMER }}>{user?.full_name || user?.email}</span>
-        </span>
-      </div>
-
-      {/* Tab rail */}
-      <div className="shrink-0 border-b flex flex-wrap" style={{ borderColor: '#2A2118' }}>
-        {TABS.map((t) => {
-          const active = activeTab === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              className="relative flex items-center gap-1.5 px-4 py-2.5 text-[9px] tracking-[0.15em] whitespace-nowrap shrink-0 transition-colors"
-              style={{ color: active ? AMBER : DIM }}
-            >
-              <span style={{ color: active ? AMBER : DIMMER }}>{t.glyph}</span>
-              {t.label}
-              {active && (
-                <motion.div
-                  layoutId="mgmt-tab-underline"
-                  className="absolute bottom-0 left-0 right-0 h-0.5"
-                  style={{ background: AMBER }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                />
-              )}
-            </button>
-          );
-        })}
-        <Link
-          to="/loot"
-          className="flex items-center gap-1.5 px-4 py-2.5 text-[9px] tracking-[0.15em] whitespace-nowrap shrink-0"
-          style={{ color: DIM }}
-        >
-          <span style={{ color: DIMMER }}>⬡</span>
-          LOOT TRACKER ↗
-        </Link>
-        <Link
-          to="/loot?view=summary"
-          className="flex items-center gap-1.5 px-4 py-2.5 text-[9px] tracking-[0.15em] whitespace-nowrap shrink-0"
-          style={{ color: DIM }}
-        >
-          <span style={{ color: DIMMER }}>◔</span>
-          LOOT SUMMARY ↗
-        </Link>
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 overflow-auto">
-        {activeTab === 'command'   && <ProprietorCommandCenter />}
-        {activeTab === 'review'    && <CouncilReviewQueue />}
-        {activeTab === 'payday'    && <PaydayManagementPanel />}
-        {activeTab === 'overview'  && <div className="p-4"><ManagementView /></div>}
-        {activeTab === 'store'     && <div className="p-4"><ProductManager /></div>}
-        {activeTab === 'discounts' && <div className="p-4"><DiscountManager /></div>}
-        {activeTab === 'orders'    && <OrdersContent />}
-        {/* ARCHIVED: jobs and crew tabs sequestered for future operator development */}
-        {activeTab === 'intake'    && <div className="p-4"><RapidLootIntakePanel /></div>}
-        {activeTab === 'warehouse' && <div className="p-4"><WarehouseCommandLayer /></div>}
-        {activeTab === 'salvage'   && <div className="p-4"><SalvageCommodityDashboard /></div>}
-        {activeTab === 'inventory' && <div className="p-4 space-y-6"><StockByClassPanel /><StockBySizePanel /><InventoryManager /></div>}
-        {activeTab === 'lootsummary' && <LootSummaryTab />}
-        {activeTab === 'auditlog'  && <OpsAuditLog />}
-        {activeTab === 'ops'       && <OpsCommandDeck />}
-        {activeTab === 'market'    && <div className="p-4"><MarketPriceComparator /></div>}
-        {activeTab === 'inbox'    && <div className="p-4"><RestockInbox /></div>}
-        {activeTab === 'restock'  && <div className="p-4"><AdminRestockControls /></div>}
-        {activeTab === 'access'   && <AccessConsole />}
-        {activeTab === 'tasks'    && <div className="space-y-6"><div className="p-4 pb-0"><LabourCostPanel /></div><TaskWorkOrderConsole /></div>}
-        {activeTab === 'runs'     && <div className="space-y-6"><div className="p-4 pb-0"><RunProfitChart /></div><RunConsole /></div>}
-        {activeTab === 'hall'     && <div className="p-4 font-mono space-y-6"><CollectionsPanel /><HallDisputePanel /><BuybackDesk /></div>}
-        {activeTab === 'hoppers'  && <div className="p-4 space-y-6"><PatchResetConsole /><ProcessingTimersPanel /></div>}
-        {activeTab === 'assets'   && <div className="p-4"><AssetLibraryPanel /></div>}
-      </div>
+  const header = (
+    <div className="shrink-0 px-3 py-2 border-b flex items-center gap-2" style={{ borderColor: '#2A2118', background: '#0A0806' }}>
+      <span style={{ color: AMBER }}>◈</span>
+      <span className="text-[9px] tracking-[0.25em]" style={{ color: '#7A6050' }}>COUNCIL CONSOLE — HELD IN COMMON</span>
+      <span className="text-[8px] ml-auto flex items-center gap-2">
+        <span style={{ color: ROLE_META[fsisRole(user)].color }}>{ROLE_META[fsisRole(user)].label}</span>
+        <span style={{ color: DIMMER }}>{user?.full_name || user?.email}</span>
+      </span>
     </div>
+  );
+
+  return (
+    <>
+      <QuickLogModal />
+      <ConsoleShell groups={CONSOLE_GROUPS} header={header} />
+    </>
   );
 }

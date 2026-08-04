@@ -1,0 +1,105 @@
+import React from 'react';
+import { Command, Scale, Store, Boxes, HardHat } from 'lucide-react';
+
+import ProprietorCommandCenter from '@/components/apps/management/ProprietorCommandCenter';
+import CouncilReviewQueue from '@/components/apps/management/review/CouncilReviewQueue';
+import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
+import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
+import ManagementView from '@/components/apps/station/ManagementView';
+import ProductManager from '@/components/apps/management/ProductManager';
+import DiscountManager from '@/components/apps/management/DiscountManager';
+import OrdersContent from '@/components/apps/OrdersContent';
+import RestockInbox from '@/components/apps/management/RestockInbox';
+import AdminRestockControls from '@/components/store/AdminRestockControls';
+import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
+import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
+import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
+import InventoryManager from '@/components/apps/management/InventoryManager';
+import StockByClassPanel from '@/components/apps/management/inventory/StockByClassPanel';
+import StockBySizePanel from '@/components/apps/management/inventory/StockBySizePanel';
+import SalvageCommodityDashboard from '@/components/apps/management/SalvageCommodityDashboard';
+import LootSummaryTab from '@/components/loot/LootSummaryTab';
+import PatchResetConsole from '@/components/apps/management/processing/PatchResetConsole';
+import ProcessingTimersPanel from '@/components/apps/management/processing/ProcessingTimersPanel';
+import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrderConsole';
+import LabourCostPanel from '@/components/apps/management/tasks/LabourCostPanel';
+import RunConsole from '@/components/apps/management/runs/RunConsole';
+import RunProfitChart from '@/components/apps/management/runs/RunProfitChart';
+import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
+import AccessConsole from '@/components/apps/management/access/AccessConsole';
+import CollectionsPanel from '@/components/apps/management/hall/CollectionsPanel';
+import HallDisputePanel from '@/components/apps/management/hall/HallDisputePanel';
+import BuybackDesk from '@/components/apps/management/hall/BuybackDesk';
+import AssetLibraryPanel from '@/components/apps/management/assets/AssetLibraryPanel';
+
+/**
+ * The whole council console, grouped by what the work actually is rather than
+ * one flat rail of 24 tabs. Every group is council standing; the one owner-only
+ * act (granting standing) is enforced inside the STANDING section itself.
+ */
+export const CONSOLE_GROUPS = [
+  {
+    id: 'command', label: 'COMMAND', icon: Command,
+    blurb: 'The state of the yard, and everything waiting on an answer.',
+    sections: [
+      { id: 'centre',   label: 'COMMAND CENTRE', glyph: '◈', bare: true,  render: () => <ProprietorCommandCenter /> },
+      { id: 'review',   label: 'REVIEW QUEUE',   glyph: '⚖', bare: true,  render: () => <CouncilReviewQueue /> },
+      { id: 'opsdeck',  label: 'OPS DECK',       glyph: '◉', bare: true,  render: () => <OpsCommandDeck /> },
+      { id: 'overview', label: 'OVERVIEW',       glyph: '▦',              render: () => <ManagementView /> },
+      { id: 'audit',    label: 'AUDIT LOG',      glyph: '⬚', bare: true,  render: () => <OpsAuditLog /> },
+    ],
+  },
+  {
+    id: 'trade', label: 'TRADE', icon: Store,
+    blurb: 'The storefront side of the house — catalogue, orders and market.',
+    sections: [
+      { id: 'store',     label: 'CATALOGUE', glyph: '⬡',             render: () => <ProductManager /> },
+      { id: 'orders',    label: 'ORDERS',    glyph: '▸', bare: true, render: () => <OrdersContent /> },
+      { id: 'inbox',     label: 'INBOX',     glyph: '▣',             render: () => <RestockInbox /> },
+      { id: 'restock',   label: 'RESTOCK',   glyph: '▲',             render: () => <AdminRestockControls /> },
+      { id: 'discounts', label: 'DISCOUNTS', glyph: '◆',             render: () => <DiscountManager /> },
+      { id: 'market',    label: 'MARKET',    glyph: '◇',             render: () => <MarketPriceComparator /> },
+    ],
+  },
+  {
+    id: 'yard', label: 'YARD', icon: Boxes,
+    blurb: 'What comes in, where it sits, and what it is worth.',
+    sections: [
+      { id: 'intake',    label: 'LOOT INTAKE',  glyph: '⬚', render: () => <RapidLootIntakePanel /> },
+      { id: 'warehouse', label: 'WAREHOUSE',    glyph: '▦', render: () => <WarehouseCommandLayer /> },
+      { id: 'inventory', label: 'INVENTORY',    glyph: '▤', render: () => <div className="space-y-6"><StockByClassPanel /><StockBySizePanel /><InventoryManager /></div> },
+      { id: 'salvage',   label: 'SALVAGE',      glyph: '◈', render: () => <SalvageCommodityDashboard /> },
+      { id: 'lootsum',   label: 'LOOT SUMMARY', glyph: '◔', bare: true, render: () => <LootSummaryTab /> },
+      { id: 'hoppers',   label: 'HOPPERS',      glyph: '⧗', render: () => <div className="space-y-6"><PatchResetConsole /><ProcessingTimersPanel /></div> },
+    ],
+    links: [
+      { to: '/loot', label: 'LOOT TRACKER ↗' },
+    ],
+  },
+  {
+    id: 'labour', label: 'LABOUR', icon: HardHat,
+    blurb: 'Work posted, runs flown, shares paid, standing held.',
+    sections: [
+      { id: 'tasks',    label: 'TASKS',    glyph: '⌗', bare: true, render: () => <div className="space-y-6"><div className="p-4 pb-0"><LabourCostPanel /></div><TaskWorkOrderConsole /></div> },
+      { id: 'runs',     label: 'RUNS',     glyph: '◎', bare: true, render: () => <div className="space-y-6"><div className="p-4 pb-0"><RunProfitChart /></div><RunConsole /></div> },
+      { id: 'payday',   label: 'PAYDAY',   glyph: '◉', bare: true, render: () => <PaydayManagementPanel /> },
+      { id: 'standing', label: 'STANDING', glyph: '✶', bare: true, render: () => <AccessConsole /> },
+    ],
+    links: [
+      { to: '/work', label: 'WORK BOARD ↗' },
+    ],
+  },
+  {
+    id: 'hall', label: 'HALL', icon: Scale,
+    blurb: 'The trading hall — settlements, disputes, buybacks and the site itself.',
+    sections: [
+      { id: 'collections', label: 'COLLECTIONS', glyph: '⚖', render: () => <CollectionsPanel /> },
+      { id: 'disputes',    label: 'DISPUTES',    glyph: '⚑', render: () => <HallDisputePanel /> },
+      { id: 'buyback',     label: 'BUYBACK',     glyph: '◆', render: () => <BuybackDesk /> },
+      { id: 'assets',      label: 'ASSETS',      glyph: '▨', render: () => <AssetLibraryPanel /> },
+    ],
+    links: [
+      { to: '/hall', label: 'PUBLIC HALL ↗' },
+    ],
+  },
+];
