@@ -31,6 +31,7 @@ import CollectionsPanel from '@/components/apps/management/hall/CollectionsPanel
 import HallDisputePanel from '@/components/apps/management/hall/HallDisputePanel';
 import BuybackDesk from '@/components/apps/management/hall/BuybackDesk';
 import AssetLibraryPanel from '@/components/apps/management/assets/AssetLibraryPanel';
+import ConsoleFold from '@/components/console/ConsoleFold';
 
 /**
  * The whole council console, grouped by what the work actually is rather than
@@ -67,10 +68,10 @@ export const CONSOLE_GROUPS = [
     sections: [
       { id: 'intake',    label: 'LOOT INTAKE',  glyph: '⬚', render: () => <RapidLootIntakePanel /> },
       { id: 'warehouse', label: 'WAREHOUSE',    glyph: '▦', render: () => <WarehouseCommandLayer /> },
-      { id: 'inventory', label: 'INVENTORY',    glyph: '▤', render: () => <div className="space-y-6"><StockByClassPanel /><StockBySizePanel /><InventoryManager /></div> },
+      { id: 'inventory', label: 'INVENTORY',    glyph: '▤', render: () => <div className="space-y-4"><ConsoleFold label="STOCK ROLLUPS — BY CLASS & SIZE"><StockByClassPanel /><StockBySizePanel /></ConsoleFold><InventoryManager /></div> },
       { id: 'salvage',   label: 'SALVAGE',      glyph: '◈', render: () => <SalvageCommodityDashboard /> },
       { id: 'lootsum',   label: 'LOOT SUMMARY', glyph: '◔', bare: true, render: () => <LootSummaryTab /> },
-      { id: 'hoppers',   label: 'HOPPERS',      glyph: '⧗', render: () => <div className="space-y-6"><PatchResetConsole /><ProcessingTimersPanel /></div> },
+      { id: 'hoppers',   label: 'HOPPERS',      glyph: '⧗', render: () => <div className="space-y-4"><ProcessingTimersPanel /><ConsoleFold label="PATCH RESET CONSOLE — BULK HOPPER CLEAR"><PatchResetConsole /></ConsoleFold></div> },
     ],
     links: [
       { to: '/loot', label: 'LOOT TRACKER ↗' },
@@ -80,8 +81,8 @@ export const CONSOLE_GROUPS = [
     id: 'labour', label: 'LABOUR', icon: HardHat,
     blurb: 'Work posted, runs flown, shares paid, standing held.',
     sections: [
-      { id: 'tasks',    label: 'TASKS',    glyph: '⌗', bare: true, render: () => <div className="space-y-6"><div className="p-4 pb-0"><LabourCostPanel /></div><TaskWorkOrderConsole /></div> },
-      { id: 'runs',     label: 'RUNS',     glyph: '◎', bare: true, render: () => <div className="space-y-6"><div className="p-4 pb-0"><RunProfitChart /></div><RunConsole /></div> },
+      { id: 'tasks',    label: 'TASKS',    glyph: '⌗', bare: true, render: () => <div className="space-y-4"><div className="p-4 pb-0"><ConsoleFold label="LABOUR COST — OUTSTANDING PAYOUT OBLIGATIONS"><LabourCostPanel /></ConsoleFold></div><TaskWorkOrderConsole /></div> },
+      { id: 'runs',     label: 'RUNS',     glyph: '◎', bare: true, render: () => <div className="space-y-4"><div className="p-4 pb-0"><ConsoleFold label="RUN PROFIT — HAUL VALUE & MARGINS"><RunProfitChart /></ConsoleFold></div><RunConsole /></div> },
       { id: 'payday',   label: 'PAYDAY',   glyph: '◉', bare: true, render: () => <PaydayManagementPanel /> },
       { id: 'standing', label: 'STANDING', glyph: '✶', bare: true, render: () => <AccessConsole /> },
     ],
