@@ -9,6 +9,7 @@ import DayLoopRail from '@/components/apps/management/proprietor/watchfloor/DayL
 import SituationBoard from '@/components/apps/management/proprietor/watchfloor/SituationBoard';
 import GaugeColumn from '@/components/apps/management/proprietor/watchfloor/GaugeColumn';
 import WorkingPane from '@/components/apps/management/proprietor/watchfloor/WorkingPane';
+import DeckPanel from '@/components/console/deck/DeckPanel';
 import { buildSignals, gaugeModel } from '@/components/apps/management/proprietor/watchfloor/signals';
 
 const STAGES = [
@@ -113,19 +114,10 @@ export default function ProprietorCommandCenter() {
             <SituationBoard signals={signals} onGo={setStage} activeStage={stage} />
           </div>
 
-          <div
-            className="min-h-0 flex flex-col"
-            style={{ clipPath: 'polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px)', background: '#090705', boxShadow: 'inset 0 0 0 1px #2E2519' }}
-          >
-            <div className="flex items-center gap-2 px-3 py-2 shrink-0" style={{ background: 'linear-gradient(180deg,#1B1309,#0D0A07)', boxShadow: 'inset 0 -1px 0 #3A2F20' }}>
-              <span className="text-[12px]" style={{ color: '#E0A22E', filter: 'drop-shadow(0 0 8px rgba(224,162,46,.5))' }}>{activeStage?.glyph}</span>
-              <span className="text-[9px] font-bold tracking-[0.3em]" style={{ color: '#F0E7D6', textShadow: '0 0 12px rgba(224,162,46,.25)' }}>{activeStage?.label}</span>
-              <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg,#3A2F20,transparent)' }} />
-              <span className="text-[7px] tracking-[0.22em] tabular-nums" style={{ color: '#5F564A' }}>{counts[stage] || 0} WAITING</span>
-            </div>
-            <div className="flex-1 min-h-0 overflow-auto p-3">
-              <WorkingPane stage={stage} d={d} />
-            </div>
+          <div className="min-h-0">
+            <DeckPanel glyph={activeStage?.glyph} title={activeStage?.label} meta={`${counts[stage] || 0} WAITING`} notch="both" bright>
+              <div className="p-3"><WorkingPane stage={stage} d={d} /></div>
+            </DeckPanel>
           </div>
 
           <div className="hidden lg:block min-h-0">
