@@ -8,12 +8,7 @@ import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
 import ManagementView from '@/components/apps/station/ManagementView';
 import TradeConsole from '@/components/apps/management/trade/TradeConsole';
 import YardConsole from '@/components/apps/management/yard/YardConsole';
-import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrderConsole';
-import LabourCostPanel from '@/components/apps/management/tasks/LabourCostPanel';
-import RunConsole from '@/components/apps/management/runs/RunConsole';
-import RunProfitChart from '@/components/apps/management/runs/RunProfitChart';
-import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
-import AccessConsole from '@/components/apps/management/access/AccessConsole';
+import LabourConsole from '@/components/apps/management/labour/LabourConsole';
 import CollectionsPanel from '@/components/apps/management/hall/CollectionsPanel';
 import HallDisputePanel from '@/components/apps/management/hall/HallDisputePanel';
 import BuybackDesk from '@/components/apps/management/hall/BuybackDesk';
@@ -67,10 +62,7 @@ export const CONSOLE_GROUPS = [
     id: 'labour', label: 'LABOUR', icon: HardHat,
     blurb: 'Work posted, runs flown, shares paid, standing held.',
     sections: [
-      { id: 'tasks',    label: 'TASKS',    glyph: '⌗', bare: true, render: () => <div className="space-y-4"><div className="p-4 pb-0"><ConsoleFold label="LABOUR COST — OUTSTANDING PAYOUT OBLIGATIONS"><LabourCostPanel /></ConsoleFold></div><TaskWorkOrderConsole /></div> },
-      { id: 'runs',     label: 'RUNS',     glyph: '◎', bare: true, render: () => <div className="space-y-4"><div className="p-4 pb-0"><ConsoleFold label="RUN PROFIT — HAUL VALUE & MARGINS"><RunProfitChart /></ConsoleFold></div><RunConsole /></div> },
-      { id: 'payday',   label: 'PAYDAY',   glyph: '◉', bare: true, render: () => <PaydayManagementPanel /> },
-      { id: 'standing', label: 'STANDING', glyph: '✶', bare: true, render: () => <AccessConsole /> },
+      { id: 'hall', label: 'LABOUR HALL', glyph: '⚒', bare: true, render: () => <LabourConsole /> },
     ],
     links: [
       { to: '/work', label: 'WORK BOARD ↗' },
