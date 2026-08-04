@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import FormRow, { FormBand } from '@/components/apps/management/ops/fleet/FormRow';
+import YieldFlowBar from './YieldFlowBar';
 import { FEEDSTOCKS, METHODS, feedMeta, methodMeta, refineEstimate } from './refineryMethods';
 
 const CONTROL = { borderColor: '#3A2F20', background: '#0B0906', color: '#EDE5D6' };
@@ -69,6 +70,8 @@ export default function RefineYieldPlanner() {
         ))}
       </div>
 
+      <YieldFlowBar est={est} />
+
       {best && best.m.id !== methodId && (
         <p className="text-[8px]" style={{ color: '#E0A22E' }}>
           {best.m.label} returns {num(best.e.net - est.net)} aUEC more on this load ({best.e.hours} h wait against {est.hours} h).
@@ -85,13 +88,24 @@ export default function RefineYieldPlanner() {
             <button
               key={m.id}
               onClick={() => setMethodId(m.id)}
-              className="w-full flex items-baseline gap-2 px-1 py-1 text-left"
+              className="w-full px-1 py-1 text-left"
               style={{ background: m.id === methodId ? 'linear-gradient(90deg,#1B1309,#0B0906)' : 'transparent' }}
             >
-              <span className="text-[8px] w-40 truncate" style={{ color: m.id === methodId ? '#F0E7D6' : '#B8AC9A' }}>{m.label}</span>
-              <span className="text-[7px] tabular-nums w-20" style={{ color: '#8A7E6C' }}>{e.outScu} SCU</span>
-              <span className="text-[7px] tabular-nums w-16" style={{ color: '#8A7E6C' }}>{e.hours} H</span>
-              <span className="text-[7px] tabular-nums ml-auto" style={{ color: e.net > 0 ? '#5F6B33' : '#C05050' }}>{num(e.net)} aUEC</span>
+              <span className="flex items-baseline gap-2">
+                <span className="text-[8px] w-40 truncate" style={{ color: m.id === methodId ? '#F0E7D6' : '#B8AC9A' }}>{m.label}</span>
+                <span className="text-[7px] tabular-nums w-20" style={{ color: '#8A7E6C' }}>{e.outScu} SCU</span>
+                <span className="text-[7px] tabular-nums w-16" style={{ color: '#8A7E6C' }}>{e.hours} H</span>
+                <span className="text-[7px] tabular-nums ml-auto" style={{ color: e.net > 0 ? '#5F6B33' : '#C05050' }}>{num(e.net)} aUEC</span>
+              </span>
+              <span className="block h-1 mt-1" style={{ background: '#120D08' }}>
+                <span
+                  className="block h-1"
+                  style={{
+                    width: `${best && best.e.net > 0 ? Math.max(0, (e.net / best.e.net) * 100) : 0}%`,
+                    background: e.net > 0 ? (m.id === methodId ? '#E0A22E' : '#5F6B33') : '#C05050',
+                  }}
+                />
+              </span>
             </button>
           ))}
         </div>
