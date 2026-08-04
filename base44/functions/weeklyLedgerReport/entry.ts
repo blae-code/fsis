@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
 
     // ---- Find or create the report spreadsheet ----
     const SETTING_KEY = 'ledger_report_spreadsheet_id';
-    const settings = await base44.asServiceRole.entities.app_setting.filter({ key: SETTING_KEY });
+    const settings = await base44.asServiceRole.entities.app_setting.filter({ key: SETTING_KEY }, '-created_date', 50);
     let spreadsheetId = settings[0]?.value;
 
     if (!spreadsheetId) {

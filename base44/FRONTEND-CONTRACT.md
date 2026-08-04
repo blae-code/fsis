@@ -677,3 +677,20 @@ requests.
   tells a comrade locked out of their own order to ask the council rather than keep guessing.
 
 Batch claiming is gone. Claim one order at a time — each has its own passphrase.
+
+---
+
+## 21. Bounded reads (2026-08-04)
+
+Every read in the backend is now bounded. On the money path a saturated read **refuses** rather than
+settling on part of the answer, so two new failure modes can surface:
+
+- **`500` with a message beginning "Read … hit its limit of N"** from `closePaydayCycle`,
+  `openPaydayCycle`, `contractorPayday`, `getMyPayday` or `submitPaydayElection`. It means the yard
+  has outgrown a cap in `shared/paging.js`. Show the message — it names what was cut and says to
+  raise the cap. **Do not retry**; it will fail identically until the cap is raised.
+- **`callMuster`** reports a truncated audience in its ops-log line rather than failing: telling
+  most of the yard beats telling none, but somebody was never told and that is recorded.
+
+Nothing changes at current scale. These fire only where the old code would silently have used part
+of a set.

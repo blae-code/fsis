@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { findCrewMemberFor, fetchConfirmedLogsFor, sharesInLogs, sameHandle } from '../../shared/members.js';
+import { readAllOrRefuse, readBounded, CAPS } from '../../shared/paging.js';
 
 // Returns the calling contractor's pay day status: linked crew member, outstanding
 // shares + time logs, the open cycle, their election, and the latest published report.
@@ -14,7 +15,8 @@ Deno.serve(async (req) => {
 
     // The roster place belonging to this account — by account link where it exists, and only
     // otherwise by callsign. A place already claimed is never opened by a matching name.
-    const crew = await svc.entities.crew_member.filter({ active: true });
+    // Same reasoning as contractorPayday: a short roster would tell a comrade they are not on it.
+    const crew = await readAllOrRefuse(svc.entities.crew_member, { active: true }, '-created_date', CAPS.roster, 'the crew roster');
     const member = findCrewMemberFor(crew, user);
     if (!member) {
       return Response.json({ linked: false });
@@ -23,12 +25,12 @@ Deno.serve(async (req) => {
     const logs = await fetchConfirmedLogsFor(base44, { userId: user.id, handle: member.handle });
     const shares = sharesInLogs(logs);
 
-    const openCycles = await svc.entities.payday_cycle.filter({ status: 'open' });
+    const { rows: openCycles } = await readBounded(svc.entities.payday_cycle, { status: 'open' }, '-opens_at', CAPS.cycles);
     const cycle = openCycles[0] || null;
 
     let election = null;
     if (cycle) {
-      const els = await svc.entities.payday_election.filter({ cycle_id: cycle.id });
+      const { rows: els } = await readBounded(svc.entities.payday_election, { cycle_id: cycle.id }, '-decided_at', CAPS.elections);
       election = els.find((e) => (e.member_user_id ? e.member_user_id === user.id : sameHandle(e.handle, member.handle))) || null;
     }
 

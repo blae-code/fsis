@@ -169,7 +169,7 @@ Deno.serve(async (req) => {
       }
 
       // Value the haul against cached UEX best-sell prices
-      const prices = await base44.asServiceRole.entities.commodity_price.filter({ is_best_sell: true });
+      const prices = await base44.asServiceRole.entities.commodity_price.filter({ is_best_sell: true }, '-created_date', 500);
       const bestFor = (code) => Math.max(0, ...prices.filter((p) => p.commodity_code === code).map((p) => p.price_sell || 0));
       const best = { rmc_scu: bestFor('RMC'), cmr_scu: bestFor('CMR'), cms_scu: bestFor('CMS') };
 

@@ -3,6 +3,7 @@ import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { MUSTER_ROLES, roleSlots } from '../../shared/musters.js';
 import { notifyMany } from '../../shared/notices.js';
 import { callsignFor } from '../../shared/callsigns.js';
+import { readBounded, CAPS } from '../../shared/paging.js';
 
 /**
  * "I am going out now, who is on?"
@@ -81,8 +82,10 @@ export default async function (req: Request): Promise<Response> {
     });
 
     // Everyone who could come is told. A muster nobody hears about is not a muster.
-    const members = await base44.asServiceRole.entities.User.filter({ fsis_role: 'contractor' });
-    const owners = await base44.asServiceRole.entities.User.filter({ fsis_role: 'owner' });
+    // Telling most of the yard beats telling none, so this reports rather than refuses — but a
+    // truncated audience means somebody never heard, and that is worth a line in the log.
+    const { rows: members, truncated: membersCut } = await readBounded(base44.asServiceRole.entities.User, { fsis_role: 'contractor' }, '-created_date', CAPS.members);
+    const { rows: owners, truncated: ownersCut } = await readBounded(base44.asServiceRole.entities.User, { fsis_role: 'owner' }, '-created_date', CAPS.members);
     const audience = [...members, ...owners].filter((m) => m.id !== user.id && !m.standing_locked);
 
     const places = roleSlots(operation)
@@ -151,7 +154,8 @@ export default async function (req: Request): Promise<Response> {
       entity_name: opName,
       actor: user.email,
       after: { starts_at: startsAt, told: audience.length, started_now: startNow },
-      notes: `Muster called by ${fsisRole(user)}${startNow ? ' and started immediately' : ''}; ${audience.length} comrade(s) told.`,
+      notes: `Muster called by ${fsisRole(user)}${startNow ? ' and started immediately' : ''}; ${audience.length} comrade(s) told.`
+        + ((membersCut || ownersCut) ? ' NOT EVERYONE WAS REACHED — the member list was truncated, so some comrades were never told about this run.' : ''),
     });
 
     return Response.json({ ok: true, operation, session, told: audience.length });

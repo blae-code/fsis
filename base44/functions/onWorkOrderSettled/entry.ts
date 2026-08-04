@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
 
     // ── Append to Google Sheets master log ──────────────────────────────────
     try {
-      const sheetSettings = await svc.app_setting.filter({ key: 'work_order_log_sheet_id' });
+      const sheetSettings = await svc.app_setting.filter({ key: 'work_order_log_sheet_id' }, '-created_date', 50);
       const sheetId = sheetSettings?.[0]?.value;
 
       if (sheetId) {

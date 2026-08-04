@@ -24,7 +24,7 @@ export default async function (req: Request): Promise<Response> {
     await base44.asServiceRole.users.inviteUser(email, 'admin');
 
     // If the comrade already holds an account, seat them immediately.
-    const existing = await base44.asServiceRole.entities.User.filter({ email });
+    const existing = await base44.asServiceRole.entities.User.filter({ email }, '-created_date', 5);
     const target = existing?.[0];
     if (target) {
       await base44.asServiceRole.entities.User.update(target.id, {

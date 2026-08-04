@@ -15,10 +15,10 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Invalid tracking code' }, { status: 400 });
     }
 
-    let matches = await base44.asServiceRole.entities.order.filter({ tracking_code: code });
+    let matches = await base44.asServiceRole.entities.order.filter({ tracking_code: code }, '-created_date', 5);
     if (matches.length === 0) {
       // Guest checkout receipts carry a handoff passphrase — allow lookup by it too
-      matches = await base44.asServiceRole.entities.order.filter({ handoff_passphrase: code });
+      matches = await base44.asServiceRole.entities.order.filter({ handoff_passphrase: code }, '-created_date', 5);
     }
     if (matches.length === 0) {
       return Response.json({ error: 'No order found for that code' }, { status: 404 });

@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
     if (!live) throw new Error('UEX did not report a live game version');
 
     const svc = base44.asServiceRole.entities;
-    const settings = await svc.app_setting.filter({ key: 'live_patch_version' });
+    const settings = await svc.app_setting.filter({ key: 'live_patch_version' }, '-created_date', 50);
     const known = settings[0]?.value || null;
 
     let changed = false;

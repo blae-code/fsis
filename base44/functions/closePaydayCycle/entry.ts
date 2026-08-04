@@ -4,6 +4,7 @@ import { contractorIndex, isContractorLine, logsBelongingTo, normaliseHandle, sa
 import { roundAuec, roundShares } from '../../shared/money.js';
 import { notifyMany } from '../../shared/notices.js';
 import { reportError, recordSweep } from '../../shared/diagnostics.js';
+import { readAllOrRefuse, CAPS } from '../../shared/paging.js';
 
 // Closes pay day cycles whose 72-hour window has elapsed (hourly FSIS.bot check),
 // or immediately when management force-closes. Publishes the final transparency
@@ -24,7 +25,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden: Management access required' }, { status: 403 });
     }
 
-    const openCycles = await base44.asServiceRole.entities.payday_cycle.filter({ status: 'open' });
+    const openCycles = await readAllOrRefuse(base44.asServiceRole.entities.payday_cycle, { status: 'open' }, '-opens_at', CAPS.cycles, 'open pay day cycles');
     const now = new Date();
     const results = [];
 
@@ -51,7 +52,8 @@ Deno.serve(async (req) => {
       // Elections made during the window, read back against the comrade who filed them — by
       // account where the election carries one, and only otherwise by callsign. A comrade whose
       // name changed mid-window must still have their own decision honoured.
-      const elections = await base44.asServiceRole.entities.payday_election.filter({ cycle_id: cycle.id });
+      // Truncate this and a comrade who asked to cash in is silently deferred instead.
+      const elections = await readAllOrRefuse(base44.asServiceRole.entities.payday_election, { cycle_id: cycle.id }, '-decided_at', CAPS.elections, 'elections for this cycle');
       const decisionFor = (line: any) => {
         const filed = elections.find((e) =>
           e.member_user_id && line.user_id
@@ -68,15 +70,17 @@ Deno.serve(async (req) => {
       // Contractors never draw from the share pool — their labour is settled in full at the
       // point of work, so a contractor in an older snapshot is skipped here. Matched by account
       // where the snapshot carries one, and only otherwise by callsign.
-      const contractorUsers = await base44.asServiceRole.entities.User.filter({ fsis_role: 'contractor' });
+      // Truncate this and a contractor is not excluded — they draw from the members' pool, against a
+      // stated hard rule. Refusing to run is far better than that.
+      const contractorUsers = await readAllOrRefuse(base44.asServiceRole.entities.User, { fsis_role: 'contractor' }, '-created_date', CAPS.members, 'contractors');
       const contractors = contractorIndex(contractorUsers);
 
       // The proprietor's cash-in is an owner draw and is labelled as one on the ledger. Read from
       // the record rather than from a name held in code, with the founding callsign kept as a
       // fallback so older snapshots still read correctly.
       const proprietorUsers = [
-        ...(await base44.asServiceRole.entities.User.filter({ fsis_role: 'proprietor' })),
-        ...(await base44.asServiceRole.entities.User.filter({ email: PROPRIETOR_EMAIL })),
+        ...(await readAllOrRefuse(base44.asServiceRole.entities.User, { fsis_role: 'proprietor' }, '-created_date', CAPS.members, 'proprietors')),
+        ...(await readAllOrRefuse(base44.asServiceRole.entities.User, { email: PROPRIETOR_EMAIL }, '-created_date', CAPS.members, 'the proprietor by address')),
       ];
       const proprietorIds = new Set(proprietorUsers.map((u) => u.id).filter(Boolean));
       const proprietorHandles = new Set(proprietorUsers.map((u) => normaliseHandle(u.handle)).filter(Boolean));

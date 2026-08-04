@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 import { groupLogsByMember } from '../../shared/members.js';
 import { roundAuec, roundShares, sumShares } from '../../shared/money.js';
 import { notifyMany } from '../../shared/notices.js';
+import { readAllOrRefuse, CAPS } from '../../shared/paging.js';
 import { reportError, recordSweep } from '../../shared/diagnostics.js';
 
 // Opens a Pay Day cycle with a 72-hour decision window.
@@ -23,7 +24,9 @@ Deno.serve(async (req) => {
     const payload = await req.json().catch(() => ({}));
 
     // Never open a second cycle while one is running
-    const openCycles = await base44.asServiceRole.entities.payday_cycle.filter({ status: 'open' });
+    // If this came back short it would read as 'no cycle open' and open a second one, splitting the
+    // pool across two settlements. Refuse instead.
+    const openCycles = await readAllOrRefuse(base44.asServiceRole.entities.payday_cycle, { status: 'open' }, '-opens_at', CAPS.cycles, 'open pay day cycles');
     if (openCycles.length > 0) {
       return Response.json({ skipped: true, reason: 'A pay day cycle is already open', cycle_id: openCycles[0].id });
     }

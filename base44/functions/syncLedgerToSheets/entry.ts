@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googlesheets');
 
     // Find or create the report spreadsheet (ID persisted in app_setting)
-    const settings = await base44.asServiceRole.entities.app_setting.filter({ key: 'ledger_sheet_id' });
+    const settings = await base44.asServiceRole.entities.app_setting.filter({ key: 'ledger_sheet_id' }, '-created_date', 50);
     let spreadsheetId = settings[0]?.value || null;
 
     if (spreadsheetId) {
