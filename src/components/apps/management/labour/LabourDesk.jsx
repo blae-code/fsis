@@ -6,6 +6,7 @@ import RunConsole from '@/components/apps/management/runs/RunConsole';
 import RunProfitChart from '@/components/apps/management/runs/RunProfitChart';
 import PaydayManagementPanel from '@/components/apps/management/PaydayManagementPanel';
 import AccessConsole from '@/components/apps/management/access/AccessConsole';
+import MonthlyReviewPanel from '@/components/apps/management/labour/report/MonthlyReviewPanel';
 
 /** Only the desk in hand is mounted — the rest of the hall costs nothing while it waits. */
 export default function LabourDesk({ desk }) {
@@ -30,5 +31,6 @@ export default function LabourDesk({ desk }) {
     );
   }
   if (desk === 'payday') return <PaydayManagementPanel />;
+  if (desk === 'review') return <MonthlyReviewPanel />;
   return <AccessConsole />;
 }

@@ -20,6 +20,7 @@ const DESKS = [
   { id: 'runs',     label: 'RUNS',     glyph: '◎', tone: 'hot', blurb: 'Musters called, seats taken, hauls closed.' },
   { id: 'payday',   label: 'PAYDAY',   glyph: '◉',              blurb: 'The pool, the elections and what each share pays.' },
   { id: 'standing', label: 'STANDING', glyph: '✶', tone: 'hot', blurb: 'Marks, appeals and who holds what standing.' },
+  { id: 'review',   label: 'REVIEW',   glyph: '▤',              blurb: 'The month read whole — hours filed, work credited, standing moved.' },
 ];
 
 export default function LabourConsole() {
