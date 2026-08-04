@@ -5,7 +5,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { KeyRound, MonitorCog } from 'lucide-react';
 import ProductCard from '@/components/store/ProductCard';
-import OrderPanel from '@/components/store/OrderPanel';
+import StoreSectionRail from '@/components/store/StoreSectionRail';
+import StoreContextColumn from '@/components/store/StoreContextColumn';
 import MyOrders from '@/components/store/MyOrders';
 import AboutFsis from '@/components/store/AboutFsis';
 import StoreToolbar from '@/components/store/StoreToolbar';
@@ -32,7 +33,6 @@ import RestockInbox from '@/components/apps/management/RestockInbox';
 import AdminFulfillmentQueue from '@/components/store/AdminFulfillmentQueue';
 import { matchesQuickFilter } from '@/components/store/CatalogQuickFilters';
 import StoreHeroStrip from '@/components/store/StoreHeroStrip';
-import StoreIntelDrawer from '@/components/store/StoreIntelDrawer';
 import CatalogSideRail from '@/components/store/CatalogSideRail';
 import { useToast } from '@/components/ui/use-toast';
 import { DerelictHull } from '@/components/brand/glyphs/EmptyStates';
@@ -48,7 +48,7 @@ export default function Storefront() {
   const [cart, setCart] = useState(() => storeCache.getCart());
   const [buyerProfile, setBuyerProfile] = useState(() => storeCache.getProfile());
   const [search, setSearch] = useState('');
-  const [intelOpen, setIntelOpen] = useState(false);
+  const [contextPane, setContextPane] = useState('manifest');
   const [category, setCategory] = useState('all');
   const [quickFilter, setQuickFilter] = useState('all');
   const [tab, setTab] = useState('catalog');
@@ -293,10 +293,16 @@ export default function Storefront() {
       <StoreMaintenanceBanner status={storeStatus} />
 
       {/* Main deck — fixed console: fills viewport, only inner panes scroll */}
-      <main className="flex-1 min-h-0 max-w-[1880px] mx-auto w-full px-3 sm:px-4 2xl:px-8 pt-3 pb-28 lg:pb-4 grid grid-cols-1 lg:grid-cols-[1fr_390px] min-[2000px]:grid-cols-[1fr_440px] gap-3 sm:gap-4 overflow-hidden">
+      <main className="flex-1 min-h-0 max-w-[1880px] mx-auto w-full px-3 sm:px-4 2xl:px-8 pt-3 pb-28 lg:pb-4 grid grid-cols-1 lg:grid-cols-[42px_1fr_390px] min-[2000px]:grid-cols-[42px_1fr_440px] gap-3 sm:gap-4 overflow-hidden">
+        <StoreSectionRail
+          active={tab}
+          onChange={setTab}
+          onOpenIntel={() => setContextPane('intel')}
+          isProprietor={user?.role === 'admin'}
+        />
         <div className="flex flex-col gap-2.5 min-h-0">
           <ProprietorEntryway user={user} />
-          <StoreHeroStrip onOpenIntel={() => setIntelOpen(true)} />
+          <StoreHeroStrip onOpenIntel={() => setContextPane('intel')} />
 
           {/* Section tabs */}
           <div className="shrink-0 flex flex-col sm:flex-row flex-wrap sm:items-center sm:justify-between gap-2">
@@ -418,10 +424,20 @@ export default function Storefront() {
           </div>
         </div>
 
-        {/* Order panel — pinned, scrolls internally if needed (drawer on mobile) */}
-        <div className="hidden lg:block min-h-0">
-          <OrderPanel cart={cart} setCart={setCart} user={user} buyerProfile={buyerProfile} preferredLocation={preferredLocation} storeStatus={storeStatus} />
-        </div>
+        {/* Context column — manifest, standing or intel (drawer on mobile) */}
+        <StoreContextColumn
+          pane={contextPane}
+          onPane={setContextPane}
+          cart={cart}
+          setCart={setCart}
+          user={user}
+          buyerProfile={buyerProfile}
+          onProfileSaved={setBuyerProfile}
+          preferredLocation={preferredLocation}
+          storeStatus={storeStatus}
+          products={storefrontProducts}
+          marketPrices={marketPrices}
+        />
       </main>
 
       <ProductDetail
@@ -430,15 +446,6 @@ export default function Storefront() {
         onClose={() => setDetailProduct(null)}
         onAdd={addToCart}
         onView={setDetailProduct}
-      />
-
-      <StoreIntelDrawer
-        open={intelOpen}
-        onClose={() => setIntelOpen(false)}
-        products={storefrontProducts}
-        marketPrices={marketPrices}
-        buyerProfile={buyerProfile}
-        onProfileSaved={setBuyerProfile}
       />
 
       <ActiveOrderBanner onViewOrders={(code) => { if (code) storeCache.addTrackingCode(code); setTab('orders'); }} />
