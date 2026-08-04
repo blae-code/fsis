@@ -7,7 +7,7 @@ import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 
 /** Filed work awaiting the council's judgement. Credit pays the agreed sum in full. */
-export default function TaskReviewQueue({ tasks }) {
+export default function TaskReviewQueue({ tasks = [] }) {
   const qc = useQueryClient();
   const [drafts, setDrafts] = useState({});
   const review = useMutation({

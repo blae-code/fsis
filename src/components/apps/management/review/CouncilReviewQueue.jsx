@@ -46,7 +46,7 @@ export default function CouncilReviewQueue() {
 
       <ReviewQueueRail section={section} onSection={setSection} counts={counts} />
 
-      {section === 'work' && <TaskReviewQueue />}
+      {section === 'work' && <TaskReviewQueue tasks={submitted} />}
       {section === 'standing' && <StandingRequestQueue />}
       {section === 'disputes' && <HallDisputePanel />}
     </div>
