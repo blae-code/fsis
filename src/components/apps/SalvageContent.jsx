@@ -33,11 +33,12 @@ import ArkanisLogImport from '@/components/apps/salvage/ArkanisLogImport';
 import SessionSummary from '@/components/apps/salvage/SessionSummary';
 import SalvageTrends from '@/components/apps/salvage/SalvageTrends';
 import CrewOpsPanel from '@/components/apps/salvage/CrewOpsPanel';
+import SalvageValueDashboard from '@/components/apps/salvage/SalvageValueDashboard';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
 export default function SalvageContent() {
-  const [activeTab, setActiveTab] = useState('market');
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedCommodity, setSelectedCommodity] = useState('RMC');
   const [quantity, setQuantity] = useState(1);
   const [selectedTier, setSelectedTier] = useState(null);
@@ -199,6 +200,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
         <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto overflow-x-auto flex-nowrap" style={{ borderColor: 'hsl(33, 18%, 18%)' }}>
           <TabsTrigger
+            value="dashboard"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            DASHBOARD
+          </TabsTrigger>
+          <TabsTrigger
             value="market"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
           >
@@ -343,6 +350,10 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             ARKANIS
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="dashboard" className="flex-1 overflow-auto m-0">
+          <SalvageValueDashboard bestPrices={bestPrices} />
+        </TabsContent>
 
         <TabsContent value="market" className="flex-1 overflow-auto m-0">
           <div className="p-4 space-y-4">
