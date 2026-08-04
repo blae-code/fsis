@@ -3,6 +3,10 @@ import { base44 } from '@/api/base44Client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import IntakeReviewTable from '@/components/apps/management/proprietor/IntakeReviewTable';
 import { cratePayload, gradeFor, groupForProducts, normalizeRows, productCategoryFor, round100, rowToLoot, rowToProduct } from '@/lib/smartInventory';
+import FormRow, { FormBand } from '@/components/apps/management/ops/fleet/FormRow';
+import IntakeStageRail from '@/components/apps/management/proprietor/IntakeStageRail';
+
+const CONTROL = { borderColor: '#3A2F20', background: '#0B0906', color: '#EDE5D6' };
 
 export default function RapidLootIntakePanel() {
   const qc = useQueryClient();
@@ -45,5 +49,104 @@ export default function RapidLootIntakePanel() {
     return { saved: approved.length, updated: updates.length, created: creates.length };
   }, onSuccess: () => { setRows([]); setNotes(''); setFile(null); qc.invalidateQueries({ queryKey: ['loot_command'] }); qc.invalidateQueries({ queryKey: ['products_admin'] }); qc.invalidateQueries({ queryKey: ['products'] }); qc.invalidateQueries({ queryKey: ['warehouse_crates'] }); } });
 
-  return <section className="border p-3 space-y-3" style={{ borderColor: '#5C4424', background: '#120D08' }}><div><div className="text-[9px] tracking-[0.22em]" style={{ color: '#E0A22E' }}>SMART INVENTORY INTAKE</div><p className="text-[9px]" style={{ color: '#8A7E6C' }}>Upload or paste stock, review AI suggestions, then sync loot, storefront stock, and warehouse crate records in one approval.</p></div><div className="grid md:grid-cols-5 gap-2"><input placeholder="Source operation" value={sourceOp} onChange={(e) => setSourceOp(e.target.value)} className="bg-transparent border px-2 py-1 text-[10px]" style={{ borderColor: '#3A2F20', color: '#D8CFC0' }} /><input placeholder="Source location" value={sourceLocation} onChange={(e) => setSourceLocation(e.target.value)} className="bg-transparent border px-2 py-1 text-[10px]" style={{ borderColor: '#3A2F20', color: '#D8CFC0' }} /><input placeholder="Crew handle" value={crewHandle} onChange={(e) => setCrewHandle(e.target.value)} className="bg-transparent border px-2 py-1 text-[10px]" style={{ borderColor: '#3A2F20', color: '#D8CFC0' }} /><select value={locationCode} onChange={(e) => setLocationCode(e.target.value)} className="bg-[#0C0A07] border px-2 py-1 text-[10px]" style={{ borderColor: '#3A2F20', color: '#D8CFC0' }}><option value="">No bay assigned</option>{locations.map((l) => <option key={l.id} value={l.code}>{l.code}</option>)}</select><input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="text-[10px]" style={{ color: '#9C9080' }} /></div><textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Paste item names, quantities, cargo manifests, condition notes, or storefront stock corrections…" className="w-full h-20 bg-transparent border p-2 text-[10px]" style={{ borderColor: '#3A2F20', color: '#D8CFC0' }} /><div className="flex flex-wrap gap-2"><button disabled={analyze.isPending || (!notes.trim() && !file)} onClick={() => analyze.mutate()} className="border px-3 py-2 text-[9px] font-bold disabled:opacity-40" style={{ borderColor: '#8A8F45', color: '#8A8F45' }}>{analyze.isPending ? 'ANALYZING…' : 'ANALYZE INTAKE'}</button><button disabled={save.isPending || rows.length === 0} onClick={() => save.mutate()} className="border px-3 py-2 text-[9px] font-bold disabled:opacity-40" style={{ borderColor: '#C8893B', color: '#E0A22E' }}>{save.isPending ? 'SYNCING…' : `APPROVE + SYNC ${rows.length}`}</button></div>{analyze.isError && <p className="text-[9px]" style={{ color: '#C05050' }}>Intake analysis failed.</p>}{save.isSuccess && <p className="text-[9px]" style={{ color: '#8A8F45' }}>Smart intake synced into loot, storefront stock, and warehouse cargo.</p>}{rows.length > 0 && <IntakeReviewTable rows={rows} setRows={setRows} />}</section>;
+  const hasManifest = Boolean(notes.trim() || file);
+  const units = rows.reduce((s, r) => s + (Number(r.quantity) || 0), 0);
+  const flagged = rows.filter((r) => (r.duplicate_count || 0) > 0).length;
+  const stage = rows.length ? 'review' : hasManifest ? 'manifest' : 'source';
+
+  return (
+    <section className="font-mono" style={{ background: '#0B0906', boxShadow: 'inset 0 0 0 1px #2E2519' }}>
+      <div className="h-[3px]" style={{ background: 'repeating-linear-gradient(45deg,#3F3018 0 5px,#120D08 5px 10px)' }} />
+
+      <div className="flex items-center gap-2 px-3 py-2" style={{ background: 'linear-gradient(180deg,#1B1309,#0D0A07)', boxShadow: 'inset 0 -1px 0 #3A2F20' }}>
+        <span className="text-[11px] leading-none" style={{ color: '#E0A22E', filter: 'drop-shadow(0 0 8px rgba(224,162,46,.5))' }}>✦</span>
+        <span className="text-[8px] font-bold tracking-[0.28em]" style={{ color: '#F0E7D6' }}>SMART INVENTORY INTAKE</span>
+        <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg,#3A2F20,transparent)' }} />
+        <span className="text-[7px] tracking-[0.2em] tabular-nums" style={{ color: '#5F564A' }}>
+          {rows.length ? `${rows.length} LINES · ${units} UNITS` : 'NO MANIFEST READ'}
+        </span>
+      </div>
+
+      <div className="p-3 space-y-3">
+        <IntakeStageRail at={stage} />
+
+        <p className="text-[7px] leading-relaxed" style={{ color: '#6B6155' }}>
+          One approval writes three records: the loot ledger, storefront stock, and a warehouse crate. Say where it came from
+          first — a haul with no provenance cannot be paid against, appraised, or traced back to the hands that lifted it.
+        </p>
+
+        <FormBand glyph="◈" title="PROVENANCE" note="Where the haul came from and who brought it in. Carried onto every line in this intake.">
+          <FormRow label="SOURCE OPERATION" hint="THE RUN IT CAME OFF">
+            <input value={sourceOp} onChange={(e) => setSourceOp(e.target.value)} placeholder="e.g. Aaron Halo sweep" className="h-7 border px-2 text-[9px]" style={CONTROL} />
+          </FormRow>
+          <FormRow label="SOURCE LOCATION" hint="WHERE IT WAS LIFTED">
+            <input value={sourceLocation} onChange={(e) => setSourceLocation(e.target.value)} placeholder="e.g. Yela belt" className="h-7 border px-2 text-[9px]" style={CONTROL} />
+          </FormRow>
+          <FormRow label="CREW HANDLE" hint="WHOSE LABOUR">
+            <input value={crewHandle} onChange={(e) => setCrewHandle(e.target.value)} placeholder="comrade handle" className="h-7 border px-2 text-[9px]" style={CONTROL} />
+          </FormRow>
+          <FormRow label="STOWED IN" hint={locationCode || 'NO BAY ASSIGNED'}>
+            <select value={locationCode} onChange={(e) => setLocationCode(e.target.value)} className="h-7 border px-2 text-[9px]" style={CONTROL}>
+              <option value="">— no bay assigned —</option>
+              {locations.map((l) => <option key={l.id} value={l.code}>{l.code} · {l.name}</option>)}
+            </select>
+          </FormRow>
+        </FormBand>
+
+        <FormBand glyph="▤" title="THE MANIFEST" note="Paste the list, photograph the hold, or both — the reading is only a proposal and every line can be corrected below.">
+          <FormRow label="TYPED MANIFEST" hint="NAMES, QUANTITIES, CONDITION" span>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Paste item names, quantities, cargo manifests, condition notes, or storefront stock corrections…"
+              className="h-20 border p-2 text-[9px] leading-relaxed"
+              style={CONTROL}
+            />
+          </FormRow>
+          <FormRow label="HOLD PHOTOGRAPH" hint={file ? file.name : 'OPTIONAL'} span>
+            <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="text-[9px] py-1" style={{ color: '#9C9080' }} />
+          </FormRow>
+        </FormBand>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            disabled={analyze.isPending || !hasManifest}
+            onClick={() => analyze.mutate()}
+            className="px-3 py-2 text-[8px] font-bold tracking-[0.2em] disabled:opacity-40"
+            style={{ boxShadow: 'inset 0 0 0 1px #8A8F45', color: '#8A8F45', background: '#0D0A07' }}
+          >
+            {analyze.isPending ? 'READING MANIFEST…' : 'READ MANIFEST'}
+          </button>
+          <button
+            disabled={save.isPending || rows.length === 0}
+            onClick={() => save.mutate()}
+            className="px-3 py-2 text-[8px] font-bold tracking-[0.2em] disabled:opacity-40"
+            style={{ boxShadow: 'inset 0 0 0 1px #8A6430', color: '#E0A22E', background: 'linear-gradient(180deg,#1B1309,#0D0A07)' }}
+          >
+            {save.isPending ? 'COMMITTING…' : rows.length ? `APPROVE + COMMIT ${rows.length} LINES` : 'NOTHING TO COMMIT'}
+          </button>
+          {!hasManifest && <span className="text-[7px]" style={{ color: '#5F564A' }}>Paste a manifest or attach a photograph to begin.</span>}
+        </div>
+
+        {analyze.isError && <p className="text-[8px]" style={{ color: '#C05050' }}>The manifest could not be read. Try a plainer list, or a clearer photograph of the hold.</p>}
+        {save.isError && <p className="text-[8px]" style={{ color: '#C05050' }}>The intake did not commit. Nothing was written — try again.</p>}
+        {save.isSuccess && <p className="text-[8px]" style={{ color: '#8A8F45' }}>Committed — loot ledger, storefront stock and a warehouse crate all updated from this intake.</p>}
+
+        {rows.length > 0 && (
+          <div className="space-y-1.5">
+            <div className="flex items-baseline gap-2">
+              <span className="text-[7px] font-bold tracking-[0.24em]" style={{ color: '#EDE5D6' }}>REVIEW THE READING</span>
+              <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg,#3A2F20,transparent)' }} />
+              <span className="text-[7px] tracking-[0.14em] tabular-nums" style={{ color: flagged ? '#E0A22E' : '#5F564A' }}>
+                {flagged ? `${flagged} POSSIBLE DUPLICATE${flagged > 1 ? 'S' : ''}` : 'NO DUPLICATES SEEN'}
+              </span>
+            </div>
+            <IntakeReviewTable rows={rows} setRows={setRows} />
+          </div>
+        )}
+      </div>
+
+      <div className="h-[3px]" style={{ background: 'repeating-linear-gradient(45deg,#3F3018 0 5px,#120D08 5px 10px)' }} />
+    </section>
+  );
 }
