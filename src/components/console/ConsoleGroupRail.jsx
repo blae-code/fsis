@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import ConsoleExitLink from '@/components/console/ConsoleExitLink';
 
 /** Vertical group rail — the five rooms of the console, storefront-rail style. */
 export default function ConsoleGroupRail({ groups, active, onChange }) {
@@ -40,6 +41,7 @@ export default function ConsoleGroupRail({ groups, active, onChange }) {
           </motion.button>
         );
       })}
+      <ConsoleExitLink />
     </nav>
   );
 }
