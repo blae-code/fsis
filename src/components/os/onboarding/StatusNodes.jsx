@@ -68,18 +68,16 @@ export default function StatusNodes({ labels, current, onJump }) {
                   />
                 )}
               </motion.span>
-              <span
-                className="absolute top-5 font-mono text-[7px] tracking-[0.15em] whitespace-nowrap transition-colors"
-                style={{
-                  color: active
-                    ? 'hsl(42, 85%, 60%)'
-                    : done
-                      ? 'hsl(35, 20%, 55%)'
-                      : 'hsl(35, 12%, 35%)',
-                }}
-              >
-                {label}
-              </span>
+              {/* Only the active step is labelled — every node labelled at once
+                  overlaps into unreadable text on a narrow track. */}
+              {active && (
+                <span
+                  className="absolute top-5 left-1/2 -translate-x-1/2 font-mono text-[7px] tracking-[0.15em] whitespace-nowrap"
+                  style={{ color: 'hsl(42, 85%, 60%)' }}
+                >
+                  {label}
+                </span>
+              )}
             </button>
           </React.Fragment>
         );
