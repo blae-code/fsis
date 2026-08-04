@@ -7,18 +7,7 @@ import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
 import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
 import ManagementView from '@/components/apps/station/ManagementView';
 import TradeConsole from '@/components/apps/management/trade/TradeConsole';
-import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
-import ScanDesk from '@/components/apps/management/scan/ScanDesk';
-import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
-import InventoryManager from '@/components/apps/management/InventoryManager';
-import StockByClassPanel from '@/components/apps/management/inventory/StockByClassPanel';
-import StockBySizePanel from '@/components/apps/management/inventory/StockBySizePanel';
-import StationSweepPanel from '@/components/apps/management/inventory/StationSweepPanel';
-import SalvageCommodityDashboard from '@/components/apps/management/SalvageCommodityDashboard';
-import SalvageProfitDashboard from '@/components/apps/management/SalvageProfitDashboard';
-import LootSummaryTab from '@/components/loot/LootSummaryTab';
-import RefineryConsole from '@/components/apps/management/processing/RefineryConsole';
-import FabQueueConsole from '@/components/apps/management/fab/FabQueueConsole';
+import YardConsole from '@/components/apps/management/yard/YardConsole';
 import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrderConsole';
 import LabourCostPanel from '@/components/apps/management/tasks/LabourCostPanel';
 import RunConsole from '@/components/apps/management/runs/RunConsole';
@@ -68,14 +57,7 @@ export const CONSOLE_GROUPS = [
     id: 'yard', label: 'YARD', icon: Boxes,
     blurb: 'What comes in, where it sits, and what it is worth.',
     sections: [
-      { id: 'scan',      label: 'SCAN DESK',    glyph: '◎', render: () => <ScanDesk /> },
-      { id: 'intake',    label: 'LOOT INTAKE',  glyph: '⬚', render: () => <RapidLootIntakePanel /> },
-      { id: 'warehouse', label: 'WAREHOUSE',    glyph: '▦', render: () => <WarehouseCommandLayer /> },
-      { id: 'inventory', label: 'INVENTORY',    glyph: '▤', render: () => <div className="space-y-4"><StationSweepPanel /><ConsoleFold label="STOCK ROLLUPS — BY CLASS & SIZE"><StockByClassPanel /><StockBySizePanel /></ConsoleFold><InventoryManager /></div> },
-      { id: 'salvage',   label: 'SALVAGE',      glyph: '◈', render: () => <div className="space-y-4"><SalvageProfitDashboard /><ConsoleFold label="COMMODITY YIELD — SCU HARVESTED & SESSIONS"><SalvageCommodityDashboard /></ConsoleFold></div> },
-      { id: 'lootsum',   label: 'LOOT SUMMARY', glyph: '◔', bare: true, render: () => <LootSummaryTab /> },
-      { id: 'refining', label: 'REFINING',    glyph: '⚗', render: () => <RefineryConsole /> },
-      { id: 'fab',      label: 'FABRICATION', glyph: '⚙', render: () => <FabQueueConsole /> },
+      { id: 'floor', label: 'YARD FLOOR', glyph: '▦', bare: true, render: () => <YardConsole /> },
     ],
     links: [
       { to: '/loot', label: 'LOOT TRACKER ↗' },
