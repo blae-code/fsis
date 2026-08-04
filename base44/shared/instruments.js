@@ -18,7 +18,7 @@
  */
 
 /** What the hall asks anybody to put their name to. */
-export const INSTRUMENT_KINDS = ['charter', 'listing_agreement', 'buyback_release', 'other'];
+export const INSTRUMENT_KINDS = ['charter', 'listing_agreement', 'consignment_agreement', 'buyback_release', 'other'];
 
 /** A signature stands until it is withdrawn or its version is superseded. */
 export const SIGNATURE_STATES = ['signed', 'superseded', 'withdrawn'];

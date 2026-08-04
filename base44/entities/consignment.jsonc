@@ -1,0 +1,120 @@
+{
+  "name": "consignment",
+  "type": "object",
+  "properties": {
+    "item_name": {
+      "type": "string"
+    },
+    "item_type": {
+      "type": "string",
+      "enum": ["ship_component", "vehicle_component", "fps_gear", "weapon", "bulk_cargo", "other"],
+      "default": "other"
+    },
+    "condition_grade": {
+      "type": "string"
+    },
+    "condition_pct": {
+      "type": "number"
+    },
+    "quantity": {
+      "type": "number",
+      "default": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "consignor_user_id": {
+      "type": "string",
+      "description": "Whose property this is. It never becomes the collective's — that is the whole difference between this and buyback"
+    },
+    "consignor_callsign": {
+      "type": "string"
+    },
+    "floor_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "The least the consignor will accept in their own hand, after the commission. Their figure, and the yard prices above it rather than through it — the point of asking for a floor is that it means something"
+    },
+    "shelf_price_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "What it sits on the storefront at. Set by the council, who run the shelf and know the market, and told to the consignor — who may withdraw if they do not like it"
+    },
+    "commission_percent": {
+      "type": "number",
+      "default": 15,
+      "description": "What the yard keeps on a sale. Fixed when the consignment is accepted so it cannot move under the consignor afterwards"
+    },
+    "term_days": {
+      "type": "number",
+      "default": 60
+    },
+    "term_ends_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When it is returned rather than left to gather dust. Every consignment ends"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "listed", "sold", "settled", "returned", "withdrawn", "declined"],
+      "default": "proposed",
+      "description": "Terminal states are settled, returned, withdrawn and declined. A consignment must never be able to hang open holding somebody's property"
+    },
+    "linked_product_id": {
+      "type": "string",
+      "description": "The storefront listing, while it is on the shelf"
+    },
+    "loot_item_id": {
+      "type": "string",
+      "description": "The stock record, marked acquisition_source consignment so it is never counted as the collective's capital"
+    },
+    "agreement_signature_id": {
+      "type": "string",
+      "description": "The consignment agreement this was taken in under. Goods left with somebody on terms nobody can point to is how a favour becomes a grievance"
+    },
+    "sold_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "What the buyer actually paid"
+    },
+    "commission_auec": {
+      "type": "number",
+      "default": 0
+    },
+    "payout_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "What the collective owes the consignor. The buyer pays FSIS at the storefront, so this is genuinely a comrade's money in our hands until we hand it over — a debt the other way round from everything else in this app"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "paid_by_email": {
+      "type": "string"
+    },
+    "sold_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ended_reason": {
+      "type": "string",
+      "description": "Why it ended, where it was returned, withdrawn or declined. Stated rather than left blank"
+    },
+    "council_notes": {
+      "type": "string"
+    }
+  },
+  "required": ["item_name", "consignor_user_id"],
+  "rls": {
+    "read": {
+      "$or": [
+        { "user_condition": { "role": "admin" } },
+        { "data.consignor_user_id": "{{user.id}}" }
+      ]
+    },
+    "create": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

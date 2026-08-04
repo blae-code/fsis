@@ -608,3 +608,45 @@ gated on it and nobody should be nagged.
 `runHealthCheck` with `deep: true` runs `checkForLeakedPii`, which scans handle and callsign fields
 for anything address- or name-shaped and reports it as **critical**. One new `|| user.email` fallback
 anywhere would put the leak back; this catches it.
+
+---
+
+## 19. Consignment — the missing middle (2026-08-03)
+
+The yard now takes stock in three ways, and a comrade should be able to see all three side by side:
+
+| | Whose it is | Their money | Our cash | Speed |
+|---|---|---|---|---|
+| **Buyback** | becomes ours | ~60% of market | tied up | tonight |
+| **Consignment** | **stays theirs** | shelf price − 15% | none | when it sells |
+| **The hall** | stays theirs | winning bid − 5% | none | when it closes |
+
+**Consignment is usually the better deal for them, and the UI should say so.** Buyback exists for the
+comrade who needs credits tonight — nobody should drift into it because it was the only door they
+found.
+
+**`proposeConsignment`** — `{ item_name, item_type?, condition_grade?, quantity?, floor_auec?,
+term_days?, loot_item_id? }`. Gated on the consignment agreement if one is published. Returns
+`minimum_shelf_price_auec`.
+
+**`acceptConsignment`** *(council)* — `{ consignment_id, decision: 'accept'|'decline',
+shelf_price_auec?, council_notes? }`. A shelf price that would pay under their floor is **refused**
+with the minimum stated. Declining requires a reason.
+
+**`settleConsignment`** *(council)* — `{ consignment_id, step: 'sold'|'paid', sold_auec? }`.
+**Two steps, deliberately.** `sold` records the sale and what we owe; `paid` records that the money
+reached them. Between the two, the collective is holding a comrade's money.
+
+**`withdrawConsignment`** — the consignor takes it back at any time before sale, no reason needed.
+The council may hand it back, which needs one.
+
+**`sweepConsignments`** — scheduled; returns anything past its term. **That is a tenth scheduled job.**
+
+### Rules for the UI
+
+- **`consignment.status` reaches a terminal state always** — settled, returned, withdrawn, declined.
+- **Never show consigned stock as the yard's capital.** `getStockPosition` already excludes it;
+  don't reintroduce it in a total.
+- **Show what they'd get, not just the shelf price.** The payout figure is what they're deciding on.
+- A sold-but-unpaid consignment is **a debt the collective owes a member** — the only one in the app
+  that runs that direction. Surface it as outstanding, not as revenue.
