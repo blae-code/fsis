@@ -20,8 +20,8 @@ import StockBySizePanel from '@/components/apps/management/inventory/StockBySize
 import SalvageCommodityDashboard from '@/components/apps/management/SalvageCommodityDashboard';
 import SalvageProfitDashboard from '@/components/apps/management/SalvageProfitDashboard';
 import LootSummaryTab from '@/components/loot/LootSummaryTab';
-import PatchResetConsole from '@/components/apps/management/processing/PatchResetConsole';
-import ProcessingTimersPanel from '@/components/apps/management/processing/ProcessingTimersPanel';
+import RefineryConsole from '@/components/apps/management/processing/RefineryConsole';
+import FabQueueConsole from '@/components/apps/management/fab/FabQueueConsole';
 import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrderConsole';
 import LabourCostPanel from '@/components/apps/management/tasks/LabourCostPanel';
 import RunConsole from '@/components/apps/management/runs/RunConsole';
@@ -81,7 +81,8 @@ export const CONSOLE_GROUPS = [
       { id: 'inventory', label: 'INVENTORY',    glyph: '▤', render: () => <div className="space-y-4"><ConsoleFold label="STOCK ROLLUPS — BY CLASS & SIZE"><StockByClassPanel /><StockBySizePanel /></ConsoleFold><InventoryManager /></div> },
       { id: 'salvage',   label: 'SALVAGE',      glyph: '◈', render: () => <div className="space-y-4"><SalvageProfitDashboard /><ConsoleFold label="COMMODITY YIELD — SCU HARVESTED & SESSIONS"><SalvageCommodityDashboard /></ConsoleFold></div> },
       { id: 'lootsum',   label: 'LOOT SUMMARY', glyph: '◔', bare: true, render: () => <LootSummaryTab /> },
-      { id: 'hoppers',   label: 'HOPPERS',      glyph: '⧗', render: () => <div className="space-y-4"><ProcessingTimersPanel /><ConsoleFold label="PATCH RESET CONSOLE — BULK HOPPER CLEAR"><PatchResetConsole /></ConsoleFold></div> },
+      { id: 'refining', label: 'REFINING',    glyph: '⚗', render: () => <RefineryConsole /> },
+      { id: 'fab',      label: 'FABRICATION', glyph: '⚙', render: () => <FabQueueConsole /> },
     ],
     links: [
       { to: '/loot', label: 'LOOT TRACKER ↗' },
