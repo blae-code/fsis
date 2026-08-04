@@ -15,7 +15,6 @@ import ProductDetail from '@/components/store/ProductDetail';
 import FsisLogo from '@/components/brand/FsisLogo';
 
 import QuoteBuilder from '@/components/store/QuoteBuilder';
-import OpsFeed from '@/components/store/OpsFeed';
 // ARCHIVED: import JobsBoard from '@/components/store/JobsBoard'; (operator feature)
 // ARCHIVED: import WeeklyReport from '@/components/store/WeeklyReport'; (operator feature)
 // ARCHIVED: import StoreDashboard from '@/components/store/StoreDashboard'; (operator feature)
@@ -432,10 +431,6 @@ export default function Storefront() {
         onAdd={addToCart}
         onView={setDetailProduct}
       />
-
-      <div className="shrink-0">
-        <OpsFeed />
-      </div>
 
       <StoreIntelDrawer
         open={intelOpen}
