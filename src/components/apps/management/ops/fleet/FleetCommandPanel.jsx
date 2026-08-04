@@ -25,6 +25,21 @@ export default function FleetCommandPanel() {
     queryKey: ['fleet_operations'],
     queryFn: () => base44.entities.crew_operation.list('-starts_at', 40),
   });
+  const { data: crew = [] } = useQuery({
+    queryKey: ['fleet_crew'],
+    queryFn: () => base44.entities.crew_member.filter({ active: true }, 'handle', 200),
+  });
+  const { data: berths = [] } = useQuery({
+    queryKey: ['fleet_berths'],
+    queryFn: () => base44.entities.warehouse_location.list('code', 100),
+  });
+
+  /** Who can be put in a seat, and where a hull can sit — offered rather than remembered. */
+  const pilots = useMemo(() => Array.from(new Set(crew.map((c) => c.handle).filter(Boolean))), [crew]);
+  const locations = useMemo(
+    () => Array.from(new Set([...berths.map((b) => b.name || b.code), ...assets.map((a) => a.home_location)].filter(Boolean))),
+    [berths, assets],
+  );
 
   const done = () => qc.invalidateQueries({ queryKey: ['fleet_assets'] });
   const create = useMutation({ mutationFn: (d) => base44.entities.fleet_asset.create({ ...d, active: true }), onSuccess: done });
@@ -82,13 +97,15 @@ export default function FleetCommandPanel() {
             node={selected}
             assets={assets}
             operations={operations}
+            pilots={pilots}
+            locations={locations}
             onUpdate={(id, data) => update.mutate({ id, data })}
             onDelete={(node) => { retire.mutate([node.id, ...descendantIds(node)]); setSelectedId(null); }}
           />
         </DeckPanel>
 
         <DeckPanel glyph="✛" title="COMMISSION" notch="br" capBottom>
-          <FleetAssetForm assets={assets} defaultParent={selectedId} onCreate={(d) => create.mutate(d)} pending={create.isPending} />
+          <FleetAssetForm assets={assets} defaultParent={selectedId} pilots={pilots} locations={locations} onCreate={(d) => create.mutate(d)} pending={create.isPending} />
         </DeckPanel>
       </div>
     </div>

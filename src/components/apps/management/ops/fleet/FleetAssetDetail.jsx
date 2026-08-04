@@ -1,5 +1,7 @@
 import React from 'react';
 import { ROLES, ROLE_META, ORDERS, STATUSES, STATUS_META, descendantIds } from './fleetMeta';
+import { HULL_NAMES, lookupHull } from './hullCatalogue';
+import SuggestField from './SuggestField';
 
 const field = { borderColor: '#3A2F20', background: '#0B0906', color: '#EDE5D6' };
 const Row = ({ label, children }) => (
@@ -10,7 +12,7 @@ const Row = ({ label, children }) => (
 );
 
 /** The hull under the cursor: what it is, who flies it, what it holds and where it answers. */
-export default function FleetAssetDetail({ node, assets, operations, onUpdate, onDelete }) {
+export default function FleetAssetDetail({ node, assets, operations, onUpdate, onDelete, pilots = [], locations = [] }) {
   if (!node) {
     return <p className="p-3 text-[9px]" style={{ color: '#5F564A' }}>Pick a hull from the order of battle to read and re-order it.</p>;
   }
@@ -41,6 +43,20 @@ export default function FleetAssetDetail({ node, assets, operations, onUpdate, o
       </div>
 
       <div className="space-y-1.5">
+        <Row label="HULL">
+          <SuggestField
+            key={`hull-${node.id}`}
+            value={node.hull || ''}
+            onChange={(v) => {
+              const known = lookupHull(v);
+              onUpdate(node.id, known ? { hull: v, capacity_scu: known.scu } : { hull: v });
+            }}
+            options={HULL_NAMES}
+            placeholder="hull unrecorded"
+            className="flex-1"
+            commitOnBlur
+          />
+        </Row>
         <Row label="ROLE">
           <select value={node.role || 'salvage'} onChange={set('role')} className="flex-1 h-7 border px-2 text-[9px]" style={field}>
             {ROLES.map((x) => <option key={x} value={x}>{ROLE_META[x].label}</option>)}
@@ -63,10 +79,29 @@ export default function FleetAssetDetail({ node, assets, operations, onUpdate, o
           </select>
         </Row>
         <Row label="PILOT">
-          <input defaultValue={node.pilot_handle || ''} onBlur={(e) => onUpdate(node.id, { pilot_handle: e.target.value })} placeholder="seat open" className="flex-1 h-7 border px-2 text-[9px]" style={field} />
+          <SuggestField
+            key={`pilot-${node.id}`}
+            value={node.pilot_handle || ''}
+            onChange={(v) => onUpdate(node.id, { pilot_handle: v })}
+            options={pilots}
+            placeholder="seat open"
+            className="flex-1"
+            commitOnBlur
+          />
         </Row>
         <Row label="HOLD SCU">
           <input type="number" defaultValue={node.capacity_scu || 0} onBlur={(e) => onUpdate(node.id, { capacity_scu: Number(e.target.value) || 0 })} className="flex-1 h-7 border px-2 text-[9px]" style={field} />
+        </Row>
+        <Row label="BERTH">
+          <SuggestField
+            key={`berth-${node.id}`}
+            value={node.home_location || ''}
+            onChange={(v) => onUpdate(node.id, { home_location: v })}
+            options={locations}
+            placeholder="no home berth"
+            className="flex-1"
+            commitOnBlur
+          />
         </Row>
         <Row label="MUSTER">
           <select
