@@ -12,6 +12,7 @@ import OrdersContent from '@/components/apps/OrdersContent';
 import RestockInbox from '@/components/apps/management/RestockInbox';
 import AdminRestockControls from '@/components/store/AdminRestockControls';
 import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
+import PricingAdvisorPanel from '@/components/apps/management/pricing/PricingAdvisorPanel';
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
 import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
 import InventoryManager from '@/components/apps/management/InventoryManager';
@@ -69,6 +70,7 @@ export const CONSOLE_GROUPS = [
       { id: 'inbox',     label: 'INBOX',     glyph: '▣',             render: () => <RestockInbox /> },
       { id: 'restock',   label: 'RESTOCK',   glyph: '▲',             render: () => <AdminRestockControls /> },
       { id: 'discounts', label: 'DISCOUNTS', glyph: '◆',             render: () => <DiscountManager /> },
+      { id: 'pricing',   label: 'PRICING',   glyph: '✦',             render: () => <div className="space-y-4"><PricingAdvisorPanel /><ConsoleFold label="MARKET COMPARATOR — TERMINAL PRICES SIDE BY SIDE"><MarketPriceComparator /></ConsoleFold></div> },
       { id: 'market',    label: 'MARKET',    glyph: '◇',             render: () => <MarketPriceComparator /> },
     ],
   },
