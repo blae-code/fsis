@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { PackagePlus, Trash2, Check, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { C, panel, plate, notch, actionBtn } from '@/components/console/theme';
 
 const CATEGORIES = ['salvage_commodity','fabricated','service','fps_gear','weapon','ship_component','vehicle_component'];
 const CONDITION_GRADES = ['new','refurb','used','worn'];
 const SIZE_CLASSES = ['S1','S2','S3','S4','S5','M','L','XL','N/A'];
 
-const border = { borderColor: 'hsl(33, 18%, 18%)' };
-const panel = { ...border, background: 'hsl(30, 10%, 8%)' };
+const inputStyle = { borderColor: '#3A2F20', background: '#0A0806', color: C.bone };
 
 function ProductRow({ product }) {
   const queryClient = useQueryClient();
@@ -31,32 +29,39 @@ function ProductRow({ product }) {
   const dirty = parseFloat(price) !== product.price_auec || parseFloat(stock) !== (product.stock ?? 0);
 
   return (
-    <div className="p-2.5 rounded border flex items-center gap-3 flex-wrap" style={panel}>
+    <div className="p-2.5 border flex items-center gap-3 flex-wrap font-mono" style={panel}>
       <div className="flex-1 min-w-[10rem]">
-        <div className="text-xs text-foreground">{product.product_name} {product.code && <span className="text-primary">[{product.code}]</span>}</div>
-        <div className="text-[9px] text-muted-foreground">{product.category} • per {product.unit || 'SCU'}</div>
+        <div className="text-xs" style={{ color: C.parchment }}>{product.product_name} {product.code && <span style={{ color: C.amber }}>[{product.code}]</span>}</div>
+        <div className="text-[9px]" style={{ color: C.dim }}>{product.category} • per {product.unit || 'SCU'}</div>
       </div>
       <div className="flex items-center gap-1.5">
-        <span className="text-[9px] text-muted-foreground">PRICE</span>
-        <Input type="number" min="0" value={price} onChange={(e) => setPrice(e.target.value)} className="h-7 w-24 text-[10px] font-mono" style={border} />
+        <span className="text-[8px] tracking-[0.14em]" style={{ color: C.faint }}>PRICE</span>
+        <Input type="number" min="0" value={price} onChange={(e) => setPrice(e.target.value)} className="h-7 w-24 text-[10px] font-mono" style={inputStyle} />
       </div>
       <div className="flex items-center gap-1.5">
-        <span className="text-[9px] text-muted-foreground">STOCK</span>
-        <Input type="number" min="0" value={stock} onChange={(e) => setStock(e.target.value)} className="h-7 w-20 text-[10px] font-mono" style={border} />
+        <span className="text-[8px] tracking-[0.14em]" style={{ color: C.faint }}>STOCK</span>
+        <Input type="number" min="0" value={stock} onChange={(e) => setStock(e.target.value)} className="h-7 w-20 text-[10px] font-mono" style={inputStyle} />
       </div>
       {dirty && (
-        <Button size="sm" className="h-7 px-2 text-[9px] font-mono gap-1"
+        <button
+          className="h-7 px-2.5 border text-[9px] font-bold tracking-[0.12em] flex items-center gap-1 hover:brightness-125 disabled:opacity-40"
+          style={actionBtn}
           disabled={updateMutation.isPending}
           onClick={() => updateMutation.mutate({ price_auec: parseFloat(price) || 0, stock: parseFloat(stock) || 0 })}>
           {updateMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />} SAVE
-        </Button>
+        </button>
       )}
       <button onClick={() => updateMutation.mutate({ available: !product.available })} title="Toggle storefront visibility">
-        <Badge variant="outline" className={`text-[9px] h-4 cursor-pointer ${product.available ? 'border-primary/40 text-primary' : 'border-muted text-muted-foreground'}`}>
-          {product.available ? 'LISTED' : 'HIDDEN'}
-        </Badge>
+        <span
+          className="text-[8px] font-bold tracking-[0.12em] px-2 py-0.5 border cursor-pointer"
+          style={product.available
+            ? { borderColor: `${C.green}55`, color: C.green, background: `${C.green}10` }
+            : { borderColor: '#3A2F20', color: C.dim, background: '#0A0806' }}
+        >
+          {product.available ? '● LISTED' : '○ HIDDEN'}
+        </span>
       </button>
-      <button onClick={() => deleteMutation.mutate()} className="text-muted-foreground hover:text-destructive">
+      <button onClick={() => deleteMutation.mutate()} className="opacity-30 hover:opacity-70" style={{ color: C.red }}>
         <Trash2 className="w-3 h-3" />
       </button>
     </div>
@@ -100,40 +105,44 @@ export default function ProductManager() {
   });
 
   return (
-    <div className="space-y-4">
-      <div className="p-3 rounded border space-y-2" style={panel}>
-        <div className="text-[10px] text-muted-foreground tracking-[0.2em] flex items-center gap-1.5">
-          <PackagePlus className="w-3 h-3" /> ADD WARE TO CATALOG
+    <div className="space-y-4 font-mono">
+      <div className="p-3 border space-y-2" style={{ ...plate, ...notch(8) }}>
+        <div className="text-[9px] tracking-[0.22em] flex items-center gap-2" style={{ color: C.amber }}>
+          <PackagePlus className="w-3.5 h-3.5" /> ADD WARE TO CATALOG
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          <Input placeholder="Product name *" value={name} onChange={(e) => setName(e.target.value)} className="h-8 text-xs col-span-2 md:col-span-1" style={border} />
-          <Input placeholder="Code (RMC…)" value={code} onChange={(e) => setCode(e.target.value)} className="h-8 text-xs" style={border} />
-          <Input type="number" min="0" placeholder="Price aUEC *" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="h-8 text-xs" style={border} />
-          <Input type="number" min="0" placeholder="Stock" value={newStock} onChange={(e) => setNewStock(e.target.value)} className="h-8 text-xs" style={border} />
+          <Input placeholder="Product name *" value={name} onChange={(e) => setName(e.target.value)} className="h-8 text-xs col-span-2 md:col-span-1" style={inputStyle} />
+          <Input placeholder="Code (RMC…)" value={code} onChange={(e) => setCode(e.target.value)} className="h-8 text-xs" style={inputStyle} />
+          <Input type="number" min="0" placeholder="Price aUEC *" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} className="h-8 text-xs" style={inputStyle} />
+          <Input type="number" min="0" placeholder="Stock" value={newStock} onChange={(e) => setNewStock(e.target.value)} className="h-8 text-xs" style={inputStyle} />
           <Select value={newCategory} onValueChange={setNewCategory}>
-            <SelectTrigger className="h-8 text-xs font-mono" style={border}><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-8 text-xs font-mono" style={inputStyle}><SelectValue /></SelectTrigger>
             <SelectContent>{CATEGORIES.map((c) => <SelectItem key={c} value={c} className="text-xs font-mono">{c.replace(/_/g,' ').toUpperCase()}</SelectItem>)}</SelectContent>
           </Select>
           <Select value={newCondition} onValueChange={setNewCondition}>
-            <SelectTrigger className="h-8 text-xs font-mono" style={border}><SelectValue placeholder="Condition grade" /></SelectTrigger>
+            <SelectTrigger className="h-8 text-xs font-mono" style={inputStyle}><SelectValue placeholder="Condition grade" /></SelectTrigger>
             <SelectContent>{CONDITION_GRADES.map((g) => <SelectItem key={g} value={g} className="text-xs font-mono">{g.toUpperCase()}</SelectItem>)}</SelectContent>
           </Select>
           <Select value={newSize} onValueChange={setNewSize}>
-            <SelectTrigger className="h-8 text-xs font-mono" style={border}><SelectValue placeholder="Size class" /></SelectTrigger>
+            <SelectTrigger className="h-8 text-xs font-mono" style={inputStyle}><SelectValue placeholder="Size class" /></SelectTrigger>
             <SelectContent>{SIZE_CLASSES.map((s) => <SelectItem key={s} value={s} className="text-xs font-mono">{s}</SelectItem>)}</SelectContent>
           </Select>
-          <Input placeholder="Manufacturer" value={newMfr} onChange={(e) => setNewMfr(e.target.value)} className="h-8 text-xs" style={border} />
-          <Button size="sm" className="h-8 text-[10px] md:col-start-4" disabled={!name || !newPrice || createMutation.isPending} onClick={() => createMutation.mutate()}>
-            ADD
-          </Button>
+          <Input placeholder="Manufacturer" value={newMfr} onChange={(e) => setNewMfr(e.target.value)} className="h-8 text-xs" style={inputStyle} />
+          <button
+            className="h-8 border text-[9px] font-bold tracking-[0.14em] md:col-start-4 hover:brightness-125 disabled:opacity-40"
+            style={actionBtn}
+            disabled={!name || !newPrice || createMutation.isPending}
+            onClick={() => createMutation.mutate()}>
+            {createMutation.isPending ? 'ADDING…' : 'ADD TO CATALOG'}
+          </button>
         </div>
-        <p className="text-[9px] text-muted-foreground">Use "Reprice Store" in the Salvage app to anchor catalog prices to live UEX market data.</p>
+        <p className="text-[9px]" style={{ color: C.dim }}>Use "Reprice Store" in the Salvage app to anchor catalog prices to live UEX market data.</p>
       </div>
 
       <div className="space-y-1.5">
-        <div className="text-[10px] text-muted-foreground tracking-[0.2em]">CATALOG ({products.length})</div>
+        <div className="text-[9px] tracking-[0.22em]" style={{ color: C.dim }}>CATALOG ({products.length})</div>
         {products.length === 0 ? (
-          <p className="text-xs text-muted-foreground py-6 text-center">No wares in the catalog yet.</p>
+          <p className="text-xs py-6 text-center" style={{ color: C.dim }}>No wares in the catalog yet.</p>
         ) : products.map((p) => <ProductRow key={p.id} product={p} />)}
       </div>
     </div>
