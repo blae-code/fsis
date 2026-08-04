@@ -34,6 +34,7 @@ import BuybackDesk from '@/components/apps/management/hall/BuybackDesk';
 import CollectionsPanel from '@/components/apps/management/hall/CollectionsPanel';
 import AssetLibraryPanel from '@/components/apps/management/assets/AssetLibraryPanel';
 import ProcessingTimersPanel from '@/components/apps/management/processing/ProcessingTimersPanel';
+import PatchResetConsole from '@/components/apps/management/processing/PatchResetConsole';
 import { hasCouncilAccess, fsisRole, ROLE_META } from '@/lib/roles';
 import { Link } from 'react-router-dom';
 
@@ -177,7 +178,7 @@ export default function ManagementContent() {
         {activeTab === 'tasks'    && <div className="space-y-6"><div className="p-4 pb-0"><LabourCostPanel /></div><TaskWorkOrderConsole /></div>}
         {activeTab === 'runs'     && <div className="space-y-6"><div className="p-4 pb-0"><RunProfitChart /></div><RunConsole /></div>}
         {activeTab === 'hall'     && <div className="p-4 font-mono space-y-6"><CollectionsPanel /><HallDisputePanel /><BuybackDesk /></div>}
-        {activeTab === 'hoppers'  && <div className="p-4"><ProcessingTimersPanel /></div>}
+        {activeTab === 'hoppers'  && <div className="p-4 space-y-6"><PatchResetConsole /><ProcessingTimersPanel /></div>}
         {activeTab === 'assets'   && <div className="p-4"><AssetLibraryPanel /></div>}
       </div>
     </div>

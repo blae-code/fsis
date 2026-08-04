@@ -42,6 +42,12 @@ export default async function (req: Request): Promise<Response> {
       ...(await svc.hall_lot.filter({ status: 'draft' }, '-created_date', 500)),
     ];
     const liveOffers = await svc.buyback_offer.filter({ status: 'offered' }, '-created_date', 500);
+    // A patch empties the refineries. Hoppers left running would count down toward material
+    // the game no longer holds, so they are written off plainly and everybody watching is told.
+    const liveJobs = [
+      ...(await svc.processing_job.filter({ status: 'running' }, '-started_at', 500)),
+      ...(await svc.processing_job.filter({ status: 'ready' }, '-started_at', 500)),
+    ];
 
     // Say what would happen before it happens. A sweep this broad should be previewable.
     if (dryRun) {
@@ -50,6 +56,7 @@ export default async function (req: Request): Promise<Response> {
         dry_run: true,
         would_void_lots: openLots.length,
         would_expire_offers: liveOffers.length,
+        would_clear_hoppers: liveJobs.length,
         note: 'Nothing has been changed. Run again without dry_run to apply it.',
       });
     }
@@ -124,6 +131,34 @@ export default async function (req: Request): Promise<Response> {
       }
     }
 
+    if (liveJobs.length > 0) {
+      await svc.processing_job.bulkUpdate(liveJobs.map((job: any) => ({
+        id: job.id,
+        status: 'abandoned',
+        notes: [job.notes, `Hopper cleared by ${patchName}. ${note}`].filter(Boolean).join(' — '),
+      })));
+
+      for (const job of liveJobs) {
+        for (const userId of [...new Set((job.watcher_user_ids || []).filter(Boolean))]) {
+          notices.push({
+            recipient_user_id: userId,
+            kind: 'order_update',
+            title: `Hopper cleared after ${patchName}: ${job.label}`,
+            body: [
+              `${patchName} has emptied the refineries, and this hopper with them.`,
+              'The timer has been written off rather than left counting down toward material that is no longer there. Nothing is owed and nothing is held against anybody.',
+              'Set the run going again when the yard is back and the record will mean something.',
+            ].join('\n\n'),
+            source_type: 'processing_job',
+            source_id: job.id,
+            source_name: job.label,
+            actor_email: user.email,
+            actor_role: fsisRole(user),
+          });
+        }
+      }
+    }
+
     await notifyMany(base44, notices);
 
     await svc.ops_log.create({
@@ -131,7 +166,7 @@ export default async function (req: Request): Promise<Response> {
       entity_type: 'hall_lot',
       entity_name: patchName,
       actor: user.email,
-      after: { lots_voided: openLots.length, offers_expired: liveOffers.length, told: notices.length },
+      after: { lots_voided: openLots.length, offers_expired: liveOffers.length, hoppers_cleared: liveJobs.length, told: notices.length },
       notes: note,
     });
 
@@ -140,6 +175,7 @@ export default async function (req: Request): Promise<Response> {
       patch_name: patchName,
       lots_voided: openLots.length,
       offers_expired: liveOffers.length,
+      hoppers_cleared: liveJobs.length,
       comrades_told: notices.length,
       settled_untouched: 'Trades already settled were not touched — those happened, in the world as it was.',
     });
