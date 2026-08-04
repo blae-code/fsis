@@ -7,9 +7,12 @@ import OperationTemplatePanel from '@/components/apps/management/tasks/Operation
 import SaveOperationAsTemplate from '@/components/apps/management/tasks/SaveOperationAsTemplate';
 import StandDownControl from '@/components/apps/management/tasks/StandDownControl';
 import MusterInsight from '@/components/apps/management/tasks/MusterInsight';
+import OpTypeSelector from '@/components/apps/management/tasks/OpTypeSelector';
+import { applyOpTypeDefaults, OP_TYPE_DEFAULTS } from '@/lib/opTypeDefaults';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
-const EMPTY = { op_name: '', brief: '', op_type: 'salvage', starts_at: '', duration_hours: 2, muster_location: '', ship: '', crew_needed: 2, roles_wanted: '', pay_basis: 'shares', flat_credit_auec: '' };
+// A blank form already carries the typical salvage run, since that is what the yard mostly flies.
+const EMPTY = { op_name: '', brief: '', op_type: 'salvage', starts_at: '', pay_basis: 'shares', flat_credit_auec: '', ...OP_TYPE_DEFAULTS.salvage };
 // stood_down is deliberately absent: standing a run down goes through the backend, which tells
 // everyone who kept the evening free. A silent status flip is exactly the failure it exists to fix.
 const STATUSES = ['scheduled', 'mustering', 'underway', 'completed'];
@@ -19,6 +22,9 @@ export default function OperationScheduleConsole({ actorEmail }) {
   const qc = useQueryClient();
   const [form, setForm] = useState(EMPTY);
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+  // Choosing the kind of run fills in what that kind usually asks for, without touching anything
+  // the council has already typed themselves.
+  const pickType = (t) => setForm((f) => applyOpTypeDefaults(f, t, f.op_type));
 
   const { data: ops = [], isLoading } = useQuery({
     queryKey: ['crew_operations'],
@@ -58,6 +64,7 @@ export default function OperationScheduleConsole({ actorEmail }) {
           never assigned. Share-based ops feed the pay day pool; direct-paid ops settle in full on the day.
         </p>
         <div className="grid sm:grid-cols-2 gap-2">
+          <OpTypeSelector value={form.op_type} onChange={pickType} />
           <input value={form.op_name} onChange={(e) => set('op_name', e.target.value)} placeholder="Operation name" className="h-9 border px-2 text-[10px] sm:col-span-2" style={box} />
           <textarea value={form.brief} onChange={(e) => set('brief', e.target.value)} rows={2} placeholder="Brief — what it involves, what to bring" className="border px-2 py-1.5 text-[10px] sm:col-span-2" style={box} />
           <input type="datetime-local" value={form.starts_at} onChange={(e) => set('starts_at', e.target.value)} className="h-9 border px-2 text-[10px]" style={box} />
