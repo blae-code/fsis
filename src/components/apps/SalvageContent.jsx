@@ -34,6 +34,7 @@ import SessionSummary from '@/components/apps/salvage/SessionSummary';
 import SalvageTrends from '@/components/apps/salvage/SalvageTrends';
 import CrewOpsPanel from '@/components/apps/salvage/CrewOpsPanel';
 import SalvageValueDashboard from '@/components/apps/salvage/SalvageValueDashboard';
+import SessionCloseoutPanel from '@/components/apps/salvage/closeout/SessionCloseoutPanel';
 
 const SALVAGE_COMMODITIES = ['RMC', 'CMR', 'CMS'];
 
@@ -210,6 +211,12 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono"
           >
             MARKET
+          </TabsTrigger>
+          <TabsTrigger
+            value="closeout"
+            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 text-xs font-mono whitespace-nowrap"
+          >
+            CLOSEOUT
           </TabsTrigger>
           <TabsTrigger
             value="summary"
@@ -636,6 +643,9 @@ TOTAL (${quote.quantity} SCU): ${quote.total.toFixed(2)} aUEC
         </TabsContent>
         <TabsContent value="arkanis" className="flex-1 overflow-auto m-0">
           <ArkanisLogImport />
+        </TabsContent>
+        <TabsContent value="closeout" className="flex-1 overflow-auto m-0">
+          <SessionCloseoutPanel bestPrices={bestPrices} />
         </TabsContent>
         <TabsContent value="summary" className="flex-1 overflow-auto m-0">
           <SessionSummary bestPrices={bestPrices} />
