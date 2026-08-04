@@ -26,6 +26,7 @@ import QuickLogModal from '@/components/apps/management/QuickLogModal';
 import LootSummaryTab from '@/components/loot/LootSummaryTab';
 import AccessConsole from '@/components/apps/management/access/AccessConsole';
 import TaskWorkOrderConsole from '@/components/apps/management/tasks/TaskWorkOrderConsole';
+import LabourCostPanel from '@/components/apps/management/tasks/LabourCostPanel';
 import RunConsole from '@/components/apps/management/runs/RunConsole';
 import RunProfitChart from '@/components/apps/management/runs/RunProfitChart';
 import HallDisputePanel from '@/components/apps/management/hall/HallDisputePanel';
@@ -173,7 +174,7 @@ export default function ManagementContent() {
         {activeTab === 'inbox'    && <div className="p-4"><RestockInbox /></div>}
         {activeTab === 'restock'  && <div className="p-4"><AdminRestockControls /></div>}
         {activeTab === 'access'   && <AccessConsole />}
-        {activeTab === 'tasks'    && <TaskWorkOrderConsole />}
+        {activeTab === 'tasks'    && <div className="space-y-6"><div className="p-4 pb-0"><LabourCostPanel /></div><TaskWorkOrderConsole /></div>}
         {activeTab === 'runs'     && <div className="space-y-6"><div className="p-4 pb-0"><RunProfitChart /></div><RunConsole /></div>}
         {activeTab === 'hall'     && <div className="p-4 font-mono space-y-6"><CollectionsPanel /><HallDisputePanel /><BuybackDesk /></div>}
         {activeTab === 'hoppers'  && <div className="p-4"><ProcessingTimersPanel /></div>}
