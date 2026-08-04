@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo, useState } from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
 import SalvageTelemetry from '@/components/apps/management/ops/SalvageTelemetry';
 import HullMaterialPredictor from '@/components/apps/management/ops/HullMaterialPredictor';
 import HaulStrategyMapper from '@/components/apps/management/ops/HaulStrategyMapper';
@@ -7,78 +9,96 @@ import MicroExpenseLogger from '@/components/apps/management/ops/MicroExpenseLog
 import LootRapidSort from '@/components/apps/management/ops/LootRapidSort';
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
 import MarketWatchBar from '@/components/apps/management/ops/MarketWatchBar';
+import OpsBoard from '@/components/apps/management/ops/OpsBoard';
+import FleetGauges from '@/components/apps/management/ops/FleetGauges';
+import DeckChevronRail from '@/components/console/deck/DeckChevronRail';
+import DeckPanel from '@/components/console/deck/DeckPanel';
+import { buildOpsSignals, fleetModel } from '@/components/apps/management/ops/opsSignals';
 
-const AMBER = '#E0A22E';
-const TEAL  = '#5F9A8C';
-const DIM   = '#7A6E60';
-
+/** The run, read left to right: what is afloat, what it will yield, where it sells, what it cost, what came back. */
 const TOOLS = [
-  { id: 'telemetry', label: 'TELEMETRY',  glyph: '◉', color: AMBER,  desc: 'Live session pulse — hull, hold & phase tracking' },
-  { id: 'hull',      label: 'HULL PRED',  glyph: '⬡', color: TEAL,   desc: 'Predict RMC/CMR/CMS yield by ship type' },
-  { id: 'haul',      label: 'HAUL MAP',   glyph: '▸', color: '#6FA0C8', desc: 'Best terminal for your current loadout' },
-  { id: 'expense',   label: 'EXPENSE',    glyph: '◆', color: '#C05050', desc: 'One-tap mid-run expense logging' },
-  { id: 'loot',      label: 'LOOT SORT',  glyph: '✦', color: '#9B6FC0', desc: 'Rapid-queue looted gear & components' },
+  { id: 'telemetry', label: 'AFLOAT',    glyph: '◉', tone: 'hot', desc: 'Live session pulse — hull, hold and phase' },
+  { id: 'hull',      label: 'HULL PRED', glyph: '⬡',              desc: 'Predict RMC/CMR/CMS yield by ship type' },
+  { id: 'haul',      label: 'HAUL MAP',  glyph: '▸',              desc: 'Best terminal for the current loadout' },
+  { id: 'expense',   label: 'EXPENSE',   glyph: '◆',              desc: 'One-tap mid-run expense logging' },
+  { id: 'loot',      label: 'LOOT SORT', glyph: '✦', tone: 'hot', desc: 'Rapid-queue looted gear and components' },
 ];
 
 export default function OpsCommandDeck() {
-  const [activeTool, setActiveTool] = useState('telemetry');
-  const active = TOOLS.find(t => t.id === activeTool);
+  const [stage, setStage] = useState('telemetry');
+  const active = TOOLS.find((t) => t.id === stage);
+
+  const { data: operations = [] } = useQuery({
+    queryKey: ['ops_deck_operations'],
+    queryFn: () => base44.entities.crew_operation.list('-starts_at', 60),
+    refetchInterval: 60000,
+  });
+  const { data: plans = [] } = useQuery({
+    queryKey: ['ops_deck_plans'],
+    queryFn: () => base44.entities.freight_plan.list('-updated_date', 60),
+    refetchInterval: 120000,
+  });
+  const { data: crates = [] } = useQuery({
+    queryKey: ['ops_deck_crates'],
+    queryFn: () => base44.entities.cargo_crate.list('-updated_date', 120),
+    refetchInterval: 120000,
+  });
+
+  const signals = useMemo(() => buildOpsSignals({ operations, plans, crates }), [operations, plans, crates]);
+  const fleet = useMemo(() => fleetModel({ operations, plans, crates }), [operations, plans, crates]);
+  const counts = useMemo(
+    () => signals.reduce((acc, s) => ({ ...acc, [s.stage]: (acc[s.stage] || 0) + s.count }), {}),
+    [signals],
+  );
 
   return (
-    <div className="h-full flex flex-col font-mono" style={{ background: '#080604' }}>
-      {/* Header */}
-      <div className="shrink-0 px-4 py-2.5 border-b flex items-center gap-3" style={{ borderColor: '#2A2118', background: '#0A0806' }}>
-        <span className="animate-pulse-glow" style={{ color: AMBER }}>◈</span>
-        <div>
-          <div className="text-[9px] tracking-[0.25em]" style={{ color: AMBER }}>OPS COMMAND DECK</div>
-          <div className="text-[8px]" style={{ color: DIM }}>ACTIVE: {active?.desc}</div>
-        </div>
-        <div className="ml-auto flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: AMBER }} />
-          <span className="text-[8px]" style={{ color: DIM }}>IN-OP</span>
-        </div>
-      </div>
-
+    <div className="relative h-full flex flex-col min-h-0 font-mono" style={{ background: '#080604' }}>
       <MarketWatchBar />
 
-      {/* Tool selector rail */}
-      <div className="shrink-0 border-b flex" style={{ borderColor: '#2A2118' }}>
-        {TOOLS.map(t => {
-          const isActive = activeTool === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setActiveTool(t.id)}
-              className="relative flex flex-col items-center gap-0.5 px-3 py-2.5 text-[8px] tracking-[0.12em] flex-1 transition-colors"
-              style={{ color: isActive ? t.color : DIM }}
-            >
-              <span className="text-[11px]" style={{ color: isActive ? t.color : '#3A3028' }}>{t.glyph}</span>
-              {t.label}
-              {isActive && (
-                <motion.div
-                  layoutId="ops-tool-underline"
-                  className="absolute bottom-0 left-0 right-0 h-0.5"
-                  style={{ background: t.color }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                />
-              )}
-            </button>
-          );
-        })}
-      </div>
+      <div className="flex flex-col min-h-0 flex-1 p-3 gap-3">
+        <DeckChevronRail
+          railId="opsdeck"
+          items={TOOLS}
+          active={stage}
+          onSelect={setStage}
+          counts={counts}
+          spine="THE RUN LOOP"
+        />
 
-      {/* Tool content */}
-      <div className="flex-1 overflow-auto">
-        {activeTool === 'telemetry' && <SalvageTelemetry />}
-        {activeTool === 'hull'      && <HullMaterialPredictor />}
-        {activeTool === 'haul'      && <HaulStrategyMapper />}
-        {activeTool === 'expense'   && <MicroExpenseLogger />}
-        {activeTool === 'loot'      && (
-          <div className="p-3 space-y-3">
-            <RapidLootIntakePanel />
-            <LootRapidSort />
+        <div className="flex-1 min-h-0 grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)_210px]">
+          <div className="hidden lg:block min-h-0">
+            <OpsBoard signals={signals} onGo={setStage} activeStage={stage} />
           </div>
-        )}
+
+          <div className="min-h-0">
+            <DeckPanel glyph={active?.glyph} title={active?.label} meta={active?.desc?.toUpperCase()} notch="both" bright>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={stage}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.16 }}
+                >
+                  {stage === 'telemetry' && <SalvageTelemetry />}
+                  {stage === 'hull' && <HullMaterialPredictor />}
+                  {stage === 'haul' && <HaulStrategyMapper />}
+                  {stage === 'expense' && <MicroExpenseLogger />}
+                  {stage === 'loot' && (
+                    <div className="p-3 space-y-3">
+                      <RapidLootIntakePanel />
+                      <LootRapidSort />
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </DeckPanel>
+          </div>
+
+          <div className="hidden lg:block min-h-0">
+            <FleetGauges f={fleet} />
+          </div>
+        </div>
       </div>
     </div>
   );

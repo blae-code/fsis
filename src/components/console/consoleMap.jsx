@@ -49,9 +49,9 @@ export const CONSOLE_GROUPS = [
       {
         id: 'opsdeck', label: 'OPS DECK', glyph: '◉', bare: true,
         render: () => (
-          <div className="space-y-4">
-            <OpsCommandDeck />
-            <div className="p-4 pt-0 space-y-3">
+          <div className="h-full flex flex-col min-h-0">
+            <div className="flex-1 min-h-0"><OpsCommandDeck /></div>
+            <div className="shrink-0 px-3 pb-3 space-y-2 max-h-[45%] overflow-auto">
               <ConsoleFold label="YARD OVERVIEW — KPIs & STATUS ALERTS"><ManagementView /></ConsoleFold>
               <ConsoleFold label="AUDIT LOG — EVERY ACT ON THE RECORD"><OpsAuditLog /></ConsoleFold>
             </div>
