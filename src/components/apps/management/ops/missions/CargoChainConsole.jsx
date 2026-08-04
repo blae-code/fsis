@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import DeckPanel from '@/components/console/deck/DeckPanel';
 import MissionPickList from './MissionPickList';
+import MissionBoardReader from './MissionBoardReader';
 import StopPlanRail from './StopPlanRail';
 import { buildStopPlan } from '@/lib/cargoRouteOptimizer';
 
@@ -68,6 +69,7 @@ export default function CargoChainConsole() {
           </div>
         }
       >
+        <MissionBoardReader />
         <MissionPickList missions={open} picked={picked} onToggle={toggle} limit={LIMIT} />
       </DeckPanel>
 

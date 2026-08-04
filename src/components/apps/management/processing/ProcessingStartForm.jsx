@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Loader2, Timer } from 'lucide-react';
+import RefineryQuoteReader from './RefineryQuoteReader';
 
 const box = { borderColor: '#3A2F20', background: '#0C0A07', color: '#EDE5D6' };
 const EMPTY = { label: '', location: '', material: '', quantity_scu: '', hours: '', est_value_auec: '', notes: '' };
@@ -32,6 +33,8 @@ export default function ProcessingStartForm({ onStart, pending, error }) {
         Whoever sets it going is watching it by default, and is told the moment it is out. Material left
         standing is material at risk, borne by the hand who went out and won it.
       </p>
+
+      <RefineryQuoteReader onRead={(read) => setForm((f) => ({ ...f, ...read }))} />
 
       <input value={form.label} onChange={set('label')} placeholder="What is being processed — e.g. Refine 320 SCU raw quantanium" className="w-full h-9 border px-2 text-[10px]" style={box} />
       <div className="grid sm:grid-cols-2 gap-2">
