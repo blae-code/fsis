@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { claimTask } from '@/functions/claimTask';
 import { submitTaskProof } from '@/functions/submitTaskProof';
@@ -8,36 +8,38 @@ import { listMusters } from '@/functions/listMusters';
 import { listOpenWork } from '@/functions/listOpenWork';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Hammer, Loader2, ArrowLeft } from 'lucide-react';
-import WorkerTaskCard from '@/components/work/WorkerTaskCard';
-import OperationRsvpCard from '@/components/work/OperationRsvpCard';
-import WorkHistoryPanel from '@/components/work/WorkHistoryPanel';
-import StandingPanel from '@/components/work/StandingPanel';
-import NoticeCentre from '@/components/work/NoticeCentre';
-import OpenWorkCard from '@/components/work/OpenWorkCard';
-import BoardSection from '@/components/work/BoardSection';
-import BoardEmpty from '@/components/work/BoardEmpty';
-import BoardStatStrip from '@/components/work/BoardStatStrip';
-import OperationCalendar from '@/components/work/OperationCalendar';
-import MyRunsPanel from '@/components/work/MyRunsPanel';
-import { fmtAuec } from '@/components/apps/management/tasks/taskMeta';
+import DeckPanel from '@/components/console/deck/DeckPanel';
+import DeckChevronRail from '@/components/console/deck/DeckChevronRail';
+import WorkerSignalBoard from '@/components/work/board/WorkerSignalBoard';
+import WorkerGauges from '@/components/work/board/WorkerGauges';
+import BoardDesk from '@/components/work/board/BoardDesk';
+import { boardModel } from '@/components/work/board/boardSignals';
 
-/** The labour board: work open to any comrade, and the tasks each holds in hand. */
+const DESKS = [
+  { id: 'mine',    label: 'IN YOUR HANDS', glyph: '◆', tone: 'hot', blurb: 'Work you took up — file your own account of it and collect the whole sum.' },
+  { id: 'musters', label: 'MUSTERS',       glyph: '◉',              blurb: 'Runs called. Nobody is owed your time until you offer it.' },
+  { id: 'open',    label: 'OPEN WORK',     glyph: '⚒',              blurb: 'Posted to the board, every task priced before you take it up.' },
+  { id: 'record',  label: 'YOUR RECORD',   glyph: '▤',              blurb: 'Notices, standing, runs flown and work credited.' },
+];
+
+/** The labour board, on the same deck as the council consoles: work open to any comrade, and the tasks each holds in hand. */
 export default function WorkBoard() {
   const qc = useQueryClient();
+  const [desk, setDesk] = useState('mine');
+
   const { data: user, isLoading: loadingUser } = useQuery({ queryKey: ['user'], queryFn: () => base44.auth.me() });
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['work_board_tasks'],
     queryFn: () => base44.entities.labour_task.list('-created_date', 200),
     refetchInterval: 30000,
   });
-
   const { data: board } = useQuery({
     queryKey: ['open_work'],
     queryFn: () => listOpenWork({}).then((r) => r.data),
     refetchInterval: 30000,
   });
-
   const { data: operations = [] } = useQuery({
     queryKey: ['work_board_operations'],
     queryFn: () => listMusters({}).then((r) => r.data.operations || []),
@@ -79,7 +81,12 @@ export default function WorkBoard() {
     () => operations.filter((o) => ['scheduled', 'mustering', 'underway'].includes(o.status)),
     [operations],
   );
+  const { counts, signals, gauges } = useMemo(
+    () => boardModel({ mine, open, upcoming, userId: user?.id, earned }),
+    [mine, open, upcoming, user, earned],
+  );
   const error = claim.error || submit.error || rsvp.error || release.error;
+  const active = DESKS.find((d) => d.id === desk) || DESKS[0];
 
   if (loadingUser || isLoading) {
     return (
@@ -90,101 +97,70 @@ export default function WorkBoard() {
   }
 
   return (
-    <div className="os-viewport overflow-auto font-mono" style={{ background: '#080604' }}>
-      <div className="max-w-6xl mx-auto p-4 space-y-5">
-        <div
-          className="sticky top-0 z-20 -mx-4 px-4 py-2.5 flex items-center justify-between gap-2 border-b backdrop-blur"
-          style={{ borderColor: '#221B12', background: 'rgba(8,6,4,0.92)' }}
-        >
-          <div className="flex items-center gap-2 text-[10px] font-bold tracking-[0.24em] xian-glow-subtle" style={{ color: '#E0A22E' }}>
-            <Hammer className="w-4 h-4" /> THE LABOUR BOARD
-          </div>
-          <Link
-            to="/"
-            className="h-7 px-2 border text-[8px] font-bold tracking-[0.16em] inline-flex items-center gap-1"
-            style={{ borderColor: '#2E2519', color: '#8A7E6C', background: '#0C0A07' }}
-          >
-            <ArrowLeft className="w-3 h-3" /> STOREFRONT
-          </Link>
+    <div className="os-viewport flex flex-col min-h-0 font-mono" style={{ background: '#080604' }}>
+      <div className="shrink-0 px-3 py-2 flex items-center justify-between gap-2 border-b" style={{ borderColor: '#221B12' }}>
+        <div className="flex items-center gap-2 text-[10px] font-bold tracking-[0.24em] xian-glow-subtle" style={{ color: '#E0A22E' }}>
+          <Hammer className="w-4 h-4" /> THE LABOUR BOARD
         </div>
-        <p className="text-[9px] max-w-3xl leading-relaxed" style={{ color: '#8A7E6C' }}>
-          Every task here carries its price up front. Take up only what you choose to, do the work, file your own
-          account of it, and collect the whole sum — the value you create is not skimmed on its way back to you.
+        <p className="hidden md:block flex-1 text-[8px] leading-relaxed truncate" style={{ color: '#5F564A' }}>
+          Every task carries its price up front — take up only what you choose to, and collect the whole sum.
         </p>
+        <Link
+          to="/"
+          className="h-7 px-2 border text-[8px] font-bold tracking-[0.16em] inline-flex items-center gap-1 shrink-0"
+          style={{ borderColor: '#2E2519', color: '#8A7E6C', background: '#0C0A07' }}
+        >
+          <ArrowLeft className="w-3 h-3" /> STOREFRONT
+        </Link>
+      </div>
+
+      <div className="flex-1 min-h-0 flex flex-col p-3 gap-3">
+        <DeckChevronRail railId="labourboard" items={DESKS} active={desk} onSelect={setDesk} counts={counts} spine="YOUR DAY ON THE BOARD" />
 
         {error && (
-          <p className="border p-2 text-[9px]" style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}>
+          <p className="shrink-0 border p-2 text-[9px]" style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}>
             {error?.response?.data?.error || error.message}
           </p>
         )}
 
-        <BoardStatStrip
-          stats={[
-            { label: 'IN YOUR HANDS', value: mine.filter((t) => ['claimed', 'submitted', 'returned'].includes(t.status)).length, color: '#6FA0C8', hint: 'work you took up' },
-            { label: 'OPEN ON THE BOARD', value: open.length, color: '#E0A22E', hint: 'yours to take or leave' },
-            { label: 'MUSTERS CALLED', value: upcoming.length, color: '#C8A05B', hint: 'time you may offer' },
-            { label: 'CREDITED TO YOU', value: fmtAuec(earned), color: '#8A8F45', hint: 'paid in full, never skimmed' },
-          ]}
-        />
+        <div className="flex-1 min-h-0 grid gap-3 lg:grid-cols-[250px_minmax(0,1fr)_200px]">
+          <div className="hidden lg:block min-h-0">
+            <WorkerSignalBoard signals={signals} activeDesk={desk} onGo={setDesk} />
+          </div>
 
-        <NoticeCentre />
+          <div className="min-h-0">
+            <DeckPanel glyph={active.glyph} title={active.label} meta={active.blurb} notch="both" bright>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={desk}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.16, ease: 'easeOut' }}
+                  className="p-3"
+                >
+                  <BoardDesk
+                    desk={desk}
+                    mine={mine}
+                    open={open}
+                    upcoming={upcoming}
+                    operations={operations}
+                    user={user}
+                    board={board}
+                    claim={claim}
+                    submit={submit}
+                    release={release}
+                    rsvp={rsvp}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </DeckPanel>
+          </div>
 
-        <StandingPanel user={user} />
-
-        <BoardSection
-          eyebrow="WORK IN YOUR HANDS"
-          accent="#6FA0C8"
-          count={mine.length}
-          note={`${fmtAuec(earned)} credited to you so far.`}
-        >
-          {mine.length === 0 ? (
-            <BoardEmpty>You hold no tasks. Take one up from the board below.</BoardEmpty>
-          ) : (
-            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
-              {mine.map((t) => (
-                <WorkerTaskCard
-                  key={t.id}
-                  task={t}
-                  mine
-                  actor={user}
-                  pending={submit.isPending || release.isPending}
-                  onSubmit={(p) => submit.mutate(p)}
-                  onRelease={(p) => release.mutate(p)}
-                  onClaim={() => {}}
-                />
-              ))}
-            </div>
-          )}
-        </BoardSection>
-
-        <BoardSection eyebrow="MUSTERS CALLED" accent="#C8A05B" count={upcoming.length}>
-          <OperationCalendar operations={operations} />
-          {upcoming.length === 0 ? (
-            <BoardEmpty>No musters called. Nobody is owed your time until you offer it.</BoardEmpty>
-          ) : (
-            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
-              {upcoming.map((op) => (
-                <OperationRsvpCard key={op.id} op={op} userId={user?.id} pending={rsvp.isPending} onRsvp={(p) => rsvp.mutate(p)} />
-              ))}
-            </div>
-          )}
-        </BoardSection>
-
-        <MyRunsPanel userId={user?.id} />
-
-        <WorkHistoryPanel tasks={mine} operations={operations} userId={user?.id} />
-
-        <BoardSection eyebrow="OPEN ON THE BOARD" accent="#E0A22E" count={open.length} note={board?.note}>
-          {open.length === 0 ? (
-            <BoardEmpty>No work posted right now. Check back — the yard rarely stays quiet.</BoardEmpty>
-          ) : (
-            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
-              {open.map((t) => (
-                <OpenWorkCard key={t.id} task={t} pending={claim.isPending} onClaim={(task) => claim.mutate(task)} />
-              ))}
-            </div>
-          )}
-        </BoardSection>
+          <div className="hidden lg:block min-h-0">
+            <WorkerGauges g={gauges} />
+          </div>
+        </div>
       </div>
     </div>
   );
