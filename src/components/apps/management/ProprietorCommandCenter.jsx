@@ -96,7 +96,7 @@ export default function ProprietorCommandCenter() {
       <CommandKpiStrip orders={orders} products={products} loot={loot} />
       <ProprietorProgressRail orders={orders} loot={loot} products={products} restocks={restocks} />
 
-      <CommandSection eyebrow="PATCH 4.9 — THIS WEEK" title="GO-LIVE TRANSITION" description="Anticipated Alpha 4.9 changes compiled from official sources and PTU testing, plus the pause → resync → reprice → audit → resume runbook.">
+      <CommandSection eyebrow="LIVE 4.9 · PTU 4.10" title="PATCH TRANSITION" description="What Alpha 4.9 settled on live servers, what 4.10 is testing on the PTU, and the pause → resync → reprice → audit → resume runbook for the next go-live.">
         <PatchTransitionPanel />
       </CommandSection>
 

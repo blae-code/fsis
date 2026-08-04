@@ -4,11 +4,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { syncUex } from '@/functions/syncUex';
 import { repriceProducts } from '@/functions/repriceProducts';
 import { Loader2, PauseCircle, PlayCircle, RefreshCw, Anchor } from 'lucide-react';
-import { INTEL, PATCH_VERSION } from '@/components/apps/management/proprietor/patch49Intel';
-import Patch49ChecklistPanel from '@/components/apps/management/proprietor/Patch49ChecklistPanel';
+import { INTEL, LIVE_PATCH, PTU_PATCH } from '@/components/apps/management/proprietor/patchIntel';
+import PatchChecklistPanel from '@/components/apps/management/proprietor/PatchChecklistPanel';
 
 const SEVERITY = { high: '#C05050', medium: '#E0A22E', low: '#8A8F45' };
-const PAUSE_MESSAGE = `Alpha ${PATCH_VERSION} go-live in progress — FSIS is holding new manifests while salvage prices and stock stabilize on the new patch. Existing orders remain tracked. Back online shortly.`;
+const PAUSE_MESSAGE = `Alpha ${PTU_PATCH} go-live in progress — FSIS is holding new manifests while salvage prices and stock stabilize on the new patch. Existing orders remain tracked. Back online shortly.`;
 
 function ActionButton({ icon: Icon, label, color, onClick, pending, done }) {
   return (
@@ -24,8 +24,8 @@ function ActionButton({ icon: Icon, label, color, onClick, pending, done }) {
   );
 }
 
-/** Patch 4.9 go-live command deck: anticipated-change intel, one-click
- *  transition actions, and the persisted runbook checklist. */
+/** Patch transition command deck: live-vs-PTU intel, one-click transition
+ *  actions, and the persisted runbook checklist for the next go-live. */
 export default function PatchTransitionPanel() {
   const qc = useQueryClient();
   const [expanded, setExpanded] = useState(null);
@@ -40,7 +40,7 @@ export default function PatchTransitionPanel() {
   const pauseToggle = useMutation({
     mutationFn: async () => {
       const patch = paused
-        ? { orders_paused: false, public_message: `FSIS is back online on Alpha ${PATCH_VERSION} — prices re-anchored to fresh market data.` }
+        ? { orders_paused: false, public_message: `FSIS is back online on Alpha ${PTU_PATCH} — prices re-anchored to fresh market data.` }
         : { orders_paused: true, public_message: PAUSE_MESSAGE };
       if (storeStatus) return base44.entities.store_status.update(storeStatus.id, { ...patch, updated_by: 'patch_transition' });
       return base44.entities.store_status.create({ setting_key: 'primary', ...patch, updated_by: 'patch_transition' });
@@ -63,9 +63,15 @@ export default function PatchTransitionPanel() {
       {/* Intel briefing */}
       <section className="border p-3 space-y-2" style={{ borderColor: '#2A2118', background: '#100E0B' }}>
         <div className="flex items-center justify-between">
-          <div className="text-[9px] tracking-[0.22em]" style={{ color: '#C8893B' }}>ALPHA {PATCH_VERSION} INTEL BRIEFING</div>
-          <span className="text-[8px]" style={{ color: '#7A6E60' }}>OFFICIAL ROADMAP · ISC · PTU NOTES</span>
+          <div className="text-[9px] tracking-[0.22em]" style={{ color: '#C8893B' }}>PATCH INTEL BRIEFING</div>
+          <span className="text-[8px] flex items-center gap-2">
+            <span className="px-1.5 py-0.5 border" style={{ borderColor: '#8A8F4560', color: '#8A8F45', background: '#0C0A07' }}>LIVE {LIVE_PATCH}</span>
+            <span className="px-1.5 py-0.5 border" style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#0C0A07' }}>PTU {PTU_PATCH}</span>
+          </span>
         </div>
+        <p className="text-[8px] leading-relaxed" style={{ color: '#5A4A34' }}>
+          We trade on Alpha {LIVE_PATCH}. Everything marked PTU below is {PTU_PATCH} testing intelligence — read it to prepare, never to re-price.
+        </p>
         {INTEL.map((item, idx) => {
           const open = expanded === idx;
           return (
@@ -115,19 +121,19 @@ export default function PatchTransitionPanel() {
               done={reprice.isSuccess ? `REPRICED ${reprice.data?.data?.repriced ?? ''} ✓` : null}
             />
           </div>
-          {paused && <p className="text-[9px]" style={{ color: '#C05050' }}>Storefront orders are PAUSED — buyers see the {PATCH_VERSION} transition notice.</p>}
+          {paused && <p className="text-[9px]" style={{ color: '#C05050' }}>Storefront orders are PAUSED — buyers see the {PTU_PATCH} transition notice.</p>}
           {(resync.isError || reprice.isError || pauseToggle.isError) && (
             <p className="text-[9px]" style={{ color: '#C05050' }}>
               {resync.error?.response?.data?.error || reprice.error?.response?.data?.error || pauseToggle.error?.message || 'Action failed — retry.'}
             </p>
           )}
           <p className="text-[8px] leading-relaxed" style={{ color: '#5A4A34' }}>
-            Patch-day sequence: pause orders → wait for {PATCH_VERSION} UEX data → resync → re-anchor prices → audit stock (Inventory tab) → resume orders.
+            Patch-day sequence: pause orders → wait for {PTU_PATCH} UEX data → resync → re-anchor prices → audit stock (Inventory tab) → resume orders.
           </p>
         </div>
       </section>
 
-      <Patch49ChecklistPanel />
+      <PatchChecklistPanel />
     </div>
   );
 }

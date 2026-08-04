@@ -2,16 +2,16 @@ import React from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2, ListChecks } from 'lucide-react';
-import { CHECKLIST_SEED, PATCH_PHASE } from '@/components/apps/management/proprietor/patch49Intel';
+import { CHECKLIST_SEED, PATCH_PHASE, PTU_PATCH } from '@/components/apps/management/proprietor/patchIntel';
 
 const GROUPS = ['BEFORE PATCH', 'PATCH DAY', 'AFTER PATCH'];
 const PRIORITY_COLOR = { blocker: '#C05050', important: '#E0A22E', polish: '#8A8F45' };
 
-/** Persisted 4.9 go-live checklist backed by qa_check (phase patch_4.9). */
-export default function Patch49ChecklistPanel() {
+/** Persisted transition checklist for the next patch, backed by qa_check. */
+export default function PatchChecklistPanel() {
   const qc = useQueryClient();
   const { data: checks = [], isLoading } = useQuery({
-    queryKey: ['patch49_checks'],
+    queryKey: ['patch_checks', PATCH_PHASE],
     queryFn: () => base44.entities.qa_check.filter({ phase: PATCH_PHASE }),
   });
 
@@ -19,7 +19,7 @@ export default function Patch49ChecklistPanel() {
     mutationFn: () => base44.entities.qa_check.bulkCreate(
       CHECKLIST_SEED.map((c) => ({ ...c, phase: PATCH_PHASE, role: 'proprietor', status: 'not_tested' }))
     ),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['patch49_checks'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['patch_checks', PATCH_PHASE] }),
   });
 
   const toggle = useMutation({
@@ -27,7 +27,7 @@ export default function Patch49ChecklistPanel() {
       status: check.status === 'pass' ? 'not_tested' : 'pass',
       last_tested_at: new Date().toISOString(),
     }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['patch49_checks'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['patch_checks', PATCH_PHASE] }),
   });
 
   const done = checks.filter((c) => c.status === 'pass').length;
@@ -36,7 +36,7 @@ export default function Patch49ChecklistPanel() {
     <section className="border p-3 space-y-2 font-mono" style={{ borderColor: '#2A2118', background: '#100E0B' }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 text-[9px] tracking-[0.22em]" style={{ color: '#C8893B' }}>
-          <ListChecks className="w-3.5 h-3.5" /> 4.9 TRANSITION RUNBOOK
+          <ListChecks className="w-3.5 h-3.5" /> {PTU_PATCH} TRANSITION RUNBOOK
         </div>
         {checks.length > 0 && (
           <span className="text-[9px] font-bold" style={{ color: done === checks.length ? '#8A8F45' : '#E0A22E' }}>
@@ -54,7 +54,7 @@ export default function Patch49ChecklistPanel() {
           className="w-full border px-3 py-2 text-[9px] font-bold tracking-[0.14em] disabled:opacity-40"
           style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#0C0A07' }}
         >
-          {seed.isPending ? 'INITIALIZING…' : 'INITIALIZE 4.9 RUNBOOK'}
+          {seed.isPending ? 'INITIALIZING…' : `INITIALIZE ${PTU_PATCH} RUNBOOK`}
         </button>
       ) : GROUPS.map((group) => {
         const rows = checks.filter((c) => c.group === group);
