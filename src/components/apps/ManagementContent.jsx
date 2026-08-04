@@ -6,6 +6,7 @@ import QuickLogModal from '@/components/apps/management/QuickLogModal';
 import ConsoleShell from '@/components/console/ConsoleShell';
 import { CONSOLE_GROUPS } from '@/components/console/consoleMap';
 import { hasCouncilAccess, fsisRole, ROLE_META } from '@/lib/roles';
+import { displayHandle } from '@/lib/displayName';
 
 const AMBER  = '#E0A22E';
 const DIM    = '#7A6E60';
@@ -46,7 +47,7 @@ export default function ManagementContent() {
       <span className="text-[9px] tracking-[0.25em]" style={{ color: '#7A6050' }}>COUNCIL CONSOLE — HELD IN COMMON</span>
       <span className="text-[8px] ml-auto flex items-center gap-2">
         <span style={{ color: ROLE_META[fsisRole(user)].color }}>{ROLE_META[fsisRole(user)].label}</span>
-        <span style={{ color: DIMMER }}>{user?.full_name || user?.email}</span>
+        <span style={{ color: DIMMER }}>{displayHandle(user)}</span>
       </span>
     </div>
   );
