@@ -369,7 +369,7 @@ export default function Storefront() {
                           className="border px-3 py-2 text-[9px] font-mono font-bold tracking-[0.14em] hover:brightness-125"
                           style={{ borderColor: '#5C4424', color: '#E0A22E', background: '#0C0A07' }}
                         >
-                          CLEAR DIAGNOSTICS
+                          CLEAR FILTERS
                         </button>
                       )}
                     </div>

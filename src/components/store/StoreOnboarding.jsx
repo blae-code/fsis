@@ -62,7 +62,7 @@ export default function StoreOnboarding({ onComplete }) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  });
+  }, [step, isLast]);
 
   return (
     <motion.div
