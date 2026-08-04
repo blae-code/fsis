@@ -113,6 +113,32 @@
     "operation_session_id": {
       "type": "string",
       "description": "The run this came off. Without it there is no per-run yield and no honest answer to 'was that worth flying'"
+    },
+    "acquisition_cost_auec": {
+      "type": "number",
+      "default": 0,
+      "description": "What the collective actually paid for this. A FIELD, because it used to live inside a prose sentence in notes — so the one question any scrapyard asks first, did we make anything on that, could not be answered without reading English item by item. Zero for salvage we went and got ourselves, where the cost was crew time rather than credits, and for consigned stock, which was never our money"
+    },
+    "acquisition_source": {
+      "type": "string",
+      "enum": [
+        "salvage",
+        "buyback",
+        "consignment",
+        "fabrication",
+        "other"
+      ],
+      "default": "salvage",
+      "description": "How it came to be ours. Each carries a different cost basis and a different risk: salvage costs time, buyback costs cash up front, consignment costs nothing and is not ours to count"
+    },
+    "acquired_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When it landed on the shelf. Stock that does not turn is cash the collective cannot use, and nothing could measure how long anything had been sitting"
+    },
+    "consignor_user_id": {
+      "type": "string",
+      "description": "Whose it is, where the yard is selling it on somebody else's behalf rather than having bought it"
     }
   },
   "required": [

@@ -3,6 +3,7 @@ import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { LIVE_STATES } from '../../shared/hall.js';
 import { roundAuec } from '../../shared/money.js';
 import { appraise, appraisalBasis, standingBonusFor } from '../../shared/buyback.js';
+import { affordability, stockPosition } from '../../shared/stock.js';
 import { notify } from '../../shared/notices.js';
 import { reportError } from '../../shared/diagnostics.js';
 import { callsignFor } from '../../shared/callsigns.js';
@@ -91,6 +92,29 @@ export default async function (req: Request): Promise<Response> {
         : 'Stated outright rather than reckoned from a market figure.')
       : appraisalBasis(appraisal);
 
+    // Can the yard afford this? Advisory, never a refusal — an Owner may know something the ledger
+    // does not. But committing credits with no idea what is left is how a yard ends up rich in
+    // shelves and unable to fuel a ship, and nothing was telling anybody.
+    const [ledger, stock] = await Promise.all([
+      svc.ledger_entry.list('-entry_date', 500).catch(() => []),
+      svc.loot_item.filter({ status: 'held' }, '-created_date', 500).catch(() => []),
+    ]);
+    const balance = ledger.reduce((total: number, e: any) => total
+      + (e.entry_type === 'income' ? (Number(e.amount_auec) || 0) : -(Number(e.amount_auec) || 0)), 0);
+    const position = stockPosition(stock);
+    const afford = affordability(offer, {
+      balance_auec: balance,
+      capital_tied_up_auec: position.capital_tied_up_auec,
+    });
+    if (!afford.ok && body?.confirm_over_balance !== true) {
+      return Response.json({
+        error: afford.warning,
+        balance_auec: Math.round(balance),
+        capital_tied_up_auec: position.capital_tied_up_auec,
+        confirm_with: 'confirm_over_balance: true',
+      }, { status: 409 });
+    }
+
     const hours = Number(body?.valid_hours);
     const validFor = Number.isFinite(hours) && hours > 0 && hours <= MAX_VALID_HOURS ? Math.floor(hours) : DEFAULT_VALID_HOURS;
     const now = new Date();
@@ -154,7 +178,13 @@ export default async function (req: Request): Promise<Response> {
       notes: offerRecord.appraisal_notes || `Appraised by ${fsisRole(user)}.`,
     });
 
-    return Response.json({ ok: true, offer: offerRecord, expires_at: expiresAt.toISOString() });
+    return Response.json({
+      ok: true,
+      offer: offerRecord,
+      expires_at: expiresAt.toISOString(),
+      // So the council sees what this does to the yard's position, not only to one item.
+      affordability: { ...afford, balance_auec: Math.round(balance), capital_tied_up_auec: position.capital_tied_up_auec },
+    });
   } catch (error) {
     await reportError(base44, { source: 'offerBuyback', error, route: 'offerBuyback' });
     return Response.json({ error: error.message }, { status: 500 });

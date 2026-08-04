@@ -69,6 +69,11 @@ export default async function (req: Request): Promise<Response> {
           source_op: `Buyback from ${offer.seller_handle}`,
           status: 'held',
           est_sell_auec: offer.market_reference_auec || 0,
+          // What we paid, as a FIELD. It used to live only inside the sentence below, which meant
+          // the yard could not tell whether it made money on anything without reading prose.
+          acquisition_cost_auec: Number(offer.offer_auec) || 0,
+          acquisition_source: 'buyback',
+          acquired_at: now.toISOString(),
           notes: `Bought back for ${Number(offer.offer_auec).toLocaleString()} aUEC at ${offer.fraction_percent}% of a ${Number(offer.market_reference_auec).toLocaleString()} market reference.`,
         });
         lootItemId = loot.id;
