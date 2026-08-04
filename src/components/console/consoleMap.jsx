@@ -6,13 +6,7 @@ import CouncilReviewQueue from '@/components/apps/management/review/CouncilRevie
 import OpsCommandDeck from '@/components/apps/management/OpsCommandDeck';
 import OpsAuditLog from '@/components/apps/management/OpsAuditLog';
 import ManagementView from '@/components/apps/station/ManagementView';
-import ProductManager from '@/components/apps/management/ProductManager';
-import DiscountManager from '@/components/apps/management/DiscountManager';
-import OrdersContent from '@/components/apps/OrdersContent';
-import RestockInbox from '@/components/apps/management/RestockInbox';
-import AdminRestockControls from '@/components/store/AdminRestockControls';
-import MarketPriceComparator from '@/components/apps/management/MarketPriceComparator';
-import PricingAdvisorPanel from '@/components/apps/management/pricing/PricingAdvisorPanel';
+import TradeConsole from '@/components/apps/management/trade/TradeConsole';
 import RapidLootIntakePanel from '@/components/apps/management/proprietor/RapidLootIntakePanel';
 import ScanDesk from '@/components/apps/management/scan/ScanDesk';
 import WarehouseCommandLayer from '@/components/apps/management/proprietor/WarehouseCommandLayer';
@@ -67,13 +61,7 @@ export const CONSOLE_GROUPS = [
     id: 'trade', label: 'TRADE', icon: Store,
     blurb: 'The storefront side of the house — catalogue, orders and market.',
     sections: [
-      { id: 'store',     label: 'CATALOGUE', glyph: '⬡',             render: () => <ProductManager /> },
-      { id: 'orders',    label: 'ORDERS',    glyph: '▸', bare: true, render: () => <OrdersContent /> },
-      { id: 'inbox',     label: 'INBOX',     glyph: '▣',             render: () => <RestockInbox /> },
-      { id: 'restock',   label: 'RESTOCK',   glyph: '▲',             render: () => <AdminRestockControls /> },
-      { id: 'discounts', label: 'DISCOUNTS', glyph: '◆',             render: () => <DiscountManager /> },
-      { id: 'pricing',   label: 'PRICING',   glyph: '✦',             render: () => <div className="space-y-4"><PricingAdvisorPanel /><ConsoleFold label="MARKET COMPARATOR — TERMINAL PRICES SIDE BY SIDE"><MarketPriceComparator /></ConsoleFold></div> },
-      { id: 'market',    label: 'MARKET',    glyph: '◇',             render: () => <MarketPriceComparator /> },
+      { id: 'desk', label: 'TRADE DESK', glyph: '⬡', bare: true, render: () => <TradeConsole /> },
     ],
   },
   {
