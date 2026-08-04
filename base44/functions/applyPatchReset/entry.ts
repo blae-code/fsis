@@ -1,6 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { isCouncil, fsisRole } from '../../shared/roles.js';
 import { notifyMany } from '../../shared/notices.js';
+import { reportError } from '../../shared/diagnostics.js';
 
 /**
  * A game patch has moved the ground under the hall.
@@ -18,8 +19,8 @@ import { notifyMany } from '../../shared/notices.js';
  * Nothing already SETTLED is touched. Those trades happened, in the world as it was.
  */
 export default async function (req: Request): Promise<Response> {
+  const base44 = createClientFromRequest(req);
   try {
-    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (!isCouncil(user) && user.role !== 'admin') {
@@ -180,6 +181,9 @@ export default async function (req: Request): Promise<Response> {
       settled_untouched: 'Trades already settled were not touched — those happened, in the world as it was.',
     });
   } catch (error) {
+    // Destructive and wide-reaching: a failure part-way through must leave a trace saying how far
+    // it got, or the next person cannot tell what was voided from what was not.
+    await reportError(base44, { source: 'applyPatchReset', error, route: 'applyPatchReset' });
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
