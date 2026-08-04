@@ -44,11 +44,20 @@ export const CONSOLE_GROUPS = [
     id: 'command', label: 'COMMAND', icon: Command,
     blurb: 'The state of the yard, and everything waiting on an answer.',
     sections: [
-      { id: 'centre',   label: 'COMMAND CENTRE', glyph: '◈', bare: true,  render: () => <ProprietorCommandCenter /> },
-      { id: 'review',   label: 'REVIEW QUEUE',   glyph: '⚖', bare: true,  render: () => <CouncilReviewQueue /> },
-      { id: 'opsdeck',  label: 'OPS DECK',       glyph: '◉', bare: true,  render: () => <OpsCommandDeck /> },
-      { id: 'overview', label: 'OVERVIEW',       glyph: '▦',              render: () => <ManagementView /> },
-      { id: 'audit',    label: 'AUDIT LOG',      glyph: '⬚', bare: true,  render: () => <OpsAuditLog /> },
+      { id: 'centre',   label: 'COMMAND CENTRE', glyph: '◈', bare: true, render: () => <ProprietorCommandCenter /> },
+      { id: 'review',   label: 'REVIEW QUEUE',   glyph: '⚖', bare: true, render: () => <CouncilReviewQueue /> },
+      {
+        id: 'opsdeck', label: 'OPS DECK', glyph: '◉', bare: true,
+        render: () => (
+          <div className="space-y-4">
+            <OpsCommandDeck />
+            <div className="p-4 pt-0 space-y-3">
+              <ConsoleFold label="YARD OVERVIEW — KPIs & STATUS ALERTS"><ManagementView /></ConsoleFold>
+              <ConsoleFold label="AUDIT LOG — EVERY ACT ON THE RECORD"><OpsAuditLog /></ConsoleFold>
+            </div>
+          </div>
+        ),
+      },
     ],
   },
   {
