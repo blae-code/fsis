@@ -3,7 +3,7 @@ import { ChevronDown, ChevronRight, UserX } from 'lucide-react';
 import { ROLE_META, STATUS_META } from './fleetMeta';
 
 /** One hull in the order of battle — indented under its lead, read at a glance. */
-export default function FleetNodeRow({ node, depth, open, onToggle, onSelect, selected }) {
+export default function FleetNodeRow({ node, depth, open, onToggle, onSelect, selected, checked, onCheck }) {
   const role = ROLE_META[node.role] || ROLE_META.salvage;
   const st = STATUS_META[node.status] || STATUS_META.docked;
   const kids = node.children.length;
@@ -12,6 +12,13 @@ export default function FleetNodeRow({ node, depth, open, onToggle, onSelect, se
   return (
     <div className="flex items-stretch" style={{ paddingLeft: depth * 12 }}>
       {depth > 0 && <div className="w-2 shrink-0 self-stretch" style={{ borderLeft: '1px solid #241C14' }} />}
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onCheck(node, e.target.checked)}
+        title="Select for a bulk order"
+        className="shrink-0 self-center mr-1 w-2.5 h-2.5 accent-amber-500"
+      />
       <button
         onClick={() => onSelect(node)}
         className="group flex-1 min-w-0 flex items-center gap-2 pl-1.5 pr-2 py-1 text-left"

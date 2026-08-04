@@ -2,7 +2,7 @@ import React from 'react';
 import FleetNodeRow from './FleetNodeRow';
 
 /** The order of battle, drawn as it is flown: leads at the top, wings folded beneath them. */
-export default function FleetTree({ nodes, openIds, onToggle, onSelect, selectedId, depth = 0 }) {
+export default function FleetTree({ nodes, openIds, onToggle, onSelect, selectedId, checkedIds, onCheck, depth = 0 }) {
   return (
     <div className="space-y-0.5">
       {nodes.map((n) => {
@@ -16,6 +16,8 @@ export default function FleetTree({ nodes, openIds, onToggle, onSelect, selected
               onToggle={onToggle}
               onSelect={onSelect}
               selected={selectedId === n.id}
+              checked={checkedIds.has(n.id)}
+              onCheck={onCheck}
             />
             {open && n.children.length > 0 && (
               <FleetTree
@@ -24,6 +26,8 @@ export default function FleetTree({ nodes, openIds, onToggle, onSelect, selected
                 onToggle={onToggle}
                 onSelect={onSelect}
                 selectedId={selectedId}
+                checkedIds={checkedIds}
+                onCheck={onCheck}
                 depth={depth + 1}
               />
             )}
