@@ -8,6 +8,7 @@ import NoticeCentre from '@/components/work/NoticeCentre';
 import StandingPanel from '@/components/work/StandingPanel';
 import MyRunsPanel from '@/components/work/MyRunsPanel';
 import WorkHistoryPanel from '@/components/work/WorkHistoryPanel';
+import ContractorProgressDesk from '@/components/work/progress/ContractorProgressDesk';
 
 const GRID = 'grid md:grid-cols-2 xl:grid-cols-3 gap-2';
 
@@ -32,6 +33,10 @@ export default function BoardDesk({ desk, mine, open, upcoming, operations, user
         ))}
       </div>
     );
+  }
+
+  if (desk === 'progress') {
+    return <ContractorProgressDesk user={user} mine={mine} upcoming={upcoming} />;
   }
 
   if (desk === 'musters') {

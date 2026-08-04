@@ -20,6 +20,7 @@ import ContractorOnboarding from '@/components/work/onboarding/ContractorOnboard
 import { workCache, setCacheScope } from '@/lib/localCache';
 
 const DESKS = [
+  { id: 'progress', label: 'YOUR PROGRESS', glyph: '◈',            blurb: 'How far in you are, what is outstanding, and where you stand.' },
   { id: 'mine',    label: 'IN YOUR HANDS', glyph: '◆', tone: 'hot', blurb: 'Work you took up — file your own account of it and collect the whole sum.' },
   { id: 'musters', label: 'MUSTERS',       glyph: '◉',              blurb: 'Runs called. Nobody is owed your time until you offer it.' },
   { id: 'open',    label: 'OPEN WORK',     glyph: '⚒',              blurb: 'Posted to the board, every task priced before you take it up.' },
