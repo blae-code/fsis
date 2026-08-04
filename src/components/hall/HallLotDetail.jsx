@@ -73,9 +73,14 @@ export default function HallLotDetail({ lotId, youMayBid, onClose }) {
                 { label: 'CONDITION', value: (lot.condition_grade || '—').toUpperCase(), color: CONDITION_COLOR[lot.condition_grade] || '#A89C8A' },
                 { label: 'COMMISSION', value: `${Number(lot.commission_percent) || 0}%`, color: '#C8A05B' },
               ].map((s) => (
-                <div key={s.label} className="border p-1.5" style={{ borderColor: '#241C12', background: '#0C0A07' }}>
-                  <div className="text-[7px] tracking-[0.18em]" style={{ color: '#6B6155' }}>{s.label}</div>
-                  <div className="text-[13px]" style={{ color: s.color }}>{s.value}</div>
+                <div
+                  key={s.label}
+                  className="relative p-1.5 overflow-hidden"
+                  style={{ clipPath: 'polygon(0 6px, 6px 0, 100% 0, 100% 100%, 0 100%)', background: 'linear-gradient(180deg,#100C08,#0A0806)', boxShadow: 'inset 0 0 0 1px #2E2519' }}
+                >
+                  <div className="pointer-events-none absolute inset-0 opacity-[0.12]" style={{ background: 'repeating-linear-gradient(180deg,rgba(255,220,160,.10) 0 1px,transparent 1px 3px)' }} />
+                  <div className="relative text-[7px] tracking-[0.18em]" style={{ color: '#6B6155' }}>{s.label}</div>
+                  <div className="relative text-[13px] tabular-nums" style={{ color: s.color }}>{s.value}</div>
                 </div>
               ))}
             </div>

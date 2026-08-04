@@ -1,34 +1,37 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { motion, AnimatePresence } from 'framer-motion';
 import { browseHall } from '@/functions/browseHall';
 import { watchHallLot } from '@/functions/watchHallLot';
-import { Gavel, Loader2, ArrowLeft } from 'lucide-react';
-import HallLotCard from '@/components/hall/HallLotCard';
+import { Gavel, ArrowLeft } from 'lucide-react';
+import DeckPanel from '@/components/console/deck/DeckPanel';
+import DeckChevronRail from '@/components/console/deck/DeckChevronRail';
 import HallLotDetail from '@/components/hall/HallLotDetail';
-import HallListForm from '@/components/hall/HallListForm';
-import BulkDraftPanel from '@/components/hall/BulkDraftPanel';
-import BuybackOffers from '@/components/hall/BuybackOffers';
-import { PlusSquare } from 'lucide-react';
+import FloorSignalBoard from '@/components/hall/floor/FloorSignalBoard';
+import FloorGauges from '@/components/hall/floor/FloorGauges';
+import FloorDesk from '@/components/hall/floor/FloorDesk';
+import { floorModel } from '@/components/hall/floor/floorSignals';
 
-const SCOPES = [
-  { key: 'open', label: 'ON THE FLOOR' },
-  { key: 'mine', label: 'MY LOTS' },
-  { key: 'watching', label: 'WATCHING' },
+const DESKS = [
+  { id: 'open',     label: 'ON THE FLOOR', glyph: '⚖', tone: 'hot', blurb: 'Lots open to bid, at a commission named before they went up.' },
+  { id: 'watching', label: 'WATCHING',     glyph: '◉',              blurb: 'Lots you asked to be told about before they close.' },
+  { id: 'mine',     label: 'MY LOTS',      glyph: '◆',              blurb: 'What you have on the floor, and how it has run.' },
+  { id: 'sell',     label: 'SELL',         glyph: '▤',              blurb: 'List a recovery, draft a batch, or answer a buyback offer.' },
 ];
 
 /**
- * The hall: comrades selling to comrades, at a commission stated up front.
+ * The hall: comrades selling to comrades, on the same deck as the council consoles.
  *
  * Read only through browseHall — the lot record itself is closed to bidders so that a reserve cannot
  * simply be read off it.
  */
 export default function Hall() {
   const qc = useQueryClient();
-  const [scope, setScope] = useState('open');
+  const [desk, setDesk] = useState('open');
   const [openLot, setOpenLot] = useState(null);
-  const [selling, setSelling] = useState(false);
 
+  const scope = desk === 'sell' ? 'mine' : desk;
   const { data, isLoading, error } = useQuery({
     queryKey: ['hall', scope],
     queryFn: () => browseHall({ scope }).then((r) => r.data),
@@ -42,103 +45,69 @@ export default function Hall() {
 
   const lots = data?.lots || [];
   const errText = error?.response?.data?.error || error?.message;
+  const { signals, gauges } = useMemo(() => floorModel({ lots, scope: desk }), [lots, desk]);
+  const active = DESKS.find((d) => d.id === desk) || DESKS[0];
+  const counts = { open: gauges.live, watching: gauges.watching, mine: desk === 'mine' ? lots.length : 0, sell: 0 };
 
   return (
-    <div className="os-viewport overflow-auto font-mono" style={{ background: '#080604' }}>
-      <div className="max-w-6xl mx-auto p-4 space-y-4">
-        <div
-          className="sticky top-0 z-20 -mx-4 px-4 py-2.5 flex items-center justify-between gap-2 border-b backdrop-blur"
-          style={{ borderColor: '#221B12', background: 'rgba(8,6,4,0.92)' }}
-        >
-          <div className="flex items-center gap-2 text-[10px] font-bold tracking-[0.24em] xian-glow-subtle" style={{ color: '#E0A22E' }}>
-            <Gavel className="w-4 h-4" /> THE HALL
-          </div>
-          <Link
-            to="/"
-            className="h-7 px-2 border text-[8px] font-bold tracking-[0.16em] inline-flex items-center gap-1"
-            style={{ borderColor: '#2E2519', color: '#8A7E6C', background: '#0C0A07' }}
-          >
-            <ArrowLeft className="w-3 h-3" /> STOREFRONT
-          </Link>
+    <div className="os-viewport flex flex-col min-h-0 font-mono" style={{ background: '#080604' }}>
+      <div className="shrink-0 px-3 py-2 flex items-center justify-between gap-2 border-b" style={{ borderColor: '#221B12' }}>
+        <div className="flex items-center gap-2 text-[10px] font-bold tracking-[0.24em] xian-glow-subtle" style={{ color: '#E0A22E' }}>
+          <Gavel className="w-4 h-4" /> THE HALL
         </div>
-
-        <p className="text-[9px] max-w-3xl leading-relaxed" style={{ color: '#8A7E6C' }}>
-          What a comrade recovered, a comrade may sell — here, to the outfit, at a commission named
-          before the lot goes up. Bidding is public so the run of it can be checked. A seller may hold
-          a figure they will not go below; you are never shown it, because a hall that leaks reserves
-          is a hall that bids against you.
+        <p className="hidden md:block flex-1 text-[8px] leading-relaxed truncate" style={{ color: '#5F564A' }}>
+          Bidding is public so the run of it can be checked — a seller's reserve is never shown, because a hall that leaks reserves bids against you.
         </p>
+        <Link
+          to="/"
+          className="h-7 px-2 border text-[8px] font-bold tracking-[0.16em] inline-flex items-center gap-1 shrink-0"
+          style={{ borderColor: '#2E2519', color: '#8A7E6C', background: '#0C0A07' }}
+        >
+          <ArrowLeft className="w-3 h-3" /> STOREFRONT
+        </Link>
+      </div>
 
-        {data?.note && (
-          <p className="border px-2 py-1.5 text-[9px] leading-relaxed" style={{ borderColor: '#4A3A22', color: '#C8A05B', background: '#14100A' }}>
-            {data.note}
-          </p>
-        )}
-
-        <BuybackOffers />
+      <div className="flex-1 min-h-0 flex flex-col p-3 gap-3">
+        <DeckChevronRail railId="hallfloor" items={DESKS} active={desk} onSelect={setDesk} counts={counts} spine="HOW A LOT CHANGES HANDS" />
 
         {errText && (
-          <p className="border p-2 text-[9px]" style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}>{errText}</p>
+          <p className="shrink-0 border p-2 text-[9px]" style={{ borderColor: '#5C302A', color: '#D08A6A', background: '#140B08' }}>{errText}</p>
         )}
 
-        <div className="flex gap-1">
-          {SCOPES.map((s) => (
-            <button
-              key={s.key}
-              onClick={() => setScope(s.key)}
-              className="h-8 px-3 border text-[8px] font-bold tracking-[0.14em]"
-              style={{
-                borderColor: scope === s.key ? '#E0A22E' : '#2E2519',
-                color: scope === s.key ? '#E0A22E' : '#7A6E60',
-                background: scope === s.key ? '#E0A22E1A' : '#0C0A07',
-              }}
-            >
-              {s.label}
-            </button>
-          ))}
-          <button
-            onClick={() => setSelling((v) => !v)}
-            className="h-8 px-3 border text-[8px] font-bold tracking-[0.14em] inline-flex items-center gap-1 ml-auto"
-            style={{
-              borderColor: selling ? '#E0A22E' : '#2E2519',
-              color: selling ? '#E0A22E' : '#7A6E60',
-              background: selling ? '#E0A22E1A' : '#0C0A07',
-            }}
-          >
-            <PlusSquare className="w-3 h-3" /> SELL SOMETHING
-          </button>
+        <div className="flex-1 min-h-0 grid gap-3 lg:grid-cols-[250px_minmax(0,1fr)_200px]">
+          <div className="hidden lg:block min-h-0">
+            <FloorSignalBoard signals={signals} activeDesk={desk} onGo={setDesk} />
+          </div>
+
+          <div className="min-h-0">
+            <DeckPanel glyph={active.glyph} title={active.label} meta={active.blurb} notch="both" bright>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={desk}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.16, ease: 'easeOut' }}
+                  className="p-3"
+                >
+                  <FloorDesk
+                    desk={desk}
+                    lots={lots}
+                    isLoading={isLoading}
+                    note={data?.note}
+                    watch={watch}
+                    onOpen={(l) => setOpenLot(l.id)}
+                    onListed={() => setDesk('mine')}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </DeckPanel>
+          </div>
+
+          <div className="hidden lg:block min-h-0">
+            <FloorGauges g={gauges} />
+          </div>
         </div>
-
-        {selling && (
-          <div className="space-y-2">
-            <HallListForm onListed={() => { setScope('mine'); setSelling(false); }} />
-            <BulkDraftPanel />
-          </div>
-        )}
-
-        {isLoading ? (
-          <div className="flex justify-center py-10"><Loader2 className="w-4 h-4 animate-spin" style={{ color: '#E0A22E' }} /></div>
-        ) : lots.length === 0 ? (
-          <p className="text-[9px] py-6 text-center border" style={{ color: '#6B6155', borderColor: '#241C12' }}>
-            {scope === 'mine'
-              ? 'You have nothing on the floor.'
-              : scope === 'watching'
-                ? 'You are watching nothing. Watch a lot and you will be told before it closes.'
-                : 'The floor is empty just now.'}
-          </p>
-        ) : (
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
-            {lots.map((lot) => (
-              <HallLotCard
-                key={lot.id}
-                lot={lot}
-                pending={watch.isPending}
-                onOpen={(l) => setOpenLot(l.id)}
-                onWatch={(l) => watch.mutate(l)}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       {openLot && (
